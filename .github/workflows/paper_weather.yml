@@ -1,0 +1,30 @@
+name: paper-weather
+# Live weather paper test (PROTOCOL_ROUND5.md "Forward test"). Hourly; each city
+# is decided once per day at its first run after 09:00 local.
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+  push:
+    paths: ["edge/weather_live.py", ".github/workflows/paper_weather.yml"]
+permissions:
+  contents: write
+concurrency: paper-weather
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install numpy pandas requests tabulate
+      - run: python -m edge.weather_live
+      - name: Commit ledger
+        run: |
+          git config user.name "paper-trade bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add paper/
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "paper-weather: ledger update $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

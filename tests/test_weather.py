@@ -29,3 +29,8 @@ def test_locate_tiers():
     assert wx.locate("KXHIGHTRJTT", "Daily high temp Tokyo")[:2] == ("RJTT", "minor")
     assert wx.locate("KXHIGHTOKC", "Oklahoma City Maximum High Temperature")[:2] == ("OKC", "minor")
     assert wx.locate("KXHIGHMIA", "Highest temperature in Miami")[1] == "major"
+
+
+def test_live_event_ticker():
+    from edge import weather_live as wl
+    assert wl._event("KXHIGHNY", pd.Timestamp("2026-10-05")) == "KXHIGHNY-26OCT05"
