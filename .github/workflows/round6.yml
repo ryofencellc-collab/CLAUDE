@@ -1,0 +1,17 @@
+name: round6
+on:
+  push:
+    paths: ["run_round6.py", "edge/options.py", ".github/workflows/round6.yml"]
+  workflow_dispatch:
+jobs:
+  puts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: Probe Deribit history API
+        run: curl -sS "https://history.deribit.com/api/v2/public/get_last_trades_by_currency_and_time?currency=BTC&kind=option&start_timestamp=1704441600000&end_timestamp=1704445200000&count=3&include_old=true" | head -c 800; echo
+      - run: python run_round6.py
