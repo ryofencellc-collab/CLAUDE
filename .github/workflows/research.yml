@@ -1,0 +1,33 @@
+name: research
+
+# The dev sandbox has no market-data access, so real-data runs happen here.
+on:
+  push:
+    branches: ["**"]
+    paths: ["edge/**", "run_research.py", "tests/**", ".github/workflows/research.yml", "requirements.txt"]
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Unit tests (noise finds nothing, planted edge is found)
+        run: python -m pytest -q tests
+      - name: Phase 1 backtest on real data
+        run: python run_research.py --refresh
+      - name: Publish results
+        if: always()
+        run: |
+          [ -f reports/RESULTS.md ] && cat reports/RESULTS.md >> "$GITHUB_STEP_SUMMARY"
+          echo "===TRIALS==="; cat reports/trials.csv || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase1-reports
+          path: reports/
