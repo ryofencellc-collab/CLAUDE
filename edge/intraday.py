@@ -205,7 +205,7 @@ def trade_stats(t: pd.DataFrame, days: pd.DatetimeIndex) -> dict:
         return dict(trades=0, win_rate=0.0, avg_R=0.0, profit_factor=0.0, green_days=0.0,
                     total_R=0.0, max_dd_R=0.0, sharpe=0.0)
     traded = t.groupby(t["time"].dt.normalize())["R"].sum()
-    daily = traded.reindex(days, fill_value=0.0)
+    daily = traded.reindex(days.union(traded.index), fill_value=0.0)  # Sunday-evening sessions too
     eq = daily.cumsum()
     gains, losses = t.loc[t["R"] > 0, "R"].sum(), -t.loc[t["R"] < 0, "R"].sum()
     return dict(

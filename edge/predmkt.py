@@ -24,18 +24,28 @@ _s = requests.Session()
 
 
 def _markets(start="2023-01-01"):
-    out, offset = [], 0
-    while True:
-        r = _s.get(GAMMA, params=dict(closed="true", limit=500, offset=offset,
-                                      end_date_min=start, volume_num_min=MIN_VOLUME), timeout=60)
-        r.raise_for_status()
-        page = r.json()
-        if not page:
-            break
-        out.extend(page)
-        offset += len(page)
-        if offset % 5000 == 0:
-            print(f"  markets fetched: {offset}", flush=True)
+    """Page through closed markets one week of end dates at a time (the API caps offsets)."""
+    out, seen = [], set()
+    weeks = pd.date_range(start, pd.Timestamp.utcnow().tz_localize(None), freq="7D")
+    for a, b in zip(weeks[:-1], weeks[1:]):
+        offset = 0
+        while True:
+            r = _s.get(GAMMA, params=dict(closed="true", limit=500, offset=offset,
+                                          end_date_min=a.isoformat() + "Z",
+                                          end_date_max=b.isoformat() + "Z",
+                                          volume_num_min=MIN_VOLUME), timeout=60)
+            if r.status_code != 200:
+                print(f"  week {a.date()}: HTTP {r.status_code} at offset {offset}, stopping week", flush=True)
+                break
+            page = r.json()
+            new = [m for m in page if m["id"] not in seen]
+            seen.update(m["id"] for m in new)
+            out.extend(new)
+            if len(page) < 500:
+                break
+            offset += len(page)
+        if a.day <= 7:
+            print(f"  through {b.date()}: {len(out)} markets", flush=True)
     return out
 
 

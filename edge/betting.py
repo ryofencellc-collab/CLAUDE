@@ -53,6 +53,8 @@ def matches(refresh: bool = False) -> pd.DataFrame:
     keep = ["season", "div", "Date", "HomeTeam", "AwayTeam", "FTR"] + \
            [f"{p}{s}" for p in ("PS", "PSC", "best") for s in SIDES]
     df = df[[c for c in keep if c in df.columns]].dropna(subset=["FTR"])
+    for c in df.columns[6:]:
+        df[c] = pd.to_numeric(df[c], errors="coerce")  # a few files have stray text
     df.to_pickle(path)
     print(f"football: {len(df)} matches, {df['season'].nunique()} seasons, {df['div'].nunique()} leagues")
     return df

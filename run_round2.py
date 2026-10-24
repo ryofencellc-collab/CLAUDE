@@ -58,8 +58,8 @@ def nq_trials(bars):
                 row.update({f"{k}_{m}": v for m, v in it.trade_stats(tt, dd).items()})
             key = row["params"]
             oos_t = seg["oos"][0]
-            oos_daily[(fam, key)] = oos_t.groupby(oos_t["time"].dt.normalize())["R"].sum() \
-                .reindex(oos_days, fill_value=0.0)
+            traded = oos_t.groupby(oos_t["time"].dt.normalize())["R"].sum()
+            oos_daily[(fam, key)] = traded.reindex(oos_days.union(traded.index), fill_value=0.0)
             rows.append(row)
             print(f"  {fam} {key}: IS sharpe {row['is_sharpe']:.2f} OOS sharpe {row['oos_sharpe']:.2f} "
                   f"OOS win {row['oos_win_rate']:.0%} trades {row['oos_trades']}", flush=True)
