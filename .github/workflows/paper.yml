@@ -1,0 +1,35 @@
+name: paper-trade
+
+# Round 3 forward paper test (PROTOCOL_ROUND3.md). Logs bets before kickoff,
+# settles them after, and commits the ledger so git timestamps every bet.
+on:
+  schedule:
+    - cron: "17 7 * * *"
+    - cron: "17 17 * * *"
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/paper.yml", "edge/forward.py"]
+
+permissions:
+  contents: write
+
+concurrency: paper-trade
+
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install numpy pandas requests tabulate
+      - run: python -m edge.forward
+      - name: Commit ledger
+        run: |
+          git config user.name "paper-trade bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add paper/
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "paper: ledger update $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

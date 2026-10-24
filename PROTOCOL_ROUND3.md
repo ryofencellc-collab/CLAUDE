@@ -57,3 +57,12 @@ At $10 stakes on a $1,000 bankroll, the worst historical drawdown was
 **−$1,567** (all seasons) and −$912 (holdout). $10 stakes would have
 bankrupted a $1,000 account at least once. Any live phase must use stakes
 ≤ 0.5% of bankroll ($5 on $1,000), or a larger bankroll.
+
+## Step 1 result (run 40100116520, 2026-10-24)
+
+Betfair + Max odds exist only for 2024/25 and 2025/26 (14,764 matches).
+Betfair-referenced rule: **3,054 bets, +1.17% ROI, +$355.80 at $10 stakes,
+max drawdown −$802** (2024/25 −1.0%, 2025/26 +5.2%). It overlaps with the
+Pinnacle rule on 712 of 1,514 Pinnacle bets in the same matches.
+**Gate: GO.** The edge looks about a third as large as the Pinnacle version.
+Forward paper test started.
