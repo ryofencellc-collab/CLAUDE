@@ -187,6 +187,32 @@ def orb(bars, n, k):
     return simulate(bars, win, last, sig, np.zeros(len(bars)), sabs, rr, max_per_win=1)
 
 
+def liquidity_sweep(bars, window, r):
+    """Fade a sweep of the prior session's high/low that closes back inside (Round 4 B)."""
+    win, last, since, fv = window_ids(bars, [window])
+    rth = bars.between_time("09:30", "15:59")
+    day = rth.index.normalize()
+    pdh = rth["high"].groupby(day).max().shift(1)
+    pdl = rth["low"].groupby(day).min().shift(1)
+    d = bars.index.normalize()
+    hi_prev, lo_prev = pdh.reindex(d).to_numpy(), pdl.reindex(d).to_numpy()
+    h, l, c = (bars[x].to_numpy() for x in ("high", "low", "close"))
+    w = pd.Series(win)
+    run_hi = pd.Series(np.where(win >= 0, h, np.nan)).groupby(w).cummax().to_numpy()
+    run_lo = pd.Series(np.where(win >= 0, l, np.nan)).groupby(w).cummin().to_numpy()
+    short = (win >= 0) & (run_hi > hi_prev) & (c < hi_prev)
+    long_ = (win >= 0) & (run_lo < lo_prev) & (c > lo_prev)
+    first = lambda m: m & (pd.Series(m.astype(int)).groupby(w).cumsum().to_numpy() == 1)
+    short, long_ = first(short), first(long_)
+    sig = np.where(short, -1, np.where(long_, 1, 0)).astype(np.int64)
+    sabs = np.where(short, run_hi + 1.0, np.where(long_, run_lo - 1.0, np.nan))
+    n = len(bars)
+    return simulate(bars, win, last, sig, np.zeros(n), sabs, np.full(n, float(r)), max_per_win=2)
+
+
+SWEEP_GRID = [dict(window=w, r=r) for w in ("am", "rth") for r in (1.5, 3)]
+
+
 FAMILIES = {
     "jj_fair_value": (jj_fair_value, [
         dict(windows=w, stops=s, disp=d, L=L, phases=p)

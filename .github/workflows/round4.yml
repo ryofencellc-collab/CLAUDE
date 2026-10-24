@@ -1,0 +1,30 @@
+name: round4
+on:
+  push:
+    paths: ["run_round4.py", "edge/crowd.py", ".github/workflows/round4.yml"]
+  workflow_dispatch:
+jobs:
+  crowd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round4.py crowd
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: data/histdata
+          key: histdata-nsxusd-v1-${{ github.run_id }}
+          restore-keys: histdata-nsxusd-v1-
+      - run: python fetch_nq.py
+      - run: python run_round4.py sweep

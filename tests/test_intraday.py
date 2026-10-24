@@ -58,3 +58,16 @@ def test_orb_long_uses_range_low_as_stop():
     assert len(t) == 1
     # direction up (104 > 100), entry 104 at 09:35, stop at OR low 98 -> risk 6, target 113
     assert np.isclose(t["R"].iloc[0], (113 - 104 - it.COST_PTS) / 6)
+
+
+def test_liquidity_sweep_fades_prior_high():
+    day1 = [[100, 110, 95, 105]] + [[105, 106, 104, 105]] * 389          # prior high 110
+    day2 = [[105, 106, 104, 105]] * 5 + [[109, 112, 108, 109]] + [[109, 109, 100, 101]] + \
+           [[101, 101, 101, 101]] * 383
+    b1 = bars(day1, "2024-03-04 09:30")
+    b2 = bars(day2, "2024-03-05 09:30")
+    t = it.liquidity_sweep(pd.concat([b1, b2]), window="rth", r=1.5)
+    assert len(t) == 1
+    # swept 112, closed 109 < 110 -> short at next open 109, stop 113 (risk 4), target 103
+    assert t["time"].iloc[0] == b2.index[6]
+    assert np.isclose(t["R"].iloc[0], (109 - 103 - it.COST_PTS) / 4)
