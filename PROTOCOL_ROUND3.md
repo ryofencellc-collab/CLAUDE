@@ -77,3 +77,12 @@ three-way book is between 97% and 106%. The 5 bets are voided (stake
 returned, excluded from results) before their matches kick off. The
 feasibility backtest is re-run with the same rule and its result recorded
 below, GO or NO GO.
+
+### Amendment 1 re-run result (run 40100552799)
+
+With junk exchange prices excluded: **1,649 bets, +4.66% ROI, +$767.70 at
+$10 stakes, max drawdown −$271**. 2024/25: +3.8% (1,108 bets); 2025/26:
++6.3% (541 bets). **Gate: GO.** Disclosure: the filter was added after the
+unfiltered version (+1.2%) had been seen. Its reason was junk prices found in
+the live feed, not outcomes, but this backtest number is still contaminated
+by that sequence. Only the forward test counts.
