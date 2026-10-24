@@ -180,37 +180,55 @@ def _unit(m):
     return "celsius" if ("°C" in text or "celsius" in text.lower()) else "fahrenheit"
 
 
+def fetch_series(series, city, tier, lat, lon, tz) -> pd.DataFrame:
+    rows = []
+    ms = [m for m in markets(series) if _target_date(m["event_ticker"]) is not None
+          and m.get("result") in ("yes", "no")]
+    if not ms:
+        return pd.DataFrame()
+    days = sorted({_target_date(m["event_ticker"]) for m in ms})
+    unit = _unit(ms[0])
+    fc = forecasts(lat, lon, tz, days[0].date().isoformat(), days[-1].date().isoformat(), unit)
+    with ThreadPoolExecutor(16) as ex:
+        quotes = list(ex.map(lambda m: _quote(series, m, tz), ms))
+    for m, q in zip(ms, quotes):
+        d = _target_date(m["event_ticker"])
+        ev = pd.to_numeric(m.get("expiration_value"), errors="coerce")
+        rows.append(dict(series=series, city=city, tier=tier, unit=unit, date=d, ticker=m["ticker"],
+                         event=m["event_ticker"], strike_type=m.get("strike_type"),
+                         floor=m.get("floor_strike"), cap=m.get("cap_strike"),
+                         yes_won=m["result"] == "yes", volume=pd.to_numeric(m.get("volume_fp", m.get("volume")),
+                                                                              errors="coerce"),
+                         bid=q[0] if q else np.nan, ask=q[1] if q else np.nan,
+                         gfs=fc["gfs"].get(d, np.nan), multi=fc["multi"].get(d, np.nan), observed=ev))
+    print(f"  {series} ({city}, {tier}, {unit}): {len(ms)} markets, {len(days)} days "
+          f"{days[0].date()}..{days[-1].date()}, quoted {sum(q is not None for q in quotes)}, "
+          f"multi-model days {int(fc['multi'].notna().sum())}", flush=True)
+    return pd.DataFrame(rows)
+
+
 def dataset(refresh=False) -> pd.DataFrame:
+    """All series; uses per-series files in data/weather/ when present (parallel fetch)."""
+    parts = sorted((CACHE / "weather").glob("*.pkl")) if (CACHE / "weather").exists() else []
+    if parts and not refresh:
+        return pd.concat([pd.read_pickle(p) for p in parts], ignore_index=True)
     path = CACHE / "weather.pkl"
     if path.exists() and not refresh:
         return pd.read_pickle(path)
-    rows = []
-    for series, city, tier, lat, lon, tz in daily_high_series():
-        ms = [m for m in markets(series) if _target_date(m["event_ticker"]) is not None
-              and m.get("result") in ("yes", "no")]
-        if not ms:
-            continue
-        days = sorted({_target_date(m["event_ticker"]) for m in ms})
-        unit = _unit(ms[0])
-        fc = forecasts(lat, lon, tz, days[0].date().isoformat(), days[-1].date().isoformat(), unit)
-        with ThreadPoolExecutor(16) as ex:
-            quotes = list(ex.map(lambda m: _quote(series, m, tz), ms))
-        for m, q in zip(ms, quotes):
-            d = _target_date(m["event_ticker"])
-            ev = pd.to_numeric(m.get("expiration_value"), errors="coerce")
-            rows.append(dict(series=series, city=city, tier=tier, unit=unit, date=d, ticker=m["ticker"],
-                             event=m["event_ticker"], strike_type=m.get("strike_type"),
-                             floor=m.get("floor_strike"), cap=m.get("cap_strike"),
-                             yes_won=m["result"] == "yes", volume=pd.to_numeric(m.get("volume_fp", m.get("volume")),
-                                                                                  errors="coerce"),
-                             bid=q[0] if q else np.nan, ask=q[1] if q else np.nan,
-                             gfs=fc["gfs"].get(d, np.nan), multi=fc["multi"].get(d, np.nan), observed=ev))
-        print(f"  {series} ({city}, {tier}, {unit}): {len(ms)} markets, {len(days)} days "
-              f"{days[0].date()}..{days[-1].date()}, quoted {sum(q is not None for q in quotes)}, "
-              f"multi-model days {int(fc['multi'].notna().sum())}", flush=True)
-    df = pd.DataFrame(rows)
+    df = pd.concat([fetch_series(*s) for s in daily_high_series()], ignore_index=True)
     df.to_pickle(path)
     return df
+
+
+if __name__ == "__main__":
+    import json
+    import sys
+    if sys.argv[1] == "list":
+        print(json.dumps([s[0] for s in daily_high_series()]))
+    else:
+        spec = next(s for s in daily_high_series() if s[0] == sys.argv[2])
+        (CACHE / "weather").mkdir(exist_ok=True)
+        fetch_series(*spec).to_pickle(CACHE / "weather" / f"{spec[0]}.pkl")
 
 
 def prob_yes(row, mu, sd):

@@ -25,7 +25,8 @@ def stats(b):
 
 
 def main():
-    df = wx.dataset(refresh=True)
+    import sys
+    df = wx.dataset(refresh='--refresh' in sys.argv)
     print(f"rows {len(df)}, cities {df['city'].nunique()}, days {df['date'].nunique()}, "
           f"quoted {df['ask'].notna().sum()}, gfs {df['gfs'].notna().sum()}, multi {df['multi'].notna().sum()}")
     cut = df["date"].max() - pd.Timedelta(days=wx.HOLDOUT_DAYS)

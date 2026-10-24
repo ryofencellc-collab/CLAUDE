@@ -1,0 +1,50 @@
+name: round5-parallel
+# Same Round 5 test, fetched one city per runner so no single job can time out.
+on:
+  push:
+    paths: [".github/workflows/round5p.yml"]
+  workflow_dispatch:
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      series: ${{ steps.s.outputs.series }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - id: s
+        run: echo "series=$(python -m edge.weather list | tail -1)" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        series: ${{ fromJson(needs.list.outputs.series) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python -m edge.weather fetch ${{ matrix.series }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "wx-${{ matrix.series }}", path: data/weather/}
+  analyse:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "wx-*", path: data/weather, merge-multiple: true}
+      - run: ls data/weather | wc -l && python run_round5.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: round5-results, path: reports/}
