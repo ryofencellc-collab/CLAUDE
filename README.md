@@ -45,4 +45,4 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 3 | Forward paper test of football value betting (Betfair-referenced) | **running live**: [paper/SUMMARY.md](paper/SUMMARY.md), rules [PROTOCOL_ROUND3.md](PROTOCOL_ROUND3.md) |
 | 4 | Beat retail: fade crypto crowd positioning, follow whales, fade NQ stop-hunt sweeps | 0/3 pass: [ROUND4.md](reports/ROUND4.md) |
 | 5 | Kalshi weather markets: 1 vs 5 forecast models, major vs unpopular cities (24 configs) | 0/4 pass: [ROUND5.md](reports/ROUND5.md) |
-| Business | Selling a product/service | proposed: [BUSINESS.md](BUSINESS.md) |
+| Business | Sell the honest report ($9) + done-for-you strategy tests ($49) | ready to launch: [business/LAUNCH.md](business/LAUNCH.md) |
