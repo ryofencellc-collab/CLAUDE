@@ -4,7 +4,7 @@ name: research
 on:
   push:
     branches: ["**"]
-    paths: ["edge/**", "run_research.py", "diagnose_carry.py", "tests/**", ".github/workflows/research.yml", "requirements.txt"]
+    paths: ["edge/backtest.py", "edge/stats.py", "edge/data.py", "edge/null.py", "edge/strategies/**", "run_research.py", "diagnose_carry.py", "tests/**", ".github/workflows/research.yml", "requirements.txt"]
   workflow_dispatch:
 
 jobs:
