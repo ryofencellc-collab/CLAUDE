@@ -4,7 +4,7 @@ name: research
 on:
   push:
     branches: ["**"]
-    paths: ["edge/**", "run_research.py", "tests/**", ".github/workflows/research.yml", "requirements.txt"]
+    paths: ["edge/**", "run_research.py", "diagnose_carry.py", "tests/**", ".github/workflows/research.yml", "requirements.txt"]
   workflow_dispatch:
 
 jobs:
@@ -21,6 +21,8 @@ jobs:
         run: python -m pytest -q tests
       - name: Phase 1 backtest on real data
         run: python run_research.py --refresh
+      - name: Carry diagnostic
+        run: python diagnose_carry.py
       - name: Publish results
         if: always()
         run: |
