@@ -41,6 +41,7 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | Round | What was tested | Result |
 |---|---|---|
 | 1 | 9 daily crypto/ETF strategy families, 61 configs | 0/9 pass: [RESULTS.md](reports/RESULTS.md), [analysis](reports/PHASE1_ANALYSIS.md) |
-| 2 | TikTok NQ strategy (14 yrs of 1-min data), opening-range breakout, football betting, Polymarket | 0/5 pass; football value betting is a lead: [ROUND2.md](reports/ROUND2.md) |
+| 2 | TikTok NQ strategy (14 yrs of 1-min data), opening-range breakout, football betting, Polymarket | 0/5 pass (NQ section corrected after a timestamp bug; verdict unchanged); football value betting is a lead: [ROUND2.md](reports/ROUND2.md) |
 | 3 | Forward paper test of football value betting (Betfair-referenced) | **running live**: [paper/SUMMARY.md](paper/SUMMARY.md), rules [PROTOCOL_ROUND3.md](PROTOCOL_ROUND3.md) |
+| 4 | Beat retail: fade crypto crowd positioning, follow whales, fade NQ stop-hunt sweeps | 0/3 pass: [ROUND4.md](reports/ROUND4.md) |
 | Business | Selling a product/service | proposed: [BUSINESS.md](BUSINESS.md) |

@@ -9,7 +9,28 @@ Full per-config tables are in the run's logs and `round2-*` artifacts.
 **Verdict: 0 of 5 families passed.** One family (football value betting)
 produced the first result in this experiment worth a forward test.
 
-## A. The TikTok strategy (JJ Simon "Fair Value Theory") on Nasdaq-100
+## Correction (2026-10-24, run 40101597740)
+
+The original section A numbers were produced by a bug. The window-id code
+assumed nanosecond timestamps; the data loaded at microsecond resolution, so
+every day fell into one long "window". The fair-value / opening price became
+the **first open of 2012**, so ORB went long almost every day and JJ's
+"above/below fair value" was nearly constant. In a bull market that gave a
+fake ~52% ORB win rate. Fixed in commit 0df5fee (resolution-independent day
+ids) and re-run. **Corrected numbers:**
+
+| | In-sample 2012–2022 | Holdout 2023–2026 |
+|---|---|---|
+| JJ variants with positive Sharpe | **0 of 72** (all −0.67 to −2.19) | 13 of 72; best +0.57 (571 trades, +29R): nowhere near 1.0, and that config was −1.0 Sharpe in-sample |
+| JJ win rates | 36–44% | 40–46% |
+| ORB, all 12 variants | Sharpe −0.13 to −3.96 | Sharpe −0.02 to −0.94; win rate 16–42% |
+| Null test passes | | 0 of 2 seeds |
+
+Verdict unchanged, and if anything stronger: no edge. Football (B) and
+Polymarket (C) did not use this code and are unaffected. The original
+(buggy) section is kept below for the record.
+
+## A. (ORIGINAL, superseded by the correction above) The TikTok strategy (JJ Simon "Fair Value Theory") on Nasdaq-100
 
 Data: 4,753,177 one-minute bars, 2012-01-03 → 2026-10-01 (HistData NSXUSD).
 Costs 1.25 points per round trip. 72 mechanised variants + 12 opening-range
