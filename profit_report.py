@@ -19,32 +19,37 @@ STAKE, BANK, EDGE, CAP = 10.0, 1000.0, 0.02, 5.0
 BOOKS = ["B365", "BW", "IW", "WH", "VC"]  # Bet365, Bwin, Interwetten, William Hill, BetVictor
 
 
+def _one(job):
+    s, d = job
+    r = requests.get(f"https://www.football-data.co.uk/mmz4281/{s}/{d}.csv", timeout=30,
+                     headers={"User-Agent": "Mozilla/5.0"})
+    if r.status_code != 200 or len(r.content) < 200:
+        return None
+    df = pd.read_csv(io.BytesIO(r.content), encoding="latin-1", on_bad_lines="skip")
+    return df.assign(season=s, div=d)
+
+
 def raw_matches():
-    rows = []
-    for s in bt.SEASONS:
-        for d in bt.DIVS:
-            r = requests.get(f"https://www.football-data.co.uk/mmz4281/{s}/{d}.csv", timeout=30,
-                             headers={"User-Agent": "Mozilla/5.0"})
-            if r.status_code == 200 and len(r.content) > 200:
-                df = pd.read_csv(io.BytesIO(r.content), encoding="latin-1", on_bad_lines="skip")
-                df["season"], df["div"] = s, d
-                rows.append(df)
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(8) as ex:
+        rows = [x for x in ex.map(_one, [(s, d) for s in bt.SEASONS for d in bt.DIVS]) if x is not None]
     df = pd.concat(rows, ignore_index=True)
     df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors="coerce")
     return df
 
 
-def bets(df, price_cols):
+def bets(df, price_cols, ref="PS"):
     out = []
     for side in bt.SIDES:
-        ps = {x: pd.to_numeric(df[f"PS{x}"], errors="coerce") for x in bt.SIDES}
+        ps = {x: pd.to_numeric(df[f"{ref}{x}"], errors="coerce") for x in bt.SIDES}
         book = sum(1 / ps[x] for x in bt.SIDES)
         fair = ps[side] * book
         px = pd.to_numeric(df[price_cols[side]], errors="coerce") if price_cols[side] in df else np.nan
         pick = (px >= fair * (1 + EDGE)) & (px <= CAP)
         b = df[pick]
         out.append(pd.DataFrame({"date": b["Date"], "season": b["season"], "odds": px[pick],
-                                 "won": (b["FTR"] == side)}))
+                                 "won": (b["FTR"] == side), "key": b["div"] + b["HomeTeam"].astype(str)
+                                 + b["AwayTeam"].astype(str) + b["season"] + side}))
     o = pd.concat(out).dropna(subset=["date"]).sort_values("date")
     o["pnl"] = np.where(o["won"], STAKE * (o["odds"] - 1), -STAKE)
     return o

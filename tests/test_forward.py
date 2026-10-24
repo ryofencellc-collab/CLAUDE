@@ -6,7 +6,7 @@ from edge import forward as fw
 
 def fixture_row(date, time, home, away, ps, mx):
     return dict(Div="E0", Date=date, Time=time, HomeTeam=home, AwayTeam=away,
-                PSH=ps[0], PSD=ps[1], PSA=ps[2], MaxH=mx[0], MaxD=mx[1], MaxA=mx[2],
+                BFEH=ps[0], BFED=ps[1], BFEA=ps[2], MaxH=mx[0], MaxD=mx[1], MaxA=mx[2],
                 B365H=mx[0], B365D=mx[1], B365A=mx[2])
 
 
@@ -14,7 +14,7 @@ def test_log_then_settle(tmp_path, monkeypatch):
     monkeypatch.setattr(fw, "LEDGER", tmp_path / "bets.csv")
     monkeypatch.setattr(fw, "ROOT", tmp_path)
     fx = pd.DataFrame([
-        # home: Pinnacle 2.0 / 3.5 / 4.0 -> fair home ~2.08; best 2.30 is +10%: bet
+        # home: Betfair 2.0 / 3.5 / 4.0 -> fair home ~2.08; best 2.30 is +10%: bet
         fixture_row("01/11/2026", "15:00", "A", "B", (2.0, 3.5, 4.0), (2.30, 3.5, 4.0)),
         # no edge anywhere
         fixture_row("01/11/2026", "15:00", "C", "D", (2.0, 3.5, 4.0), (2.0, 3.5, 4.0)),

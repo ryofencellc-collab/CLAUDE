@@ -26,7 +26,7 @@ RESULTS = "https://www.football-data.co.uk/mmz4281/{season}/{div}.csv"
 EDGE, CAP, STAKE, BANK = 0.02, 5.0, 10.0, 1000.0  # frozen in PROTOCOL_ROUND3.md
 MIN_LEAD = pd.Timedelta(minutes=30)                # bet must be logged >= 30 min before kickoff
 COLS = ["bet_id", "logged_at_utc", "kickoff_uk", "div", "home", "away", "side", "odds",
-        "pinnacle_odds", "fair_odds", "edge", "b365_odds", "stake", "status", "pnl", "settled_at_utc"]
+        "betfair_odds", "fair_odds", "edge", "b365_odds", "stake", "status", "pnl", "settled_at_utc"]
 UA = {"User-Agent": "Mozilla/5.0"}
 
 
@@ -54,7 +54,7 @@ def find_bets(fx: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
     kick = pd.to_datetime(fx["Date"] + " " + fx["Time"].fillna("15:00"), dayfirst=True, errors="coerce")
     fx["kickoff"] = kick.dt.tz_localize("Europe/London", ambiguous="NaT", nonexistent="NaT")
     fx = fx[fx["kickoff"] > now + MIN_LEAD]
-    ps = {s: _num(fx, f"PS{s}") for s in SIDES}
+    ps = {s: _num(fx, f"BFE{s}") for s in SIDES}  # Betfair Exchange = sharp reference
     overround = sum(1 / ps[s] for s in SIDES)
     out = []
     for s in SIDES:
@@ -65,7 +65,7 @@ def find_bets(fx: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
         out.append(pd.DataFrame({
             "kickoff_uk": b["kickoff"].dt.strftime("%Y-%m-%d %H:%M"), "div": b["Div"],
             "home": b["HomeTeam"], "away": b["AwayTeam"], "side": s, "odds": best[pick],
-            "pinnacle_odds": ps[s][pick], "fair_odds": fair[pick].round(3),
+            "betfair_odds": ps[s][pick], "fair_odds": fair[pick].round(3),
             "edge": (best[pick] / fair[pick] - 1).round(4), "b365_odds": _num(fx, f"B365{s}")[pick]}))
     new = pd.concat(out, ignore_index=True)
     new["bet_id"] = new["kickoff_uk"].str[:10] + "|" + new["div"] + "|" + new["home"] + "|" + \
