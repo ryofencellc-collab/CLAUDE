@@ -67,3 +67,32 @@ Change: markets and candlesticks are also read from Kalshi's
 grid or split changes. Disclosure: the last 68 days of the holdout have now
 been seen under a *different* (uncalibrated) model. The calibrated model's
 results on them have not.
+
+## Amendment 2 (2026-10-24 15:10 UTC): owner's ideas, pre-registered before any calibrated result
+
+The amendment-1 run was cancelled before producing results, to fold in two
+hypotheses from the owner. All of the following are fixed now.
+
+**Calibration target.** Use the official settled value Kalshi publishes on
+each contract (`expiration_value`) as the observed high, for every city,
+instead of NOAA. It is exactly what settles the market and needs no station
+mapping. (Change for the original test too, made before seeing calibrated
+results.)
+
+**5b-1: unpopular cities.** Universe "minor" = every Kalshi daily-high city
+series *not* in the original 14 US cities (e.g. Trenton, San Diego,
+Oklahoma City, Tokyo, London, Paris, Toronto, Mexico City, Hong Kong,
+Singapore, Berlin, Mumbai, Beijing), located at the airport station in the
+series ticker. Hypothesis: thinner markets are more mispriced. Forecast
+units follow the market's units (°C where the rules say Celsius).
+
+**5b-2: multiple forecast sources.** Forecast "multi" = mean of
+`temperature_2m_previous_day1` across whichever of GFS, ECMWF IFS, ICON,
+GEM and JMA return data for that city-day (at least 2 required). Same
+no-look-ahead construction as GFS.
+
+**Trials.** forecast {gfs, multi} × universe {major, minor} × the original
+6-config grid = 24, of which gfs × major is the original Round 5 test.
+New trials: 18. **Cumulative: 177 + 18 = 195**, used for every deflation.
+Each of the 4 combinations selects its own config on in-sample ROI and is
+judged on the holdout with the original pass rule (p × 195 < 0.05).
