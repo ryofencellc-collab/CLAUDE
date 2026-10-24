@@ -1,7 +1,7 @@
 name: round4
 on:
   push:
-    paths: ["run_round4.py", "edge/crowd.py", ".github/workflows/round4.yml"]
+    paths: ["run_round4.py", "edge/crowd.py", "edge/intraday.py", ".github/workflows/round4.yml"]
   workflow_dispatch:
 jobs:
   crowd:

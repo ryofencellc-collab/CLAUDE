@@ -121,7 +121,7 @@ WINDOWS = {"am": (9 * 60 + 30, 11 * 60), "pm": (14 * 60, 15 * 60),
 def window_ids(bars: pd.DataFrame, names: list[str]):
     """Window id per bar (-1 outside), last-bar flag, minutes since window start, window open."""
     mod = (bars.index.hour * 60 + bars.index.minute).to_numpy()
-    day = (bars.index.normalize().asi8 // 86_400_000_000_000).astype(np.int64)
+    day = pd.factorize(bars.index.normalize())[0].astype(np.int64)  # independent of ns/us resolution
     win = np.full(len(bars), -1, np.int64)
     since = np.full(len(bars), -1, np.int64)
     for j, name in enumerate(names):
