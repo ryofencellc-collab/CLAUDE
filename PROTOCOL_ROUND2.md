@@ -26,9 +26,10 @@ whether total profit after costs is real and not luck.
 
 ### A. Intraday NQ (Nasdaq-100), 1-minute bars
 
-Data: Dukascopy USATECHIDXUSD (Nasdaq-100 CFD; tracks NQ futures to within
-the basis), 2016 onward, converted to New York time. IS ≤ 2022-12-31,
-holdout 2023-01-01 onward.
+Data: HistData.com NSXUSD 1-minute bars (Nasdaq-100 quote feed; tracks NQ
+futures to within the basis), 2012 onward, converted to New York time.
+IS ≤ 2022-12-31, holdout 2023-01-01 onward. (Amended before any download:
+Dukascopy, the first choice, blocks GitHub's servers with HTTP 503/429.)
 
 Costs: **1.25 index points per round trip** (NQ futures: 1 tick spread
 0.25 + commission ≈0.2 + 0.8 slippage on market/stop fills). Sensitivity

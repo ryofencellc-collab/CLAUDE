@@ -17,14 +17,19 @@ CACHE = Path(__file__).resolve().parent.parent / "data"
 COST_PTS = 1.25  # round trip, index points
 
 
-def load_nq(directory: Path = CACHE / "duka") -> pd.DataFrame:
-    """Read dukascopy-node CSVs (UTC ms timestamps) into NY-time 1-min bars."""
-    files = sorted(directory.glob("*.csv"))
+def load_nq(directory: Path = CACHE / "histdata") -> pd.DataFrame:
+    """Read HistData ASCII M1 files into New York-time 1-minute bars.
+
+    HistData timestamps are fixed EST (UTC-5) with no daylight saving.
+    """
+    files = sorted(directory.glob("DAT_ASCII_NSXUSD_M1_*.csv"))
     if not files:
-        raise FileNotFoundError(f"no CSVs in {directory}")
-    df = pd.concat(pd.read_csv(f) for f in files)
-    ts = pd.to_datetime(df["timestamp"], unit="ms", utc=True).dt.tz_convert("America/New_York")
-    df.index = ts.dt.tz_localize(None)
+        raise FileNotFoundError(f"no HistData CSVs in {directory}")
+    df = pd.concat(pd.read_csv(f, sep=";", header=None,
+                               names=["ts", "open", "high", "low", "close", "vol"]) for f in files)
+    est = pd.to_datetime(df["ts"], format="%Y%m%d %H%M%S")
+    ny = (est + pd.Timedelta(hours=5)).dt.tz_localize("UTC").dt.tz_convert("America/New_York")
+    df.index = ny.dt.tz_localize(None).to_numpy()
     df = df[~df.index.duplicated()].sort_index()[["open", "high", "low", "close"]]
     return df[df["high"] > df["low"]]  # drop flat/no-trade minutes
 
@@ -97,7 +102,8 @@ def _simulate(o, h, l, c, win, last, sig, sdist, sabs, rr, max_per_win, cost):
 
 
 def simulate(bars: pd.DataFrame, win, last, sig, sdist, sabs, rr,
-             max_per_win: int, cost: float = COST_PTS) -> pd.DataFrame:
+             max_per_win: int, cost: float | None = None) -> pd.DataFrame:
+    cost = COST_PTS if cost is None else cost
     a = lambda x: np.ascontiguousarray(np.asarray(x, dtype=np.float64))
     idx, r, pts = _simulate(a(bars["open"]), a(bars["high"]), a(bars["low"]), a(bars["close"]),
                             np.asarray(win, np.int64), np.asarray(last, np.bool_),

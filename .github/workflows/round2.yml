@@ -1,0 +1,53 @@
+name: round2
+
+on:
+  push:
+    paths: ["edge/**", "run_round2.py", "fetch_nq.py", ".github/workflows/round2.yml"]
+  workflow_dispatch:
+
+jobs:
+  nq:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: data/histdata
+          key: histdata-nsxusd-v1-${{ github.run_id }}
+          restore-keys: histdata-nsxusd-v1-
+      - run: python fetch_nq.py
+      - run: python -m pytest -q tests
+      - run: python run_round2.py nq
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: round2-nq, path: reports/}
+
+  football:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round2.py football
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: round2-football, path: reports/}
+
+  polymarket:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round2.py pm
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: round2-pm, path: reports/}
