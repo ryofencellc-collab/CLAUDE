@@ -43,6 +43,8 @@ def bets(df, price_cols, ref="PS"):
     for side in bt.SIDES:
         ps = {x: pd.to_numeric(df[f"{ref}{x}"], errors="coerce") for x in bt.SIDES}
         book = sum(1 / ps[x] for x in bt.SIDES)
+        if ref == "BFE":
+            book = book.where(book.between(0.97, 1.06))  # amendment 1: drop junk exchange prices
         fair = ps[side] * book
         px = pd.to_numeric(df[price_cols[side]], errors="coerce") if price_cols[side] in df else np.nan
         pick = (px >= fair * (1 + EDGE)) & (px <= CAP)

@@ -18,6 +18,8 @@ def test_log_then_settle(tmp_path, monkeypatch):
         fixture_row("01/11/2026", "15:00", "A", "B", (2.0, 3.5, 4.0), (2.30, 3.5, 4.0)),
         # no edge anywhere
         fixture_row("01/11/2026", "15:00", "C", "D", (2.0, 3.5, 4.0), (2.0, 3.5, 4.0)),
+        # junk exchange prices (265% book): never bet
+        fixture_row("01/11/2026", "15:00", "G", "H", (1.13, 1.11, 1.16), (3.1, 3.25, 3.0)),
         # already kicked off: never bet
         fixture_row("24/10/2026", "12:00", "E", "F", (2.0, 3.5, 4.0), (2.6, 3.5, 4.0)),
     ])

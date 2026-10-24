@@ -1,7 +1,7 @@
 name: round3-feasibility
 on:
   push:
-    paths: ["round3_backtest.py", ".github/workflows/round3.yml"]
+    paths: ["round3_backtest.py", "profit_report.py", ".github/workflows/round3.yml"]
   workflow_dispatch:
 jobs:
   feasibility:

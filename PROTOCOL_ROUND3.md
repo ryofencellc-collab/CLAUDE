@@ -66,3 +66,14 @@ max drawdown −$802** (2024/25 −1.0%, 2025/26 +5.2%). It overlaps with the
 Pinnacle rule on 712 of 1,514 Pinnacle bets in the same matches.
 **Gate: GO.** The edge looks about a third as large as the Pinnacle version.
 Forward paper test started.
+
+## Amendment 1 (2026-10-24 14:05 UTC, before any forward bet settled)
+
+The first forward run logged 15 bets. 5 came from illiquid exchange markets
+quoting junk prices (e.g. 1.11/1.13/1.16 on all three outcomes, a 265% book),
+which make the de-vigged "fair" odds meaningless and create fake edges of up
+to 58%. Data-quality rule added: use the Betfair line only when its
+three-way book is between 97% and 106%. The 5 bets are voided (stake
+returned, excluded from results) before their matches kick off. The
+feasibility backtest is re-run with the same rule and its result recorded
+below, GO or NO GO.

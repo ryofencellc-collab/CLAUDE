@@ -24,10 +24,15 @@ LEDGER = ROOT / "bets.csv"
 FIXTURES = "https://www.football-data.co.uk/fixtures.csv"
 RESULTS = "https://www.football-data.co.uk/mmz4281/{season}/{div}.csv"
 EDGE, CAP, STAKE, BANK = 0.02, 5.0, 10.0, 1000.0  # frozen in PROTOCOL_ROUND3.md
+BOOK_RANGE = (0.97, 1.06)                         # amendment 1, PROTOCOL_ROUND3.md
 MIN_LEAD = pd.Timedelta(minutes=30)                # bet must be logged >= 30 min before kickoff
 COLS = ["bet_id", "logged_at_utc", "kickoff_uk", "div", "home", "away", "side", "odds",
         "betfair_odds", "fair_odds", "edge", "b365_odds", "stake", "status", "pnl", "settled_at_utc"]
 UA = {"User-Agent": "Mozilla/5.0"}
+# logged by the first run from junk exchange prices, voided before kickoff (amendment 1)
+VOIDED_JUNK = {"2026-10-26|F2|Boulogne|Reims|H", "2026-10-26|F2|Boulogne|Reims|D",
+               "2026-10-26|F2|Montpellier|Red Star|D", "2026-10-26|F2|Montpellier|Red Star|A",
+               "2026-10-25|I2|Palermo|Carrarese|D"}
 
 
 def _csv(url):
@@ -58,6 +63,8 @@ def find_bets(fx: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
     fx = fx[fx["kickoff"] > now + MIN_LEAD]
     ps = {s: _num(fx, f"BFE{s}") for s in SIDES}  # Betfair Exchange = sharp reference
     overround = sum(1 / ps[s] for s in SIDES)
+    sane = overround.between(*BOOK_RANGE)  # illiquid exchange markets show junk prices
+    fx, overround, ps = fx[sane], overround[sane], {s: ps[s][sane] for s in SIDES}
     out = []
     for s in SIDES:
         fair = ps[s] * overround
@@ -141,6 +148,8 @@ def summary(led: pd.DataFrame, now: pd.Timestamp) -> str:
 def run(now: pd.Timestamp | None = None):
     now = now or pd.Timestamp.now(tz="UTC")
     led = ledger()
+    junk = led["bet_id"].isin(VOIDED_JUNK) & (led["status"] == "open")
+    led.loc[junk, ["status", "pnl", "settled_at_utc"]] = ["void", 0.0, now.isoformat()]
     fx = _csv(FIXTURES)
     new = find_bets(fx, now)
     new = new[~new["bet_id"].isin(led["bet_id"])]
