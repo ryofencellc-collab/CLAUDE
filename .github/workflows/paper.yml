@@ -4,8 +4,7 @@ name: paper-trade
 # settles them after, and commits the ledger so git timestamps every bet.
 on:
   schedule:
-    - cron: "17 7 * * *"
-    - cron: "17 17 * * *"
+    - cron: "17 */4 * * *"   # every 4 hours; GitHub can skip individual scheduled runs
   workflow_dispatch:
   push:
     paths: [".github/workflows/paper.yml", "edge/forward.py"]
