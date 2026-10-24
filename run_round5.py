@@ -41,6 +41,8 @@ def main():
         keep[row["params"]] = bo
         print(row, flush=True)
     t = pd.DataFrame(rows)
+    if t["is_roi"].isna().all():
+        raise SystemExit("no in-sample bets: not enough history before the holdout")
     best = t.loc[t["is_roi"].idxmax()]
     p_adj = min(1.0, best["oos_p"] * CUMULATIVE_TRIALS)
     checks = {"oos_roi>0": best["oos_roi"] > 0, "p_adj<0.05": p_adj < 0.05,

@@ -87,20 +87,24 @@ def _target_date(event_ticker):
 
 
 def markets(series):
-    out, cursor = [], None
-    while True:
-        p = {"series_ticker": series, "status": "settled", "limit": 1000}
-        if cursor:
-            p["cursor"] = cursor
-        r = _get(f"{KALSHI}/markets", p)
-        if r is None or r.status_code != 200:
-            break
-        j = r.json()
-        out += j.get("markets", [])
-        cursor = j.get("cursor")
-        if not cursor or not j.get("markets"):
-            break
-    return out
+    """Settled markets from the live API plus Kalshi's historical archive (older than its cutoff)."""
+    out = {}
+    for path, extra in (("markets", {"status": "settled"}), ("historical/markets", {})):
+        cursor = None
+        while True:
+            p = {"series_ticker": series, "limit": 1000, **extra}
+            if cursor:
+                p["cursor"] = cursor
+            r = _get(f"{KALSHI}/{path}", p)
+            if r is None or r.status_code != 200:
+                break
+            j = r.json()
+            for m in j.get("markets", []):
+                out.setdefault(m["ticker"], {**m, "_archive": path.startswith("historical")})
+            cursor = j.get("cursor")
+            if not cursor or not j.get("markets"):
+                break
+    return list(out.values())
 
 
 def _quote(series, m, tz):
@@ -108,9 +112,16 @@ def _quote(series, m, tz):
     day = _target_date(m["event_ticker"])
     decide = pd.Timestamp(day.year, day.month, day.day, DECISION_HOUR).tz_localize(tz).tz_convert("UTC")
     t1 = int(decide.timestamp())
-    r = _get(f"{KALSHI}/series/{series}/markets/{m['ticker']}/candlesticks",
-             {"start_ts": t1 - 3 * 3600, "end_ts": t1, "period_interval": 60})
-    if r is None or r.status_code != 200:
+    q = {"start_ts": t1 - 3 * 3600, "end_ts": t1, "period_interval": 60}
+    urls = [f"{KALSHI}/series/{series}/markets/{m['ticker']}/candlesticks",
+            f"{KALSHI}/historical/markets/{m['ticker']}/candlesticks"]
+    if m.get("_archive"):
+        urls.reverse()
+    for url in urls:
+        r = _get(url, q)
+        if r is not None and r.status_code == 200 and r.json().get("candlesticks"):
+            break
+    else:
         return None
     best = None
     for c in r.json().get("candlesticks", []):
@@ -152,7 +163,7 @@ def dataset(refresh=False) -> pd.DataFrame:
         days = sorted({_target_date(m["event_ticker"]) for m in ms})
         start, end = days[0].date().isoformat(), days[-1].date().isoformat()
         fc, ob = forecasts(lat, lon, tz, start, end), observed(station, start, end)
-        with ThreadPoolExecutor(6) as ex:
+        with ThreadPoolExecutor(16) as ex:
             quotes = list(ex.map(lambda m: _quote(series, m, tz), ms))
         for m, q in zip(ms, quotes):
             d = _target_date(m["event_ticker"])

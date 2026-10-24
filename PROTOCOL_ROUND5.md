@@ -54,3 +54,16 @@ bets. Win rate, % green days and $ P&L are reported for every config.
 Candlestick ask/bid is top-of-book with unknown size; $10 bets are assumed
 to fill. Settlement via The Weather Company can differ by a degree from
 NOAA, which adds noise to σ but no look-ahead.
+
+## Amendment 1 (2026-10-24 15:02 UTC)
+
+The first run (Actions 40103074875) found that Kalshi's live API returns
+only the last 68 days of settled weather markets. Everything fell inside the
+120-day holdout, so there was no in-sample data and the model ran
+uncalibrated (bias 0, σ 3°F). That run's numbers were seen: on those 68
+days the uncalibrated model lost money (−6% ROI "best", −30% "all").
+Change: markets and candlesticks are also read from Kalshi's
+`/historical/...` archive (markets older than its 2026-08-25 cutoff). No rule,
+grid or split changes. Disclosure: the last 68 days of the holdout have now
+been seen under a *different* (uncalibrated) model. The calibrated model's
+results on them have not.
