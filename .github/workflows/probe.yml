@@ -1,0 +1,37 @@
+name: probe-data-sources
+on:
+  push:
+    paths: [".github/workflows/probe.yml"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Dukascopy NQ (USATECHIDXUSD) 1-min, one week
+        continue-on-error: true
+        run: |
+          npx -y dukascopy-node --install-browser || true
+          npx -y dukascopy-node -i usatechidxusd -from 2024-03-04 -to 2024-03-09 -t m1 -f csv -v -dir ./duka -r 3 2>&1 | tail -20
+          ls -la duka; head -5 duka/*.csv; wc -l duka/*.csv
+          npx -y dukascopy-node -i usatechidxusd -from 2016-01-04 -to 2016-01-06 -t m1 -f csv -dir ./duka2 -r 3 2>&1 | tail -5
+          head -3 duka2/*.csv; wc -l duka2/*.csv
+      - name: football-data.co.uk
+        continue-on-error: true
+        run: |
+          curl -sS -m 30 https://www.football-data.co.uk/mmz4281/2324/E0.csv | head -3 | cut -c1-600
+          curl -sS -m 30 https://www.football-data.co.uk/mmz4281/1011/E0.csv | head -2 | cut -c1-600
+      - name: Kalshi public API
+        continue-on-error: true
+        run: |
+          curl -sS -m 30 "https://api.elections.kalshi.com/trade-api/v2/markets?status=settled&limit=2" | head -c 2500; echo
+          curl -sS -m 30 "https://api.elections.kalshi.com/trade-api/v2/markets/trades?limit=3" | head -c 1200; echo
+      - name: Polymarket APIs
+        continue-on-error: true
+        run: |
+          curl -sS -m 30 "https://gamma-api.polymarket.com/markets?closed=true&limit=1&order=volumeNum&ascending=false" | head -c 2500; echo
+      - name: yfinance NQ=F intraday
+        continue-on-error: true
+        run: |
+          pip install -q yfinance
+          python -c "import yfinance as yf; d=yf.download('NQ=F', period='60d', interval='5m', progress=False); print(d.shape, d.index.min(), d.index.max())"
