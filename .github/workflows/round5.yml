@@ -1,0 +1,18 @@
+name: round5
+on:
+  push:
+    paths: ["run_round5.py", "edge/weather.py", ".github/workflows/round5.yml"]
+  workflow_dispatch:
+jobs:
+  weather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round5.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: round5, path: reports/}
