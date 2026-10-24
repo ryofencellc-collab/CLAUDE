@@ -1,0 +1,33 @@
+name: probe-data-sources
+on:
+  push:
+    paths: [".github/workflows/probe.yml"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Kalshi weather series and history
+        continue-on-error: true
+        run: |
+          K=https://api.elections.kalshi.com/trade-api/v2
+          curl -sS "$K/series?category=Climate%20and%20Weather" | python3 -c "import sys,json; d=json.load(sys.stdin); s=d.get('series',[]); print(len(s)); [print(x['ticker'], '|', x['title']) for x in s[:60]]"
+          curl -sS "$K/markets?series_ticker=KXHIGHNY&status=settled&limit=3" | head -c 2500; echo
+          curl -sS "$K/events?series_ticker=KXHIGHNY&status=settled&limit=2" | head -c 1200; echo
+          T=$(curl -sS "$K/markets?series_ticker=KXHIGHNY&status=settled&limit=1" | python3 -c "import sys,json; print(json.load(sys.stdin)['markets'][0]['ticker'])")
+          echo "ticker=$T"
+          NOW=$(date +%s); curl -sS "$K/series/KXHIGHNY/markets/$T/candlesticks?start_ts=$((NOW-86400*10))&end_ts=$NOW&period_interval=60" | head -c 1500; echo
+          curl -sS "$K/markets?series_ticker=KXHIGHNY&status=settled&limit=1000" | python3 -c "import sys,json; m=json.load(sys.stdin)['markets']; print('settled KXHIGHNY markets on page 1:', len(m), 'oldest close', min(x['close_time'] for x in m))"
+          curl -sS "$K/markets?series_ticker=HIGHNY&status=settled&limit=5" | head -c 800; echo
+      - name: Open-Meteo historical forecasts and observations
+        continue-on-error: true
+        run: |
+          curl -sS "https://historical-forecast-api.open-meteo.com/v1/forecast?latitude=40.78&longitude=-73.97&start_date=2024-07-01&end_date=2024-07-03&daily=temperature_2m_max&models=gfs_seamless,ecmwf_ifs025&temperature_unit=fahrenheit&timezone=America/New_York" | head -c 800; echo
+          curl -sS "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=40.78&longitude=-73.97&start_date=2024-07-01&end_date=2024-07-03&hourly=temperature_2m_previous_day1&temperature_unit=fahrenheit" | head -c 600; echo
+          curl -sS "https://ensemble-api.open-meteo.com/v1/ensemble?latitude=40.78&longitude=-73.97&daily=temperature_2m_max&models=gfs_seamless&temperature_unit=fahrenheit&forecast_days=2" | head -c 600; echo
+      - name: NOAA observed daily max (Central Park)
+        continue-on-error: true
+        run: |
+          curl -sS "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00094728&startDate=2024-07-01&endDate=2024-07-05&dataTypes=TMAX&units=standard&format=json" | head -c 600; echo
+          curl -sS "https://mesonet.agron.iastate.edu/cgi-bin/request/daily.py?network=NY_ASOS&stations=NYC&year1=2024&month1=7&day1=1&year2=2024&month2=7&day2=5" | head -c 600; echo
