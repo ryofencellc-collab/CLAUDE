@@ -96,3 +96,21 @@ no-look-ahead construction as GFS.
 New trials: 18. **Cumulative: 177 + 18 = 195**, used for every deflation.
 Each of the 4 combinations selects its own config on in-sample ROI and is
 judged on the holdout with the original pass rule (p × 195 < 0.05).
+
+## Forward test (live paper), pre-registered 2026-10-24 18:20 UTC
+
+The backtest could only use day-old forecasts. A live test can use the
+latest forecast available at decision time without look-ahead. Frozen rule:
+
+- Hourly job. For each Kalshi daily-high city, the first run at or after
+  09:00 local (and before 12:00) on a day logs that day's decisions once.
+- Forecast μ = mean of today's daily max from the *current* Open-Meteo
+  forecasts of GFS, ECMWF IFS, ICON, GEM, JMA (≥ 2 required); no bias term.
+- σ = 1.3 × std of today's daily max across the 31 GFS ensemble members
+  (ensembles are under-dispersed), floored at 1.5 °F / 0.8 °C.
+- Probabilities as in the backtest; prices from live `yes_ask` (YES) and
+  `1 − yes_bid` (NO); only prices in [0.05, 0.95]; edge ≥ 0.10; only the
+  single biggest edge per city-day; $10 paper stake; Kalshi taker fee.
+- Settled from Kalshi's own `result`. Ledger: `paper/weather_bets.csv`.
+- Counts as 1 more trial (cumulative 196). Minimum 30 days and ≥ 200 settled
+  bets before any verdict. Pass: ROI > 0 with bootstrap p × 196 < 0.05.
