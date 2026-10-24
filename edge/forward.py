@@ -33,7 +33,9 @@ UA = {"User-Agent": "Mozilla/5.0"}
 def _csv(url):
     r = requests.get(url, timeout=60, headers=UA)
     r.raise_for_status()
-    return pd.read_csv(io.BytesIO(r.content), encoding="latin-1", on_bad_lines="skip")
+    df = pd.read_csv(io.BytesIO(r.content), encoding="latin-1", on_bad_lines="skip")
+    df.columns = [c.replace("\ufeff", "").replace("ï»¿", "").strip() for c in df.columns]  # BOM
+    return df
 
 
 def _num(df, col):
