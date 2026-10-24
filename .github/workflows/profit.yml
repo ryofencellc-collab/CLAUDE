@@ -1,0 +1,20 @@
+name: profit-report
+on:
+  push:
+    paths: ["profit_report.py", ".github/workflows/profit.yml"]
+  workflow_dispatch:
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python profit_report.py
+      - name: Peek at the live fixtures feed
+        run: |
+          curl -sSL -A "Mozilla/5.0" https://www.football-data.co.uk/fixtures.csv -o fx.csv
+          head -1 fx.csv; wc -l fx.csv; cut -d, -f1-5 fx.csv | head -5
+          curl -sSL -A "Mozilla/5.0" -o r.csv -w "%{http_code} %{size_download}\n" https://www.football-data.co.uk/mmz4281/2627/E0.csv; head -2 r.csv | cut -c1-300
