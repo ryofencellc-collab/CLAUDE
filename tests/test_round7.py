@@ -14,6 +14,6 @@ def test_bracket_arb_detects_cheap_set():
 
 
 def test_tennis_symmetric():
-    df = pd.DataFrame([dict(year=2023, PSW=1.5, PSL=2.6, MaxW=1.6, MaxL=2.9)])
+    df = pd.DataFrame([dict(year=2023, PSW=1.5, PSL=2.6, MaxW=1.65, MaxL=2.9)])  # both sides beat fair by > 2%
     b = r7.tennis_value(df, edge=0.02, max_odds=None)
-    assert len(b) == 2 and abs(b["ret"].sum() - (0.6 - 1)) < 1e-9
+    assert len(b) == 2 and abs(b["ret"].sum() - (0.65 - 1)) < 1e-9
