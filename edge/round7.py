@@ -45,10 +45,15 @@ def tennis(refresh=False) -> pd.DataFrame:
 
     def one(args):
         year, tour = args
-        url = f"http://www.tennis-data.co.uk/{year}{'w' if tour == 'wta' else ''}/{year}.xlsx"
+        path = f"{year}{'w' if tour == 'wta' else ''}/{year}.xlsx"
         try:
-            r = requests.get(url, timeout=60, headers={"User-Agent": "Mozilla/5.0"})
-            if r.status_code != 200:
+            for host in ("http://www.tennis-data.co.uk", "https://www.tennis-data.co.uk", "http://tennis-data.co.uk"):
+                r = requests.get(f"{host}/{path}", timeout=60, headers={"User-Agent": "Mozilla/5.0"})
+                if r.status_code == 200 and r.content[:2] == b"PK":  # xlsx is a zip
+                    break
+            else:
+                print(f"  tennis {tour} {year}: HTTP {r.status_code}, {len(r.content)} bytes, "
+                      f"starts {r.content[:40]!r}")
                 return None
             df = pd.read_excel(io.BytesIO(r.content))
         except Exception as e:  # missing year / format change
