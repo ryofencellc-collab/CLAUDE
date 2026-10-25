@@ -47,4 +47,5 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 5 | Kalshi weather markets: 1 vs 5 forecast models, major vs unpopular cities (24 configs) | 0/4 pass: [ROUND5.md](reports/ROUND5.md) |
 | 5-live | Weather, live paper test with same-day forecasts | **running**: [paper/WEATHER.md](paper/WEATHER.md) |
 | 6 | Sell a weekly Bitcoin put (3 strikes, real Deribit prices) | 0/1 pass; 96% winning weeks, ~0% return: [ROUND6.md](reports/ROUND6.md) |
+| 7 | Bracket arbitrage, cross-exchange funding, pairs, tennis value, matched betting | 0/3 pass (tennis data blocked): [ROUND7.md](reports/ROUND7.md) |
 | Business | Sell the honest report ($9) + done-for-you strategy tests ($49) | ready to launch: [business/LAUNCH.md](business/LAUNCH.md) |

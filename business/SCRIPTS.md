@@ -20,9 +20,9 @@ recordings of the result tables in `reports/` work as B-roll.
 **Body:** "In 2022 it worked: up 24%. Then from 2024 on: down 11%. Hunting their stop-losses on Nasdaq lost money every single way I tried it."
 **Close:** "The people who make money off retail aren't betting against them. They're charging them fees."
 
-## 4. "198 strategies, zero passed"
+## 4. "206 strategies, zero passed"
 **Hook:** "I gave an AI a thousand dollars of hypothetical money and one job: find a strategy that works."
-**Body:** "Crypto, stocks, futures, sports betting, prediction markets, weather. 198 strategies. Every fee charged, tested on data it never saw. Zero passed. One football strategy showed a small edge and it's being paper-traded live right now."
+**Body:** "Crypto, stocks, futures, sports betting, prediction markets, weather. 206 strategies. Every fee charged, tested on data it never saw. Zero passed. One football strategy showed a small edge and it's being paper-traded live right now."
 **Close:** "Follow to see if it survives."
 
 ## 5. "The famous crypto trade that stopped working"

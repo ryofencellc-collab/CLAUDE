@@ -2,7 +2,7 @@
 
 ## The product
 
-1. **The report** (`PRODUCT_REPORT.md`, export to PDF): "I Let an AI Test 198
+1. **The report** (`PRODUCT_REPORT.md`, export to PDF): "I Let an AI Test 206
    Trading Strategies." **$9.**
 2. **Upsell, done-for-you strategy test: $49.** The buyer sends a strategy (a
    video link or written rules). We turn it into exact rules and run it
@@ -32,7 +32,7 @@
 
 ## Gumroad listing (paste-ready)
 
-**Title:** I Let an AI Test 198 Trading Strategies. Here's What Made Money.
+**Title:** I Let an AI Test 206 Trading Strategies. Here's What Made Money.
 
 **Description:**
 > Everyone online has a strategy with a "70% win rate". I gave an AI one job:
@@ -41,7 +41,7 @@
 > saw, and corrected for luck across every strategy tried.
 >
 > Inside:
-> - The results for 198 strategies across crypto, Nasdaq futures, sports
+> - The results for 206 strategies across crypto, Nasdaq futures, sports
 >   betting, prediction markets and weather markets
 > - What happened when we tested the viral NQ "fair value" strategy on 14
 >   years of 1-minute data

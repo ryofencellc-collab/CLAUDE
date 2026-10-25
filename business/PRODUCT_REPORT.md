@@ -1,4 +1,4 @@
-# I Let an AI Test 198 Trading Strategies. Here's What Actually Made Money.
+# I Let an AI Test 206 Trading Strategies. Here's What Actually Made Money.
 
 *An honest, reproducible test of the strategies sold on TikTok, YouTube and
 Reddit, run with the same rules a hedge fund would use to check its own work.*
@@ -32,6 +32,7 @@ a public log so they couldn't be changed after the fact:
 | 4 | "Beat retail": fade the crowd, follow the whales, hunt stop-losses | 10 | 0 |
 | 5 | Kalshi weather markets with 5 forecast models | 24 | 0 |
 | 6 | Selling weekly Bitcoin options | 3 | 0 |
+| 7 | Arbitrage: Kalshi brackets, cross-exchange funding, pairs trading | 8 | 0 |
 
 ## What we learned (the part worth paying for)
 
@@ -56,7 +57,7 @@ to about **+2% a year by 2026** as large funds piled in. That's what any edge
 looks like once it's famous.
 
 ### 4. "No emotions" isn't an edge
-All 198 strategies were run by a machine with zero emotion and perfect
+All 206 strategies were run by a machine with zero emotion and perfect
 discipline. That buys consistency, not profit. A rule with no edge, followed
 perfectly, just loses consistently.
 
@@ -79,7 +80,15 @@ from 2024 to 2026 and **made −0.3% in total**. A few crash weeks (−34% in
 March 2020, −21% in June 2022) wiped out years of small wins. Strategies
 that "print daily" are usually quietly selling crash insurance.
 
-### 8. The one lead: small, slow, and unproven
+### 8. Arbitrage exists, until it doesn't
+A cross-exchange funding trade (Hyperliquid vs Binance) earned **~11% a year
+with a Sharpe ratio of 12** in 2023–24, about as close to "printing money"
+as a strategy gets. In 2025–26 it **lost 0.3%**. Buying every bracket of a
+Kalshi weather market for under $1 (a guaranteed profit) happened **0 times
+in 1,081 events**. Real arbitrage is found by whoever is first and fastest,
+and it closes fast.
+
+### 9. The one lead: small, slow, and unproven
 Betting football matches only when a bookmaker's price beats the sharp
 exchange price made about **+3.5% to +4.7% per bet** in past seasons. That's
 about $300–440 a season on a $1,000 bankroll at $10 bets. 56% of months were
