@@ -97,8 +97,10 @@ def settle(led: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
         except requests.RequestException:
             continue
         r["d"] = pd.to_datetime(r["Date"], dayfirst=True, errors="coerce").dt.strftime("%Y-%m-%d")
-        for _, row in r.dropna(subset=["FTR"]).iterrows():
+        done = r.dropna(subset=["FTR"])
+        for _, row in done.iterrows():
             results[(row["d"], dv, row["HomeTeam"], row["AwayTeam"])] = row["FTR"]
+        print(f"  results {season}/{dv}: {len(done)} played, latest {done['d'].max()}")
     for i in led.index[open_]:
         if kick[i] > now.tz_convert("Europe/London").tz_localize(None):
             continue  # not played yet
