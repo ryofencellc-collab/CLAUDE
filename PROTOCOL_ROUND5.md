@@ -114,3 +114,21 @@ latest forecast available at decision time without look-ahead. Frozen rule:
 - Settled from Kalshi's own `result`. Ledger: `paper/weather_bets.csv`.
 - Counts as 1 more trial (cumulative 196). Minimum 30 days and ≥ 200 settled
   bets before any verdict. Pass: ROI > 0 with bootstrap p × 196 < 0.05.
+
+### Forward test amendment 1 (2026-10-26 14:20 UTC, before any forward bet settled)
+
+Design flaw found by inspecting the ledger (no outcomes known): in all 17
+first-day bets the market's implied high was ~2–3 °F above our forecast mean,
+so the bot bet NO on the most likely bracket every time. Cause: Open-Meteo's
+daily max is the max of *hourly* values and misses the true peak, a
+systematic cold bias. The backtest removed it with a per-city bias term; the
+forward rule as written ("no bias term") did not. Fix, effective for city-days
+decided after this commit:
+- μ = multi-model mean + per-city bias, bias = mean(settled value −
+  `multi` forecast) over **all** Round 5 history for that city
+  (`paper/weather_bias.json`, computed once by `weather_bias.py` and not
+  updated afterward). Cities with fewer than 20 days of history are skipped.
+- Ledger column `rule`: the 17 earlier bets are `v1` (flawed rule). They
+  are still settled and shown separately but **excluded from the verdict**.
+  All new bets are `v2`. Minimum sample and pass rule unchanged, counted on
+  v2 only.

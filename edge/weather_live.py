@@ -17,7 +17,9 @@ ROOT.mkdir(exist_ok=True)
 LEDGER = ROOT / "weather_bets.csv"
 EDGE, MIN_P, MAX_P, ENS_INFLATE = 0.10, 0.05, 0.95, 1.3
 SD_FLOOR = {"fahrenheit": 1.5, "celsius": 0.8}
-COLS = ["city_day", "logged_at_utc", "series", "city", "date", "ticker", "side", "price", "prob", "edge",
+BIAS = ROOT / "weather_bias.json"
+RULE = "v2"  # forward amendment 1: per-city bias added
+COLS = ["city_day", "rule", "logged_at_utc", "series", "city", "date", "ticker", "side", "price", "prob", "edge",
         "mu", "sd", "n_models", "stake", "status", "pnl", "settled_at_utc"]
 
 
@@ -25,6 +27,8 @@ def ledger() -> pd.DataFrame:
     if LEDGER.exists():
         d = pd.read_csv(LEDGER, dtype={"status": str, "settled_at_utc": str})
         d["settled_at_utc"] = d["settled_at_utc"].fillna("")
+        if "rule" not in d:
+            d["rule"] = "v1"  # bets placed before forward amendment 1
         return d
     return pd.DataFrame(columns=COLS)
 
@@ -50,7 +54,7 @@ def live_forecast(lat, lon, tz, unit):
     return float(np.mean(vals)), sd, len(vals)
 
 
-def decide(series, city, tz, lat, lon, now):
+def decide(series, city, tz, lat, lon, now, bias):
     local = now.tz_convert(tz)
     day = local.normalize().tz_localize(None)
     r = wx._get(f"{wx.KALSHI}/markets", {"event_ticker": _event(series, day)})
@@ -63,6 +67,7 @@ def decide(series, city, tz, lat, lon, now):
     if fc is None:
         return None
     mu, sd, n = fc
+    mu += bias
     best = None
     for m in ms:
         bid, ask = (pd.to_numeric(m.get(k), errors="coerce") for k in ("yes_bid_dollars", "yes_ask_dollars"))
@@ -97,6 +102,8 @@ def settle(led, now):
 
 
 def summary(led, now):
+    old = led[(led["rule"] == "v1") & led["status"].isin(["won", "lost"])]
+    led = led[led["rule"] != "v1"]
     s = led[led["status"].isin(["won", "lost"])]
     pnl = s["pnl"].astype(float)
     lines = ["# Live paper test: Kalshi weather (forward, latest forecasts)", "",
@@ -107,7 +114,9 @@ def summary(led, now):
              f"| Open | {int((led['status'] == 'open').sum())} |",
              f"| Settled | {len(s)} (won {int((s['status'] == 'won').sum())}) |",
              f"| **Profit** | **${pnl.sum():+,.2f}** |",
-             f"| ROI | {pnl.sum() / (len(s) * wx.STAKE):+.1%} |" if len(s) else "| ROI | n/a |"]
+             f"| ROI | {pnl.sum() / (len(s) * wx.STAKE):+.1%} |" if len(s) else "| ROI | n/a |",
+             "", f"Excluded v1 bets (flawed rule, see forward amendment 1): {len(old)} settled, "
+             f"P&L ${old['pnl'].astype(float).sum():+,.2f}."]
     if len(s):
         daily = s.groupby("date")["pnl"].sum()
         lines += ["", f"Green days: {(daily > 0).sum()} of {len(daily)}", "",
@@ -119,18 +128,22 @@ def summary(led, now):
 def run(now=None):
     now = now or pd.Timestamp.now(tz="UTC")
     led = ledger()
+    import json
+    biases = json.loads(BIAS.read_text()) if BIAS.exists() else {}
     new = []
     for series, city, tier, lat, lon, tz in wx.daily_high_series():
+        if city not in biases:
+            continue
         local = now.tz_convert(tz)
         if not (9 <= local.hour < 12):
             continue
         key = f"{series}|{local:%Y-%m-%d}"
         if key in set(led["city_day"]):
             continue
-        d = decide(series, city, tz, lat, lon, now)
+        d = decide(series, city, tz, lat, lon, now, biases[city]["bias"])
         if d is None:
             continue
-        new.append({**d, "city_day": key, "logged_at_utc": now.isoformat(), "series": series, "city": city,
+        new.append({**d, "city_day": key, "rule": RULE, "logged_at_utc": now.isoformat(), "series": series, "city": city,
                     "stake": wx.STAKE if d["status"] == "open" else 0.0, "pnl": np.nan, "settled_at_utc": ""})
     if new:
         led = pd.concat([led, pd.DataFrame(new)[COLS]], ignore_index=True)
