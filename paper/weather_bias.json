@@ -1,0 +1,87 @@
+{
+ "OKC": {
+  "bias": 1.52,
+  "days": 255,
+  "sd": 2.749
+ },
+ "SAN": {
+  "bias": -1.166,
+  "days": 66,
+  "sd": 2.263
+ },
+ "TTN": {
+  "bias": 0.668,
+  "days": 59,
+  "sd": 1.506
+ },
+ "atlanta": {
+  "bias": 2.502,
+  "days": 262,
+  "sd": 2.366
+ },
+ "austin": {
+  "bias": 2.634,
+  "days": 619,
+  "sd": 2.67
+ },
+ "chicago": {
+  "bias": 2.277,
+  "days": 1028,
+  "sd": 2.989
+ },
+ "denver": {
+  "bias": 1.788,
+  "days": 568,
+  "sd": 2.877
+ },
+ "houston": {
+  "bias": 1.768,
+  "days": 287,
+  "sd": 2.733
+ },
+ "los angeles": {
+  "bias": -1.41,
+  "days": 568,
+  "sd": 2.824
+ },
+ "miami": {
+  "bias": 2.037,
+  "days": 618,
+  "sd": 1.843
+ },
+ "minneapolis": {
+  "bias": 0.971,
+  "days": 262,
+  "sd": 2.469
+ },
+ "new orleans": {
+  "bias": 1.367,
+  "days": 283,
+  "sd": 1.954
+ },
+ "new york": {
+  "bias": 1.201,
+  "days": 935,
+  "sd": 3.2
+ },
+ "philadelphia": {
+  "bias": 2.651,
+  "days": 574,
+  "sd": 2.406
+ },
+ "phoenix": {
+  "bias": 2.442,
+  "days": 262,
+  "sd": 1.782
+ },
+ "san francisco": {
+  "bias": 2.371,
+  "days": 283,
+  "sd": 2.995
+ },
+ "washington": {
+  "bias": 0.969,
+  "days": 277,
+  "sd": 2.528
+ }
+}
