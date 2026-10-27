@@ -68,3 +68,24 @@ Out-of-sample runs from 2012-01-01 to latest, 252 days a year.
 Lean PASS on drawdown and beating SPY. The deflated Sharpe is the risk:
 2012–2014 has no crypto and SPY was very strong then, so the early years may
 dilute the Sharpe.
+
+## Forward test (added 2026-10-27 after the backtest PASS, before the bot's first run)
+
+The backtest passed. The next step is a live paper test on data nobody has
+seen, using the unchanged procedure (`edge/paper13.py`):
+
+- $10,000 paper, starting with target weights set at the 2026-10-27 close.
+- Run each US trading day after the crypto daily bar closes (00:23 UTC). The
+  config is re-chosen on 1 January and 1 July exactly as in the backtest.
+- `paper/r13_ledger.csv` is append-only, so git timestamps every position
+  before the returns it earns.
+- Review at 6 months (2027-04-27), then at 12 months. To advance to the
+  owner's $1,000 live stage, at 6 months:
+  1. return at least T-bills (≥ +2% over the 6 months);
+  2. drawdown no worse than −15%;
+  3. the realised daily returns match the backtest's own replay of the same
+     days within 0.1% a day. This checks that the bot does what the
+     backtest assumed.
+- These thresholds are fixed now. A 6-month result is too short to prove an
+  edge on its own; its job is to catch errors and regime breaks before any
+  real money is used.

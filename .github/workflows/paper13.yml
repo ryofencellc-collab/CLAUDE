@@ -1,0 +1,27 @@
+name: paper13
+# Round 13 forward paper test (PROTOCOL_ROUND13.md, "Forward test").
+on:
+  schedule:
+    - cron: "23 0 * * 2-6"   # 00:23 UTC Tue-Sat: after the US close and the crypto daily bar
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: paper13
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python -m edge.paper13
+      - name: Commit ledger
+        run: |
+          git config user.name "paper13 bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add paper/
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "paper13: ledger update $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
