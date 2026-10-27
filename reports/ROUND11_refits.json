@@ -1,0 +1,152 @@
+[
+ {
+  "refit": "2012-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.93
+ },
+ {
+  "refit": "2012-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2013-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.76
+ },
+ {
+  "refit": "2013-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.67
+ },
+ {
+  "refit": "2014-01-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.74
+ },
+ {
+  "refit": "2014-07-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.8
+ },
+ {
+  "refit": "2015-01-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.78
+ },
+ {
+  "refit": "2015-07-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.71
+ },
+ {
+  "refit": "2016-01-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.64
+ },
+ {
+  "refit": "2016-07-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.75
+ },
+ {
+  "refit": "2017-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.74
+ },
+ {
+  "refit": "2017-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2018-01-01",
+  "chosen": "mom252-vol8-btc",
+  "train_sharpe": 0.93
+ },
+ {
+  "refit": "2018-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.84
+ },
+ {
+  "refit": "2019-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.73
+ },
+ {
+  "refit": "2019-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.81
+ },
+ {
+  "refit": "2020-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2020-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.82
+ },
+ {
+  "refit": "2021-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.91
+ },
+ {
+  "refit": "2021-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.97
+ },
+ {
+  "refit": "2022-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.94
+ },
+ {
+  "refit": "2022-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.9
+ },
+ {
+  "refit": "2023-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2023-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2024-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2024-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.84
+ },
+ {
+  "refit": "2025-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.83
+ },
+ {
+  "refit": "2025-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.85
+ },
+ {
+  "refit": "2026-01-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.88
+ },
+ {
+  "refit": "2026-07-01",
+  "chosen": "sma100-vol8-btc",
+  "train_sharpe": 0.88
+ }
+]
