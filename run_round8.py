@@ -240,11 +240,17 @@ def final():
     h, cg, px = load()
     spy = px["SPY"].pct_change(fill_method=None)
     cfgs = {c["id"]: c for c in configs()}
-    ids = ["13F-base-avg", "Congress-base"] + frozen["ids"]
-    lines = ["# Round 8, sealed test (2022-01-01 onward)", "",
+    part = frozen.get("part", "all")
+    out = REPORTS / f"ROUND8_SEALED_{part.upper()}.md"
+    if out.exists():
+        raise SystemExit(f"{out} exists: the sealed test for this part has already been run once")
+    base = {"congress": ["Congress-base"], "13f": ["13F-base-avg"]}.get(part, ["13F-base-avg", "Congress-base"])
+    ids = base + frozen["ids"]
+    lines = [f"# Round 8, sealed test (2022-01-01 onward): {part}", "",
              f"Frozen: {frozen['ids']}. Trials deflated over: {n_trials}.", "",
-             "| Config | Dev IR | Sealed IR | Sealed DSR | Sealed excess MDD | Sealed CAGR | SPY CAGR | Pass |",
-             "|---|---:|---:|---:|---:|---:|---:|---|"]
+             f"Prediction written before this run: {frozen.get('prediction', 'none')}", "",
+             "| Config | Dev IR | Sealed IR | Sealed DSR | Sealed excess MDD | Sealed CAGR | SPY CAGR | $1,000 → | SPY | Pass |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---|"]
     for cid in ids:
         r = run_config(cfgs[cid], h, cg, px)
         d = r8.score(r[r.index <= r8.DEV_END], spy)
@@ -255,8 +261,9 @@ def final():
         ok = s.get("ir", -9) >= 0.5 and dsr >= 0.95 and d.get("ir", -9) > 0 and s.get("excess_mdd", -1) >= -0.25
         lines.append(f"| {cid} | {d.get('ir', np.nan):+.2f} | {s.get('ir', np.nan):+.2f} | {dsr:.3f} | "
                      f"{s.get('excess_mdd', np.nan):.1%} | {s.get('cagr', np.nan):+.1%} | "
-                     f"{s.get('spy_cagr', np.nan):+.1%} | **{'PASS' if ok else 'FAIL'}** |")
-    (REPORTS / "ROUND8.md").write_text("\n".join(lines) + "\n")
+                     f"{s.get('spy_cagr', np.nan):+.1%} | ${s.get('usd_1000', np.nan):,.0f} | "
+                     f"${s.get('usd_1000_spy', np.nan):,.0f} | **{'PASS' if ok else 'FAIL'}** |")
+    out.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
 
