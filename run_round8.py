@@ -75,6 +75,12 @@ def prices():
     if SMALL:
         c = c[c["filed"].between("2019-01-01", "2020-12-31")]
     c.to_pickle(DATA / "congress.pkl")
+    st = c[c["asset_type"] == "ST"]
+    print(f"Congress stock rows {len(st):,}: amount parsed {st['amount_low'].notna().mean():.0%}, "
+          f"owner set {(st['owner'] != '').mean():.0%}, types {st['type'].value_counts().to_dict()}", flush=True)
+    if "raw" in st:
+        for txt in st.loc[st["amount_low"].isna(), "raw"].head(8):
+            print("  NO AMOUNT:", txt, flush=True)
     buys = c[c["asset_type"].isin(["ST", "OP"]) & (c["type"] == "P")]["ticker"].str.replace(".", "-", regex=False)
     tks = set(h["ticker"].dropna()) | set(buys)
     tks = ["SPY"] + sorted(tks - {"SPY"})
@@ -200,7 +206,7 @@ def dev():
     n_dev = pd.read_csv(DEV_LOG)["id"].nunique() if DEV_LOG.exists() else 0
     data_note = (f"13F: {h['cik'].nunique()} funds, {h['accession'].nunique():,} filings, "
                  f"{h['ticker'].notna().mean():.0%} of holdings mapped to a priced ticker. " if len(h) else
-                 "13F: no data yet (SEC blocks GitHub's servers; to be fetched from the owner's computer). ")
+                 "13F: no data yet (SEC rate-limits GitHub's servers; sec13f.yml retries hourly). ")
     data_note += (
                  f"Congress: {len(cg):,} parsed transactions from {cg['doc_id'].nunique():,} reports, "
                  f"{(cg['type'] == 'P').sum():,} purchases, {cg['member'].nunique()} members.")

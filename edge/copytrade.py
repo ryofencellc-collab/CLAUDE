@@ -141,7 +141,7 @@ def figi_map(cusips: list[str]) -> dict[str, str]:
 # ------------------------------------------------------------------ Congress (House PTRs)
 
 CLERK = "https://disclosures-clerk.house.gov/public_disc"
-TX_START = re.compile(r"\s(P|S \(partial\)|S|E)\s+(\d{2}/\d{2}/\d{4})\s+(\d{2}/\d{2}/\d{4})\s+(.*)$")
+TX_START = re.compile(r"\s(P|S \(partial\)|S|E)\s+(\d{2}/\d{2}/\d{4})\s+(\d{2}/\d{2}/\d{4})(?:\s+(.*))?$")
 TICKER = re.compile(r"\(([A-Z][A-Z0-9.\-]{0,6})\)\s*\[([A-Z]{2})\]")
 AMOUNT = re.compile(r"\$([\d,]+)\s*-\s*\$([\d,]+)|Over \$([\d,]+)")
 
@@ -172,7 +172,7 @@ def parse_ptr_text(text: str) -> list[dict]:
         if not t:
             continue
         lo = hi = None
-        rest = m.group(4)
+        rest = m.group(4) or ""
         a = AMOUNT.search(rest)
         if a and a.group(3):
             lo = hi = float(a.group(3).replace(",", ""))
@@ -187,10 +187,17 @@ def parse_ptr_text(text: str) -> list[dict]:
                     if nxt:
                         hi = float((nxt.group(1) or nxt.group(2)).replace(",", ""))
                         break
+        if lo is None:  # amount on its own line below the dates
+            a = AMOUNT.search(re.sub(r"\s+", " ", " ".join(block[1:])))
+            if a and a.group(3):
+                lo = hi = float(a.group(3).replace(",", ""))
+            elif a:
+                lo, hi = float(a.group(1).replace(",", "")), float(a.group(2).replace(",", ""))
         owner = re.match(r"\s*(SP|JT|DC)\s", lines[i])
         out.append(dict(type=m.group(1).split()[0], tx_date=m.group(2), ticker=t.group(1), asset_type=t.group(2),
                         owner=owner.group(1) if owner else "",
-                        amount_low=lo, amount_high=hi))
+                        amount_low=lo, amount_high=hi,
+                        raw="" if lo is not None else " | ".join(x.strip() for x in block)[:400]))
     return out
 
 

@@ -46,3 +46,10 @@ def test_ptr_split_amount():
            "                      Common Stock (BE) [ST]                                              $5,000,000\n")
     (row,) = parse_ptr_text(txt)
     assert (row["ticker"], row["owner"], row["amount_low"], row["amount_high"]) == ("BE", "SP", 1000001.0, 5000000.0)
+
+
+def test_ptr_amount_on_line_below_dates():
+    txt = ("          SP          Foo Inc (FOO) [ST]         P                07/24/2019 07/24/2019\n"
+           "                                                   $1,001 - $15,000\n")
+    (row,) = parse_ptr_text(txt)
+    assert (row["ticker"], row["amount_low"], row["amount_high"]) == ("FOO", 1001.0, 15000.0)
