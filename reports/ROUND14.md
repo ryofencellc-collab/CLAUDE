@@ -12,8 +12,8 @@ Rules: [PROTOCOL_ROUND14.md](../PROTOCOL_ROUND14.md). Deflated over 280 trials. 
 | Cboe PPUT | 2012-01-03 | 53% | 0.94 | 0.93 | +11.4% | -22% | $4,920 | 0.774 |  |  | **FAIL** |
 | Cboe CLL | 2012-01-03 | 52% | 0.92 | 0.92 | +10.2% | -17% | $4,222 | 0.738 |  |  | **FAIL** |
 | B1 buy weekly 2% OTM calls | 2012-01-06 | 12% | -3.53 | 0.93 | -47.3% | -100% | $0 | 0.000 | 11x | 1 | **FAIL** |
-| B2 buy 0DTE 0.5% OTM calls | 2023-04-24 | 20% | 1.31 | 1.36 | +6261696651775691.0% | -34% | $2,662,871,688,099,237,887,066,301,093,704,016,683,385,331,298,336,768 | 0.081 | 9741x | 146 | **FAIL** |
-| B3 sell 0DTE iron condor | 2023-04-24 | 89% | -3.61 | 1.36 | -100.0% | -100% | $0 | 0.000 |  |  | **FAIL** |
+| B2 buy 0DTE 0.5% OTM calls | 2023-04-24 | 16% | -3.01 | 1.36 | -86.6% | -100% | $1 | 0.000 | 25x | 6 | **FAIL** |
+| B3 sell 0DTE iron condor | 2023-04-24 | 91% | 0.78 | 1.36 | -100.0% | -100% | $0 | 0.031 |  |  | **FAIL** |
 | B4 sell weekly 2% OTM puts | 2012-01-06 | 91% | 0.81 | 0.93 | +4.9% | -23% | $2,024 | 0.569 |  |  | **FAIL** |
 
 Failed checks per strategy:
@@ -26,7 +26,7 @@ Failed checks per strategy:
 - Cboe PPUT: sharpe>=1, dsr>=0.95
 - Cboe CLL: sharpe>=1, dsr>=0.95, beats_spy_sharpe
 - B1 buy weekly 2% OTM calls: sharpe>=1, dsr>=0.95, beats_tbills, max_dd<=25%, beats_spy_sharpe
-- B2 buy 0DTE 0.5% OTM calls: dsr>=0.95, max_dd<=25%, beats_spy_sharpe
+- B2 buy 0DTE 0.5% OTM calls: sharpe>=1, dsr>=0.95, beats_tbills, max_dd<=25%, beats_spy_sharpe
 - B3 sell 0DTE iron condor: sharpe>=1, dsr>=0.95, beats_tbills, max_dd<=25%, beats_spy_sharpe
 - B4 sell weekly 2% OTM puts: sharpe>=1, dsr>=0.95, beats_spy_sharpe
 
