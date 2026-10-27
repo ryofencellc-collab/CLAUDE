@@ -7,6 +7,7 @@ and appends each config it scores to reports/round8_dev_log.csv.
 final runs only round8_frozen.json (plus the baselines) on 2022-01-01 onward.
 """
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -25,6 +26,7 @@ DEV_LOG = REPORTS / "round8_dev_log.csv"
 FROZEN = Path("round8_frozen.json")
 FILERS = json.loads(Path("edge/r8_filers.json").read_text())
 PRIOR_TRIALS = 211
+SMALL = os.environ.get("R8_SMALL") == "1"  # smoke test: tiny slice, fast fail, results not logged as trials
 
 
 def fetch13f(cik):
@@ -70,13 +72,18 @@ def prices():
         print(f"  mapped {len(m):,} of {len(cus):,} CUSIPs ({h['ticker'].notna().mean():.1%} of rows)", flush=True)
     h.to_pickle(DATA / "holdings.pkl")
     c = pd.concat([pd.read_pickle(p) for p in DATA.glob("ptr_*.pkl")], ignore_index=True)
+    if SMALL:
+        c = c[c["filed"].between("2019-01-01", "2020-12-31")]
     c.to_pickle(DATA / "congress.pkl")
-    tks = set(h["ticker"].dropna()) | set(c.loc[c["asset_type"].isin(["ST", "OP"]), "ticker"]
-                                          .str.replace(".", "-", regex=False))
+    buys = c[c["asset_type"].isin(["ST", "OP"]) & (c["type"] == "P")]["ticker"].str.replace(".", "-", regex=False)
+    tks = set(h["ticker"].dropna()) | set(buys)
     tks = ["SPY"] + sorted(tks - {"SPY"})
+    if SMALL:
+        tks = ["SPY"] + list(buys.value_counts().index.drop("SPY", errors="ignore")[:60])
     print(f"downloading {len(tks):,} tickers", flush=True)
     got = {}
-    for rnd, wait in enumerate((0, 180, 600, 1200)):  # Yahoo rate-limits bursts: small batches, long back-off
+    waits = (0, 60) if SMALL else (0, 180, 600)
+    for rnd, wait in enumerate(waits):  # Yahoo rate-limits bursts: small batches, back off between rounds
         miss = [t for t in tks if t not in got]
         if not miss:
             break
@@ -90,6 +97,9 @@ def prices():
                 columns={"Close": chunk[0]})
             for t in close.columns[close.notna().any()]:
                 got[t] = close[t]
+            print(f"    batch {i // 40 + 1}: {len(got):,} priced so far", flush=True)
+            if rnd == 0 and i >= 80 and len(got) == 0:  # fail fast: 3 batches and nothing came back
+                raise RuntimeError("Yahoo returned no prices for the first 120 tickers: blocked, stopping now")
             time.sleep(4)
         print(f"  round {rnd + 1}: {len(got):,} of {len(tks):,} tickers priced", flush=True)
     if "SPY" not in got:
@@ -184,9 +194,10 @@ def dev():
                                                  c["members"]))
         rows.append(dict(id=c["id"], **s))
         print(f"  {c['id']}: IR {s.get('ir', float('nan')):+.2f}", flush=True)
-    log = pd.DataFrame(rows).assign(run_utc=stamp, config=[json.dumps(c) for c in cfgs])
-    log.to_csv(DEV_LOG, mode="a", header=not DEV_LOG.exists(), index=False)
-    n_dev = pd.read_csv(DEV_LOG)["id"].nunique()
+    if not SMALL:
+        log = pd.DataFrame(rows).assign(run_utc=stamp, config=[json.dumps(c) for c in cfgs])
+        log.to_csv(DEV_LOG, mode="a", header=not DEV_LOG.exists(), index=False)
+    n_dev = pd.read_csv(DEV_LOG)["id"].nunique() if DEV_LOG.exists() else 0
     data_note = (f"13F: {h['cik'].nunique()} funds, {h['accession'].nunique():,} filings, "
                  f"{h['ticker'].notna().mean():.0%} of holdings mapped to a priced ticker. " if len(h) else
                  "13F: no data yet (SEC blocks GitHub's servers; to be fetched from the owner's computer). ")
@@ -211,7 +222,9 @@ def dev():
         sub = df[mask].sort_values("ir", ascending=False)
         if len(sub):
             lines += [f"## {title}", "", table(sub.to_dict("records")), ""]
-    (REPORTS / "ROUND8_DEV.md").write_text("\n".join(lines) + "\n")
+    if SMALL:
+        lines[0] = "# Round 8 SMOKE TEST (pipeline check: 2019-2020 filings, 60 tickers; not results)"
+    (REPORTS / ("ROUND8_SMOKE.md" if SMALL else "ROUND8_DEV.md")).write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
 

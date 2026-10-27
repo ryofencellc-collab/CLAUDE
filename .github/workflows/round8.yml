@@ -10,10 +10,13 @@ on:
       data_run: {description: "run id holding the r8-data artifact (blank = fetch fresh)", default: ""}
       fetch_run: {description: "run id whose r8-13f/r8-ptr artifacts to price (blank = fetch here)", default: ""}
       mode: {description: "dev or final", default: "dev"}
+      small: {description: "1 = smoke test on a tiny slice", default: "0"}
 permissions:
   actions: read
   contents: write
 concurrency: round8
+env:
+  R8_SMALL: ${{ inputs.small || '0' }}
 jobs:
   ptr:
     if: ${{ !inputs.data_run && !inputs.fetch_run }}

@@ -7,7 +7,7 @@ name: sec13f
 # round8 workflow, which prices everything and runs the dev analysis.
 on:
   schedule:
-    - cron: "41 */6 * * *"
+    - cron: "41 * * * *"   # hourly: a blocked attempt costs the SEC one request
   workflow_dispatch:
   push:
     paths: [".github/workflows/sec13f.yml"]
