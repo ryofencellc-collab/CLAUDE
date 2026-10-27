@@ -15,7 +15,7 @@ def _market(n=400, seed=0, drift=0.0):
     rng = np.random.default_rng(seed)
     idx = pd.bdate_range("2023-05-01", periods=n)
     close = pd.Series(400 * np.exp(np.cumsum(rng.normal(drift, 0.01, n))), index=idx)
-    opn = close.shift(1).fillna(close.iloc[0]) * np.exp(rng.normal(0, 0.002, n))
+    opn = close * np.exp(-rng.normal(drift, 0.01, n))  # open-to-close moves of 1% a day
     vix = pd.Series(16.0, index=idx)
     rate = pd.Series(0.04, index=idx)
     return opn, close, vix, rate
@@ -24,7 +24,7 @@ def _market(n=400, seed=0, drift=0.0):
 def test_fairly_priced_options_lose_the_spread_on_average():
     # with prices drawn from the same vol the model uses, buyers should lose about the spread, not win
     opn, close, vix, rate = _market(n=3000, seed=1)
-    vix1d = pd.Series(0.01 * np.sqrt(252) * 100 * np.sqrt(525600 / 390 / 252), index=close.index)  # matches 1% daily
+    vix1d = pd.Series(0.01 * np.sqrt(252) * 100, index=close.index)  # 1% a day on a trading-time basis
     t = r.b2_0dte_calls(opn, close, vix1d, rate)
     assert len(t) > 2000 and t["ret"].mean() < 0.05
 
@@ -41,3 +41,9 @@ def test_weekly_puts_and_calls_run():
     t = r.b1_weekly_calls(close, vix, rate)
     assert len(t) > 100 and (t["cost"] > 0).all()
     assert r.equity_buyer(t).iloc[-1] > 0
+
+
+def test_0dte_price_is_sane():
+    # an ATM 0DTE SPY call at VIX1D 15 should cost about 0.4 x S x 15%/sqrt(252), not a few cents
+    c = r.bs(500, 500, r.T_0DTE, 0.15, 0.04, "call")
+    assert 1.5 < c < 2.2

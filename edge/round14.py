@@ -13,7 +13,7 @@ import requests
 CBOE = ["PUT", "WPUT", "BXM", "CNDR", "BFLY", "PPUT", "CLL"]
 SPREAD = 0.05             # half bid-ask, as a share of the option price, each way
 STAKE = 0.02              # buyers spend 2% of the account per trade
-MINUTES_0DTE = 390        # open to close
+T_0DTE = 1 / 252          # one trading session; VIX1D is quoted on a trading-time basis
 START = pd.Timestamp("2012-01-01")
 
 
@@ -72,7 +72,7 @@ def b1_weekly_calls(close: pd.Series, vix9d: pd.Series, rate: pd.Series) -> pd.D
 
 def b2_0dte_calls(opn: pd.Series, close: pd.Series, vix1d_open: pd.Series, rate: pd.Series) -> pd.DataFrame:
     rows = []
-    T = MINUTES_0DTE / 525600
+    T = T_0DTE
     for d in vix1d_open.dropna().index.intersection(opn.index):
         S, ST = opn[d], close[d]
         K = S * 1.005
@@ -85,7 +85,7 @@ def b2_0dte_calls(opn: pd.Series, close: pd.Series, vix1d_open: pd.Series, rate:
 
 def b3_0dte_condor(opn: pd.Series, close: pd.Series, vix1d_open: pd.Series, rate: pd.Series) -> pd.DataFrame:
     rows = []
-    T = MINUTES_0DTE / 525600
+    T = T_0DTE
     for d in vix1d_open.dropna().index.intersection(opn.index):
         S, ST, v, r = opn[d], close[d], vix1d_open[d] / 100, rate.get(d, 0.0)
         c1, c2 = bs(S, S * 1.01, T, v, r, "call"), bs(S, S * 1.02, T, v, r, "call")

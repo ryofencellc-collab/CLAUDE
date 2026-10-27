@@ -76,3 +76,14 @@ We report:
   with drawdowns in 2020 and 2022 that likely break the 25% limit.
 - **BXM, CNDR and BFLY:** below SPY on Sharpe.
 - **Overall:** FAIL.
+
+## Correction (2026-10-27, after the first run)
+
+The first run priced 0DTE options (B2, B3) with T = 390 minutes / 525,600,
+a calendar-time basis. VIX1D is quoted on a trading-time basis: an index of
+~13 means a ~0.8% one-day move. The calendar basis made every 0DTE option
+cost about half its real price. It produced an impossible 9,741× call trade
+(B2) and starved the condor's credit (B3). Fixed to T = 1/252 per session,
+and a test now checks that an at-the-money 0DTE price is sane. This is a unit
+error fixed to match the definition of the input. Nothing was tuned. Part A,
+B1 and B4 are unaffected. The first run's numbers stay in git history.
