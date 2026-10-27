@@ -48,4 +48,5 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 5-live | Weather, live paper test with same-day forecasts | **running**: [paper/WEATHER.md](paper/WEATHER.md) |
 | 6 | Sell a weekly Bitcoin put (3 strikes, real Deribit prices) | 0/1 pass; 96% winning weeks, ~0% return: [ROUND6.md](reports/ROUND6.md) |
 | 7 | Bracket arbitrage, cross-exchange funding, pairs, tennis value, matched betting | 0/3 pass (tennis data blocked): [ROUND7.md](reports/ROUND7.md) |
+| 8 | Copy Congress (House stock disclosures 2014–26, 52 tweaks on 2014–21, one frozen) and copy 13F funds | Congress: **0/1 pass, as predicted**. Sealed 2022–26: $1,000 → $1,633 vs SPY $1,726: [ROUND8_SEALED_CONGRESS.md](reports/ROUND8_SEALED_CONGRESS.md), [dev](reports/ROUND8_DEV.md). 13F: waiting on SEC data (hourly fetch) |
 | Business | Sell the honest report ($9) + done-for-you strategy tests ($49) | ready to launch: [business/LAUNCH.md](business/LAUNCH.md) |
