@@ -1,0 +1,290 @@
+[
+ {
+  "refit": "2021-01-01",
+  "gates": [
+   "perp_discount"
+  ],
+  "inner_path": [
+   "perp_discount",
+   "NOT_funding_negative",
+   "NOT_pullback_3d"
+  ],
+  "val_sharpe_by_k": [
+   4.06,
+   4.79,
+   3.82,
+   2.94
+  ],
+  "k": 1
+ },
+ {
+  "refit": "2021-07-01",
+  "gates": [],
+  "inner_path": [
+   "perp_discount",
+   "NOT_vol_below_1y_median",
+   "NOT_funding_negative",
+   "weekday"
+  ],
+  "val_sharpe_by_k": [
+   3.11,
+   0.06,
+   -0.26,
+   -0.89,
+   -0.42
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2022-01-01",
+  "gates": [],
+  "inner_path": [
+   "vol_falling",
+   "mom20_up",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "mom60_up",
+   "NOT_funding_negative"
+  ],
+  "val_sharpe_by_k": [
+   2.14,
+   1.97,
+   0.47,
+   1.91,
+   1.91,
+   1.49,
+   1.57
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2022-07-01",
+  "gates": [
+   "above_sma50",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "NOT_funding_negative"
+  ],
+  "inner_path": [
+   "vol_falling",
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "spy_above_sma200",
+   "mom60_up",
+   "NOT_funding_negative"
+  ],
+  "val_sharpe_by_k": [
+   -1.94,
+   -1.2,
+   0.15,
+   0.04,
+   0.2,
+   0.2,
+   0.2
+  ],
+  "k": 4
+ },
+ {
+  "refit": "2023-01-01",
+  "gates": [
+   "above_sma50",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "NOT_funding_negative",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "inner_path": [
+   "NOT_funding_below_90d_median",
+   "mom20_up",
+   "spy_above_sma200",
+   "above_sma50",
+   "NOT_funding_negative",
+   "volume_rising"
+  ],
+  "val_sharpe_by_k": [
+   -1.38,
+   -1.81,
+   -1.26,
+   -0.83,
+   -0.59,
+   -0.59,
+   -0.12
+  ],
+  "k": 6
+ },
+ {
+  "refit": "2023-07-01",
+  "gates": [
+   "above_sma50",
+   "btc_above_sma100"
+  ],
+  "inner_path": [
+   "above_sma50",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "NOT_funding_negative",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.34,
+   0.27,
+   0.39,
+   0.38,
+   0.04,
+   -0.09,
+   -0.09
+  ],
+  "k": 2
+ },
+ {
+  "refit": "2024-01-01",
+  "gates": [],
+  "inner_path": [
+   "vol_falling",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "NOT_pullback_3d",
+   "above_sma50",
+   "NOT_funding_negative"
+  ],
+  "val_sharpe_by_k": [
+   2.4,
+   0.68,
+   0.55,
+   -0.05,
+   -0.34,
+   -0.29,
+   -0.2
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2024-07-01",
+  "gates": [],
+  "inner_path": [
+   "above_sma50",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "NOT_funding_negative",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   2.09,
+   2.06,
+   2.06,
+   1.88,
+   1.71,
+   1.27,
+   1.28
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2025-01-01",
+  "gates": [
+   "btc_above_sma100",
+   "volume_rising",
+   "mom60_up",
+   "NOT_funding_negative",
+   "spy_above_sma200"
+  ],
+  "inner_path": [
+   "above_sma50",
+   "btc_above_sma100",
+   "spy_above_sma200",
+   "NOT_funding_negative",
+   "volume_rising",
+   "mom20_up"
+  ],
+  "val_sharpe_by_k": [
+   2.21,
+   1.72,
+   2.08,
+   1.93,
+   1.81,
+   2.47,
+   2.28
+  ],
+  "k": 5
+ },
+ {
+  "refit": "2025-07-01",
+  "gates": [
+   "btc_above_sma100",
+   "volume_rising",
+   "mom60_up"
+  ],
+  "inner_path": [
+   "above_sma50",
+   "btc_above_sma100",
+   "volume_rising",
+   "spy_above_sma200",
+   "mom20_up",
+   "NOT_funding_negative"
+  ],
+  "val_sharpe_by_k": [
+   1.01,
+   0.79,
+   1.04,
+   1.59,
+   1.56,
+   1.51,
+   1.57
+  ],
+  "k": 3
+ },
+ {
+  "refit": "2026-01-01",
+  "gates": [
+   "btc_above_sma100",
+   "volume_rising",
+   "mom60_up"
+  ],
+  "inner_path": [
+   "above_sma50",
+   "btc_above_sma100",
+   "volume_rising",
+   "spy_above_sma200",
+   "mom20_up",
+   "NOT_funding_negative"
+  ],
+  "val_sharpe_by_k": [
+   0.3,
+   0.26,
+   0.53,
+   0.75,
+   0.71,
+   0.66,
+   0.72
+  ],
+  "k": 3
+ },
+ {
+  "refit": "2026-07-01",
+  "gates": [
+   "btc_above_sma100",
+   "volume_rising"
+  ],
+  "inner_path": [
+   "btc_above_sma100",
+   "volume_rising",
+   "mom60_up",
+   "NOT_funding_negative",
+   "spy_above_sma200",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   -0.11,
+   0.63,
+   0.92,
+   0.78,
+   0.88,
+   0.79,
+   0.74
+  ],
+  "k": 2
+ }
+]
