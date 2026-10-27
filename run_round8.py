@@ -37,12 +37,15 @@ def fetchptr(year):
 
 def prices():
     import yfinance as yf
-    h = pd.concat([pd.read_pickle(p) for p in DATA.glob("13f_*.pkl")], ignore_index=True)
+    files = list(DATA.glob("13f_*.pkl"))
+    h = pd.concat([pd.read_pickle(p) for p in files], ignore_index=True) if files else pd.DataFrame(
+        columns=["cik", "fund", "accession", "filed", "period", "cusip", "issuer", "value", "shares", "weight", "rank"])
     cus = sorted(h["cusip"].unique())
     print(f"13F rows {len(h):,}, unique CUSIPs {len(cus):,}; mapping via OpenFIGI", flush=True)
-    m = ct.figi_map(cus)
+    m = ct.figi_map(cus) if cus else {}
     h["ticker"] = h["cusip"].map(m)
-    print(f"  mapped {len(m):,} of {len(cus):,} CUSIPs ({h['ticker'].notna().mean():.1%} of rows)", flush=True)
+    if cus:
+        print(f"  mapped {len(m):,} of {len(cus):,} CUSIPs ({h['ticker'].notna().mean():.1%} of rows)", flush=True)
     h.to_pickle(DATA / "holdings.pkl")
     c = pd.concat([pd.read_pickle(p) for p in DATA.glob("ptr_*.pkl")], ignore_index=True)
     c.to_pickle(DATA / "congress.pkl")
@@ -137,18 +140,21 @@ def dev():
     spy = px["SPY"].pct_change(fill_method=None)
     stamp = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
     rows = []
-    for c in configs():
+    cfgs = [c for c in configs() if len(h) or not c["kind"].startswith("13f")]  # unrun configs are not trials
+    for c in cfgs:
         s = r8.score(run_config(c, h, cg, px), spy)
         if c["kind"] == "congress":
             s["trades"] = len(r8.congress_events(cg, px, tuple(c["assets"]), c["min_amount"], c["max_delay"],
                                                  c["members"]))
         rows.append(dict(id=c["id"], **s))
         print(f"  {c['id']}: IR {s.get('ir', float('nan')):+.2f}", flush=True)
-    log = pd.DataFrame(rows).assign(run_utc=stamp, config=[json.dumps(c) for c in configs()])
+    log = pd.DataFrame(rows).assign(run_utc=stamp, config=[json.dumps(c) for c in cfgs])
     log.to_csv(DEV_LOG, mode="a", header=not DEV_LOG.exists(), index=False)
     n_dev = pd.read_csv(DEV_LOG)["id"].nunique()
     data_note = (f"13F: {h['cik'].nunique()} funds, {h['accession'].nunique():,} filings, "
-                 f"{h['ticker'].notna().mean():.0%} of holdings mapped to a priced ticker. "
+                 f"{h['ticker'].notna().mean():.0%} of holdings mapped to a priced ticker. " if len(h) else
+                 "13F: no data yet (SEC blocks GitHub's servers; to be fetched from the owner's computer). ")
+    data_note += (
                  f"Congress: {len(cg):,} parsed transactions from {cg['doc_id'].nunique():,} reports, "
                  f"{(cg['type'] == 'P').sum():,} purchases, {cg['member'].nunique()} members.")
     df = pd.DataFrame(rows)
@@ -167,7 +173,8 @@ def dev():
              "the strategy relative to SPY; $1000 = what $1,000 grew to.", ""]
     for title, mask in groups:
         sub = df[mask].sort_values("ir", ascending=False)
-        lines += [f"## {title}", "", table(sub.to_dict("records")), ""]
+        if len(sub):
+            lines += [f"## {title}", "", table(sub.to_dict("records")), ""]
     (REPORTS / "ROUND8_DEV.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
