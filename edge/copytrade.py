@@ -14,6 +14,7 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -143,6 +144,9 @@ def figi_map(cusips: list[str]) -> dict[str, str]:
 CLERK = "https://disclosures-clerk.house.gov/public_disc"
 TX_START = re.compile(r"\s(P|S \(partial\)|S|E)\s+(\d{2}/\d{2}/\d{4})\s+(\d{2}/\d{2}/\d{4})(?:\s+(.*))?$")
 TICKER = re.compile(r"\(([A-Z][A-Z0-9.\-]{0,6})\)\s*\[([A-Z]{2})\]")
+# STOCK Act reporting brackets: the low end fixes the high end
+BRACKETS = {1001: 15000, 15001: 50000, 50001: 100000, 100001: 250000, 250001: 500000, 500001: 1000000,
+            1000001: 5000000, 5000001: 25000000, 25000001: 50000000}
 AMOUNT = re.compile(r"\$([\d,]+)\s*-\s*\$([\d,]+)|Over \$([\d,]+)")
 
 
@@ -179,14 +183,10 @@ def parse_ptr_text(text: str) -> list[dict]:
         elif a:
             lo, hi = float(a.group(1).replace(",", "")), float(a.group(2).replace(",", ""))
         else:
-            half = re.search(r"\$([\d,]+)\s*-\s*$", rest)  # range split over two lines
+            half = re.search(r"\$([\d,]+)\s*-", rest)  # range split over lines; checkbox letters may follow
             if half:
                 lo = float(half.group(1).replace(",", ""))
-                for ln in block[1:]:
-                    nxt = re.search(r"^\s*\S.*?\s{2,}\$([\d,]+)\s*$|^\s+\$([\d,]+)\s*$", ln)
-                    if nxt:
-                        hi = float((nxt.group(1) or nxt.group(2)).replace(",", ""))
-                        break
+                hi = float(BRACKETS.get(int(lo), np.nan))
         if lo is None:  # amount on its own line below the dates
             a = AMOUNT.search(re.sub(r"\s+", " ", " ".join(block[1:])))
             if a and a.group(3):

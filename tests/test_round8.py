@@ -53,3 +53,12 @@ def test_ptr_amount_on_line_below_dates():
            "                                                   $1,001 - $15,000\n")
     (row,) = parse_ptr_text(txt)
     assert (row["ticker"], row["amount_low"], row["amount_high"]) == ("FOO", 1001.0, 15000.0)
+
+
+def test_ptr_split_amount_with_checkbox_letters():
+    txt = ("          JT        Apple Inc. (AAPL) [ST]                  P          01/14/2020 02/02/2020"
+           "         $15,001 -               c\n"
+           "                                                         d\n"
+           "                                                                         $50,000\n")
+    (row,) = parse_ptr_text(txt)
+    assert (row["ticker"], row["amount_low"], row["amount_high"]) == ("AAPL", 15001.0, 50000.0)
