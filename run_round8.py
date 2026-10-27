@@ -73,7 +73,7 @@ def prices():
     h.to_pickle(DATA / "holdings.pkl")
     c = pd.concat([pd.read_pickle(p) for p in DATA.glob("ptr_*.pkl")], ignore_index=True)
     if SMALL:
-        c = c[c["filed"].between("2019-01-01", "2020-12-31")]
+        c = c[c["filed"].between("2016-01-01", "2020-12-31")]
     c.to_pickle(DATA / "congress.pkl")
     st = c[c["asset_type"] == "ST"]
     print(f"Congress stock rows {len(st):,}: amount parsed {st['amount_low'].notna().mean():.0%}, "
@@ -229,7 +229,7 @@ def dev():
         if len(sub):
             lines += [f"## {title}", "", table(sub.to_dict("records")), ""]
     if SMALL:
-        lines[0] = "# Round 8 SMOKE TEST (pipeline check: 2019-2020 filings, 60 tickers; not results)"
+        lines[0] = "# Round 8 SMOKE TEST (pipeline check: 2016 + 2019 filings, 60 tickers; not results)"
     (REPORTS / ("ROUND8_SMOKE.md" if SMALL else "ROUND8_DEV.md")).write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 

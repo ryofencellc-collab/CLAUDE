@@ -201,9 +201,13 @@ def parse_ptr_text(text: str) -> list[dict]:
     return out
 
 
+_DIAG = []  # (doc_id, status, text_len, n_tx, head) per report, for the fetch log
+
+
 def _ptr(year: int, doc_id: str) -> list[dict]:
     r = _get(f"{CLERK}/ptr-pdfs/{year}/{doc_id}.pdf")
     if r is None or r.status_code != 200 or not r.content.startswith(b"%PDF"):
+        _DIAG.append((doc_id, "no-pdf" if r is None else f"http {r.status_code} {r.content[:20]!r}", 0, 0, ""))
         return []
     with tempfile.NamedTemporaryFile(suffix=".pdf") as f:
         f.write(r.content)
@@ -211,8 +215,13 @@ def _ptr(year: int, doc_id: str) -> list[dict]:
         try:
             text = subprocess.run(["pdftotext", "-layout", f.name, "-"], capture_output=True, timeout=60).stdout
         except (OSError, subprocess.SubprocessError):
+            _DIAG.append((doc_id, "pdftotext failed", 0, 0, ""))
             return []
-    return parse_ptr_text(text.decode("utf-8", "replace"))
+    text = text.decode("utf-8", "replace")
+    rows = parse_ptr_text(text)
+    _DIAG.append((doc_id, "ok", len(text), len(rows), "" if rows else " / ".join(
+        ln.strip() for ln in text.splitlines() if ln.strip())[:600]))
+    return rows
 
 
 def fetch_congress_year(year: int) -> pd.DataFrame:
@@ -223,6 +232,13 @@ def fetch_congress_year(year: int) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     if len(df):
         df["tx_date"] = pd.to_datetime(df["tx_date"], format="%m/%d/%Y", errors="coerce")
+    d = pd.DataFrame(_DIAG, columns=["doc", "status", "chars", "n_tx", "head"])
+    print(f"  fetch status: {d['status'].str[:8].value_counts().to_dict()}; text chars median "
+          f"{d['chars'].median():.0f}; reports with 0 trades: {(d['n_tx'] == 0).sum()}", flush=True)
+    for _, x in d[(d["status"] == "ok") & (d["n_tx"] == 0)].head(3).iterrows():
+        print(f"  ZERO-TRADE {x['doc']}: {x['head']}", flush=True)
+    for _, x in d[d["status"] != "ok"].head(3).iterrows():
+        print(f"  FAILED {x['doc']}: {x['status']}", flush=True)
     print(f"  {year}: {len(idx)} electronic PTRs, {len(df)} transactions, "
           f"{int((df['asset_type'] == 'ST').sum()) if len(df) else 0} stock trades", flush=True)
     return df
