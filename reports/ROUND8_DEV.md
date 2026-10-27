@@ -1,8 +1,8 @@
 # Round 8, development period (2014 → 2021-12-31)
 
-Run 2026-10-27T16:42:35+00:00. Sealed data (2022 onward) was cut before any calculation. Distinct dev configs logged so far: 52 (each adds to the trial count for the final test).
+Run 2026-10-27T17:27:58+00:00. Sealed data (2022 onward) was cut before any calculation. Distinct dev configs logged so far: 52 (each adds to the trial count for the final test).
 
-13F: no data yet (SEC blocks GitHub's servers; to be fetched from the owner's computer). Congress: 7,347 parsed transactions from 1,108 reports, 3,965 purchases, 122 members.
+13F: no data yet (SEC rate-limits GitHub's servers; sec13f.yml retries hourly). Congress: 7,347 parsed transactions from 1,108 reports, 3,965 purchases, 122 members.
 
 Columns: CAGR of the strategy and of SPY over the same days; excess = annual return over SPY; IR = information ratio (pass needs ≥ 0.5 in the sealed period); excess MDD = worst drop of the strategy relative to SPY; $1000 = what $1,000 grew to.
 
@@ -20,49 +20,49 @@ Columns: CAGR of the strategy and of SPY over the same days; excess = annual ret
 | Congress-h120-ST-min0-d15         | 2018-04-27 | 2021-12-31 | +30.2% | +19.1%     | +9.5%        |  0.8  | -12.5%       | 60%               | $2,643     | $1,904         |      600 |
 | Congress-h60-ST+OP-min0-d15       | 2018-04-27 | 2021-12-31 | +31.4% | +19.1%     | +10.6%       |  0.79 | -10.6%       | 60%               | $2,731     | $1,904         |      606 |
 | Congress-h60-ST-min0-d15          | 2018-04-27 | 2021-12-31 | +31.3% | +19.1%     | +10.6%       |  0.78 | -10.8%       | 60%               | $2,725     | $1,904         |      600 |
+| Congress-h60-ST-min15001-d15      | 2018-04-27 | 2021-12-31 | +29.1% | +19.1%     | +8.6%        |  0.64 | -16.2%       | 60%               | $2,565     | $1,904         |      152 |
+| Congress-h60-ST+OP-min15001-d15   | 2018-04-27 | 2021-12-31 | +29.1% | +19.1%     | +8.6%        |  0.64 | -16.2%       | 60%               | $2,563     | $1,904         |      154 |
+| Congress-h20-ST-min15001-d15      | 2018-04-27 | 2021-12-31 | +29.9% | +19.1%     | +9.9%        |  0.52 | -20.4%       | 47%               | $2,622     | $1,904         |      152 |
+| Congress-h20-ST+OP-min15001-d15   | 2018-04-27 | 2021-12-31 | +29.9% | +19.1%     | +9.9%        |  0.52 | -20.4%       | 47%               | $2,618     | $1,904         |      154 |
+| Congress-h60-ST-min50001-dany     | 2018-05-15 | 2021-12-31 | +25.6% | +18.6%     | +7.0%        |  0.49 | -28.8%       | 59%               | $2,288     | $1,857         |      241 |
+| Congress-h120-ST-min15001-d15     | 2018-04-27 | 2021-12-31 | +25.4% | +19.1%     | +5.4%        |  0.48 | -14.2%       | 60%               | $2,300     | $1,904         |      152 |
+| Congress-h120-ST+OP-min15001-d15  | 2018-04-27 | 2021-12-31 | +25.4% | +19.1%     | +5.4%        |  0.48 | -14.2%       | 60%               | $2,299     | $1,904         |      154 |
+| Congress-h60-ST+OP-min50001-dany  | 2018-05-15 | 2021-12-31 | +25.2% | +18.6%     | +6.7%        |  0.47 | -28.8%       | 61%               | $2,261     | $1,857         |      248 |
+| Congress-h60-ST-min50001-d15      | 2018-06-18 | 2021-12-31 | +27.4% | +18.4%     | +9.1%        |  0.47 | -25.5%       | 58%               | $2,359     | $1,821         |       61 |
+| Congress-h60-ST+OP-min50001-d15   | 2018-06-18 | 2021-12-31 | +27.4% | +18.4%     | +9.1%        |  0.47 | -25.5%       | 58%               | $2,356     | $1,821         |       63 |
+| Congress-h120-ST-min50001-d15     | 2018-06-18 | 2021-12-31 | +25.4% | +18.4%     | +7.4%        |  0.42 | -18.7%       | 58%               | $2,232     | $1,821         |       61 |
+| Congress-h120-ST+OP-min50001-d15  | 2018-06-18 | 2021-12-31 | +25.4% | +18.4%     | +7.3%        |  0.42 | -18.7%       | 58%               | $2,230     | $1,821         |       63 |
 | Congress-h60-ST+OP-min0-dany      | 2018-04-27 | 2021-12-31 | +22.7% | +19.1%     | +3.3%        |  0.41 | -10.3%       | 60%               | $2,125     | $1,904         |     2544 |
 | Congress-h120-ST+OP-min0-dany     | 2018-04-27 | 2021-12-31 | +22.1% | +19.1%     | +2.7%        |  0.37 | -9.4%        | 58%               | $2,086     | $1,904         |     2544 |
+| Congress-h120-ST-min50001-dany    | 2018-05-15 | 2021-12-31 | +23.0% | +18.6%     | +4.6%        |  0.37 | -21.0%       | 57%               | $2,123     | $1,857         |      241 |
+| Congress-h120-ST+OP-min50001-dany | 2018-05-15 | 2021-12-31 | +22.9% | +18.6%     | +4.5%        |  0.37 | -21.0%       | 57%               | $2,117     | $1,857         |      248 |
 | Congress-h120-ST-min0-dany        | 2018-04-27 | 2021-12-31 | +22.0% | +19.1%     | +2.7%        |  0.37 | -9.5%        | 62%               | $2,083     | $1,904         |     2519 |
 | Congress-h20-ST-min0-d15          | 2018-04-27 | 2021-12-31 | +22.0% | +19.1%     | +3.0%        |  0.23 | -20.6%       | 49%               | $2,078     | $1,904         |      600 |
 | Congress-h20-ST+OP-min0-d15       | 2018-04-27 | 2021-12-31 | +21.4% | +19.1%     | +2.5%        |  0.19 | -18.7%       | 49%               | $2,039     | $1,904         |      606 |
+| Congress-h60-ST-min15001-dany     | 2018-04-27 | 2021-12-31 | +20.1% | +19.1%     | +1.0%        |  0.12 | -14.0%       | 51%               | $1,964     | $1,904         |      618 |
+| Congress-h60-ST+OP-min15001-dany  | 2018-04-27 | 2021-12-31 | +20.1% | +19.1%     | +1.0%        |  0.11 | -14.1%       | 51%               | $1,962     | $1,904         |      625 |
+| Congress-h20-ST-min50001-d15      | 2018-06-18 | 2021-12-31 | +16.6% | +18.4%     | +0.6%        |  0.03 | -34.9%       | 42%               | $1,725     | $1,821         |       61 |
+| Congress-h20-ST+OP-min50001-d15   | 2018-06-18 | 2021-12-31 | +16.5% | +18.4%     | +0.5%        |  0.02 | -34.9%       | 42%               | $1,719     | $1,821         |       63 |
+| Congress-h5-ST-min50001-dany      | 2018-05-15 | 2021-12-31 | +16.8% | +18.6%     | -0.1%        | -0.01 | -34.8%       | 43%               | $1,761     | $1,857         |      241 |
+| Congress-h5-ST+OP-min50001-dany   | 2018-05-15 | 2021-12-31 | +16.6% | +18.6%     | -0.3%        | -0.02 | -34.3%       | 43%               | $1,749     | $1,857         |      248 |
+| Congress-h120-ST+OP-min15001-dany | 2018-04-27 | 2021-12-31 | +16.7% | +19.1%     | -1.9%        | -0.24 | -14.2%       | 53%               | $1,765     | $1,904         |      625 |
+| Congress-h5-ST-min50001-d15       | 2018-06-18 | 2021-12-31 | +12.5% | +18.4%     | -3.7%        | -0.25 | -37.4%       | 26%               | $1,520     | $1,821         |       61 |
+| Congress-h120-ST-min15001-dany    | 2018-04-27 | 2021-12-31 | +16.6% | +19.1%     | -2.0%        | -0.25 | -14.2%       | 51%               | $1,762     | $1,904         |      618 |
+| Congress-h5-ST+OP-min50001-d15    | 2018-06-18 | 2021-12-31 | +12.4% | +18.4%     | -3.9%        | -0.26 | -37.4%       | 26%               | $1,514     | $1,821         |       63 |
+| Congress-h5-ST-min15001-dany      | 2018-04-27 | 2021-12-31 | +10.8% | +19.1%     | -5.4%        | -0.27 | -36.7%       | 40%               | $1,459     | $1,904         |      618 |
+| Congress-h5-ST+OP-min15001-dany   | 2018-04-27 | 2021-12-31 | +10.5% | +19.1%     | -5.7%        | -0.29 | -35.5%       | 40%               | $1,446     | $1,904         |      625 |
+| Congress-h20-ST+OP-min50001-dany  | 2018-05-15 | 2021-12-31 | +9.0%  | +18.6%     | -6.3%        | -0.33 | -40.2%       | 43%               | $1,367     | $1,857         |      248 |
+| Congress-h20-ST+OP-min15001-dany  | 2018-04-27 | 2021-12-31 | +13.3% | +19.1%     | -4.2%        | -0.34 | -25.8%       | 42%               | $1,584     | $1,904         |      625 |
+| Congress-h20-ST-min15001-dany     | 2018-04-27 | 2021-12-31 | +13.2% | +19.1%     | -4.3%        | -0.34 | -26.0%       | 42%               | $1,580     | $1,904         |      618 |
+| Congress-h20-ST-min50001-dany     | 2018-05-15 | 2021-12-31 | +8.4%  | +18.6%     | -6.8%        | -0.35 | -41.4%       | 41%               | $1,339     | $1,857         |      241 |
 | Congress-h20-ST+OP-min0-dany      | 2018-04-27 | 2021-12-31 | +14.9% | +19.1%     | -3.4%        | -0.42 | -15.8%       | 42%               | $1,667     | $1,904         |     2544 |
 | Congress-h20-ST-min0-dany         | 2018-04-27 | 2021-12-31 | +14.8% | +19.1%     | -3.4%        | -0.42 | -16.4%       | 44%               | $1,665     | $1,904         |     2519 |
+| Congress-h5-ST-min15001-d15       | 2018-04-27 | 2021-12-31 | +8.8%  | +19.1%     | -7.8%        | -0.46 | -45.5%       | 42%               | $1,366     | $1,904         |      152 |
+| Congress-h5-ST+OP-min15001-d15    | 2018-04-27 | 2021-12-31 | +8.7%  | +19.1%     | -7.9%        | -0.47 | -45.5%       | 42%               | $1,360     | $1,904         |      154 |
 | Congress-h5-ST+OP-min0-dany       | 2018-04-27 | 2021-12-31 | +7.4%  | +19.1%     | -9.7%        | -0.64 | -43.8%       | 40%               | $1,301     | $1,904         |     2544 |
 | Congress-h5-ST-min0-d15           | 2018-04-27 | 2021-12-31 | +1.7%  | +19.1%     | -14.0%       | -0.71 | -56.7%       | 42%               | $1,063     | $1,904         |      600 |
 | Congress-h5-ST-min0-dany          | 2018-04-27 | 2021-12-31 | +4.9%  | +19.1%     | -11.9%       | -0.81 | -48.9%       | 38%               | $1,195     | $1,904         |     2519 |
 | Congress-h5-ST+OP-min0-d15        | 2018-04-27 | 2021-12-31 | -1.7%  | +19.1%     | -17.4%       | -0.89 | -59.5%       | 42%               | $937       | $1,904         |      606 |
-| Congress-h5-ST-min15001-dany      | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST-min15001-d15       | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST-min50001-dany      | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST-min50001-d15       | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST+OP-min15001-dany   | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST+OP-min15001-d15    | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST+OP-min50001-dany   | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h5-ST+OP-min50001-d15    | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST-min15001-dany     | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST-min15001-d15      | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST-min50001-dany     | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST-min50001-d15      | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST+OP-min15001-dany  | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST+OP-min15001-d15   | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST+OP-min50001-dany  | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h20-ST+OP-min50001-d15   | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST-min15001-dany     | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST-min15001-d15      | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST-min50001-dany     | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST-min50001-d15      | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST+OP-min15001-dany  | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST+OP-min15001-d15   | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST+OP-min50001-dany  | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h60-ST+OP-min50001-d15   | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST-min15001-dany    | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST-min15001-d15     | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST-min50001-dany    | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST-min50001-d15     | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST+OP-min15001-dany | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST+OP-min15001-d15  | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST+OP-min50001-dany | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
-| Congress-h120-ST+OP-min50001-d15  | nan        | nan        |        |            |              |       |              |                   |            |                |        0 |
 
 ## Pelosi only
 
