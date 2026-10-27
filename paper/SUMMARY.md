@@ -1,15 +1,23 @@
 # Round 3: live paper trading (football value bets)
 
-Updated 2026-10-26 21:04 UTC. Rule frozen in [PROTOCOL_ROUND3.md](../PROTOCOL_ROUND3.md). Paper bankroll $1,000, flat $10 stakes.
+Updated 2026-10-27 05:15 UTC. Rule frozen in [PROTOCOL_ROUND3.md](../PROTOCOL_ROUND3.md). Paper bankroll $1,000, flat $10 stakes.
 
 | | |
 |---|---|
 | Bets logged | 15 |
-| Open (not yet played) | 10 |
-| Settled | 0 (won 0, lost 0) |
-| Win rate | n/a |
-| Staked | $0 |
-| **Profit** | **$+0.00** |
-| ROI | n/a |
-| Paper bankroll | $1,000.00 |
+| Open (not yet played) | 0 |
+| Settled | 10 (won 4, lost 6) |
+| Win rate | 40.0% |
+| Staked | $100 |
+| **Profit** | **$+58.30** |
+| ROI | +58.30% |
+| Paper bankroll | $1,058.30 |
 
+## By match day
+
+| Day | Bets | P&L | Bankroll |
+|---|---:|---:|---:|
+| 2026-10-24 | 4 | $+47.50 | $1,047.50 |
+| 2026-10-25 | 6 | $+10.80 | $1,058.30 |
+
+Green days: 2 of 2
