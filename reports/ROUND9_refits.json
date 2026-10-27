@@ -1,0 +1,305 @@
+[
+ {
+  "refit": "2021-01-01",
+  "gates": [
+   "perp_discount",
+   "mom20_up",
+   "above_sma200",
+   "NOT_vol_below_1y_median",
+   "above_sma50"
+  ],
+  "inner_path": [
+   "perp_discount",
+   "mom20_up",
+   "NOT_vol_below_1y_median",
+   "above_sma200",
+   "above_sma50",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   1.82,
+   1.48,
+   2.19,
+   2.67,
+   2.77,
+   2.94,
+   2.58
+  ],
+  "k": 5
+ },
+ {
+  "refit": "2021-07-01",
+  "gates": [
+   "btc_above_sma100",
+   "NOT_vol_falling",
+   "above_sma50",
+   "NOT_pullback_3d"
+  ],
+  "inner_path": [
+   "perp_discount",
+   "mom20_up",
+   "volume_rising",
+   "above_sma50",
+   "above_sma200",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   2.94,
+   3.04,
+   2.99,
+   3.06,
+   3.07,
+   2.72,
+   2.72
+  ],
+  "k": 4
+ },
+ {
+  "refit": "2022-01-01",
+  "gates": [
+   "NOT_vol_falling",
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "above_sma100",
+   "spy_above_sma200",
+   "mom20_up"
+  ],
+  "inner_path": [
+   "btc_above_sma100",
+   "NOT_vol_falling",
+   "above_sma50",
+   "NOT_pullback_3d",
+   "spy_above_sma200",
+   "mom20_up"
+  ],
+  "val_sharpe_by_k": [
+   1.07,
+   1.22,
+   0.85,
+   0.69,
+   1.25,
+   1.25,
+   1.31
+  ],
+  "k": 6
+ },
+ {
+  "refit": "2022-07-01",
+  "gates": [
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "mom20_up",
+   "mom60_up",
+   "spy_above_sma200",
+   "NOT_vol_falling"
+  ],
+  "inner_path": [
+   "NOT_vol_falling",
+   "spy_above_sma200",
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "above_sma100",
+   "mom20_up"
+  ],
+  "val_sharpe_by_k": [
+   -1.84,
+   -2.04,
+   -1.17,
+   -1.23,
+   -0.95,
+   -0.59,
+   -0.46
+  ],
+  "k": 6
+ },
+ {
+  "refit": "2023-01-01",
+  "gates": [],
+  "inner_path": [
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "above_sma100",
+   "NOT_vol_falling",
+   "spy_above_sma200",
+   "mom20_up"
+  ],
+  "val_sharpe_by_k": [
+   -1.14,
+   -1.34,
+   -1.48,
+   -1.69,
+   -2.25,
+   -1.88,
+   -1.88
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2023-07-01",
+  "gates": [],
+  "inner_path": [
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "mom20_up",
+   "mom60_up",
+   "spy_above_sma200",
+   "NOT_vol_falling"
+  ],
+  "val_sharpe_by_k": [
+   0.07,
+   -0.13,
+   -0.7,
+   -0.32,
+   -0.37,
+   -0.34,
+   -0.15
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2024-01-01",
+  "gates": [
+   "btc_above_sma100"
+  ],
+  "inner_path": [
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "mom20_up",
+   "mom60_up",
+   "spy_above_sma200",
+   "NOT_vol_falling"
+  ],
+  "val_sharpe_by_k": [
+   1.1,
+   1.11,
+   0.57,
+   1.06,
+   0.87,
+   0.53,
+   1.09
+  ],
+  "k": 1
+ },
+ {
+  "refit": "2024-07-01",
+  "gates": [],
+  "inner_path": [
+   "btc_above_sma100",
+   "NOT_pullback_3d",
+   "mom20_up",
+   "mom60_up",
+   "spy_above_sma200",
+   "NOT_vol_falling"
+  ],
+  "val_sharpe_by_k": [
+   0.65,
+   0.55,
+   -0.17,
+   0.2,
+   0.18,
+   0.06,
+   0.15
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2025-01-01",
+  "gates": [],
+  "inner_path": [
+   "btc_above_sma100",
+   "above_sma50",
+   "NOT_pullback_3d",
+   "mom20_up",
+   "weekday",
+   "mom60_up"
+  ],
+  "val_sharpe_by_k": [
+   1.56,
+   1.43,
+   1.5,
+   1.11,
+   1.15,
+   -0.22,
+   -0.09
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2025-07-01",
+  "gates": [
+   "btc_above_sma100",
+   "above_sma50"
+  ],
+  "inner_path": [
+   "btc_above_sma100",
+   "above_sma50",
+   "NOT_pullback_3d",
+   "mom20_up",
+   "weekday",
+   "mom60_up"
+  ],
+  "val_sharpe_by_k": [
+   0.58,
+   0.48,
+   0.73,
+   0.6,
+   0.51,
+   -0.36,
+   -0.16
+  ],
+  "k": 2
+ },
+ {
+  "refit": "2026-01-01",
+  "gates": [
+   "btc_above_sma100",
+   "above_sma50"
+  ],
+  "inner_path": [
+   "btc_above_sma100",
+   "above_sma50",
+   "mom20_up",
+   "NOT_pullback_3d",
+   "NOT_funding_negative",
+   "NOT_vol_falling"
+  ],
+  "val_sharpe_by_k": [
+   0.29,
+   0.32,
+   0.55,
+   0.36,
+   0.53,
+   0.53,
+   0.25
+  ],
+  "k": 2
+ },
+ {
+  "refit": "2026-07-01",
+  "gates": [
+   "btc_above_sma100",
+   "above_sma50",
+   "NOT_pullback_3d",
+   "mom60_up",
+   "mom20_up"
+  ],
+  "inner_path": [
+   "btc_above_sma100",
+   "above_sma50",
+   "mom20_up",
+   "mom60_up",
+   "NOT_pullback_3d",
+   "spy_above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   0.04,
+   0.53,
+   0.91,
+   0.75,
+   0.77,
+   1.32,
+   1.27
+  ],
+  "k": 5
+ }
+]
