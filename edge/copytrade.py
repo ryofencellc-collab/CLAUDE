@@ -142,8 +142,8 @@ def figi_map(cusips: list[str]) -> dict[str, str]:
 # ------------------------------------------------------------------ Congress (House PTRs)
 
 CLERK = "https://disclosures-clerk.house.gov/public_disc"
-TX_START = re.compile(r"\s(P|S \(partial\)|S|E)\s+(\d{2}/\d{2}/\d{4})\s+(\d{2}/\d{2}/\d{4})(?:\s+(.*))?$")
-TICKER = re.compile(r"\(([A-Z][A-Z0-9.\-]{0,6})\)\s*\[([A-Z]{2})\]")
+TX_START = re.compile(r"\s(P|S \(partial\)|S|E)\s+(\d{1,2}/\d{1,2}/\d{4})\s+(\d{1,2}/\d{1,2}/\d{4})(?:\s+(.*))?$")
+TICKER = re.compile(r"\(([A-Z][A-Z0-9.\-]{0,6})\)\s*(?:\[([A-Z]{2})\])?")  # pre-2018 forms have no [ST] tag
 # STOCK Act reporting brackets: the low end fixes the high end
 BRACKETS = {1001: 15000, 15001: 50000, 50001: 100000, 100001: 250000, 250001: 500000, 500001: 1000000,
             1000001: 5000000, 5000001: 25000000, 25000001: 50000000}
@@ -162,6 +162,12 @@ def _index(year: int) -> pd.DataFrame:
                              last=g.get("Last", ""), district=g.get("StateDst", ""),
                              filed=pd.to_datetime(g.get("FilingDate"), errors="coerce")))
     return pd.DataFrame(rows)
+
+
+def _tag(after: str) -> str:
+    """Asset tag wrapped onto a later line ([ST], [OP], ...); pre-2018 forms have none: a stock."""
+    m = re.search(r"\[([A-Z]{2})\]", after)
+    return m.group(1) if m else "ST"
 
 
 def parse_ptr_text(text: str) -> list[dict]:
@@ -194,7 +200,7 @@ def parse_ptr_text(text: str) -> list[dict]:
             elif a:
                 lo, hi = float(a.group(1).replace(",", "")), float(a.group(2).replace(",", ""))
         owner = re.match(r"\s*(SP|JT|DC)\s", lines[i])
-        out.append(dict(type=m.group(1).split()[0], tx_date=m.group(2), ticker=t.group(1), asset_type=t.group(2),
+        out.append(dict(type=m.group(1).split()[0], tx_date=m.group(2), ticker=t.group(1), asset_type=t.group(2) or _tag(btxt[t.end():]),
                         owner=owner.group(1) if owner else "",
                         amount_low=lo, amount_high=hi,
                         raw="" if lo is not None else " | ".join(x.strip() for x in block)[:400]))

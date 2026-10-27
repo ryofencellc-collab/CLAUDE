@@ -62,3 +62,22 @@ def test_ptr_split_amount_with_checkbox_letters():
            "                                                                         $50,000\n")
     (row,) = parse_ptr_text(txt)
     assert (row["ticker"], row["amount_low"], row["amount_high"]) == ("AAPL", 15001.0, 50000.0)
+
+
+def test_ptr_pre2018_layout():
+    txt = ("                Walt Disney Company (DIS)                S                01/4/2016    01/4/2016"
+           "          $15,001 - $50,000\n"
+           "       JT       Mondelez International, Inc. - Class A    P              12/28/2015 12/28/2015"
+           "        $1,001 - $15,000\n"
+           "                (MDLZ)\n")
+    a, b = parse_ptr_text(txt)
+    assert (a["ticker"], a["type"], a["tx_date"], a["asset_type"], a["amount_low"]) == ("DIS", "S", "01/4/2016", "ST", 15001.0)
+    assert (b["ticker"], b["type"], b["owner"], b["amount_low"]) == ("MDLZ", "P", "JT", 1001.0)
+
+
+def test_ptr_tag_wrapped_to_next_line():
+    txt = ("           SP         Vistra Corp. Common Stock (VST)             P                 01/16/2026 01/16/2026"
+           "             $100,001 -\n"
+           "                      [OP]                                                                       $250,000\n")
+    (row,) = parse_ptr_text(txt)
+    assert (row["ticker"], row["asset_type"], row["amount_low"]) == ("VST", "OP", 100001.0)
