@@ -1,0 +1,112 @@
+[
+ {
+  "refit": "2016-01-01",
+  "chosen": "hold-sma50-crypto30",
+  "train_sharpe": 0.78
+ },
+ {
+  "refit": "2016-07-01",
+  "chosen": "hold-sma50-crypto30",
+  "train_sharpe": 1.0
+ },
+ {
+  "refit": "2017-01-01",
+  "chosen": "hold-sma50-crypto30",
+  "train_sharpe": 1.35
+ },
+ {
+  "refit": "2017-07-01",
+  "chosen": "trend200-sma50-crypto30",
+  "train_sharpe": 1.84
+ },
+ {
+  "refit": "2018-01-01",
+  "chosen": "trend200-sma50-crypto30",
+  "train_sharpe": 2.19
+ },
+ {
+  "refit": "2018-07-01",
+  "chosen": "trend200-sma100-crypto30",
+  "train_sharpe": 1.87
+ },
+ {
+  "refit": "2019-01-01",
+  "chosen": "trend200-sma100-crypto30",
+  "train_sharpe": 1.68
+ },
+ {
+  "refit": "2019-07-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.91
+ },
+ {
+  "refit": "2020-01-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.72
+ },
+ {
+  "refit": "2020-07-01",
+  "chosen": "volman-sma50-crypto30",
+  "train_sharpe": 1.49
+ },
+ {
+  "refit": "2021-01-01",
+  "chosen": "volman-sma50-crypto30",
+  "train_sharpe": 1.74
+ },
+ {
+  "refit": "2021-07-01",
+  "chosen": "volman-sma50-crypto30",
+  "train_sharpe": 1.8
+ },
+ {
+  "refit": "2022-01-01",
+  "chosen": "volman-sma50-crypto30",
+  "train_sharpe": 1.71
+ },
+ {
+  "refit": "2022-07-01",
+  "chosen": "trend200-sma100-crypto30",
+  "train_sharpe": 1.49
+ },
+ {
+  "refit": "2023-01-01",
+  "chosen": "trend200-sma100-crypto30",
+  "train_sharpe": 1.42
+ },
+ {
+  "refit": "2023-07-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.44
+ },
+ {
+  "refit": "2024-01-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.43
+ },
+ {
+  "refit": "2024-07-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.51
+ },
+ {
+  "refit": "2025-01-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.51
+ },
+ {
+  "refit": "2025-07-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.42
+ },
+ {
+  "refit": "2026-01-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.44
+ },
+ {
+  "refit": "2026-07-01",
+  "chosen": "volman-sma100-crypto30",
+  "train_sharpe": 1.43
+ }
+]
