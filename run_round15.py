@@ -76,6 +76,18 @@ def report():
                   "| Check | Result |", "|---|---|"] + \
                  [f"| {k} | {'yes' if v else '**no**'} |" for k, v in checks.items()] + \
                  ["", "## By city", "", by_city.round(2).to_markdown()]
+    if len(dec) and "n_trades" in dec:
+        d = dec[dec["tradable"]]
+        lines += ["", "## Diagnostics (decided markets)", "",
+                  f"- trades fetched per decided market: median {d['n_trades'].median():.0f}, "
+                  f"zero for {(d['n_trades'] == 0).mean():.0%}",
+                  f"- trades after the decision was knowable: median {d.get('n_after', pd.Series(dtype=float)).median():.0f}",
+                  f"- cheapest decided-side price after the decision: median "
+                  f"{d.get('min_price_after', pd.Series(dtype=float)).median():.3f}, "
+                  f"share below 0.97: {(d.get('min_price_after', pd.Series(dtype=float)) <= 0.97).mean():.0%}",
+                  f"- decided markets per city-day: {len(dec) / max(dec.groupby(['city', 'date']).ngroups, 1):.1f}", "",
+                  dec.head(12)[[c for c in ["date", "ticker", "side", "known", "n_trades", "n_after",
+                                            "min_price_after", "first_trade", "last_trade"] if c in dec]].to_markdown(index=False)]
     if len(misses):
         lines += ["", "## Decided calls that settled the other way", "",
                   misses[["city", "date", "ticker", "side", "result", "floor", "cap"]].to_markdown(index=False)]

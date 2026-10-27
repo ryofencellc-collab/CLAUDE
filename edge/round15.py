@@ -143,9 +143,20 @@ def scan_series(series: str, city: str, tz: str, start: pd.Timestamp, end: pd.Ti
     with ThreadPoolExecutor(4) as ex:
         trs = list(ex.map(lambda x: trades(x[0]["ticker"]), todo))
     opp = []
+    diag = {r["ticker"]: r for r in dec_rows}
     for (m, side, known, correct), tr in zip(todo, trs):
+        row = diag[m["ticker"]]
+        row["n_trades"] = len(tr)
+        if len(tr):
+            after = tr[tr["time"] > known]
+            row["n_after"] = len(after)
+            row["min_price_after"] = float(after[f"{side}_price"].min()) if len(after) else np.nan
+            row["first_trade"], row["last_trade"] = tr["time"].min(), tr["time"].max()
         for o in opportunities(m, side, known, tr, correct):
             opp.append(dict(series=series, city=city, date=wx._target_date(m["event_ticker"]), **o))
+    days = {wx._target_date(m["event_ticker"]) for m in ms}
+    print(f"  obs reports {len(obs):,} ({obs.index.min()} .. {obs.index.max()}); market-days {len(days)}; "
+          f"trades fetched {sum(len(t) for t in trs):,}", flush=True)
     print(f"  {series} ({city}/{station}): {len(ms)} markets, {len(dec_rows)} decided, {len(todo)} tradable, "
           f"{len(opp)} cheap trades after the decision", flush=True)
     return pd.DataFrame(dec_rows), pd.DataFrame(opp)
