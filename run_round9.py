@@ -25,20 +25,24 @@ def main():
           f"{p['spot_close'].index[-1].date()}", flush=True)
     oos, turn, log = gates.walk_forward(p, spy)
     v = gates.verdict(oos, turn, p["spot_close"]["BTC"])
-    btc = metrics(p["spot_close"]["BTC"].pct_change(fill_method=None).reindex(oos.index).fillna(0), gates.PERIODS)
+    report(oos, turn, log, v, p["spot_close"]["BTC"], "BTC", gates.PERIODS, "PROTOCOL_ROUND9.md", 264,
+           "ROUND9_SMOKE.md" if SMALL else "ROUND9.md",
+           " SMOKE TEST (3 coins, pipeline check, not a result)" if SMALL else "")
+
+
+def report(oos, turn, log, v, bench_close, bench, periods, protocol, n_trials, name, note):
+    b = metrics(bench_close.pct_change(fill_method=None).reindex(oos.index).fillna(0), periods)
     eq = (1 + oos).cumprod()
-    name = "ROUND9_SMOKE.md" if SMALL else "ROUND9.md"
-    lines = [f"# Round 9{' SMOKE TEST (3 coins, pipeline check, not a result)' if SMALL else ''}: "
-             "data-chosen trade gates", "",
-             "Rules: [PROTOCOL_ROUND9.md](../PROTOCOL_ROUND9.md). Out-of-sample = every 6-month block traded with "
+    lines = [f"# Round 9{note}: data-chosen trade gates", "",
+             f"Rules: [{protocol}](../{protocol}). Out-of-sample = every 6-month block traded with "
              f"gates chosen without it, {oos.index[0].date()} to {oos.index[-1].date()}.", "",
              f"## Verdict: **{'PASS' if v['pass'] else 'FAIL'}**", "",
-             "| | Gate strategy | Buy & hold BTC |", "|---|---:|---:|",
-             f"| $1,000 became | ${1000 * eq.iloc[-1]:,.0f} | ${1000 * (1 + btc['total']):,.0f} |",
-             f"| Yearly return | {v['cagr']:+.1%} | {btc['cagr']:+.1%} |",
-             f"| Sharpe | {v['sharpe']:.2f} | {btc['sharpe']:.2f} |",
-             f"| Worst drop | {v['max_dd']:.1%} | {btc['max_dd']:.1%} |",
-             f"| Deflated Sharpe (264 trials) | {v['dsr']:.3f} | |",
+             f"| | Gate strategy | Buy & hold {bench} |", "|---|---:|---:|",
+             f"| $1,000 became | ${1000 * eq.iloc[-1]:,.0f} | ${1000 * (1 + b['total']):,.0f} |",
+             f"| Yearly return | {v['cagr']:+.1%} | {b['cagr']:+.1%} |",
+             f"| Sharpe | {v['sharpe']:.2f} | {b['sharpe']:.2f} |",
+             f"| Worst drop | {v['max_dd']:.1%} | {b['max_dd']:.1%} |",
+             f"| Deflated Sharpe ({n_trials} trials) | {v['dsr']:.3f} | |",
              f"| Days with a position change | {v['trades']} | |", "",
              "| Check | Result |", "|---|---|"] + \
             [f"| {k} | {'yes' if ok else '**no**'} |" for k, ok in v["checks"].items()] + \
