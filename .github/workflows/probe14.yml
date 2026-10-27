@@ -1,0 +1,44 @@
+name: probe14
+# Data check for Round 14 (SPY options) and Round 15 (Kalshi weather speed).
+on:
+  push:
+    paths: [".github/workflows/probe14.yml"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Cboe strategy index histories
+        continue-on-error: true
+        run: |
+          for i in PUT WPUT BXM BXMW CNDR BFLY PPUT CLL BXMD PUTR SPRI; do
+            u="https://cdn.cboe.com/api/global/us_indices/daily_prices/${i}_History.csv"
+            printf "%-5s " $i; curl -sS -m 30 -o /tmp/$i.csv -w "%{http_code} " "$u"; head -c 120 /tmp/$i.csv | tr '\n' ' '; echo; tail -n 1 /tmp/$i.csv
+          done
+      - name: Yahoo short-dated vol indices
+        continue-on-error: true
+        run: |
+          pip install -q yfinance pandas
+          python - <<'PY'
+          import yfinance as yf
+          for t in ["^VIX9D", "^VIX1D", "^VIX", "SPY"]:
+              d = yf.download(t, start="2005-01-01", progress=False, auto_adjust=True)
+              print(t, len(d), d.index[0].date() if len(d) else None, d.index[-1].date() if len(d) else None)
+          PY
+      - name: Kalshi historical trades for a past weather market
+        continue-on-error: true
+        run: |
+          K=https://api.elections.kalshi.com/trade-api/v2
+          curl -sS -m 30 "$K/markets?event_ticker=KXHIGHNY-25JUL01" | head -c 600; echo
+          T=$(curl -sS -m 30 "$K/markets?event_ticker=KXHIGHNY-25JUL01" | python3 -c "import sys,json; print(json.load(sys.stdin)['markets'][0]['ticker'])" || true)
+          echo "ticker=$T"
+          for u in "$K/markets/trades?ticker=$T&limit=5" "$K/historical/trades?ticker=$T&limit=5" "$K/historical/markets/$T/candlesticks?period_interval=1&start_ts=1751328000&end_ts=1751414400"; do
+            echo "== $u"; curl -sS -m 30 "$u" | head -c 700; echo
+          done
+      - name: Iowa Mesonet station observations (Central Park)
+        continue-on-error: true
+        run: |
+          curl -sS -m 60 "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?station=NYC&data=tmpf&year1=2025&month1=7&day1=1&year2=2025&month2=7&day2=2&tz=Etc/UTC&format=onlycomma&latlon=no&missing=M&trace=T&report_type=3&report_type=4" | head -20
+          echo "== 1-minute"
+          curl -sS -m 60 "https://mesonet.agron.iastate.edu/cgi-bin/request/asos1min.py?station=NYC&vars=tmpf&sts=2025-07-01T14:00Z&ets=2025-07-01T15:00Z&sample=1min&what=download&delim=comma" | head -8
