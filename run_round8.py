@@ -8,6 +8,7 @@ final runs only round8_frozen.json (plus the baselines) on 2022-01-01 onward.
 """
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -72,14 +73,28 @@ def prices():
     c.to_pickle(DATA / "congress.pkl")
     tks = set(h["ticker"].dropna()) | set(c.loc[c["asset_type"].isin(["ST", "OP"]), "ticker"]
                                           .str.replace(".", "-", regex=False))
-    tks = sorted(tks | {"SPY"})
+    tks = ["SPY"] + sorted(tks - {"SPY"})
     print(f"downloading {len(tks):,} tickers", flush=True)
-    parts = []
-    for i in range(0, len(tks), 200):
-        raw = yf.download(tks[i:i + 200], start="2013-06-01", auto_adjust=True, progress=False, threads=True)
-        parts.append(raw["Close"] if isinstance(raw.columns, pd.MultiIndex) else raw[["Close"]].rename(
-            columns={"Close": tks[i]}))
-    px = pd.concat(parts, axis=1)
+    got = {}
+    for rnd, wait in enumerate((0, 180, 600, 1200)):  # Yahoo rate-limits bursts: small batches, long back-off
+        miss = [t for t in tks if t not in got]
+        if not miss:
+            break
+        time.sleep(wait)
+        for i in range(0, len(miss), 40):
+            chunk = miss[i:i + 40]
+            raw = yf.download(chunk, start="2013-06-01", auto_adjust=True, progress=False, threads=False)
+            if raw is None or raw.empty:
+                continue
+            close = raw["Close"] if isinstance(raw.columns, pd.MultiIndex) else raw[["Close"]].rename(
+                columns={"Close": chunk[0]})
+            for t in close.columns[close.notna().any()]:
+                got[t] = close[t]
+            time.sleep(4)
+        print(f"  round {rnd + 1}: {len(got):,} of {len(tks):,} tickers priced", flush=True)
+    if "SPY" not in got:
+        raise RuntimeError("no SPY prices: Yahoo still rate-limiting; rerun later")
+    px = pd.concat(got, axis=1)
     px = px.loc[:, px.notna().sum() > 20].dropna(subset=["SPY"]).sort_index()
     px.index = pd.DatetimeIndex(px.index).tz_localize(None)
     print(f"prices: {px.shape[1]:,} tickers with data, {px.index[0].date()} to {px.index[-1].date()}")
