@@ -1,0 +1,140 @@
+[
+ {
+  "cik": "0001067983",
+  "name": "Berkshire Hathaway Inc",
+  "short": "Berkshire",
+  "person": "Warren Buffett (Chairman Emeritus since 2026-09-18) and Greg Abel (CEO since 2026-01-01)"
+ },
+ {
+  "cik": "0001336528",
+  "name": "Pershing Square Capital Management, L.P.",
+  "short": "Pershing",
+  "person": "Bill Ackman"
+ },
+ {
+  "cik": "0001649339",
+  "name": "Scion Asset Management, LLC",
+  "short": "Scion",
+  "person": "Michael Burry"
+ },
+ {
+  "cik": "0001350694",
+  "name": "Bridgewater Associates, LP",
+  "short": "Bridgewater",
+  "person": "founded by Ray Dalio"
+ },
+ {
+  "cik": "0001697748",
+  "name": "ARK Investment Management LLC",
+  "short": "ARK",
+  "person": "Cathie Wood"
+ },
+ {
+  "cik": "0001536411",
+  "name": "Duquesne Family Office LLC",
+  "short": "Duquesne",
+  "person": "Stanley Druckenmiller"
+ },
+ {
+  "cik": "0001656456",
+  "name": "Appaloosa LP",
+  "short": "Appaloosa",
+  "person": "David Tepper"
+ },
+ {
+  "cik": "0001061768",
+  "name": "Baupost Group LLC/MA",
+  "short": "Baupost",
+  "person": "Seth Klarman"
+ },
+ {
+  "cik": "0001040273",
+  "name": "Third Point LLC",
+  "short": "ThirdPoint",
+  "person": "Dan Loeb"
+ },
+ {
+  "cik": "0001709323",
+  "name": "Himalaya Capital Management LLC",
+  "short": "Himalaya",
+  "person": "Li Lu"
+ },
+ {
+  "cik": "0000921669",
+  "name": "Icahn Carl C",
+  "short": "Icahn",
+  "person": "Carl Icahn"
+ },
+ {
+  "cik": "0001029160",
+  "name": "Soros Fund Management LLC",
+  "short": "Soros",
+  "person": "George Soros (family office)"
+ },
+ {
+  "cik": "0001037389",
+  "name": "Renaissance Technologies LLC",
+  "short": "Renaissance",
+  "person": "founded by Jim Simons"
+ },
+ {
+  "cik": "0001167483",
+  "name": "Tiger Global Management LLC",
+  "short": "TigerGlobal",
+  "person": "Chase Coleman"
+ },
+ {
+  "cik": "0001135730",
+  "name": "Coatue Management LLC",
+  "short": "Coatue",
+  "person": "Philippe Laffont"
+ },
+ {
+  "cik": "0001061165",
+  "name": "Lone Pine Capital LLC",
+  "short": "LonePine",
+  "person": "founded by Stephen Mandel"
+ },
+ {
+  "cik": "0001791786",
+  "name": "Elliott Investment Management L.P.",
+  "short": "Elliott",
+  "person": "founded by Paul Singer"
+ },
+ {
+  "cik": "0001569205",
+  "name": "Fundsmith LLP",
+  "short": "Fundsmith",
+  "person": "Terry Smith"
+ },
+ {
+  "cik": "0001096343",
+  "name": "Markel Group Inc.",
+  "short": "Markel",
+  "person": "Tom Gayner"
+ },
+ {
+  "cik": "0001166559",
+  "name": "Gates Foundation Trust",
+  "short": "Gates",
+  "person": "Bill & Melinda Gates Foundation Trust"
+ },
+ {
+  "cik": "0001549575",
+  "name": "Dalal Street, LLC",
+  "short": "Pabrai",
+  "person": "Mohnish Pabrai"
+ },
+ {
+  "cik": "0001112520",
+  "name": "Akre Capital Management LLC",
+  "short": "Akre",
+  "person": "founded by Chuck Akre"
+ },
+ {
+  "cik": "0000949509",
+  "name": "Oaktree Capital Management LP",
+  "short": "Oaktree",
+  "person": "Howard Marks"
+ }
+]

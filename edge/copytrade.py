@@ -1,0 +1,206 @@
+"""Round 8 data: 13F holdings (SEC EDGAR) and House trade disclosures (House Clerk).
+
+See PROTOCOL_ROUND8.md. Primary sources only. Network calls identify this
+project in the User-Agent, as SEC requires.
+"""
+import io
+import json
+import re
+import subprocess
+import tempfile
+import time
+import xml.etree.ElementTree as ET
+import zipfile
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+import pandas as pd
+import requests
+
+UA = {"User-Agent": "ryofencellc-collab CLAUDE research (github.com/ryofencellc-collab/CLAUDE)"}
+_s = requests.Session()
+_s.headers.update(UA)
+TOP_N = 20  # holdings kept per filing
+
+
+def _get(url, tries=5, **kw):
+    for i in range(tries):
+        try:
+            r = _s.get(url, timeout=60, **kw)
+            if r.status_code == 200:
+                return r
+            if r.status_code in (403, 404):
+                return r
+        except requests.RequestException:
+            pass
+        time.sleep(1.5 * 2 ** i)
+    return None
+
+
+# ------------------------------------------------------------------ 13F
+
+def _filings(cik: str) -> list[dict]:
+    base = "https://data.sec.gov/submissions/"
+    r = _get(f"{base}CIK{int(cik):010d}.json")
+    j = r.json()
+    blocks = [j["filings"]["recent"]] + [_get(base + f["name"]).json() for f in j["filings"].get("files", [])]
+    out = []
+    for b in blocks:
+        for acc, form, filed, period in zip(b["accessionNumber"], b["form"], b["filingDate"], b["reportDate"]):
+            if form == "13F-HR":
+                out.append(dict(accession=acc, filed=filed, period=period))
+    return out
+
+
+def _info_table(cik: str, acc: str) -> pd.DataFrame:
+    folder = f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc.replace('-', '')}"
+    idx = _get(f"{folder}/index.json")
+    if idx is None or idx.status_code != 200:
+        return pd.DataFrame()
+    items = idx.json()["directory"]["item"]
+    xmls = [i for i in items if i["name"].lower().endswith(".xml") and i["name"].lower() != "primary_doc.xml"]
+    if not xmls:
+        return pd.DataFrame()
+    name = max(xmls, key=lambda i: int(i.get("size") or 0))["name"]
+    time.sleep(0.15)
+    r = _get(f"{folder}/{name}")
+    if r is None or r.status_code != 200:
+        return pd.DataFrame()
+    root = ET.fromstring(r.content)
+    rows = []
+    for it in root.iter():
+        if not it.tag.endswith("infoTable"):
+            continue
+        f = {c.tag.split("}")[-1]: c for c in it.iter()}
+        if "putCall" in f and (f["putCall"].text or "").strip():
+            continue  # options, not stock
+        rows.append(dict(cusip=(f["cusip"].text or "").strip().upper(),
+                         issuer=(f["nameOfIssuer"].text or "").strip(),
+                         value=float(f["value"].text or 0),
+                         shares=float(f["sshPrnamt"].text or 0) if "sshPrnamt" in f else 0.0))
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    return df.groupby(["cusip", "issuer"], as_index=False)[["value", "shares"]].sum()
+
+
+def fetch_13f(cik: str, name: str) -> pd.DataFrame:
+    parts = []
+    for f in _filings(cik):
+        if f["filed"] < "2013-10-01":
+            continue
+        t = _info_table(cik, f["accession"])
+        time.sleep(0.15)
+        if t.empty:
+            continue
+        t = t.sort_values("value", ascending=False).head(TOP_N)
+        t["weight"] = t["value"] / t["value"].sum()   # within top 20; units changed in 2023, weights don't care
+        t["rank"] = range(1, len(t) + 1)
+        parts.append(t.assign(cik=cik, fund=name, **f))
+    df = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+    print(f"  {name}: {len(parts)} filings, {len(df)} rows", flush=True)
+    return df
+
+
+def figi_map(cusips: list[str]) -> dict[str, str]:
+    """CUSIP -> Yahoo ticker via OpenFIGI (no key: 10 ids per request, 25 requests a minute)."""
+    out = {}
+    for i in range(0, len(cusips), 10):
+        chunk = cusips[i:i + 10]
+        body = [{"idType": "ID_CUSIP", "idValue": c, "exchCode": "US"} for c in chunk]
+        for attempt in range(5):
+            r = requests.post("https://api.openfigi.com/v3/mapping", json=body, timeout=60)
+            if r.status_code == 429:
+                time.sleep(10)
+                continue
+            break
+        if r.status_code == 200:
+            for c, res in zip(chunk, r.json()):
+                data = res.get("data") or []
+                if data and data[0].get("ticker"):
+                    out[c] = data[0]["ticker"].replace("/", "-").replace(" ", "-")
+        time.sleep(2.5)
+    return out
+
+
+# ------------------------------------------------------------------ Congress (House PTRs)
+
+CLERK = "https://disclosures-clerk.house.gov/public_disc"
+TX_START = re.compile(r"\s(P|S \(partial\)|S|E)\s+(\d{2}/\d{2}/\d{4})\s+(\d{2}/\d{2}/\d{4})\s+(.*)$")
+TICKER = re.compile(r"\(([A-Z][A-Z0-9.\-]{0,6})\)\s*\[([A-Z]{2})\]")
+AMOUNT = re.compile(r"\$([\d,]+)\s*-\s*\$([\d,]+)|Over \$([\d,]+)")
+
+
+def _index(year: int) -> pd.DataFrame:
+    r = _get(f"{CLERK}/financial-pdfs/{year}FD.zip")
+    with zipfile.ZipFile(io.BytesIO(r.content)) as z:
+        xml = z.read(next(n for n in z.namelist() if n.lower().endswith(".xml")))
+    rows = []
+    for m in ET.fromstring(xml).iter("Member"):
+        g = {c.tag: (c.text or "").strip() for c in m}
+        if g.get("FilingType") == "P" and g.get("DocID", "").startswith("2"):  # electronic PTRs only
+            rows.append(dict(doc_id=g["DocID"], member=f"{g.get('First', '')} {g.get('Last', '')}".strip(),
+                             last=g.get("Last", ""), district=g.get("StateDst", ""),
+                             filed=pd.to_datetime(g.get("FilingDate"), errors="coerce")))
+    return pd.DataFrame(rows)
+
+
+def parse_ptr_text(text: str) -> list[dict]:
+    lines = text.splitlines()
+    starts = [i for i, ln in enumerate(lines) if TX_START.search(ln)]
+    out = []
+    for k, i in enumerate(starts):
+        block = lines[i:(starts[k + 1] if k + 1 < len(starts) else min(i + 6, len(lines)))][:6]
+        m = TX_START.search(lines[i])
+        btxt = " ".join(block)
+        t = TICKER.search(btxt)
+        if not t:
+            continue
+        lo = hi = None
+        rest = m.group(4)
+        a = AMOUNT.search(rest)
+        if a and a.group(3):
+            lo = hi = float(a.group(3).replace(",", ""))
+        elif a:
+            lo, hi = float(a.group(1).replace(",", "")), float(a.group(2).replace(",", ""))
+        else:
+            half = re.search(r"\$([\d,]+)\s*-\s*$", rest)  # range split over two lines
+            if half:
+                lo = float(half.group(1).replace(",", ""))
+                for ln in block[1:]:
+                    nxt = re.search(r"^\s*\S.*?\s{2,}\$([\d,]+)\s*$|^\s+\$([\d,]+)\s*$", ln)
+                    if nxt:
+                        hi = float((nxt.group(1) or nxt.group(2)).replace(",", ""))
+                        break
+        owner = re.match(r"\s*(SP|JT|DC)\s", lines[i])
+        out.append(dict(type=m.group(1).split()[0], tx_date=m.group(2), ticker=t.group(1), asset_type=t.group(2),
+                        owner=owner.group(1) if owner else "",
+                        amount_low=lo, amount_high=hi))
+    return out
+
+
+def _ptr(year: int, doc_id: str) -> list[dict]:
+    r = _get(f"{CLERK}/ptr-pdfs/{year}/{doc_id}.pdf")
+    if r is None or r.status_code != 200 or not r.content.startswith(b"%PDF"):
+        return []
+    with tempfile.NamedTemporaryFile(suffix=".pdf") as f:
+        f.write(r.content)
+        f.flush()
+        try:
+            text = subprocess.run(["pdftotext", "-layout", f.name, "-"], capture_output=True, timeout=60).stdout
+        except (OSError, subprocess.SubprocessError):
+            return []
+    return parse_ptr_text(text.decode("utf-8", "replace"))
+
+
+def fetch_congress_year(year: int) -> pd.DataFrame:
+    idx = _index(year)
+    with ThreadPoolExecutor(6) as ex:
+        trades = list(ex.map(lambda d: _ptr(year, d), idx["doc_id"]))
+    rows = [dict(r, **m) for m, ts in zip(idx.to_dict("records"), trades) for r in ts]
+    df = pd.DataFrame(rows)
+    if len(df):
+        df["tx_date"] = pd.to_datetime(df["tx_date"], format="%m/%d/%Y", errors="coerce")
+    print(f"  {year}: {len(idx)} electronic PTRs, {len(df)} transactions, "
+          f"{int((df['asset_type'] == 'ST').sum()) if len(df) else 0} stock trades", flush=True)
+    return df

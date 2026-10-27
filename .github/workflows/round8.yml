@@ -1,0 +1,106 @@
+name: round8
+# Round 8 (PROTOCOL_ROUND8.md): copy 13F funds and House stock purchases.
+# Fresh data: fetch 13Fs and PTRs in parallel, map and price them, run dev.
+# Re-run dev on old data: dispatch with data_run = the run id that built it.
+on:
+  push:
+    paths: [".github/workflows/round8.yml"]
+  workflow_dispatch:
+    inputs:
+      data_run: {description: "run id holding the r8-data artifact (blank = fetch fresh)", default: ""}
+      mode: {description: "dev or final", default: "dev"}
+permissions:
+  actions: read
+  contents: write
+concurrency: round8
+jobs:
+  list:
+    if: ${{ !inputs.data_run }}
+    runs-on: ubuntu-latest
+    outputs:
+      ciks: ${{ steps.s.outputs.ciks }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - id: s
+        run: echo "ciks=$(python run_round8.py list13f)" >> "$GITHUB_OUTPUT"
+  f13:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 3          # SEC asks for <= 10 requests a second in total
+      matrix:
+        cik: ${{ fromJson(needs.list.outputs.ciks) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round8.py fetch13f ${{ matrix.cik }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r8-13f-${{ matrix.cik }}", path: data/r8/}
+  ptr:
+    if: ${{ !inputs.data_run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        year: [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: sudo apt-get install -y -q poppler-utils && pip install -r requirements.txt
+      - run: python run_round8.py fetchptr ${{ matrix.year }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r8-ptr-${{ matrix.year }}", path: data/r8/}
+  prices:
+    needs: [f13, ptr]
+    if: ${{ always() && !inputs.data_run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r8-*", path: data/r8, merge-multiple: true}
+      - run: ls data/r8 && python run_round8.py prices
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r8-data
+          path: |
+            data/r8/holdings.pkl
+            data/r8/congress.pkl
+            data/r8/prices.pkl
+  analyse:
+    needs: prices
+    if: ${{ always() && (needs.prices.result == 'success' || inputs.data_run) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: r8-data
+          path: data/r8
+          run-id: ${{ inputs.data_run || github.run_id }}
+          github-token: ${{ github.token }}
+      - run: python run_round8.py ${{ inputs.mode || 'dev' }}
+      - name: Commit report and trial log
+        run: |
+          git config user.name "round8 bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add reports/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "round8: ${{ inputs.mode || 'dev' }} results (run ${{ github.run_id }})"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
