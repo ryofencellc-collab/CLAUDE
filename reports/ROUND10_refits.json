@@ -1,0 +1,62 @@
+[
+ {
+  "refit": "2021-01-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol30",
+  "train_sharpe": 3.02
+ },
+ {
+  "refit": "2021-07-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol30",
+  "train_sharpe": 2.93
+ },
+ {
+  "refit": "2022-01-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol30",
+  "train_sharpe": 2.62
+ },
+ {
+  "refit": "2022-07-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol30",
+  "train_sharpe": 2.12
+ },
+ {
+  "refit": "2023-01-01",
+  "chosen": "all-sma100-gate-vol20",
+  "train_sharpe": 1.75
+ },
+ {
+  "refit": "2023-07-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol20",
+  "train_sharpe": 1.83
+ },
+ {
+  "refit": "2024-01-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol20",
+  "train_sharpe": 1.84
+ },
+ {
+  "refit": "2024-07-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol20",
+  "train_sharpe": 1.87
+ },
+ {
+  "refit": "2025-01-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol20",
+  "train_sharpe": 1.75
+ },
+ {
+  "refit": "2025-07-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol20",
+  "train_sharpe": 1.66
+ },
+ {
+  "refit": "2026-01-01",
+  "chosen": "BTC+ETH-sma50-gate-vol30",
+  "train_sharpe": 1.59
+ },
+ {
+  "refit": "2026-07-01",
+  "chosen": "BTC+ETH-sma50-gate-vol40",
+  "train_sharpe": 1.44
+ }
+]
