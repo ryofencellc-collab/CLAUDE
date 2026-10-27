@@ -89,3 +89,7 @@ seen, using the unchanged procedure (`edge/paper13.py`):
 - These thresholds are fixed now. A 6-month result is too short to prove an
   edge on its own; its job is to catch errors and regime breaks before any
   real money is used.
+- Note (2026-10-27): the first ledger row was booked by a manual run at
+  21:03 UTC, before that day's crypto bar closed. Its starting crypto sizes
+  therefore used an intraday BTC/ETH price. No return was booked on that row.
+  Every scheduled run is at 00:23 UTC, as specified.
