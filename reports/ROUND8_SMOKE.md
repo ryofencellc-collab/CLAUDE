@@ -1,8 +1,8 @@
 # Round 8 SMOKE TEST (pipeline check: 2019-2020 filings, 60 tickers; not results)
 
-Run 2026-10-27T16:35:52+00:00. Sealed data (2022 onward) was cut before any calculation. Distinct dev configs logged so far: 0 (each adds to the trial count for the final test).
+Run 2026-10-27T16:44:26+00:00. Sealed data (2022 onward) was cut before any calculation. Distinct dev configs logged so far: 0 (each adds to the trial count for the final test).
 
-13F: no data yet (SEC blocks GitHub's servers; to be fetched from the owner's computer). Congress: 4,060 parsed transactions from 582 reports, 2,055 purchases, 81 members.
+13F: no data yet (SEC rate-limits GitHub's servers; sec13f.yml retries hourly). Congress: 4,060 parsed transactions from 582 reports, 2,055 purchases, 81 members.
 
 Columns: CAGR of the strategy and of SPY over the same days; excess = annual return over SPY; IR = information ratio (pass needs ≥ 0.5 in the sealed period); excess MDD = worst drop of the strategy relative to SPY; $1000 = what $1,000 grew to.
 
