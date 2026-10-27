@@ -1,0 +1,44 @@
+name: sec13f
+# Fetch the 23 funds' 13F filings from SEC EDGAR, politely and resumably.
+# GitHub's shared runner addresses often hit the SEC's rate threshold because
+# of other users' traffic. On a 403 this job stops at once and waits for its
+# next scheduled run, as the SEC asks. Finished funds are committed to
+# cache13f/, so progress accumulates. When the last fund lands, it starts the
+# round8 workflow, which prices everything and runs the dev analysis.
+on:
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/sec13f.yml"]
+permissions:
+  contents: write
+  actions: write
+concurrency: sec13f
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Done already?
+        id: done
+        run: test -f cache13f/COMPLETE && echo "yes=1" >> "$GITHUB_OUTPUT" || true
+      - uses: actions/setup-python@v5
+        if: ${{ !steps.done.outputs.yes }}
+        with: {python-version: "3.12"}
+      - if: ${{ !steps.done.outputs.yes }}
+        run: pip install -r requirements.txt && python run_round8.py sec13f
+      - name: Commit cache
+        if: ${{ !steps.done.outputs.yes }}
+        run: |
+          git config user.name "sec13f bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add cache13f/ || true
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -m "sec13f: cache $(ls cache13f/13f_*.pkl | wc -l) of 23 funds"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+      - name: Start Round 8 analysis when complete
+        if: ${{ !steps.done.outputs.yes && hashFiles('cache13f/COMPLETE') != '' }}
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: gh workflow run round8.yml --ref "${{ github.ref_name }}"

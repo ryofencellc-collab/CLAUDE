@@ -41,13 +41,24 @@ def _get(url, tries=5, **kw):
 
 # ------------------------------------------------------------------ 13F
 
+class SecBlocked(RuntimeError):
+    """SEC answered 403 (rate threshold). Stop and try again on a later schedule, never at once."""
+
+
+def _sec(url):
+    r = _get(url, tries=3)
+    if r is not None and r.status_code == 403:
+        raise SecBlocked(url)
+    return r
+
+
 def _filings(cik: str) -> list[dict]:
     base = "https://data.sec.gov/submissions/"
-    r = _get(f"{base}CIK{int(cik):010d}.json")
+    r = _sec(f"{base}CIK{int(cik):010d}.json")
     if r is None or r.status_code != 200:
         raise RuntimeError(f"SEC submissions for {cik}: {None if r is None else (r.status_code, r.text[:200])}")
     j = r.json()
-    blocks = [j["filings"]["recent"]] + [_get(base + f["name"]).json() for f in j["filings"].get("files", [])]
+    blocks = [j["filings"]["recent"]] + [_sec(base + f["name"]).json() for f in j["filings"].get("files", [])]
     out = []
     for b in blocks:
         for acc, form, filed, period in zip(b["accessionNumber"], b["form"], b["filingDate"], b["reportDate"]):
@@ -58,7 +69,7 @@ def _filings(cik: str) -> list[dict]:
 
 def _info_table(cik: str, acc: str) -> pd.DataFrame:
     folder = f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc.replace('-', '')}"
-    idx = _get(f"{folder}/index.json")
+    idx = _sec(f"{folder}/index.json")
     if idx is None or idx.status_code != 200:
         return pd.DataFrame()
     items = idx.json()["directory"]["item"]
@@ -67,7 +78,7 @@ def _info_table(cik: str, acc: str) -> pd.DataFrame:
         return pd.DataFrame()
     name = max(xmls, key=lambda i: int(i.get("size") or 0))["name"]
     time.sleep(0.15)
-    r = _get(f"{folder}/{name}")
+    r = _sec(f"{folder}/{name}")
     if r is None or r.status_code != 200:
         return pd.DataFrame()
     root = ET.fromstring(r.content)

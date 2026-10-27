@@ -31,13 +31,34 @@ def fetch13f(cik):
     ct.fetch_13f(cik, name).to_pickle(DATA / f"13f_{cik}.pkl")
 
 
+CACHE13F = Path("cache13f")  # committed: survives between the scheduled SEC attempts
+
+
+def sec13f():
+    """One polite pass over the funds not fetched yet. Stops at the first SEC 403."""
+    CACHE13F.mkdir(exist_ok=True)
+    todo = [f for f in FILERS if not (CACHE13F / f"13f_{f['cik']}.pkl").exists()]
+    print(f"{len(FILERS) - len(todo)} of {len(FILERS)} funds cached; fetching {len(todo)}", flush=True)
+    for f in todo:
+        try:
+            df = ct.fetch_13f(f["cik"], f["name"])
+        except ct.SecBlocked as e:
+            print(f"SEC rate threshold at {e}; stopping until the next scheduled attempt", flush=True)
+            break
+        df.to_pickle(CACHE13F / f"13f_{f['cik']}.pkl")
+    left = sum(not (CACHE13F / f"13f_{f['cik']}.pkl").exists() for f in FILERS)
+    print(f"funds still missing: {left}")
+    if left == 0 and todo:
+        Path("cache13f/COMPLETE").write_text(pd.Timestamp.now(tz="UTC").isoformat())
+
+
 def fetchptr(year):
     ct.fetch_congress_year(int(year)).to_pickle(DATA / f"ptr_{year}.pkl")
 
 
 def prices():
     import yfinance as yf
-    files = list(DATA.glob("13f_*.pkl"))
+    files = list(DATA.glob("13f_*.pkl")) + list(Path("cache13f").glob("13f_*.pkl"))
     h = pd.concat([pd.read_pickle(p) for p in files], ignore_index=True) if files else pd.DataFrame(
         columns=["cik", "fund", "accession", "filed", "period", "cusip", "issuer", "value", "shares", "weight", "rank"])
     cus = sorted(h["cusip"].unique())
@@ -210,4 +231,4 @@ if __name__ == "__main__":
     if mode == "list13f":
         print(json.dumps([f["cik"] for f in FILERS]))
     else:
-        {"fetch13f": fetch13f, "fetchptr": fetchptr, "prices": prices, "dev": dev, "final": final}[mode](*sys.argv[2:])
+        {"fetch13f": fetch13f, "sec13f": sec13f, "fetchptr": fetchptr, "prices": prices, "dev": dev, "final": final}[mode](*sys.argv[2:])

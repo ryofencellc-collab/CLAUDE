@@ -1,6 +1,6 @@
 name: round8
 # Round 8 (PROTOCOL_ROUND8.md): copy 13F funds and House stock purchases.
-# Fresh data: fetch 13Fs and PTRs in parallel, map and price them, run dev.
+# Fresh data: fetch PTRs in parallel, add the 13Fs cached by sec13f.yml, map and price, run dev.
 # Re-run dev on old data: dispatch with data_run = the run id that built it.
 on:
   push:
@@ -15,35 +15,6 @@ permissions:
   contents: write
 concurrency: round8
 jobs:
-  list:
-    if: ${{ !inputs.data_run && !inputs.fetch_run }}
-    runs-on: ubuntu-latest
-    outputs:
-      ciks: ${{ steps.s.outputs.ciks }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: {python-version: "3.12"}
-      - run: pip install -r requirements.txt
-      - id: s
-        run: echo "ciks=$(python run_round8.py list13f)" >> "$GITHUB_OUTPUT"
-  f13:
-    needs: list
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      max-parallel: 3          # SEC asks for <= 10 requests a second in total
-      matrix:
-        cik: ${{ fromJson(needs.list.outputs.ciks) }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: {python-version: "3.12"}
-      - run: pip install -r requirements.txt
-      - run: python run_round8.py fetch13f ${{ matrix.cik }}
-      - uses: actions/upload-artifact@v4
-        with: {name: "r8-13f-${{ matrix.cik }}", path: data/r8/}
   ptr:
     if: ${{ !inputs.data_run && !inputs.fetch_run }}
     runs-on: ubuntu-latest
@@ -62,7 +33,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with: {name: "r8-ptr-${{ matrix.year }}", path: data/r8/}
   prices:
-    needs: [f13, ptr]
+    needs: [ptr]
     if: ${{ always() && !inputs.data_run }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
