@@ -1,0 +1,22 @@
+name: probe-sec
+# One request per SEC host, to read why EDGAR answers 403 from GitHub runners.
+on:
+  push:
+    paths: [".github/workflows/probe_sec.yml"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          UA="ryofencellc-collab-research 265339802+ryofencellc-collab@users.noreply.github.com"
+          echo "runner IP: $(curl -sS -m 10 https://api.ipify.org)"
+          for u in https://data.sec.gov/submissions/CIK0001067983.json \
+                   https://www.sec.gov/Archives/edgar/data/1067983/ \
+                   https://www.sec.gov/files/company_tickers.json; do
+            echo "== $u"
+            curl -sS -m 30 -A "$UA" -H "Accept-Encoding: gzip, deflate" --compressed -o body -w "HTTP %{http_code}\n" "$u"
+            sed -e 's/<[^>]*>/ /g' body | tr -s ' \n' | head -c 900; echo
+            sleep 2
+          done
