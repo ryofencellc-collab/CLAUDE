@@ -17,7 +17,9 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-UA = {"User-Agent": "ryofencellc-collab CLAUDE research (github.com/ryofencellc-collab/CLAUDE)"}
+# SEC asks for "Company Name contact@domain"; a GitHub no-reply address keeps it impersonal
+UA = {"User-Agent": "ryofencellc-collab-research 265339802+ryofencellc-collab@users.noreply.github.com",
+      "Accept-Encoding": "gzip, deflate"}
 _s = requests.Session()
 _s.headers.update(UA)
 TOP_N = 20  # holdings kept per filing
@@ -42,6 +44,8 @@ def _get(url, tries=5, **kw):
 def _filings(cik: str) -> list[dict]:
     base = "https://data.sec.gov/submissions/"
     r = _get(f"{base}CIK{int(cik):010d}.json")
+    if r is None or r.status_code != 200:
+        raise RuntimeError(f"SEC submissions for {cik}: {None if r is None else (r.status_code, r.text[:200])}")
     j = r.json()
     blocks = [j["filings"]["recent"]] + [_get(base + f["name"]).json() for f in j["filings"].get("files", [])]
     out = []
