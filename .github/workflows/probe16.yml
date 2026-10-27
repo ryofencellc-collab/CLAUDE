@@ -1,0 +1,46 @@
+name: probe16
+# Data check for Round 16: same game on Kalshi and Polymarket, live order books.
+on:
+  push:
+    paths: [".github/workflows/probe16.yml"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Kalshi and Polymarket sports markets
+        continue-on-error: true
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse
+          def get(u):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as r:
+                      return json.load(r)
+              except Exception as e:
+                  return {"error": str(e)}
+          K = "https://api.elections.kalshi.com/trade-api/v2"
+          for s in ["KXNFLGAME", "KXNBAGAME", "KXMLBGAME", "KXNHLGAME", "KXNCAAFGAME", "KXEPLGAME", "KXUFCFIGHT"]:
+              j = get(f"{K}/markets?series_ticker={s}&status=open&limit=200")
+              ms = j.get("markets", [])
+              print(f"KALSHI {s}: {len(ms)} open", j.get("error", ""))
+              for m in ms[:3]:
+                  print("   ", m["ticker"], "|", m.get("title"), "|", m.get("yes_sub_title"), "| ask", m.get("yes_ask_dollars"), "bid", m.get("yes_bid_dollars"), "| close", m.get("close_time"))
+          if ms:
+              ob = get(f"{K}/markets/{ms[0]['ticker']}/orderbook")
+              print("KALSHI orderbook sample:", json.dumps(ob)[:400])
+          G = "https://gamma-api.polymarket.com"
+          for tag in ["nfl", "nba", "mlb", "nhl", "ncaaf", "epl", "ufc", "sports"]:
+              j = get(f"{G}/events?tag_slug={tag}&active=true&closed=false&limit=100")
+              evs = j if isinstance(j, list) else []
+              print(f"POLY {tag}: {len(evs)} events", "" if isinstance(j, list) else j)
+              for e in evs[:3]:
+                  mk = e.get("markets", [])
+                  print("   ", e.get("slug"), "|", e.get("title"), "| markets", len(mk), "|", (mk[0].get("outcomes"), mk[0].get("outcomePrices"), mk[0].get("clobTokenIds", "")[:80]) if mk else "")
+          evs = get(f"{G}/events?tag_slug=nfl&active=true&closed=false&limit=5")
+          if isinstance(evs, list) and evs and evs[0].get("markets"):
+              tok = json.loads(evs[0]["markets"][0]["clobTokenIds"])[0]
+              print("POLY book sample:", json.dumps(get(f"https://clob.polymarket.com/book?token_id={tok}"))[:400])
+              print("POLY fee info:", {k: evs[0]["markets"][0].get(k) for k in ("feesEnabled", "makerBaseFee", "takerBaseFee", "feeType")})
+          PY
