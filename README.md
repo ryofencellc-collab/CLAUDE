@@ -53,4 +53,6 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 10 | Crypto trend gate + volatility limit (72 configs, walk-forward) | **FAIL**: Sharpe 0.85, worst drop −34% (vs BTC −77%): [ROUND10.md](reports/ROUND10.md) |
 | 11 | Multi-asset trend, risk-balanced (24 configs, OOS 2012+) | **FAIL**: Sharpe 0.75 vs SPY 0.93, worst drop only −17%: [ROUND11.md](reports/ROUND11.md) |
 | 12 | SPY core + crypto trend sleeve (18 configs, OOS 2016+) | **FAIL (5 of 6)**: $1,000 → $6,434 vs SPY $4,489, Sharpe 1.28, worst drop −24.9%; missed only deflated Sharpe 0.905 < 0.95: [ROUND12.md](reports/ROUND12.md) |
+| 13 | SPY core + multi-asset trend + crypto trend (24 configs, OOS 2012+) | **PASS (first in 269 trials)**: Sharpe 1.19 vs SPY 0.93, worst drop −20% vs −34%, deflated Sharpe 0.957; but $1,000 → $6,335 vs SPY $7,913, and the stress audit shows the pass leans on 2017 and 2020: [ROUND13.md](reports/ROUND13.md), [audit](reports/ROUND13_ROBUST.md) |
+| 13-live | Round 13 forward paper test, $10k, daily | **running**: [paper/ROUND13_PAPER.md](paper/ROUND13_PAPER.md); 6-month gate before any real money |
 | Business | Sell the honest report ($9) + done-for-you strategy tests ($49) | ready to launch: [business/LAUNCH.md](business/LAUNCH.md) |
