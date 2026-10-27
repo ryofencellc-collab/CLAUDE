@@ -1,0 +1,683 @@
+[
+ {
+  "refit": "2012-01-01",
+  "gates": [],
+  "inner_path": [
+   "pullback_3d",
+   "vix_below_1y_median",
+   "NOT_vol_below_1y_median",
+   "mom60_up",
+   "vix_contango",
+   "credit_calm"
+  ],
+  "val_sharpe_by_k": [
+   0.44,
+   0.34,
+   -0.72,
+   -0.84,
+   -1.49,
+   -1.49,
+   -0.86
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2012-07-01",
+  "gates": [],
+  "inner_path": [
+   "pullback_3d",
+   "vix_below_1y_median",
+   "NOT_vol_below_1y_median",
+   "mom60_up",
+   "vix_contango",
+   "credit_calm"
+  ],
+  "val_sharpe_by_k": [
+   0.31,
+   0.2,
+   -1.07,
+   -0.98,
+   -1.76,
+   -1.76,
+   -1.43
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2013-01-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "NOT_mom20_up",
+   "credit_calm",
+   "vol_below_1y_median",
+   "mom60_up",
+   "above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   0.93,
+   0.65,
+   0.17,
+   -0.36,
+   -0.36,
+   -0.43,
+   -0.42
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2013-07-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "NOT_mom20_up",
+   "credit_calm",
+   "vol_below_1y_median",
+   "mom60_up",
+   "above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   1.44,
+   1.04,
+   0.03,
+   -0.38,
+   -0.28,
+   -0.4,
+   -0.4
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2014-01-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "NOT_rates_falling",
+   "credit_calm",
+   "vol_falling",
+   "spy_above_sma200",
+   "mom20_up"
+  ],
+  "val_sharpe_by_k": [
+   1.87,
+   1.3,
+   0.57,
+   0.46,
+   0.4,
+   0.4,
+   0.33
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2014-07-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "credit_calm",
+   "vol_below_1y_median",
+   "mom60_up",
+   "NOT_rates_falling",
+   "vol_falling"
+  ],
+  "val_sharpe_by_k": [
+   1.84,
+   1.05,
+   0.89,
+   0.65,
+   0.41,
+   -0.07,
+   -0.09
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2015-01-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "credit_calm",
+   "vol_below_1y_median",
+   "mom60_up",
+   "above_sma100",
+   "NOT_rates_falling"
+  ],
+  "val_sharpe_by_k": [
+   1.62,
+   0.38,
+   0.58,
+   0.43,
+   0.21,
+   0.22,
+   0.17
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2015-07-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "credit_calm",
+   "above_sma100",
+   "mom60_up",
+   "vol_below_1y_median",
+   "NOT_rates_falling"
+  ],
+  "val_sharpe_by_k": [
+   1.32,
+   -0.82,
+   -0.56,
+   -0.58,
+   -0.56,
+   -0.62,
+   -0.03
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2016-01-01",
+  "gates": [],
+  "inner_path": [
+   "vix_below_1y_median",
+   "credit_calm",
+   "above_sma100",
+   "mom60_up",
+   "vol_below_1y_median",
+   "NOT_rates_falling"
+  ],
+  "val_sharpe_by_k": [
+   0.62,
+   -1.56,
+   -0.95,
+   -0.86,
+   -0.85,
+   -0.76,
+   0.02
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2016-07-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "vix_below_1y_median",
+   "above_sma100",
+   "above_sma50",
+   "mom20_up",
+   "vol_falling"
+  ],
+  "val_sharpe_by_k": [
+   0.52,
+   0.06,
+   -0.86,
+   -0.8,
+   -0.83,
+   -0.94,
+   -0.72
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2017-01-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "vix_below_1y_median",
+   "NOT_mom60_up",
+   "rates_falling",
+   "turn_of_month"
+  ],
+  "val_sharpe_by_k": [
+   0.63,
+   0.46,
+   -0.39,
+   -1.14,
+   -2.25,
+   -0.34
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2017-07-01",
+  "gates": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "NOT_tlt_above_sma100",
+   "mom60_up"
+  ],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.68,
+   0.7,
+   0.62,
+   1.0,
+   1.08,
+   1.16,
+   1.15
+  ],
+  "k": 5
+ },
+ {
+  "refit": "2018-01-01",
+  "gates": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "mom60_up",
+   "above_sma200",
+   "above_sma100"
+  ],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.95,
+   1.15,
+   1.07,
+   1.28,
+   1.3,
+   1.36,
+   1.37
+  ],
+  "k": 6
+ },
+ {
+  "refit": "2018-07-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   1.36,
+   0.76,
+   0.7,
+   0.62,
+   0.57,
+   0.38,
+   0.37
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2019-01-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   1.02,
+   0.42,
+   0.45,
+   0.37,
+   0.38,
+   0.26,
+   0.28
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2019-07-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "vol_falling",
+   "vol_below_1y_median"
+  ],
+  "val_sharpe_by_k": [
+   1.19,
+   0.37,
+   0.46,
+   0.43,
+   0.42,
+   0.26,
+   0.67
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2020-01-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   1.18,
+   0.4,
+   0.5,
+   0.28,
+   0.26,
+   0.1,
+   0.13
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2020-07-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "above_sma200",
+   "mom60_up",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.47,
+   -0.16,
+   -0.09,
+   -0.15,
+   -0.04,
+   -0.23,
+   -0.2
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2021-01-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "mom60_up",
+   "above_sma200",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.67,
+   0.4,
+   0.47,
+   -0.03,
+   -0.26,
+   -0.14,
+   -0.11
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2021-07-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "mom60_up",
+   "above_sma200",
+   "above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.72,
+   0.56,
+   0.63,
+   -0.24,
+   -0.46,
+   -0.33,
+   -0.3
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2022-01-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "vol_below_1y_median",
+   "vol_falling",
+   "above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   0.81,
+   0.71,
+   0.78,
+   -0.22,
+   -0.6,
+   -0.81,
+   -0.75
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2022-07-01",
+  "gates": [],
+  "inner_path": [
+   "credit_calm",
+   "spy_above_sma200",
+   "NOT_rates_falling",
+   "vol_below_1y_median",
+   "vol_falling",
+   "NOT_tlt_above_sma100"
+  ],
+  "val_sharpe_by_k": [
+   0.5,
+   0.03,
+   0.44,
+   -0.75,
+   -0.46,
+   -0.76,
+   -0.87
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2023-01-01",
+  "gates": [],
+  "inner_path": [
+   "NOT_rates_falling",
+   "vix_contango",
+   "above_sma50",
+   "above_sma100",
+   "mom60_up",
+   "above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   0.59,
+   0.19,
+   0.04,
+   0.17,
+   0.23,
+   0.3,
+   0.26
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2023-07-01",
+  "gates": [
+   "spy_above_sma200"
+  ],
+  "inner_path": [
+   "vix_contango",
+   "above_sma100",
+   "NOT_rates_falling",
+   "above_sma50",
+   "mom60_up",
+   "above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   0.62,
+   0.76,
+   0.62,
+   0.16,
+   0.52,
+   0.61,
+   0.57
+  ],
+  "k": 1
+ },
+ {
+  "refit": "2024-01-01",
+  "gates": [],
+  "inner_path": [
+   "NOT_rates_falling",
+   "vix_contango",
+   "above_sma50",
+   "above_sma100",
+   "mom60_up",
+   "above_sma200"
+  ],
+  "val_sharpe_by_k": [
+   0.64,
+   0.29,
+   0.15,
+   0.29,
+   0.35,
+   0.49,
+   0.45
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2024-07-01",
+  "gates": [],
+  "inner_path": [
+   "spy_above_sma200",
+   "credit_calm",
+   "above_sma200",
+   "NOT_rates_falling",
+   "vix_below_1y_median",
+   "mom60_up"
+  ],
+  "val_sharpe_by_k": [
+   1.17,
+   1.13,
+   0.66,
+   0.78,
+   -0.28,
+   -0.15,
+   -0.08
+  ],
+  "k": 0
+ },
+ {
+  "refit": "2025-01-01",
+  "gates": [
+   "spy_above_sma200"
+  ],
+  "inner_path": [
+   "spy_above_sma200",
+   "credit_calm",
+   "above_sma200",
+   "NOT_rates_falling",
+   "vix_below_1y_median",
+   "mom60_up"
+  ],
+  "val_sharpe_by_k": [
+   0.94,
+   1.05,
+   0.67,
+   0.74,
+   -0.43,
+   -0.11,
+   -0.01
+  ],
+  "k": 1
+ },
+ {
+  "refit": "2025-07-01",
+  "gates": [
+   "spy_above_sma200"
+  ],
+  "inner_path": [
+   "spy_above_sma200",
+   "credit_calm",
+   "above_sma200",
+   "above_sma100",
+   "vix_contango",
+   "NOT_rates_falling"
+  ],
+  "val_sharpe_by_k": [
+   0.81,
+   0.9,
+   0.61,
+   0.61,
+   0.54,
+   0.41,
+   -0.31
+  ],
+  "k": 1
+ },
+ {
+  "refit": "2026-01-01",
+  "gates": [
+   "spy_above_sma200"
+  ],
+  "inner_path": [
+   "spy_above_sma200",
+   "credit_calm",
+   "above_sma200",
+   "above_sma100",
+   "mom60_up",
+   "vix_contango"
+  ],
+  "val_sharpe_by_k": [
+   0.74,
+   0.81,
+   0.42,
+   0.41,
+   0.35,
+   0.53,
+   0.43
+  ],
+  "k": 1
+ },
+ {
+  "refit": "2026-07-01",
+  "gates": [
+   "spy_above_sma200"
+  ],
+  "inner_path": [
+   "spy_above_sma200",
+   "credit_calm",
+   "above_sma200",
+   "above_sma100",
+   "mom60_up",
+   "vix_contango"
+  ],
+  "val_sharpe_by_k": [
+   0.82,
+   0.85,
+   0.64,
+   0.59,
+   0.59,
+   0.78,
+   0.69
+  ],
+  "k": 1
+ }
+]
