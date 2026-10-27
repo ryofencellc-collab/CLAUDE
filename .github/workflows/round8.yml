@@ -14,7 +14,7 @@ on:
 permissions:
   actions: read
   contents: write
-concurrency: round8
+concurrency: round8-${{ inputs.small || '0' }}  # smoke tests never queue behind a full run
 env:
   R8_SMALL: ${{ inputs.small || '0' }}
 jobs:
