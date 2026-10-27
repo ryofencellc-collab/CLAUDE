@@ -1,0 +1,62 @@
+[
+ {
+  "refit": "2021-01-01",
+  "chosen": "BTC+ETH-sma50-nogate-vol30",
+  "train_sharpe": 3.02
+ },
+ {
+  "refit": "2021-07-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 3.21
+ },
+ {
+  "refit": "2022-01-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 3.23
+ },
+ {
+  "refit": "2022-07-01",
+  "chosen": "top5-sma50-gate-vol40",
+  "train_sharpe": 2.69
+ },
+ {
+  "refit": "2023-01-01",
+  "chosen": "top5-sma100-nogate-vol20",
+  "train_sharpe": 2.11
+ },
+ {
+  "refit": "2023-07-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 2.14
+ },
+ {
+  "refit": "2024-01-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 2.38
+ },
+ {
+  "refit": "2024-07-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 2.28
+ },
+ {
+  "refit": "2025-01-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 2.12
+ },
+ {
+  "refit": "2025-07-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 1.99
+ },
+ {
+  "refit": "2026-01-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 1.89
+ },
+ {
+  "refit": "2026-07-01",
+  "chosen": "top5-sma50-nogate-vol40",
+  "train_sharpe": 1.73
+ }
+]
