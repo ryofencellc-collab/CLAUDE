@@ -40,3 +40,14 @@ def test_opportunities_only_after_decision_and_correct_pnl():
     assert 0 < out[0]["profit_25"] < out[0]["profit_100"]
     wrong = r.opportunities({"ticker": "T"}, "no", known, tr, correct=False)
     assert wrong[0]["profit_100"] < 0
+
+
+def test_maker_mode_counts_losing_side_buyers(monkeypatch):
+    monkeypatch.setattr(r, "MODE", "maker")
+    monkeypatch.setattr(r, "MAX_PRICE", 0.99)
+    known = pd.Timestamp("2026-07-01 18:00", tz="UTC")
+    tr = pd.DataFrame({"time": pd.to_datetime(["2026-07-01 18:05", "2026-07-01 18:06"], utc=True),
+                       "taker_side": ["yes", "no"], "count": [50, 50],
+                       "yes_price": [0.01, 0.01], "no_price": [0.99, 0.99]})
+    out = r.opportunities({"ticker": "T"}, "no", known, tr, correct=True)
+    assert len(out) == 1 and out[0]["price"] == 0.99 and out[0]["profit_100"] > 0

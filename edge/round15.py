@@ -95,11 +95,20 @@ def trades(ticker: str) -> pd.DataFrame:
     return df
 
 
+MODE = __import__("os").environ.get("R15_MODE", "taker")  # "maker" = Round 18: resting bids filled by losing-side buyers
+
+
+def _maker_fee(n, p):
+    import math
+    return math.ceil(0.0175 * n * p * (1 - p) * 100 - 1e-9) / 100
+
+
 def opportunities(m: dict, side: str, known: pd.Timestamp, tr: pd.DataFrame, correct: bool) -> list[dict]:
     if tr.empty:
         return []
     price_col = f"{side}_price"
-    hit = tr[(tr["time"] > known) & (tr["taker_side"] == side) & (tr[price_col] <= MAX_PRICE)]
+    taker = side if MODE == "taker" else ("no" if side == "yes" else "yes")
+    hit = tr[(tr["time"] > known) & (tr["taker_side"] == taker) & (tr[price_col] <= MAX_PRICE)]
     out = []
     for _, x in hit.iterrows():
         p = float(x[price_col])
@@ -109,7 +118,8 @@ def opportunities(m: dict, side: str, known: pd.Timestamp, tr: pd.DataFrame, cor
         for tag, share in (("25", CAPTURE), ("100", 1.0)):
             n = n_all * share
             pay = n * (1.0 if correct else 0.0)
-            row[f"profit_{tag}"] = pay - n * p - wx.fee(n, p) if n > 0 else 0.0
+            fee = wx.fee(n, p) if MODE == "taker" else _maker_fee(n, p)
+            row[f"profit_{tag}"] = pay - n * p - fee if n > 0 else 0.0
         out.append(row)
     return out
 

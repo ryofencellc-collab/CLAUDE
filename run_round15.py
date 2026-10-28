@@ -42,7 +42,8 @@ def report():
     opp = pd.concat([o for o in opps if len(o)], ignore_index=True) if any(len(o) for o in opps) else pd.DataFrame()
     acc = dec["correct"].mean() if len(dec) else float("nan")
     misses = dec[~dec["correct"]]
-    title = "Kalshi weather first-money-in" if TAG == "15" else f"sweep decided weather outcomes at <= {round15.MAX_PRICE:.2f}"
+    title = {"15": "Kalshi weather first-money-in", "18": "resting bids on decided weather outcomes (maker)"}.get(
+        TAG, f"sweep decided weather outcomes at <= {round15.MAX_PRICE:.2f}")
     lines = [f"# Round {TAG}{' SMOKE TEST (New York, 60 days)' if SMALL else ''}: {title}", "",
              f"Rules: [PROTOCOL_ROUND{TAG}.md](../PROTOCOL_ROUND{TAG}.md). Window {START.date()} to {END.date()}.", "",
              f"Decided markets: {len(dec):,} (tradable before close: {int(dec['tradable'].sum()) if len(dec) else 0:,}); "
