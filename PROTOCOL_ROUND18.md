@@ -25,3 +25,39 @@ Round 15. The pass rule is identical to Rounds 15 and 17.
 
 Accuracy and days pass easily. Profit is the question. Lottery tickets are
 small, so I expect roughly $3–$15 a day at 25% capture, short of $2,000 a year.
+
+## Forward test (amendment, 2026-10-28, written after the backtest passed and before any live run)
+
+The backtest can't see queue position: historical order books don't exist, so
+"25% capture" is an assumption. The forward test measures it live, with no money.
+
+**Bot:** `edge/paper18.py`, run every ~10 minutes by `.github/workflows/paper18.yml`.
+
+1. It reads live ASOS reports and finds markets newly decided by Round 15's rule.
+2. It places a paper bid of 1,000 contracts at 99c on the decided side.
+3. At that moment it records the live order-book size already resting at
+   99c or better on that side (the queue ahead).
+4. A later public trade fills us only once it is a taker buying the losing
+   side at 1c, and only after the whole recorded queue ahead is used up.
+   Cancels ahead of us are ignored, which is conservative.
+5. Orders settle on Kalshi's official result. Pnl = filled × (payout − 0.99) −
+   the maker fee.
+
+**Window:** 30 calendar days of settled climate days, starting with the first run.
+
+**Pass rule (all must hold):**
+
+1. No settled filled order lost; every miss is reported in full.
+2. Paper profit ≥ $600 over the 30 days (≈ $20/day, under a third of the
+   backtest's $65.70/day).
+3. Profit on ≥ 60% of days that had any fill.
+4. Fills on ≥ 20 of the 30 days.
+
+**If it passes:** go live small. Up to $1,000 of capital, same rules, scaled
+to what the fills show.
+
+**If it fails:** the queue at 99c is too deep, and Round 18 is not a money printer.
+
+**Prediction:** the queue ahead at 99c will often be large, because existing
+market makers sit there. I expect a fill on some days but under $20/day, so
+probably FAIL on rule 2.

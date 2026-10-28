@@ -57,4 +57,8 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 13-live | Round 13 forward paper test, $10k, daily | **running**: [paper/ROUND13_PAPER.md](paper/ROUND13_PAPER.md); 6-month gate before any real money |
 | 14 | SPY options: 7 Cboe strategy indexes + 4 TikTok-style trades (weekly/0DTE calls, 0DTE condor, weekly puts) | **0/11 pass**: call buying went to $0 despite 11x and 25x winners; condors and put sales won 91% of the time but never beat SPY: [ROUND14.md](reports/ROUND14.md) |
 | 15 | Kalshi weather "first money in" (buy outcomes already decided by station data, 22 cities, 12 months) | **FAIL**: 7,619 decided calls all correct, but prices were already 99c by the time public data confirmed them; $545/yr even at 100% capture: [ROUND15.md](reports/ROUND15.md) |
+| 16 | Kalshi vs Polymarket cross-venue arbitrage | **dropped**: no reliably matched markets with both sides liquid: [ROUND16_NOTE.md](reports/ROUND16_NOTE.md) |
+| 17 | Round 15 at up to 99c (taker) | **FAIL**: only 386 cheap sells of decided outcomes in 12 months: [ROUND17.md](reports/ROUND17.md) |
+| 18 | Rest 99c bids on decided weather outcomes (maker; fills from lottery-ticket buyers) | **PASS (backtest)**: 0 wrong calls in 7,619, profit every one of 365 days, $23,981/yr at an assumed 25% queue share; queue position is unverifiable from history: [ROUND18.md](reports/ROUND18.md) |
+| 18-live | Round 18 forward paper test, live order-book queue measured, every 10 min | **running**: [paper/ROUND18_PAPER.md](paper/ROUND18_PAPER.md); 30-day gate ($600, no losing fills) before real money |
 | Business | Sell the honest report ($9) + done-for-you strategy tests ($49) | ready to launch: [business/LAUNCH.md](business/LAUNCH.md) |
