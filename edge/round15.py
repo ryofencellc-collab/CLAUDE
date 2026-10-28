@@ -21,7 +21,7 @@ STATIONS = {"new york": "NYC", "chicago": "MDW", "miami": "MIA", "austin": "AUS"
             "SAN": "SAN", "TTN": "TTN"}
 IEM = "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py"
 DELAY = pd.Timedelta(minutes=10)
-MAX_PRICE = 0.97
+MAX_PRICE = float(__import__("os").environ.get("R15_MAX_PRICE", "0.97"))
 CAPTURE = 0.25
 MAX_STAKE = 100.0
 

@@ -1,0 +1,63 @@
+name: round17
+# Round 17 (PROTOCOL_ROUND17.md): sweep decided weather outcomes at <=99c (Round 15 pipeline).
+on:
+  workflow_dispatch:
+    inputs:
+      small: {description: "1 = New York, 60 days", default: "1"}
+permissions:
+  contents: write
+concurrency: round17-${{ inputs.small }}
+env:
+  R15_SMALL: ${{ inputs.small }}
+  R15_MAX_PRICE: "0.99"
+  R15_TAG: "17"
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      series: ${{ steps.s.outputs.series }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - id: s
+        run: echo "series=$(python run_round15.py list | tail -1)" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        series: ${{ fromJson(needs.list.outputs.series) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round15.py fetch ${{ matrix.series }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r17-${{ matrix.series }}", path: data/r17/}
+  report:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r17-*", path: data/r17, merge-multiple: true}
+      - run: python run_round15.py report
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round17 bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND17* || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "round17: results (run ${{ github.run_id }}, small=${{ inputs.small }})"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

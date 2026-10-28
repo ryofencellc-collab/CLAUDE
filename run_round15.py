@@ -15,9 +15,10 @@ import pandas as pd
 from edge import round15, weather as wx
 
 SMALL = os.environ.get("R15_SMALL") == "1"
+TAG = os.environ.get("R15_TAG", "15")  # "17" = the 99c sweep (PROTOCOL_ROUND17.md), same pipeline
 END = pd.Timestamp("2026-10-26")
 START = END - pd.Timedelta(days=60 if SMALL else 364)
-DATA = Path("data/r15")
+DATA = Path(f"data/r{TAG}")
 REPORTS = Path("reports")
 
 
@@ -41,8 +42,9 @@ def report():
     opp = pd.concat([o for o in opps if len(o)], ignore_index=True) if any(len(o) for o in opps) else pd.DataFrame()
     acc = dec["correct"].mean() if len(dec) else float("nan")
     misses = dec[~dec["correct"]]
-    lines = [f"# Round 15{' SMOKE TEST (New York, 60 days)' if SMALL else ''}: Kalshi weather first-money-in", "",
-             f"Rules: [PROTOCOL_ROUND15.md](../PROTOCOL_ROUND15.md). Window {START.date()} to {END.date()}.", "",
+    title = "Kalshi weather first-money-in" if TAG == "15" else f"sweep decided weather outcomes at <= {round15.MAX_PRICE:.2f}"
+    lines = [f"# Round {TAG}{' SMOKE TEST (New York, 60 days)' if SMALL else ''}: {title}", "",
+             f"Rules: [PROTOCOL_ROUND{TAG}.md](../PROTOCOL_ROUND{TAG}.md). Window {START.date()} to {END.date()}.", "",
              f"Decided markets: {len(dec):,} (tradable before close: {int(dec['tradable'].sum()) if len(dec) else 0:,}); "
              f"decided calls correct: **{acc:.2%}** ({len(misses)} misses)."]
     if opp.empty:
@@ -72,7 +74,9 @@ def report():
                   f"| Days with an opportunity | {len(daily)} (profitable {(daily > 0).mean():.0%}) |",
                   f"| Last 3 months, 25% capture | ${last3:,.2f} |",
                   f"| Median minutes from decision to cheap trade | {opp['delay_min'].median():.1f} |",
-                  f"| Median price paid | {opp['price'].median():.3f} |", "",
+                  f"| Median price paid | {opp['price'].median():.3f} |",
+                  f"| Average profit per day with an opportunity (25%) | ${daily.mean():,.2f} |",
+                  f"| Contracts available (100%, capped $100/trade) | {(opp['profit_100'] != 0).sum():,} trades |", "",
                   "| Check | Result |", "|---|---|"] + \
                  [f"| {k} | {'yes' if v else '**no**'} |" for k, v in checks.items()] + \
                  ["", "## By city", "", by_city.round(2).to_markdown()]
@@ -92,7 +96,7 @@ def report():
         lines += ["", "## Decided calls that settled the other way", "",
                   misses[["city", "date", "ticker", "side", "result", "floor", "cap"]].to_markdown(index=False)]
     REPORTS.mkdir(exist_ok=True)
-    name = "ROUND15_SMOKE.md" if SMALL else "ROUND15.md"
+    name = f"ROUND{TAG}_SMOKE.md" if SMALL else f"ROUND{TAG}.md"
     (REPORTS / name).write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
