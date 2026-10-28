@@ -2,13 +2,17 @@ name: probe16
 # Data check for Round 16: same game on Kalshi and Polymarket, live order books.
 on:
   push:
-    paths: [".github/workflows/probe16.yml"]
+    paths: [".github/workflows/probe16.yml", "probe16b.py"]
   workflow_dispatch:
 jobs:
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v4
+      - name: Snapshot gaps
+        continue-on-error: true
+        run: python3 probe16b.py
       - name: Kalshi and Polymarket sports markets
         continue-on-error: true
         run: |
