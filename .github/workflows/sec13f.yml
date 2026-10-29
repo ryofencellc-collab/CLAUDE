@@ -6,9 +6,8 @@ name: sec13f
 # cache13f/, so progress accumulates. When the last fund lands, it starts the
 # round8 workflow, which prices everything and runs the dev analysis.
 on:
-  # schedule paused 2026-10-28: Actions jobs are not getting runners (likely minutes used up)
-  # schedule:
-  #   - cron: "41 * * * *"   # hourly: a blocked attempt costs the SEC one request
+  schedule:
+    - cron: "41 * * * *"   # hourly: a blocked attempt costs the SEC one request
   workflow_dispatch:
   push:
     paths: [".github/workflows/sec13f.yml"]

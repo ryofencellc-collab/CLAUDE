@@ -1,9 +1,8 @@
 name: paper18
 # Round 18 forward paper test (PROTOCOL_ROUND18.md, "Forward test").
 on:
-  # schedule paused 2026-10-28: Actions jobs are not getting runners (likely minutes used up)
-  # schedule:
-  #   - cron: "*/10 * * * *"
+  schedule:
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 permissions:
   contents: write
