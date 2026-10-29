@@ -4,7 +4,7 @@ on:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - run: python3 probe19.py
+      - run: python3 probe19b.py
