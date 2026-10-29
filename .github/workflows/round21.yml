@@ -1,0 +1,61 @@
+name: round21
+# Round 21 (PROTOCOL_ROUND21.md): maker bids on crypto markets decided by the spot price.
+on:
+  workflow_dispatch:
+    inputs:
+      small: {description: "1 = two series, 5 days per period", default: "1"}
+permissions:
+  contents: write
+concurrency: round21-${{ inputs.small }}
+env:
+  R21_SMALL: ${{ inputs.small }}
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      series: ${{ steps.s.outputs.series }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - id: s
+        run: echo "series=$(python run_round21.py list | tail -1)" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.small == '1' && 15 || 340 }}
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        series: ${{ fromJson(needs.list.outputs.series) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round21.py fetch ${{ matrix.series }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r21-${{ matrix.series }}", path: data/r21/}
+  report:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r21-*", path: data/r21, merge-multiple: true}
+      - run: python run_round21.py report
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round21 bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND21* || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "round21: results (run ${{ github.run_id }}, small=${{ inputs.small }})"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
