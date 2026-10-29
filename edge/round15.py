@@ -148,13 +148,17 @@ def scan_series(series: str, city: str, tz: str, start: pd.Timestamp, end: pd.Ti
     station = station or STATIONS.get(city)
     if station is None:
         return pd.DataFrame(), pd.DataFrame()
-    ms = [m for m in wx.markets(series) if m.get("result") in ("yes", "no")]
+    allm = wx.markets(series)
+    ms = [m for m in allm if m.get("result") in ("yes", "no")]
     ms = [m for m in ms if (d := wx._target_date(m["event_ticker"])) is not None and start <= d <= end]
     if not ms:
+        print(f"  {series}: {len(allm)} markets listed, none settled in window; sample "
+              f"{[(m['event_ticker'], m.get('status'), m.get('result')) for m in allm[:3]]}", flush=True)
         return pd.DataFrame(), pd.DataFrame()
     obs = observations(station, start - pd.Timedelta(days=1), end + pd.Timedelta(days=2))
     if any(is_celsius(m) for m in ms[:20]):
         obs = (obs - 32) * 5 / 9
+        print(f"  {series}: Celsius markets; readings converted", flush=True)
     todo, dec_rows = [], []
     for m in ms:
         d = wx._target_date(m["event_ticker"])
