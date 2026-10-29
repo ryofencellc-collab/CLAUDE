@@ -51,3 +51,17 @@ def test_maker_mode_counts_losing_side_buyers(monkeypatch):
                        "yes_price": [0.01, 0.01], "no_price": [0.99, 0.99]})
     out = r.opportunities({"ticker": "T"}, "no", known, tr, correct=True)
     assert len(out) == 1 and out[0]["price"] == 0.99 and out[0]["profit_100"] > 0
+
+
+def test_decided_low_mirrors_high():
+    o = obs([60, 55, 50, 49, 47, 52])
+    # "low greater than 50" is dead (NO) once the running low reaches 49
+    side, known = r.decided({"strike_type": "greater", "floor_strike": 50}, o, "low")
+    assert side == "no" and known == o.index[3] + r.DELAY
+    # "low less than 49" is YES once the running low reaches 47
+    side, known = r.decided({"strike_type": "less", "cap_strike": 49}, o, "low")
+    assert side == "yes" and known == o.index[4] + r.DELAY
+    # "low between 49 and 50" is dead once the running low reaches 47
+    side, known = r.decided({"strike_type": "between", "floor_strike": 49, "cap_strike": 50}, o, "low")
+    assert side == "no" and known == o.index[4] + r.DELAY
+    assert r.decided({"strike_type": "less", "cap_strike": 48}, o, "low") is None

@@ -47,11 +47,24 @@ def climate_day(date: pd.Timestamp, tz: str) -> tuple[pd.Timestamp, pd.Timestamp
     return start, start + pd.Timedelta(days=1)
 
 
-def decided(m: dict, obs_day: pd.Series) -> tuple[str, pd.Timestamp] | None:
-    """(decided side, first time it was knowable) or None if never decided during the day."""
+def decided(m: dict, obs_day: pd.Series, kind: str = "high") -> tuple[str, pd.Timestamp] | None:
+    """(decided side, first time it was knowable) or None if never decided during the day.
+
+    kind="low" (Round 19) mirrors the rule on the running minimum, same 1-degree margins."""
     f = pd.to_numeric(m.get("floor_strike"), errors="coerce")
     c = pd.to_numeric(m.get("cap_strike"), errors="coerce")
     t = m.get("strike_type")
+    if kind == "low":
+        if t == "greater" and pd.notna(f):
+            side, level = "no", f - 1
+        elif t == "less" and pd.notna(c):
+            side, level = "yes", c - 2
+        elif t == "between" and pd.notna(f):
+            side, level = "no", f - 2
+        else:
+            return None
+        hit = obs_day[obs_day.cummin() <= level]
+        return None if hit.empty else (side, hit.index[0] + DELAY)
     if t == "greater" and pd.notna(f):
         side, level = "yes", f + 2
     elif t == "less" and pd.notna(c):
@@ -124,9 +137,15 @@ def opportunities(m: dict, side: str, known: pd.Timestamp, tr: pd.DataFrame, cor
     return out
 
 
-def scan_series(series: str, city: str, tz: str, start: pd.Timestamp, end: pd.Timestamp):
-    """Returns (decided-market rows, opportunity rows) for one daily-high series."""
-    station = STATIONS.get(city)
+def is_celsius(m: dict) -> bool:
+    text = " ".join(str(m.get(k, "")) for k in ("rules_primary", "title", "subtitle", "yes_sub_title")).lower()
+    return "celsius" in text or "°c" in text
+
+
+def scan_series(series: str, city: str, tz: str, start: pd.Timestamp, end: pd.Timestamp,
+                station: str | None = None, kind: str = "high"):
+    """Returns (decided-market rows, opportunity rows) for one daily-high (or -low) series."""
+    station = station or STATIONS.get(city)
     if station is None:
         return pd.DataFrame(), pd.DataFrame()
     ms = [m for m in wx.markets(series) if m.get("result") in ("yes", "no")]
@@ -134,18 +153,20 @@ def scan_series(series: str, city: str, tz: str, start: pd.Timestamp, end: pd.Ti
     if not ms:
         return pd.DataFrame(), pd.DataFrame()
     obs = observations(station, start - pd.Timedelta(days=1), end + pd.Timedelta(days=2))
+    if any(is_celsius(m) for m in ms[:20]):
+        obs = (obs - 32) * 5 / 9
     todo, dec_rows = [], []
     for m in ms:
         d = wx._target_date(m["event_ticker"])
         a, b = climate_day(d, tz)
-        dec = decided(m, obs[(obs.index >= a) & (obs.index < b)])
+        dec = decided(m, obs[(obs.index >= a) & (obs.index < b)], kind)
         if dec is None:
             continue
         side, known = dec
         close = pd.to_datetime(m.get("close_time"), utc=True, errors="coerce")
         tradable = known < min(b, close) if pd.notna(close) else known < b
         correct = m["result"] == side
-        dec_rows.append(dict(series=series, city=city, date=d, ticker=m["ticker"], side=side, known=known,
+        dec_rows.append(dict(series=series, city=city, kind=kind, date=d, ticker=m["ticker"], side=side, known=known,
                              correct=correct, tradable=tradable, strike_type=m.get("strike_type"),
                              floor=m.get("floor_strike"), cap=m.get("cap_strike"), result=m["result"]))
         if tradable:
