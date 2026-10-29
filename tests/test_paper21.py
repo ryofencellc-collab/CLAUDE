@@ -31,7 +31,10 @@ def test_cancel_when_z_drops_and_fill_after_queue(monkeypatch):
     monkeypatch.setattr(p, "spot_and_vol", lambda prod, now: (100.01, 0.002))   # z near 0: no longer decided
     monkeypatch.setattr(p, "seen_since", lambda t, s, a, b: 800.0)
     led = p.watch(row(), now, count_fills=True)
-    assert led.at[0, "status"] == "cancelled" and led.at[0, "filled"] == 300
+    assert led.at[0, "status"] == "cancelled" and led.at[0, "filled"] == 0          # fills counted after close
+    monkeypatch.setattr(p.wx, "_get", lambda url, params=None: R({"market": {"result": ""}}))
+    led = p.watch(led, pd.Timestamp("2026-10-30 12:03", tz="UTC"), count_fills=True)
+    assert led.at[0, "filled"] == 300
 
 
 def test_settle_win_and_loss(monkeypatch):
@@ -45,3 +48,17 @@ def test_settle_win_and_loss(monkeypatch):
     led = p.watch(row(), now, count_fills=True)
     assert led.at[0, "status"] == "lost" and led.at[0, "pnl"] < -989
     assert "Paper profit" in p.summary(led, now)
+
+
+def test_settle_out_moves_rows_and_aggregates(tmp_path, monkeypatch):
+    monkeypatch.setattr(p, "FILLS", tmp_path / "f.csv")
+    monkeypatch.setattr(p, "DAILY", tmp_path / "d.csv")
+    led = pd.concat([row(ticker="A", status="won", filled=1000.0, pnl=9.83),
+                     row(ticker="B", status="won", filled=0.0, pnl=0.0), row(ticker="C")], ignore_index=True)
+    left = p.settle_out(led)
+    assert list(left["ticker"]) == ["C"]
+    d = pd.read_csv(tmp_path / "d.csv")
+    assert d["settled"].sum() == 2 and d["filled_markets"].sum() == 1 and abs(d["pnl"].sum() - 9.83) < 1e-9
+    assert list(pd.read_csv(tmp_path / "f.csv")["ticker"]) == ["A"]
+    p.settle_out(pd.concat([row(ticker="D", status="won", filled=0.0, pnl=0.0)], ignore_index=True))
+    assert pd.read_csv(tmp_path / "d.csv")["settled"].sum() == 3

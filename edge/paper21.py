@@ -24,26 +24,61 @@ from edge import weather as wx
 
 ROOT = Path(__file__).resolve().parent.parent / "paper"
 ROOT.mkdir(exist_ok=True)
-ORDERS = ROOT / "r21_orders.csv"
+OPEN = ROOT / "r21_open.csv"      # orders not yet settled (carried between jobs)
+FILLS = ROOT / "r21_fills.csv"    # settled markets that got any fill, or were wrong
+DAILY = ROOT / "r21_daily.csv"    # every settled market, aggregated by day and series
 Z, BID, ORDER = 6.0, 0.99, 1000.0
 SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "KXXRP15M": "XRP-USD",
           "KXDOGE15M": "DOGE-USD", "KXBTCD": "BTC-USD", "KXETHD": "ETH-USD", "KXSOLD": "SOL-USD", "KXXRPD": "XRP-USD"}
 # KXBNB15M is in the backtest, but BNB has no Coinbase market, so it is left out here.
 RUN_SECONDS = int(os.environ.get("P21_SECONDS", 20700))
-COMMIT_EVERY = 1800
+COMMIT_EVERY = 7200
 COLS = ["ticker", "series", "side", "strike", "close_utc", "placed_utc", "z_at_place", "spot_at_place", "queue_ahead",
         "seen", "filled", "status", "cancelled_utc", "result", "pnl", "settled_utc"]
 CB = "https://api.exchange.coinbase.com/products/{}/candles"
 _cb = requests.Session()
 
 
-def ledger() -> pd.DataFrame:
-    if ORDERS.exists():
-        d = pd.read_csv(ORDERS, dtype={"status": str, "result": str, "settled_utc": str, "cancelled_utc": str})
+DCOLS = ["day", "series", "settled", "cancelled", "filled_markets", "contracts", "pnl", "lost_filled", "queue_sum"]
+
+
+def _read(path, cols):
+    if path.exists() and path.stat().st_size:
+        d = pd.read_csv(path, dtype={"status": str, "result": str, "settled_utc": str, "cancelled_utc": str})
         for c in ("result", "settled_utc", "cancelled_utc"):
-            d[c] = d[c].fillna("")
+            if c in d:
+                d[c] = d[c].fillna("")
         return d
-    return pd.DataFrame(columns=COLS)
+    return pd.DataFrame(columns=cols)
+
+
+def ledger() -> pd.DataFrame:
+    return _read(OPEN, COLS)
+
+
+def settle_out(led: pd.DataFrame) -> pd.DataFrame:
+    """Move settled rows out of the open ledger: filled or wrong ones to FILLS, all into DAILY totals."""
+    done = led[led["status"].isin(["won", "lost"])]
+    if done.empty:
+        return led
+    fills = done[(done["filled"].astype(float) > 0) | (done["status"] == "lost")]
+    if len(fills):
+        fills[COLS].to_csv(FILLS, mode="a", header=not FILLS.exists(), index=False)
+    g = done.assign(day=pd.to_datetime(done["close_utc"]).dt.date.astype(str),
+                    cancelled=(done["cancelled_utc"] != "").astype(int),
+                    filled_m=(done["filled"].astype(float) > 0).astype(int),
+                    lost_filled=((done["status"] == "lost") & (done["filled"].astype(float) > 0)).astype(int),
+                    q=pd.to_numeric(done["queue_ahead"], errors="coerce").fillna(0))
+    agg = g.groupby(["day", "series"]).agg(settled=("ticker", "size"), cancelled=("cancelled", "sum"),
+                                           filled_markets=("filled_m", "sum"), contracts=("filled", "sum"),
+                                           pnl=("pnl", "sum"), lost_filled=("lost_filled", "sum"),
+                                           queue_sum=("q", "sum")).reset_index()
+    old = _read(DAILY, DCOLS)
+    both = pd.concat([old, agg], ignore_index=True) if len(old) else agg
+    num = [c for c in DCOLS if c not in ("day", "series")]
+    both[num] = both[num].apply(pd.to_numeric)
+    both.groupby(["day", "series"])[num].sum().reset_index()[DCOLS].to_csv(DAILY, index=False)
+    return led[~led.index.isin(done.index)]
 
 
 def spot_and_vol(product: str, now: pd.Timestamp):
@@ -142,7 +177,7 @@ def watch(led: pd.DataFrame, now: pd.Timestamp, count_fills: bool) -> pd.DataFra
             z = z_for(s, v, float(led.at[i, "strike"]), close, now)
             if np.isfinite(z) and (z if side == "yes" else -z) < Z:
                 led.at[i, "status"], led.at[i, "cancelled_utc"] = "cancelled", now.isoformat()
-        if count_fills or now >= close:
+        if now >= close + pd.Timedelta(minutes=2) and led.at[i, "seen"] == 0:
             until = pd.Timestamp(led.at[i, "cancelled_utc"]) if led.at[i, "cancelled_utc"] else min(now, close)
             seen = seen_since(led.at[i, "ticker"], side, pd.Timestamp(led.at[i, "placed_utc"]), until)
             q = led.at[i, "queue_ahead"]
@@ -162,37 +197,43 @@ def watch(led: pd.DataFrame, now: pd.Timestamp, count_fills: bool) -> pd.DataFra
 
 
 def summary(led: pd.DataFrame, now: pd.Timestamp) -> str:
-    s = led[led["status"].isin(["won", "lost"])].copy()
-    s["day"] = pd.to_datetime(s["settled_utc"]).dt.date.astype(str) if len(s) else []
-    filled = s[s["filled"].astype(float) > 0]
+    d = _read(DAILY, DCOLS)
+    f = _read(FILLS, COLS)
+    num = ["settled", "cancelled", "filled_markets", "contracts", "pnl", "lost_filled", "queue_sum"]
+    d[num] = d[num].apply(pd.to_numeric) if len(d) else d[num]
+    tot = d[num].sum() if len(d) else pd.Series(0.0, index=num)
     lines = ["# Round 21 live paper test: 99c bids on crypto markets decided by the spot price", "",
              f"Updated {now:%Y-%m-%d %H:%M} UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), \"Forward test\". "
              f"{ORDER:,.0f} contracts per market at z >= {Z:g}; fills only after the live queue ahead.", "",
              "| | |", "|---|---|",
-             f"| Markets bid | {len(led)} (open {int((led['status'] == 'open').sum())}, cancelled before close "
-             f"{int((led['cancelled_utc'] != '').sum())}) |",
-             f"| Settled | {len(s)}; with fills {len(filled)}; losing filled markets {int((filled['status'] == 'lost').sum())} |",
-             f"| Contracts filled | {s['filled'].astype(float).sum():,.0f} |",
-             f"| **Paper profit** | **${s['pnl'].astype(float).sum():+,.2f}** |",
-             f"| Median queue ahead at placement | {pd.to_numeric(led['queue_ahead'], errors='coerce').median():,.0f} |",
-             f"| Markets that got any fill | {(s['filled'].astype(float) > 0).mean() if len(s) else 0:.0%} |", ""]
-    if len(s):
-        lines += ["| Day | Settled | Filled | P&L |", "|---|---:|---:|---:|"]
-        for d, g in s.groupby("day"):
-            lines.append(f"| {d} | {len(g)} | {g['filled'].astype(float).sum():,.0f} | ${g['pnl'].astype(float).sum():+.2f} |")
-        lines += ["", "| Series | Settled | Filled | P&L |", "|---|---:|---:|---:|"]
-        for k, g in s.groupby("series"):
-            lines.append(f"| {k} | {len(g)} | {g['filled'].astype(float).sum():,.0f} | ${g['pnl'].astype(float).sum():+.2f} |")
+             f"| Markets bid and settled | {int(tot['settled']):,} (cancelled before close {int(tot['cancelled']):,}); open now {len(led):,} |",
+             f"| Markets that got any fill | {int(tot['filled_markets']):,} ({tot['filled_markets'] / max(tot['settled'], 1):.1%}) |",
+             f"| Losing filled markets | {int(tot['lost_filled'])} |",
+             f"| Contracts filled | {tot['contracts']:,.0f} |",
+             f"| **Paper profit** | **${tot['pnl']:+,.2f}** |",
+             f"| Average queue ahead at placement | {tot['queue_sum'] / max(tot['settled'], 1):,.0f} contracts |", ""]
+    if len(d):
+        by_day = d.groupby("day")[num].sum()
+        lines += ["| Day | Settled | Filled markets | Contracts | P&L |", "|---|---:|---:|---:|---:|"]
+        lines += [f"| {k} | {int(r.settled):,} | {int(r.filled_markets)} | {r.contracts:,.0f} | ${r.pnl:+.2f} |" for k, r in by_day.iterrows()]
+        by_s = d.groupby("series")[num].sum()
+        lines += ["", "| Series | Settled | Filled markets | Contracts | P&L | Avg queue |", "|---|---:|---:|---:|---:|---:|"]
+        lines += [f"| {k} | {int(r.settled):,} | {int(r.filled_markets)} | {r.contracts:,.0f} | ${r.pnl:+.2f} | "
+                  f"{r.queue_sum / max(r.settled, 1):,.0f} |" for k, r in by_s.iterrows()]
+    if len(f):
+        lines += ["", f"Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) ({len(f)} rows)."]
     return "\n".join(lines) + "\n"
 
 
 def save(led, now):
-    led[COLS].to_csv(ORDERS, index=False)
+    led = settle_out(led)
+    led[COLS].to_csv(OPEN, index=False)
     (ROOT / "ROUND21_PAPER.md").write_text(summary(led, now))
+    return led
 
 
 def commit(now):
-    cmds = [["git", "add", "paper/r21_orders.csv", "paper/ROUND21_PAPER.md"],
+    cmds = [["git", "add", "paper/r21_open.csv", "paper/r21_fills.csv", "paper/r21_daily.csv", "paper/ROUND21_PAPER.md"],
             ["git", "commit", "-q", "-m", f"paper21: ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
             ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]]
     for c in cmds:
@@ -201,6 +242,8 @@ def commit(now):
 
 
 def run():
+    for f in (FILLS, DAILY):
+        f.touch()
     t0 = time.time()
     led, last_fill, last_commit = ledger(), 0.0, time.time()
     while time.time() - t0 < RUN_SECONDS:
@@ -211,7 +254,7 @@ def run():
             led = watch(led, now, count)
             if count:
                 last_fill = time.time()
-            save(led, now)
+            led = save(led, now)
         except Exception as e:  # keep the loop alive; the ledger is saved every pass
             print(f"{now:%H:%M:%S} pass failed: {e!r}", flush=True)
         if os.environ.get("P21_COMMIT") == "1" and time.time() - last_commit > COMMIT_EVERY:
@@ -219,7 +262,7 @@ def run():
             last_commit = time.time()
         time.sleep(max(0.0, 15 - (time.time() - now.timestamp())))
     now = pd.Timestamp.now(tz="UTC")
-    save(led, now)
+    led = save(led, now)
     if os.environ.get("P21_COMMIT") == "1":
         commit(now)
     print(summary(led, now))
