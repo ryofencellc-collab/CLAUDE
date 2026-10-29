@@ -24,7 +24,7 @@ jobs:
   fetch:
     needs: list
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: ${{ inputs.small == '1' && 10 || 300 }}
     strategy:
       fail-fast: false
       max-parallel: 12

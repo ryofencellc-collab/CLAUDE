@@ -5,6 +5,7 @@ other side. We take CAPTURE of each such fill. After settlement the maker earned
 (long shot lost) or lost 1 - px (long shot won), minus the maker fee rounded up per fill. No outcome
 knowledge is used, so this is the real risk of always backing the heavy favorite.
 """
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
@@ -69,9 +70,20 @@ def fills(m: dict, tr: pd.DataFrame) -> pd.DataFrame:
 
 
 def scan(series: str, a: pd.Timestamp, b: pd.Timestamp) -> pd.DataFrame:
+    t0 = time.time()
     ms = markets(series, a, b)
+    print(f"  {series}: {len(ms)} markets listed in {time.time() - t0:.0f}s", flush=True)
+    done = [0]
+
+    def one(m):
+        tr = r15.trades(m["ticker"])
+        done[0] += 1
+        if done[0] % 200 == 0:
+            print(f"    trades for {done[0]}/{len(ms)} markets, {time.time() - t0:.0f}s", flush=True)
+        return tr
+
     with ThreadPoolExecutor(8) as ex:
-        trs = list(ex.map(lambda m: r15.trades(m["ticker"]), ms))
+        trs = list(ex.map(one, ms))
     parts = [fills(m, t) for m, t in zip(ms, trs)]
     parts = [p for p in parts if len(p)]
     out = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()

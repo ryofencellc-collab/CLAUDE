@@ -62,6 +62,7 @@ def _get(url, params=None, tries=6):
             time.sleep(2 ** i)
             continue
         if r.status_code == 429:
+            print(f"    429 rate-limited ({i + 1}/{tries}) on {url.split('/trade-api/v2/')[-1][:60]}", flush=True)
             time.sleep(2 ** i)
             continue
         return r
