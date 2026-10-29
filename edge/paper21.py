@@ -245,16 +245,20 @@ def run():
     for f in (FILLS, DAILY):
         f.touch()
     t0 = time.time()
-    led, last_fill, last_commit = ledger(), 0.0, time.time()
+    led, last_commit, passes = ledger(), time.time(), 0
     while time.time() - t0 < RUN_SECONDS:
         now = pd.Timestamp.now(tz="UTC")
         try:
+            t1 = time.time()
             led = place(led, now)
-            count = time.time() - last_fill > 30
-            led = watch(led, now, count)
-            if count:
-                last_fill = time.time()
+            t2 = time.time()
+            led = watch(led, now, True)
+            t3 = time.time()
             led = save(led, now)
+            passes += 1
+            if passes % 20 == 1:
+                print(f"{now:%H:%M:%S} pass {passes}: place {t2 - t1:.0f}s, watch {t3 - t2:.0f}s, save {time.time() - t3:.0f}s; "
+                      f"open {len(led)}", flush=True)
         except Exception as e:  # keep the loop alive; the ledger is saved every pass
             print(f"{now:%H:%M:%S} pass failed: {e!r}", flush=True)
         if os.environ.get("P21_COMMIT") == "1" and time.time() - last_commit > COMMIT_EVERY:
