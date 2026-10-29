@@ -72,13 +72,18 @@ def scan_new(now: pd.Timestamp, led: pd.DataFrame) -> list[dict]:
         std = r15.climate_day(pd.Timestamp(local.date()), tz)
         day = pd.Timestamp(local.date()) if now >= std[0] else pd.Timestamp(local.date()) - pd.Timedelta(days=1)
         a, b = r15.climate_day(day, tz)
-        r = wx._get(f"{wx.KALSHI}/markets", {"event_ticker": _event_ticker(series, day)})
+        r = wx._get(f"{wx.KALSHI}/markets", {"series_ticker": series, "status": "open", "limit": 1000})
         ms = r.json().get("markets", []) if r is not None and r.status_code == 200 else []
-        ms = [m for m in ms if m.get("status") in ("active", "open") and m["ticker"] not in have]
-        if not ms:
+        ms = [m for m in ms if m.get("event_ticker") == _event_ticker(series, day)]
+        todo = [m for m in ms if m["ticker"] not in have]
+        if not todo:
+            print(f"  {series} {day:%Y-%m-%d}: {len(ms)} open markets, none new", flush=True)
             continue
         obs = r15.observations(station, a - pd.Timedelta(hours=1), b)
         obs = obs[(obs.index >= a) & (obs.index < b)]
+        print(f"  {series} {day:%Y-%m-%d}: {len(ms)} open markets, running high "
+              f"{obs.max() if len(obs) else float('nan')} from {len(obs)} reports", flush=True)
+        ms = todo
         for m in ms:
             dec = r15.decided(m, obs)
             if dec is None or dec[1] > now:
