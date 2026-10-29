@@ -1,0 +1,30 @@
+name: paper21
+# Round 21 forward paper test (PROTOCOL_ROUND21.md, "Forward test"). Each job loops ~5.75 h; the next
+# scheduled run queues behind it (same concurrency group), so coverage is near-continuous.
+on:
+  schedule:
+    - cron: "5 */3 * * *"
+  workflow_dispatch:
+    inputs:
+      seconds: {description: "loop length in seconds", default: "20700"}
+permissions:
+  contents: write
+concurrency:
+  group: paper21
+  cancel-in-progress: false
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      P21_SECONDS: ${{ inputs.seconds || '20700' }}
+      P21_COMMIT: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: |
+          git config user.name "paper21 bot"
+          git config user.email "actions@users.noreply.github.com"
+      - run: python -m edge.paper21
