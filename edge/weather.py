@@ -6,6 +6,7 @@ from model runs published before ~04:00 local.
 """
 import math
 import re
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from statistics import NormalDist
@@ -54,15 +55,26 @@ MONTHS = {m: i for i, m in enumerate(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
                                       "SEP", "OCT", "NOV", "DEC"], 1)}
 
 
+_lock = threading.Lock()
+_last = [0.0]
+MIN_INTERVAL = 0.12  # polite cap of about 8 requests a second per process
+
+
 def _get(url, params=None, tries=6):
     for i in range(tries):
+        with _lock:
+            wait = _last[0] + MIN_INTERVAL - time.monotonic()
+            if wait > 0:
+                time.sleep(wait)
+            _last[0] = time.monotonic()
         try:
             r = _s.get(url, params=params, timeout=60)
         except requests.RequestException:
             time.sleep(2 ** i)
             continue
         if r.status_code == 429:
-            print(f"    429 rate-limited ({i + 1}/{tries}) on {url.split('/trade-api/v2/')[-1][:60]}", flush=True)
+            if i >= 2:
+                print(f"    429 rate-limited ({i + 1}/{tries}) on {url.split('/trade-api/v2/')[-1][:60]}", flush=True)
             time.sleep(2 ** i)
             continue
         return r

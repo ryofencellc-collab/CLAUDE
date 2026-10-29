@@ -34,6 +34,8 @@ def report():
         lines += ["No long-shot fills.", "", "## Verdict: **FAIL**"]
     else:
         f = pd.concat(fs, ignore_index=True)
+        w = f["weight"] if "weight" in f else 1
+        f["pnl"], f["pnl_100"] = f["pnl"] * w, f["pnl_100"] * w  # sampled series scaled to all their markets
         f["day"] = f["time"].dt.floor("D")
         daily = f.groupby("day")["pnl"].sum()
         total = f["pnl"].sum()
@@ -54,6 +56,9 @@ def report():
                   "| Check | Result |", "|---|---|"] + [f"| {k} | {'yes' if v else '**no**'} |" for k, v in checks.items()] + \
                  ["", "## Per series", "", per.round(2).to_markdown(), "", "## By minutes to close", "", tc.round(2).to_markdown(),
                   "", "## Worst 15 fills", "", f.nsmallest(15, "pnl")[["series", "ticker", "time", "px", "count", "pnl", "min_to_close"]].round(2).to_markdown(index=False)]
+    have = {p.stem for p in DATA.glob("*.pkl")}
+    missing = [x for x in (["KXBTC15M", "KXWTAMATCH"] if SMALL else SERIES) if x not in have]
+    lines += ["", f"Series with no data file (job failed or timed out): {', '.join(missing) if missing else 'none'}"]
     REPORTS.mkdir(exist_ok=True)
     (REPORTS / ("ROUND20_SMOKE.md" if SMALL else "ROUND20.md")).write_text("\n".join(lines) + "\n")
     print("\n".join(lines))

@@ -17,6 +17,7 @@ from edge import weather as wx
 CAPTURE = 0.25
 LONGSHOT = 0.02
 MAX_PAGES = 400
+MAX_MARKETS = 1500
 
 
 def markets(series: str, a: pd.Timestamp, b: pd.Timestamp) -> list[dict]:
@@ -71,8 +72,10 @@ def fills(m: dict, tr: pd.DataFrame) -> pd.DataFrame:
 
 def scan(series: str, a: pd.Timestamp, b: pd.Timestamp) -> pd.DataFrame:
     t0 = time.time()
-    ms = markets(series, a, b)
-    print(f"  {series}: {len(ms)} markets listed in {time.time() - t0:.0f}s", flush=True)
+    ms = sorted(markets(series, a, b), key=lambda m: m.get("close_time", ""))
+    weight = max(1, -(-len(ms) // MAX_MARKETS))  # evenly spaced sample of big series, scaled back up
+    print(f"  {series}: {len(ms)} markets listed in {time.time() - t0:.0f}s; testing every {weight}", flush=True)
+    ms = ms[::weight]
     done = [0]
 
     def one(m):
@@ -82,7 +85,7 @@ def scan(series: str, a: pd.Timestamp, b: pd.Timestamp) -> pd.DataFrame:
             print(f"    trades for {done[0]}/{len(ms)} markets, {time.time() - t0:.0f}s", flush=True)
         return tr
 
-    with ThreadPoolExecutor(8) as ex:
+    with ThreadPoolExecutor(4) as ex:
         trs = list(ex.map(one, ms))
     parts = [fills(m, t) for m, t in zip(ms, trs)]
     parts = [p for p in parts if len(p)]
@@ -92,4 +95,5 @@ def scan(series: str, a: pd.Timestamp, b: pd.Timestamp) -> pd.DataFrame:
           f"net ${out['pnl'].sum() if len(out) else 0:,.2f}", flush=True)
     if len(out):
         out["series"] = series
+        out["weight"] = weight
     return out

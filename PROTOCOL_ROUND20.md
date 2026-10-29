@@ -95,3 +95,15 @@ missed them.
   2. profitable on ≥ 80% of days;
   3. worst day ≥ −$300;
   4. the last 60 days are ≥ 20% of the total.
+
+## Amendment 2 (2026-10-29, implementation; the smoke test had shown WTA only)
+
+The 15-minute series hit Kalshi's rate limit even for 7 days.
+
+- **Sampling:** a series with more than 1,500 settled markets in the window is
+  tested on an evenly spaced sample of 1,500 markets, ordered by close time.
+  Its profit is scaled by the sampling step, and wins and losses are counted
+  alike.
+- **Request rate:** capped at about 8 requests a second per job.
+
+Neither change touches the trade or the pass rule.
