@@ -1,0 +1,61 @@
+name: round20
+# Round 20 (PROTOCOL_ROUND20.md): blind 98-99c maker bids on Kalshi favorites.
+on:
+  workflow_dispatch:
+    inputs:
+      small: {description: "1 = two series, 7 days", default: "1"}
+permissions:
+  contents: write
+concurrency: round20-${{ inputs.small }}
+env:
+  R20_SMALL: ${{ inputs.small }}
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      series: ${{ steps.s.outputs.series }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - id: s
+        run: echo "series=$(python run_round20.py list | tail -1)" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        series: ${{ fromJson(needs.list.outputs.series) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round20.py fetch ${{ matrix.series }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r20-${{ matrix.series }}", path: data/r20/}
+  report:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r20-*", path: data/r20, merge-multiple: true}
+      - run: python run_round20.py report
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round20 bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND20* || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "round20: results (run ${{ github.run_id }}, small=${{ inputs.small }})"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
