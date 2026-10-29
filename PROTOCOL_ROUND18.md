@@ -61,3 +61,9 @@ to what the fills show.
 **Prediction:** the queue ahead at 99c will often be large, because existing
 market makers sit there. I expect a fill on some days but under $20/day, so
 probably FAIL on rule 2.
+
+**Operational note (2026-10-29).** GitHub ran the 10-minute cron only 3 times
+on day 1 (10:39, 10:40, 17:04 UTC), so day-1 bids were placed late. From
+2026-10-29 ~18:45 UTC each job instead loops the bot every 5 minutes for
+about 5.75 hours, with jobs queued back to back. The rules and gate are
+unchanged. Day 1 counts in the window, flagged as sparse coverage.
