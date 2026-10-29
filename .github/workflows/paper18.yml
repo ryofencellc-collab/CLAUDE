@@ -1,27 +1,39 @@
 name: paper18
-# Round 18 forward paper test (PROTOCOL_ROUND18.md, "Forward test").
+# Round 18/19 forward paper test (PROTOCOL_ROUND18.md and PROTOCOL_ROUND19.md, "Forward test").
+# GitHub delays or drops frequent cron runs, so each job loops: one bot pass every 5 minutes for ~5.75 h,
+# committing the ledger after each pass. The next scheduled run queues behind it (same concurrency group).
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "35 */3 * * *"
   workflow_dispatch:
+    inputs:
+      passes: {description: "bot passes (5 minutes apart)", default: "69"}
 permissions:
   contents: write
-concurrency: paper18
+concurrency:
+  group: paper18
+  cancel-in-progress: false
 jobs:
   paper:
     runs-on: ubuntu-latest
-    timeout-minutes: 9
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
       - run: pip install -r requirements.txt
-      - run: python -m edge.paper18
-      - name: Commit ledger
+      - name: Loop the bot
         run: |
           git config user.name "paper18 bot"
           git config user.email "actions@users.noreply.github.com"
-          git add paper/
-          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
-          git commit -q -m "paper18: ledger update $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          for i in $(seq 1 ${{ inputs.passes || '69' }}); do
+            start=$(date +%s)
+            python -m edge.paper18 || echo "pass $i failed"
+            git add paper/r18_orders.csv paper/ROUND18_PAPER.md
+            if ! git diff --cached --quiet; then
+              git commit -q -m "paper18: ledger update $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
+              for k in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+            fi
+            left=$(( 300 - ($(date +%s) - start) ))
+            if [ $left -gt 0 ]; then sleep $left; fi
+          done
