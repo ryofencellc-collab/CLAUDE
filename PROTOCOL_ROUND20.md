@@ -67,3 +67,31 @@ Long-shot wins will be rare, but not zero. Each one costs about 98c a
 contract, so a single flip in a big BTC 15-minute fill can erase about 100
 winning fills. I expect a pooled PASS with thin margins in crypto 15-minute
 markets, and some sports series negative.
+
+## Amendment 1 (2026-10-29, before any Round 20 result: the smoke test had not finished)
+
+probe19b sized the hindsight long-shot pool per series over 30 days:
+
+| Series | Pool |
+|---|---:|
+| KXNFLGAME | $1.23M |
+| KXNBAGAME | $0.63M |
+| KXMLBGAME | $0.54M |
+| KXNHLGAME | $0.11M |
+| KXHIGHNY (weather) | $21k |
+
+The game series were missing from the universe because the 6-hour probe
+missed them.
+
+**Changes:**
+
+- **Universe:** adds KXNFLGAME, KXNBAGAME, KXMLBGAME, KXNHLGAME,
+  KXNCAAFGAME, KXEPLGAME, KXUCLGAME, KXUFCFIGHT, KXATPMATCH, KXMLSGAME,
+  KXNFLSPREAD, KXNFLTOTAL and KXMLBTOTAL.
+- **Window:** widens to **2026-04-01 to 2026-09-29** (182 days), so the NBA
+  and NHL seasons are included.
+- **Thresholds, scaled to the longer window:**
+  1. net profit ≥ $6,000;
+  2. profitable on ≥ 80% of days;
+  3. worst day ≥ −$300;
+  4. the last 60 days are ≥ 20% of the total.
