@@ -15,14 +15,16 @@ from edge import weather as wx
 
 CAPTURE = 0.25
 LONGSHOT = 0.02
+MAX_PAGES = 400
 
 
 def markets(series: str, a: pd.Timestamp, b: pd.Timestamp) -> list[dict]:
     """Settled markets of a series closing in [a, b), from the live and historical endpoints."""
     out = {}
     for path in ("markets", "historical/markets"):
-        cursor = None
-        while True:
+        cursor, pages, kept = None, 0, 0
+        while pages < MAX_PAGES:
+            pages += 1
             p = {"series_ticker": series, "limit": 1000, "min_close_ts": int(a.timestamp()), "max_close_ts": int(b.timestamp())}
             if path == "markets":
                 p["status"] = "settled"
@@ -32,11 +34,16 @@ def markets(series: str, a: pd.Timestamp, b: pd.Timestamp) -> list[dict]:
             if r is None or r.status_code != 200:
                 break
             j = r.json()
-            for m in j.get("markets", []):
-                if m.get("result") in ("yes", "no"):
+            page = j.get("markets", [])
+            closes = pd.to_datetime([m.get("close_time") for m in page], utc=True, errors="coerce")
+            for m, c in zip(page, closes):
+                if m.get("result") in ("yes", "no") and pd.notna(c) and a <= c < b:
                     out.setdefault(m["ticker"], m)
+                    kept += 1
             cursor = j.get("cursor")
-            if not cursor or not j.get("markets"):
+            if pages % 20 == 1 or not cursor:
+                print(f"    {series} {path} page {pages}: closes {closes.min()} .. {closes.max()}, kept {kept}", flush=True)
+            if not cursor or not page or (len(closes) and closes.max() < a):  # pages run newest first
                 break
     return list(out.values())
 
