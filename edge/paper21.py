@@ -44,7 +44,9 @@ DCOLS = ["day", "series", "settled", "cancelled", "filled_markets", "contracts",
 
 def _read(path, cols):
     if path.exists() and path.stat().st_size:
-        d = pd.read_csv(path, dtype={"status": str, "result": str, "settled_utc": str, "cancelled_utc": str})
+        first = path.read_text().split(",", 1)[0]
+        named = {} if first in ("ticker", "day") else {"header": None, "names": cols}  # day-1 file lacked a header
+        d = pd.read_csv(path, dtype={"status": str, "result": str, "settled_utc": str, "cancelled_utc": str}, **named)
         for c in ("result", "settled_utc", "cancelled_utc"):
             if c in d:
                 d[c] = d[c].fillna("")
@@ -63,7 +65,7 @@ def settle_out(led: pd.DataFrame) -> pd.DataFrame:
         return led
     fills = done[(done["filled"].astype(float) > 0) | (done["status"] == "lost")]
     if len(fills):
-        fills[COLS].to_csv(FILLS, mode="a", header=not FILLS.exists(), index=False)
+        fills[COLS].to_csv(FILLS, mode="a", header=not (FILLS.exists() and FILLS.stat().st_size), index=False)
     g = done.assign(day=pd.to_datetime(done["close_utc"]).dt.date.astype(str),
                     cancelled=(done["cancelled_utc"] != "").astype(int),
                     filled_m=(done["filled"].astype(float) > 0).astype(int),
