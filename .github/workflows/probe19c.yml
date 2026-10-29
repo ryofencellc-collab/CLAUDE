@@ -1,0 +1,12 @@
+name: probe19c
+on:
+  workflow_dispatch:
+    inputs:
+      hours: {description: "random hours to sample", default: "6"}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 probe19c.py ${{ inputs.hours }}
