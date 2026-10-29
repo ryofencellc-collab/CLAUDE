@@ -59,3 +59,29 @@ sampled evenly, as in Round 20.
 
 PASS at Z of about 3–4, roughly $20–60 a day. Basis risk between Binance and
 CF Benchmarks shows up as a few losses at low Z.
+
+## Result and forward test (amendment, 2026-10-29, after the backtest and before any live run)
+
+**Backtest result:** PASS. Z = 6 was chosen on dev. Holdout: $16,255 in 27 days,
+100% green days, 0 long-shot wins in 61,923 fills. KXBTC15M timed out and is
+not in the result.
+
+**Forward test.** `edge/paper21.py` runs in back-to-back ~5.5-hour GitHub
+Actions jobs and polls every ~15 seconds:
+
+1. Find open markets in the 10 series that close within the hour.
+2. Compute z from the **Coinbase** spot price, using its last completed
+   minute and the trailing 60-minute volatility. (Binance blocks US servers.
+   Coinbase is also a constituent of the CF Benchmarks index the markets
+   settle on.)
+3. If z ≥ 6 for a side, place a paper bid of 1,000 contracts at 99c for that
+   side, and record the queue resting at ≥ 99c ahead of us.
+4. We are filled only by later public trades where a taker bought the other
+   side at ≤ 2c, after the queue ahead is used up.
+5. Settle on Kalshi's result.
+
+**Gate (14 calendar days of results):**
+
+1. No more than one losing filled market.
+2. Paper profit ≥ $300 (≈ $21/day, about 1/30 of the backtest's pace).
+3. A profit on ≥ 80% of days with fills.
