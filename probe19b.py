@@ -1,62 +1,73 @@
-"""Hindsight size of the 'lottery flow' by Kalshi category: contracts where a taker bought the
-eventual loser at <= 2c, in recently settled markets. An upper bound on what resting 98-99c bids
-could earn, before asking whether the outcome was knowable in time."""
-import collections, json, urllib.parse, urllib.request
+"""Hindsight size of the 'lottery flow' by Kalshi series: contracts where a taker bought the
+eventual loser at <= 2c, in markets settled over the last 30 days. An upper bound on what resting
+98-99c bids could earn, before asking whether the outcome was knowable in time."""
+import json, time, urllib.parse, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 K = "https://api.elections.kalshi.com/trade-api/v2"
+SERIES = ["KXHIGHNY", "KXHIGHCHI", "KXLOWTNYC",                       # weather (reference)
+          "KXNFLGAME", "KXNBAGAME", "KXMLBGAME", "KXNHLGAME", "KXNCAAFGAME", "KXEPLGAME", "KXUCLGAME",
+          "KXUFCFIGHT", "KXATPMATCH", "KXWTAMATCH", "KXMLSGAME", "KXNFLSPREAD", "KXNFLTOTAL", "KXMLBTOTAL",
+          "KXBTCD", "KXETHD", "KXBTC", "KXETH", "KXSOLD", "KXBTC15M", "KXETH15M",
+          "KXINXD", "KXINX", "KXNASDAQ100D", "KXNASDAQ100", "KXINXU",
+          "KXCPI", "KXFED", "KXPAYROLLS", "KXJOBLESSCLAIMS", "KXGASD", "KXAAAGASD",
+          "KXTRUMPMENTION", "KXMENTION", "KXNETFLIXRANK", "KXSPOTIFY", "KXTOPSONG", "KXBILLBOARD",
+          "KXTSAW", "KXRT", "KXNYTHEAD", "KXEARNINGSMENTION"]
+since = int(time.time()) - 30 * 86400
 
 
 def get(path, **p):
     u = f"{K}/{path}?" + urllib.parse.urlencode(p)
-    for _ in range(4):
+    for i in range(5):
         try:
             with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=60) as r:
                 return json.load(r)
         except Exception:
-            pass
+            time.sleep(2 ** i)
     return {}
 
 
-cat = {s["ticker"]: s.get("category") for s in get("series").get("series", [])}
-ms, cur = [], None
-for _ in range(15):
-    j = get("markets", status="settled", limit=1000, **({"cursor": cur} if cur else {}))
-    ms += j.get("markets", [])
-    cur = j.get("cursor")
-    if not cur:
-        break
-print("settled markets fetched", len(ms))
-for m in ms:
-    m["_series"] = m["event_ticker"].split("-")[0]
-    m["_cat"] = cat.get(m["_series"], "?")
-    m["_vol"] = float(m.get("volume_fp") or m.get("volume") or 0)
-ms = [m for m in ms if m.get("result") in ("yes", "no")]
-top = sorted(ms, key=lambda m: -m["_vol"])[:1500]
+def markets(s):
+    out, cur = [], None
+    for _ in range(20):
+        j = get("markets", series_ticker=s, status="settled", min_close_ts=since, limit=1000, **({"cursor": cur} if cur else {}))
+        out += j.get("markets", [])
+        cur = j.get("cursor")
+        if not cur or not j.get("markets"):
+            break
+    return [m for m in out if m.get("result") in ("yes", "no")]
 
 
 def flow(m):
     loser = "no" if m["result"] == "yes" else "yes"
-    j = get("markets/trades", ticker=m["ticker"], limit=1000)
-    n = 0.0
-    for t in j.get("trades", []):
-        px = float(t.get(f"{loser}_price_dollars") or 0)
-        if t.get("taker_side") == loser and 0 < px <= 0.02:
-            n += float(t.get("count_fp") or t.get("count") or 0) * px  # what the winning-side maker earns
-    return m, n
+    usd, n, cur = 0.0, 0, None
+    for _ in range(10):
+        j = get("markets/trades", ticker=m["ticker"], limit=1000, **({"cursor": cur} if cur else {}))
+        for t in j.get("trades", []):
+            px = float(t.get(f"{loser}_price_dollars") or 0)
+            if t.get("taker_side") == loser and 0 < px <= 0.02:
+                usd += float(t.get("count_fp") or t.get("count") or 0) * px  # what the winning-side maker earns
+                n += 1
+        cur = j.get("cursor")
+        if not cur or not j.get("trades"):
+            break
+    return usd, n
 
 
-with ThreadPoolExecutor(8) as ex:
-    res = list(ex.map(flow, top))
-by_cat, by_ser = collections.defaultdict(float), collections.defaultdict(float)
-span = [m["close_time"] for m in top if m.get("close_time")]
-for m, usd in res:
-    by_cat[m["_cat"]] += usd
-    by_ser[(m["_cat"], m["_series"])] += usd
-print("close_time span", min(span), max(span))
-print("maker profit pool at 98-99c ($, gross) by category:")
-for k, v in sorted(by_cat.items(), key=lambda x: -x[1]):
-    print(f"  {k:<25} ${v:,.0f}")
-print("top series:")
-for k, v in sorted(by_ser.items(), key=lambda x: -x[1])[:40]:
-    print(f"  {k[0]:<22} {k[1]:<28} ${v:,.0f}")
+print(f"{'series':<20}{'markets':>8}{'pool $/30d':>12}{'trades':>9}  (pool = loser bought at <=2c; maker earns that)")
+rows = []
+for s in SERIES:
+    ms = markets(s)
+    if not ms:
+        print(f"{s:<20}{0:>8}")
+        continue
+    ms = sorted(ms, key=lambda m: -float(m.get("volume_fp") or m.get("volume") or 0))
+    sample = ms[:400]
+    with ThreadPoolExecutor(8) as ex:
+        res = list(ex.map(flow, sample))
+    usd = sum(r[0] for r in res) * len(ms) / len(sample)
+    rows.append((s, len(ms), usd))
+    print(f"{s:<20}{len(ms):>8}{usd:>12,.0f}{sum(r[1] for r in res):>9}{'  (scaled from top 400)' if len(ms) > 400 else ''}", flush=True)
+print("\nRANKED")
+for s, n, usd in sorted(rows, key=lambda r: -r[2]):
+    print(f"  {s:<20} ${usd:,.0f} per 30 days over {n} markets")
