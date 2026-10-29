@@ -67,3 +67,18 @@ high. Accuracy check only, to confirm stations, time zones and units.
 - **International series:** thinner trading, and some settle on sources that
   disagree with METAR, so several fail the dev accuracy screen.
 - **Overall:** PASS, adding roughly $15–40/day at 25% capture.
+
+## Result and forward test (amendment, 2026-10-29, written after the backtest and before any live run)
+
+**Backtest result:** PASS. 22 series were eligible. In the holdout, 99.98% of
+decided calls were right and profit was $2,697 at 25% capture
+(≈ $14.74/day). Four decided calls were wrong over the full year
+(Houston and Boston in April, Minneapolis on 2026-05-12).
+
+**Forward test.** The 22 eligible series join the Round 18 paper bot
+(`edge/paper18.py`, rows tagged `round=19`) under the same rules. Gate
+over the same 30 days, on Round 19 rows alone:
+
+1. no settled filled order lost;
+2. paper profit ≥ $150 (about a third of the backtest's pace);
+3. a profit on ≥ 60% of days with fills.

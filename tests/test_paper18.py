@@ -29,7 +29,7 @@ def test_eligible_volume_only_losing_side_takers_after_placement(monkeypatch):
 
 
 def _ledger(queue):
-    return pd.DataFrame([dict(ticker="T", series="S", city="c", date="2026-07-01", side="no",
+    return pd.DataFrame([dict(round=18, ticker="T", series="S", city="c", date="2026-07-01", side="no",
                               known_utc="2026-07-01T18:00:00+00:00", placed_utc="2026-07-01T18:00:00+00:00",
                               queue_ahead=queue, eligible_seen=0.0, fillable=0.0, filled=0.0, status="open",
                               result="", pnl=float("nan"), settled_utc="")])[p.COLS]
@@ -62,3 +62,10 @@ def test_order_cap_and_no_fill_behind_queue(monkeypatch):
 
 def test_event_ticker_format():
     assert p._event_ticker("KXHIGHNY", pd.Timestamp("2026-07-04")) == "KXHIGHNY-26JUL04"
+
+
+def test_specs_include_round19_lows(monkeypatch):
+    monkeypatch.setattr(p.wx, "daily_high_series", lambda: [("KXHIGHNY", "new york", "major", 0, 0, "America/New_York")])
+    sp = p.specs()
+    assert sp[0] == (18, "KXHIGHNY", "new york", "NYC", "America/New_York", "high")
+    assert (19, "KXLOWTNYC", "NYC", "NYC", "America/New_York", "low") in sp and len(sp) == 1 + len(p.R19_SERIES)

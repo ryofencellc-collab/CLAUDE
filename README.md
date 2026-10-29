@@ -61,4 +61,5 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 17 | Round 15 at up to 99c (taker) | **FAIL**: only 386 cheap sells of decided outcomes in 12 months: [ROUND17.md](reports/ROUND17.md) |
 | 18 | Rest 99c bids on decided weather outcomes (maker; fills from lottery-ticket buyers) | **PASS (backtest)**: 0 wrong calls in 7,619, profit every one of 365 days, $23,981/yr at an assumed 25% queue share; queue position is unverifiable from history: [ROUND18.md](reports/ROUND18.md) |
 | 18-live | Round 18 forward paper test, live order-book queue measured, every 10 min | **running**: [paper/ROUND18_PAPER.md](paper/ROUND18_PAPER.md); 30-day gate ($600, no losing fills) before real money |
+| 19 | Round 18 trade on 29 more series: daily lows and the remaining daily highs (dev screen, 6-month holdout) | **PASS**: 22 series eligible, 99.98% of 4,059 holdout calls right, $2,697 in 6 months at 25% capture (≈ $15/day), 99% of days green: [ROUND19.md](reports/ROUND19.md); now in the paper bot as round 19 |
 | Business | Sell the honest report ($9) + done-for-you strategy tests ($49) | ready to launch: [business/LAUNCH.md](business/LAUNCH.md) |
