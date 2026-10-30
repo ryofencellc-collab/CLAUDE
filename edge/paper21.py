@@ -228,8 +228,40 @@ def summary(led: pd.DataFrame, now: pd.Timestamp) -> str:
         lines += [f"| {k} | {int(r.settled):,} | {int(r.filled_markets)} | {r.contracts:,.0f} | ${r.pnl:+.2f} | "
                   f"{r.queue_sum / max(r.settled, 1):,.0f} |" for k, r in by_s.iterrows()]
     if len(f):
+        lines += round22(f)
         lines += ["", f"Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) ({len(f)} rows)."]
     return "\n".join(lines) + "\n"
+
+
+R22_START, R22_END = pd.Timestamp("2026-10-31", tz="UTC"), pd.Timestamp("2026-11-14", tz="UTC")
+
+
+def r22_size(series: str) -> float:
+    return 10000.0 if series.endswith("15M") else 1000.0
+
+
+def round22(f: pd.DataFrame) -> list[str]:
+    """PROTOCOL_ROUND22.md: the same ledger at 10k contracts on 15-minute markets (filled = min(size, seen - queue))."""
+    f = f.copy()
+    close = pd.to_datetime(f["close_utc"], utc=True)
+    f = f[(close >= R22_START) & (close < R22_END)]
+    lines = ["", f"## Round 22 sizing (10k contracts on 15-minute markets), window {R22_START.date()} to "
+                 f"{(R22_END - pd.Timedelta(days=1)).date()}", ""]
+    if f.empty:
+        return lines + ["No settled fills in the window yet."]
+    size = f["series"].map(r22_size)
+    excess = (f["seen"].astype(float) - pd.to_numeric(f["queue_ahead"], errors="coerce").fillna(0)).clip(lower=0)
+    n = excess.clip(upper=size)
+    right = f["status"] == "won"
+    fee = [r15._maker_fee(x, BID) if x > 0 else 0.0 for x in n]
+    f["pnl22"] = (n * (right.astype(float) - BID)).to_numpy() - fee
+    day = pd.to_datetime(f["close_utc"], utc=True).dt.date
+    daily = f.groupby(day)["pnl22"].sum()
+    lost = f[(~right) & (n > 0)]
+    lines += ["| | |", "|---|---|", f"| Paper profit at Round 22 size | **${f['pnl22'].sum():+,.2f}** |",
+              f"| Losing filled markets | {len(lost)} |", f"| Days with fills | {len(daily)} (green {(daily > 0).mean():.0%}) |",
+              f"| Worst day | ${daily.min():+,.2f} |"]
+    return lines
 
 
 def save(led, now):

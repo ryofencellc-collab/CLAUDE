@@ -62,3 +62,13 @@ def test_settle_out_moves_rows_and_aggregates(tmp_path, monkeypatch):
     assert list(pd.read_csv(tmp_path / "f.csv")["ticker"]) == ["A"]
     p.settle_out(pd.concat([row(ticker="D", status="won", filled=0.0, pnl=0.0)], ignore_index=True))
     assert pd.read_csv(tmp_path / "d.csv")["settled"].sum() == 3
+
+
+def test_round22_sizing_uses_excess_over_queue():
+    f = pd.concat([row(ticker="A", series="KXBTC15M", status="won", seen=60000.0, queue_ahead=20000.0, filled=1000.0,
+                       close_utc="2026-11-01T12:00:00+00:00"),
+                   row(ticker="B", series="KXBTCD", status="won", seen=60000.0, queue_ahead=20000.0, filled=1000.0,
+                       close_utc="2026-11-01T12:00:00+00:00")], ignore_index=True)
+    text = "\n".join(p.round22(f))
+    want = 10000 * 0.01 - p.r15._maker_fee(10000, 0.99) + 1000 * 0.01 - p.r15._maker_fee(1000, 0.99)
+    assert f"${want:+,.2f}" in text
