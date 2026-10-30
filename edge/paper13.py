@@ -46,7 +46,9 @@ def target(px: pd.DataFrame, cid: str) -> pd.Series:
 def step(px: pd.DataFrame, now: pd.Timestamp | None = None) -> pd.DataFrame:
     """Book every completed trading day since the last ledger row; set the next target."""
     cols = round13.ASSETS
-    led = pd.read_csv(LEDGER, parse_dates=["date"]) if LEDGER.exists() else pd.DataFrame()
+    led = pd.read_csv(LEDGER) if LEDGER.exists() else pd.DataFrame()
+    if len(led):  # the first row was written with a time part; normalise both forms
+        led["date"] = pd.to_datetime(led["date"], format="mixed").dt.normalize()
     rets = px.pct_change(fill_method=None).fillna(0.0)
     days = px.index[px.index >= FORWARD_START]
     if led.empty:
