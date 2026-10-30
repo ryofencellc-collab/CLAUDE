@@ -33,6 +33,7 @@ SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "
 # KXBNB15M is in the backtest, but BNB has no Coinbase market, so it is left out here.
 RUN_SECONDS = int(os.environ.get("P21_SECONDS", 20700))
 COMMIT_EVERY = 7200
+SETTLE_PER_PASS = 40
 COLS = ["ticker", "series", "side", "strike", "close_utc", "placed_utc", "z_at_place", "spot_at_place", "queue_ahead",
         "seen", "filled", "status", "cancelled_utc", "result", "pnl", "settled_utc"]
 CB = "https://api.exchange.coinbase.com/products/{}/candles"
@@ -168,10 +169,14 @@ def place(led: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
 
 
 def watch(led: pd.DataFrame, now: pd.Timestamp, count_fills: bool) -> pd.DataFrame:
-    spots = {}
+    spots, settling = {}, 0
     for i in led.index[led["status"].isin(["open", "cancelled"])]:
         close = pd.Timestamp(led.at[i, "close_utc"])
         side = led.at[i, "side"]
+        if now >= close + pd.Timedelta(minutes=2):
+            settling += 1
+            if settling > SETTLE_PER_PASS:  # keep each pass short so cancels on open bids stay fast
+                continue
         if led.at[i, "status"] == "open" and now < close:
             prod = SERIES[led.at[i, "series"]]
             spots.setdefault(prod, spot_and_vol(prod, now))
