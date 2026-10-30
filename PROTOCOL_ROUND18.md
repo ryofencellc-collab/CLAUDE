@@ -67,3 +67,10 @@ on day 1 (10:39, 10:40, 17:04 UTC), so day-1 bids were placed late. From
 2026-10-29 ~18:45 UTC each job instead loops the bot every 5 minutes for
 about 5.75 hours, with jobs queued back to back. The rules and gate are
 unchanged. Day 1 counts in the window, flagged as sparse coverage.
+
+**Day-1 queue reading (2026-10-30, recorded as it stands; the gate is still judged at 30 days).**
+17 orders have settled, all called correctly, and none filled. The queue at
+≥ 99c at placement was 10k–215k contracts (median about 32k). The lottery
+flow that followed was 0–14k contracts. The incumbent 99c bids absorb all of
+it, so the 25% capture assumed in the backtest is not available to a new
+bidder.
