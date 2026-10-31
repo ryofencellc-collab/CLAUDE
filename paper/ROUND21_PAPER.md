@@ -1,41 +1,41 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-10-31 13:24 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-10-31 15:09 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 24,980 (cancelled before close 657); open now 818 |
-| Markets that got any fill | 57 (0.2%) |
+| Markets bid and settled | 26,302 (cancelled before close 667); open now 1,215 |
+| Markets that got any fill | 65 (0.2%) |
 | Losing filled markets | 0 |
-| Contracts filled | 19,769 |
-| **Paper profit** | **$+193.88** |
-| Average queue ahead at placement | 19,995 contracts |
+| Contracts filled | 21,685 |
+| **Paper profit** | **$+212.65** |
+| Average queue ahead at placement | 19,960 contracts |
 
 | Day | Settled | Filled markets | Contracts | P&L |
 |---|---:|---:|---:|---:|
 | 2026-10-29 | 3,653 | 8 | 8,000 | $+78.56 |
 | 2026-10-30 | 15,338 | 34 | 4,133 | $+40.36 |
-| 2026-10-31 | 5,989 | 15 | 7,636 | $+74.96 |
+| 2026-10-31 | 7,311 | 23 | 9,552 | $+93.73 |
 
 | Series | Settled | Filled markets | Contracts | P&L | Avg queue |
 |---|---:|---:|---:|---:|---:|
 | KXBTC15M | 18 | 1 | 1,000 | $+9.82 | 536,331 |
-| KXBTCD | 5,356 | 12 | 5,204 | $+51.07 | 19,119 |
-| KXDOGE15M | 17 | 2 | 2,000 | $+19.64 | 21,671 |
+| KXBTCD | 5,713 | 15 | 6,066 | $+59.53 | 18,982 |
+| KXDOGE15M | 18 | 2 | 2,000 | $+19.64 | 23,266 |
 | KXETH15M | 13 | 0 | 0 | $+0.00 | 74,285 |
-| KXETHD | 8,637 | 4 | 1,100 | $+10.80 | 20,065 |
-| KXSOL15M | 15 | 2 | 2,000 | $+19.64 | 31,400 |
-| KXSOLD | 8,660 | 5 | 587 | $+5.74 | 19,576 |
-| KXXRP15M | 20 | 2 | 2,000 | $+19.64 | 35,964 |
-| KXXRPD | 2,244 | 29 | 5,879 | $+57.53 | 18,747 |
+| KXETHD | 9,224 | 5 | 1,101 | $+10.80 | 20,067 |
+| KXSOL15M | 16 | 2 | 2,000 | $+19.64 | 32,642 |
+| KXSOLD | 8,958 | 6 | 611 | $+5.98 | 19,584 |
+| KXXRP15M | 23 | 3 | 3,000 | $+29.46 | 37,008 |
+| KXXRPD | 2,319 | 31 | 5,906 | $+57.78 | 18,804 |
 
 ## Round 22 sizing (10k contracts on 15-minute markets), window 2026-10-31 to 2026-11-13
 
 | | |
 |---|---|
-| Paper profit at Round 22 size | **$+107.60** |
+| Paper profit at Round 22 size | **$+164.28** |
 | Losing filled markets | 0 |
 | Days with fills | 1 (green 100%) |
-| Worst day | $+107.60 |
+| Worst day | $+164.28 |
 
-Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (63 rows).
+Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (71 rows).
