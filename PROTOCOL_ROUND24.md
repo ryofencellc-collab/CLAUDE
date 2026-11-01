@@ -52,3 +52,11 @@ Fewer fills than crypto, because the market trades only 6.5 hours a day and
 there are fewer lottery buyers. The calls should be very reliable near the
 4 pm close. My guess: PASS at about $15–40/day, and a FAIL on profit is
 quite possible.
+
+## Result (2026-11-01)
+
+PASS. Z = 2 was chosen on dev. Holdout: $474.70 over 15 trading days, all of
+them green, worst day +$4.31, long shots won 0.44% of fills. KXINXU (hourly
+S&P) gave $430 of it. These are backtest fills at 25% capture. Round 21's
+live test shows that the real queue at 99c sharply limits that capture, so
+any live use needs its own forward test first.
