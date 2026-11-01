@@ -29,7 +29,9 @@ jobs:
           for i in $(seq 1 ${{ inputs.passes || '69' }}); do
             start=$(date +%s)
             python -m edge.paper18 || echo "pass $i failed"
-            git add paper/r18_orders.csv paper/ROUND18_PAPER.md
+            git pull --rebase -q || true
+            python -m edge.portfolio > /dev/null || echo "portfolio failed"
+            git add paper/r18_orders.csv paper/ROUND18_PAPER.md paper/PORTFOLIO.md
             if ! git diff --cached --quiet; then
               git commit -q -m "paper18: ledger update $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
               for k in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
