@@ -84,3 +84,15 @@ def test_index_z_sides_by_strike_type():
     zy, zn = p.z_sides("between", 6900, 6910, 6850.0, 0.0003, close, now)
     assert zn > 2 and zy == -np.inf                     # outside the range: NO decided; inside never is
     assert p.zmin("KXINXU") == 2.0 and p.zmin("KXBTCD") == 6.0
+
+
+def test_capital_meter(tmp_path, monkeypatch):
+    monkeypatch.setattr(p, "CAPITAL", tmp_path / "c.csv")
+    now = pd.Timestamp("2026-10-30 11:55", tz="UTC")
+    led = pd.concat([row(ticker="A", series="KXBTC15M"), row(ticker="B", series="KXBTCD"), row(ticker="C", series="KXINXU"),
+                     row(ticker="D", series="KXBTCD", status="cancelled")], ignore_index=True)
+    p.sample_capital(led, now)
+    p.save_capital()
+    c = pd.read_csv(tmp_path / "c.csv").set_index("group")
+    assert c.loc["crypto15m", "peak"] == 9900 and c.loc["crypto_hourly", "peak"] == 990 and c.loc["index", "peak"] == 990
+    assert "Capital a real account" in "\n".join(p.capital_lines())

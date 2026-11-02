@@ -27,6 +27,7 @@ ROOT.mkdir(exist_ok=True)
 OPEN = ROOT / "r21_open.csv"      # orders not yet settled (carried between jobs)
 FILLS = ROOT / "r21_fills.csv"    # settled markets that got any fill, or were wrong
 DAILY = ROOT / "r21_daily.csv"    # every settled market, aggregated by day and series
+CAPITAL = ROOT / "r21_capital.csv"  # collateral a real account would tie up, sampled every pass
 Z, BID, ORDER = 6.0, 0.99, 1000.0
 SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "KXXRP15M": "XRP-USD",
           "KXDOGE15M": "DOGE-USD", "KXBTCD": "BTC-USD", "KXETHD": "ETH-USD", "KXSOLD": "SOL-USD", "KXXRPD": "XRP-USD"}
@@ -286,6 +287,7 @@ def summary(led: pd.DataFrame, now: pd.Timestamp) -> str:
         lines += ["", "| Series | Settled | Filled markets | Contracts | P&L | Avg queue |", "|---|---:|---:|---:|---:|---:|"]
         lines += [f"| {k} | {int(r.settled):,} | {int(r.filled_markets)} | {r.contracts:,.0f} | ${r.pnl:+.2f} | "
                   f"{r.queue_sum / max(r.settled, 1):,.0f} |" for k, r in by_s.iterrows()]
+    lines += capital_lines()
     lines += round24_forward(d)
     if len(f):
         lines += round22(f)
@@ -344,6 +346,49 @@ def round24_forward(d: pd.DataFrame) -> list[str]:
                     f"| Days with fills | {len(active)} (green {(active['pnl'] > 0).mean() if len(active) else 0:.0%}) |"]
 
 
+GROUPS = ("crypto15m", "crypto_hourly", "index")
+_cap = {}  # (day, group) -> [samples, sum, peak]
+
+
+def group(series: str) -> str:
+    return "index" if series in INDEX_SERIES else "crypto15m" if series.endswith("15M") else "crypto_hourly"
+
+
+def sample_capital(led: pd.DataFrame, now: pd.Timestamp) -> None:
+    """Collateral of resting bids right now: 15-minute markets at the Round 22 size, everything else at ORDER."""
+    live = led[(led["status"] == "open") & (pd.to_datetime(led["close_utc"], utc=True) > now)]
+    day = now.date().isoformat()
+    for g in GROUPS:
+        x = live[live["series"].map(group) == g]
+        size = 10000.0 if g == "crypto15m" else ORDER
+        usd = float(len(x)) * size * BID
+        k = _cap.setdefault((day, g), [0, 0.0, 0.0])
+        k[0] += 1
+        k[1] += usd
+        k[2] = max(k[2], usd)
+
+
+def save_capital() -> None:
+    old = pd.read_csv(CAPITAL) if CAPITAL.exists() and CAPITAL.stat().st_size else pd.DataFrame(
+        columns=["day", "group", "samples", "sum", "peak"])
+    new = pd.DataFrame([dict(day=d, group=g, samples=v[0], sum=v[1], peak=v[2]) for (d, g), v in _cap.items()])
+    both = pd.concat([old, new], ignore_index=True) if len(old) else new
+    both = both.groupby(["day", "group"]).agg(samples=("samples", "sum"), sum=("sum", "sum"), peak=("peak", "max")).reset_index()
+    both.to_csv(CAPITAL, index=False)
+    _cap.clear()
+
+
+def capital_lines() -> list[str]:
+    if not (CAPITAL.exists() and CAPITAL.stat().st_size):
+        return []
+    c = pd.read_csv(CAPITAL)
+    c["avg"] = c["sum"] / c["samples"].clip(lower=1)
+    lines = ["", "## Capital a real account would tie up (resting bids x size x 99c)", "",
+             "| Day | Group | Average | Peak |", "|---|---|---:|---:|"]
+    lines += [f"| {r.day} | {r.group} | ${r.avg:,.0f} | ${r.peak:,.0f} |" for r in c.sort_values(["day", "group"]).itertuples()]
+    return lines
+
+
 def save(led, now):
     led = settle_out(led)
     led[OCOLS].to_csv(OPEN, index=False)
@@ -352,7 +397,8 @@ def save(led, now):
 
 
 def commit(now):
-    cmds = [["git", "add", "paper/r21_open.csv", "paper/r21_fills.csv", "paper/r21_daily.csv", "paper/ROUND21_PAPER.md"],
+    cmds = [["git", "add", "paper/r21_open.csv", "paper/r21_fills.csv", "paper/r21_daily.csv", "paper/r21_capital.csv",
+             "paper/ROUND21_PAPER.md"],
             ["git", "commit", "-q", "-m", f"paper21: ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
             ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]]
     for c in cmds:
@@ -361,7 +407,7 @@ def commit(now):
 
 
 def run():
-    for f in (FILLS, DAILY):
+    for f in (FILLS, DAILY, CAPITAL):
         f.touch()
     t0 = time.time()
     led, last_commit, passes = ledger(), time.time(), 0
@@ -373,6 +419,7 @@ def run():
             t2 = time.time()
             led = watch(led, now, True)
             t3 = time.time()
+            sample_capital(led, now)
             led = save(led, now)
             passes += 1
             if passes % 20 == 1:
@@ -381,10 +428,12 @@ def run():
         except Exception as e:  # keep the loop alive; the ledger is saved every pass
             print(f"{now:%H:%M:%S} pass failed: {e!r}", flush=True)
         if os.environ.get("P21_COMMIT") == "1" and time.time() - last_commit > COMMIT_EVERY:
+            save_capital()
             commit(now)
             last_commit = time.time()
         time.sleep(max(0.0, 15 - (time.time() - now.timestamp())))
     now = pd.Timestamp.now(tz="UTC")
+    save_capital()
     led = save(led, now)
     if os.environ.get("P21_COMMIT") == "1":
         commit(now)
