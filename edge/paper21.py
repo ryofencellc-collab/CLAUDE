@@ -31,6 +31,15 @@ Z, BID, ORDER = 6.0, 0.99, 1000.0
 SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "KXXRP15M": "XRP-USD",
           "KXDOGE15M": "DOGE-USD", "KXBTCD": "BTC-USD", "KXETHD": "ETH-USD", "KXSOLD": "SOL-USD", "KXXRPD": "XRP-USD"}
 # KXBNB15M is in the backtest, but BNB has no Coinbase market, so it is left out here.
+# Round 24 (PROTOCOL_ROUND24.md, forward test): S&P 500 / Nasdaq-100 binaries, Yahoo 1-minute index bars, Z = 2.
+INDEX_SERIES = {"KXINXU": "^GSPC", "KXINX": "^GSPC", "KXNASDAQ100U": "^NDX", "KXNASDAQ100": "^NDX"}
+SERIES.update(INDEX_SERIES)
+Z_INDEX = 2.0
+STALE = pd.Timedelta(minutes=5)
+
+
+def zmin(series: str) -> float:
+    return Z_INDEX if series in INDEX_SERIES else Z
 RUN_SECONDS = int(os.environ.get("P21_SECONDS", 20700))
 COMMIT_EVERY = 7200
 SETTLE_PER_PASS = 40
@@ -40,6 +49,7 @@ CB = "https://api.exchange.coinbase.com/products/{}/candles"
 _cb = requests.Session()
 
 
+OCOLS = COLS + ["strike_type", "cap"]  # the open ledger also keeps what the cancel check needs
 DCOLS = ["day", "series", "settled", "cancelled", "filled_markets", "contracts", "pnl", "lost_filled", "queue_sum"]
 
 
@@ -56,7 +66,12 @@ def _read(path, cols):
 
 
 def ledger() -> pd.DataFrame:
-    return _read(OPEN, COLS)
+    d = _read(OPEN, OCOLS)
+    for c, default in (("strike_type", "greater"), ("cap", np.nan)):
+        if c not in d:
+            d[c] = default
+    d["strike_type"] = d["strike_type"].fillna("greater")
+    return d
 
 
 def settle_out(led: pd.DataFrame) -> pd.DataFrame:
@@ -84,8 +99,29 @@ def settle_out(led: pd.DataFrame) -> pd.DataFrame:
     return led[~led.index.isin(done.index)]
 
 
+def index_spot_and_vol(ticker: str, now: pd.Timestamp):
+    """Yahoo 1-minute index bars: (last completed minute's close, per-minute vol over 60); nan when stale."""
+    try:
+        import yfinance as yf
+        df = yf.download(ticker, period="1d", interval="1m", progress=False, auto_adjust=False)
+    except Exception:
+        return np.nan, np.nan
+    if df is None or df.empty:
+        return np.nan, np.nan
+    c = df["Close"]
+    c = c.iloc[:, 0] if isinstance(c, pd.DataFrame) else c
+    idx = c.index.tz_convert("UTC") if c.index.tz is not None else c.index.tz_localize("UTC")
+    c = pd.Series(c.to_numpy(dtype=float), index=idx + pd.Timedelta(minutes=1)).dropna()
+    c = c[c.index <= now]
+    if c.empty or now - c.index[-1] > STALE:
+        return np.nan, np.nan
+    return float(c.iloc[-1]), float(np.log(c).diff().tail(60).std())
+
+
 def spot_and_vol(product: str, now: pd.Timestamp):
     """(close of the last completed minute, per-minute vol over the trailing 60) from Coinbase 1-minute candles."""
+    if product.startswith("^"):
+        return index_spot_and_vol(product, now)
     try:
         r = _cb.get(CB.format(product), params={"granularity": 60}, timeout=20, headers={"User-Agent": "paper21"})
         rows = r.json() if r.status_code == 200 else []
@@ -102,6 +138,20 @@ def spot_and_vol(product: str, now: pd.Timestamp):
 def z_for(spot, vol, strike, close, now):
     tau = max((close - now).total_seconds() / 60, 0.5)
     return np.log(spot / strike) / (vol * np.sqrt(tau)) if vol and vol > 0 else np.nan
+
+
+def z_sides(strike_type, floor, cap, spot, vol, close, now):
+    """(z that YES is winning, z that NO is winning). A range's YES ('inside') is never treated as decided."""
+    if strike_type in ("greater", "greater_or_equal"):
+        z = z_for(spot, vol, float(floor), close, now)
+        return z, -z
+    if strike_type in ("less", "less_or_equal"):
+        z = -z_for(spot, vol, float(cap), close, now)
+        return z, -z
+    if strike_type == "between":
+        inside = min(z_for(spot, vol, float(floor), close, now), -z_for(spot, vol, float(cap), close, now))
+        return -np.inf, -inside
+    return np.nan, np.nan
 
 
 def queue_ahead(ticker: str, side: str) -> float:
@@ -140,7 +190,9 @@ def open_markets(series: str, now: pd.Timestamp) -> list[dict]:
     out = []
     for m in ms:
         close = pd.to_datetime(m.get("close_time"), utc=True, errors="coerce")
-        if m.get("strike_type") in ("greater", "greater_or_equal") and pd.notna(close) and \
+        kinds = ("greater", "greater_or_equal", "less", "less_or_equal", "between") if series in INDEX_SERIES \
+            else ("greater", "greater_or_equal")
+        if m.get("strike_type") in kinds and pd.notna(close) and \
                 now + pd.Timedelta(seconds=5) < close <= now + pd.Timedelta(hours=1):
             out.append({**m, "_close": close})
     return out
@@ -154,17 +206,23 @@ def place(led: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
         if not np.isfinite(s):
             continue
         for m in open_markets(series, now):
-            z = z_for(s, v, float(m["floor_strike"]), m["_close"], now)
-            if m["ticker"] in have or not np.isfinite(z) or abs(z) < Z:
+            if m["ticker"] in have:
                 continue
-            side = "yes" if z > 0 else "no"
-            new.append(dict(ticker=m["ticker"], series=series, side=side, strike=m["floor_strike"],
+            zy, zn = z_sides(m.get("strike_type"), m.get("floor_strike"), m.get("cap_strike"), s, v, m["_close"], now)
+            if np.isfinite(zy) and zy >= zmin(series):
+                side, z = "yes", zy
+            elif np.isfinite(zn) and zn >= zmin(series):
+                side, z = "no", zn
+            else:
+                continue
+            new.append(dict(ticker=m["ticker"], series=series, side=side, strike=m.get("floor_strike"),
+                            strike_type=m.get("strike_type"), cap=m.get("cap_strike"),
                             close_utc=m["_close"].isoformat(), placed_utc=now.isoformat(), z_at_place=round(abs(z), 2),
                             spot_at_place=s, queue_ahead=queue_ahead(m["ticker"], side), seen=0.0, filled=0.0,
                             status="open", cancelled_utc="", result="", pnl=np.nan, settled_utc=""))
     if new:
         print(f"{now:%H:%M:%S} placed {len(new)}: {[x['ticker'] for x in new][:6]}", flush=True)
-        led = pd.concat([led, pd.DataFrame(new)[COLS]], ignore_index=True) if len(led) else pd.DataFrame(new)[COLS]
+        led = pd.concat([led, pd.DataFrame(new)[OCOLS]], ignore_index=True) if len(led) else pd.DataFrame(new)[OCOLS]
     return led
 
 
@@ -181,8 +239,9 @@ def watch(led: pd.DataFrame, now: pd.Timestamp, count_fills: bool) -> pd.DataFra
             prod = SERIES[led.at[i, "series"]]
             spots.setdefault(prod, spot_and_vol(prod, now))
             s, v = spots[prod]
-            z = z_for(s, v, float(led.at[i, "strike"]), close, now)
-            if np.isfinite(z) and (z if side == "yes" else -z) < Z:
+            zy, zn = z_sides(led.at[i, "strike_type"], led.at[i, "strike"], led.at[i, "cap"], s, v, close, now)
+            z = zy if side == "yes" else zn
+            if np.isfinite(z) and z < zmin(led.at[i, "series"]):
                 led.at[i, "status"], led.at[i, "cancelled_utc"] = "cancelled", now.isoformat()
         if now >= close + pd.Timedelta(minutes=2) and led.at[i, "seen"] == 0:
             until = pd.Timestamp(led.at[i, "cancelled_utc"]) if led.at[i, "cancelled_utc"] else min(now, close)
@@ -227,6 +286,7 @@ def summary(led: pd.DataFrame, now: pd.Timestamp) -> str:
         lines += ["", "| Series | Settled | Filled markets | Contracts | P&L | Avg queue |", "|---|---:|---:|---:|---:|---:|"]
         lines += [f"| {k} | {int(r.settled):,} | {int(r.filled_markets)} | {r.contracts:,.0f} | ${r.pnl:+.2f} | "
                   f"{r.queue_sum / max(r.settled, 1):,.0f} |" for k, r in by_s.iterrows()]
+    lines += round24_forward(d)
     if len(f):
         lines += round22(f)
         lines += ["", f"Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) ({len(f)} rows)."]
@@ -264,9 +324,29 @@ def round22(f: pd.DataFrame) -> list[str]:
     return lines
 
 
+R24_START, R24_END = pd.Timestamp("2026-11-02"), pd.Timestamp("2026-11-16")
+
+
+def round24_forward(d: pd.DataFrame) -> list[str]:
+    """PROTOCOL_ROUND24.md forward test: the index series alone, 1,000 contracts per market."""
+    lines = ["", f"## Round 24 forward test (S&P 500 / Nasdaq-100 binaries), {R24_START.date()} to "
+                 f"{(R24_END - pd.Timedelta(days=1)).date()}", ""]
+    if d.empty:
+        return lines + ["No settled index markets yet."]
+    x = d[d["series"].isin(INDEX_SERIES) & (pd.to_datetime(d["day"]) >= R24_START) & (pd.to_datetime(d["day"]) < R24_END)]
+    if x.empty:
+        return lines + ["No settled index markets yet."]
+    daily = x.groupby("day")[["settled", "filled_markets", "pnl", "lost_filled"]].sum()
+    active = daily[daily["filled_markets"] > 0]
+    return lines + ["| | |", "|---|---|", f"| Paper profit | **${daily['pnl'].sum():+,.2f}** |",
+                    f"| Markets settled / filled | {int(daily['settled'].sum()):,} / {int(daily['filled_markets'].sum())} |",
+                    f"| Losing filled markets | {int(daily['lost_filled'].sum())} |",
+                    f"| Days with fills | {len(active)} (green {(active['pnl'] > 0).mean() if len(active) else 0:.0%}) |"]
+
+
 def save(led, now):
     led = settle_out(led)
-    led[COLS].to_csv(OPEN, index=False)
+    led[OCOLS].to_csv(OPEN, index=False)
     (ROOT / "ROUND21_PAPER.md").write_text(summary(led, now))
     return led
 

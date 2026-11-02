@@ -60,3 +60,23 @@ them green, worst day +$4.31, long shots won 0.44% of fills. KXINXU (hourly
 S&P) gave $430 of it. These are backtest fills at 25% capture. Round 21's
 live test shows that the real queue at 99c sharply limits that capture, so
 any live use needs its own forward test first.
+
+## Forward test (amendment, 2026-11-02, before any live index bid)
+
+The four index series join the Round 21 paper bot (`edge/paper21.py`), with
+the same placement, queue, cancellation and settlement logic and these
+inputs:
+
+- Z = 2;
+- Yahoo 1-minute index bars, the last completed minute only, with no bids
+  when the latest bar is more than 5 minutes old;
+- above, below and range markets, where a range's "inside" is never treated
+  as decided;
+- 1,000 contracts per market.
+
+**Window:** 2026-11-02 to 2026-11-15 (10 trading days).
+
+**Gate:**
+1. Paper profit ≥ $150.
+2. At most one losing filled market.
+3. Profitable on ≥ 70% of days with fills.

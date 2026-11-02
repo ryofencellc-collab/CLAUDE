@@ -15,9 +15,10 @@ class R:
 def row(**kw):
     base = dict(ticker="T", series="KXBTCD", side="yes", strike=100.0, close_utc="2026-10-30T12:00:00+00:00",
                 placed_utc="2026-10-30T11:50:00+00:00", z_at_place=7.0, spot_at_place=110.0, queue_ahead=500.0,
-                seen=0.0, filled=0.0, status="open", cancelled_utc="", result="", pnl=np.nan, settled_utc="")
+                seen=0.0, filled=0.0, status="open", cancelled_utc="", result="", pnl=np.nan, settled_utc="",
+                strike_type="greater", cap=np.nan)
     base.update(kw)
-    return pd.DataFrame([base])[p.COLS]
+    return pd.DataFrame([base])[p.OCOLS]
 
 
 def test_z_sign_and_size():
@@ -72,3 +73,14 @@ def test_round22_sizing_uses_excess_over_queue():
     text = "\n".join(p.round22(f))
     want = 10000 * 0.01 - p.r15._maker_fee(10000, 0.99) + 1000 * 0.01 - p.r15._maker_fee(1000, 0.99)
     assert f"${want:+,.2f}" in text
+
+
+def test_index_z_sides_by_strike_type():
+    now, close = pd.Timestamp("2026-11-02 19:55", tz="UTC"), pd.Timestamp("2026-11-02 20:00", tz="UTC")
+    zy, zn = p.z_sides("greater", 6800, None, 6850.0, 0.0003, close, now)
+    assert zy > 2 and zn < -2
+    zy, zn = p.z_sides("less", None, 6900, 6850.0, 0.0003, close, now)
+    assert zy > 2
+    zy, zn = p.z_sides("between", 6900, 6910, 6850.0, 0.0003, close, now)
+    assert zn > 2 and zy == -np.inf                     # outside the range: NO decided; inside never is
+    assert p.zmin("KXINXU") == 2.0 and p.zmin("KXBTCD") == 6.0
