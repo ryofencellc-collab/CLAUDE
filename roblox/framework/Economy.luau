@@ -8,6 +8,7 @@ function Economy.new(data, config: { rebirthBase: number, rebirthGrowth: number,
 	self.data = data
 	self.config = config
 	self.passMultiplier = {} :: { [Player]: number }
+	self.bonus = {} :: { [Player]: number } -- extra game-specific multiplier (e.g. collection items), default 1
 	data.Loaded:Connect(function(player: Player, profile)
 		local stats = Instance.new("Folder")
 		stats.Name = "leaderstats"
@@ -35,7 +36,7 @@ end
 function Economy:Multiplier(player: Player): number
 	local profile = self.data:Get(player)
 	if not profile then return 1 end
-	return (1 + self.config.rebirthBonus * profile.rebirths) * (self.passMultiplier[player] or 1)
+	return (1 + self.config.rebirthBonus * profile.rebirths) * (self.passMultiplier[player] or 1) * (self.bonus[player] or 1)
 end
 
 -- amount is the base reward; multipliers apply here so every source of income gets them.

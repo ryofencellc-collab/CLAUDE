@@ -52,6 +52,29 @@ coin packs. The map is built in code, so no hand-made assets are needed.
 Run a $20–100 sponsored-ad test per game. Kill a game that misses the bar; give updates and ad budget to
 the ones that clear it.
 
+## Game #2: Village of Lights (Diwali, ~Nov 8)
+
+A server-wide co-op loop: light diyas around the village, and when 90% are lit, fireworks pay everyone.
+Five free collectibles range from 1 in 10 to the Mythic **Star of Diwali at 1 in 1,000,000**, with the odds
+shown in-game. Rangoli Trails are bought with Sparkles. The icon and thumbnail are in `art/`.
+Launch steps: [games/village-of-lights/LAUNCH.md](games/village-of-lights/LAUNCH.md).
+
+## Holiday calendar (dates approximate: verify each year)
+
+| Holiday | Date | Game |
+|---|---|---|
+| Diwali | ~Nov 8 | Village of Lights |
+| Thanksgiving | Nov 26 | Harvest Feast (co-op cooking) |
+| Hanukkah | ~Dec 4–12 | Eight Nights (8-day login and nightly mini-game) |
+| Christmas | Dec 25 | Gift Factory (workshop tycoon and sleigh runs) |
+| Kwanzaa | Dec 26–Jan 1 | Seven Principles (7-day community build) |
+| Lunar New Year | ~Feb 6 | Dragon Parade (rhythm) |
+| Ramadan → Eid al-Fitr | ~Feb 8 → ~Mar 9 | Lantern Market (decorate, cook iftar, give) |
+| Nowruz | ~Mar 20 | Spring Reset (Haft-sin puzzle) |
+| Holi | ~Mar 22 | Color War (team map coverage) |
+
+Build around festive traditions (lights, food, colours, kites, gifts), never around religious rituals.
+
 ## Next games (each with its own core mechanic, not a reskin)
 
 1. **Mine & Refine:** tycoon. Dig ores, run them through machines, sell the output.
