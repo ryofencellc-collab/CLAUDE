@@ -1,6 +1,6 @@
 # Round 3: live paper trading (football value bets)
 
-Updated 2026-11-02 18:30 UTC. Rule frozen in [PROTOCOL_ROUND3.md](../PROTOCOL_ROUND3.md). Paper bankroll $1,000, flat $10 stakes.
+Updated 2026-11-03 02:26 UTC. Rule frozen in [PROTOCOL_ROUND3.md](../PROTOCOL_ROUND3.md). Paper bankroll $1,000, flat $10 stakes.
 
 | | |
 |---|---|
