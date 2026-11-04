@@ -13,6 +13,11 @@ trades only the 15-minute crypto markets, one position at a time.
 | Startup | Cancels any leftover order of ours. |
 | Errors | Logged, and the open order is pulled. |
 | Kill switch | Commit an empty file `paper/LIVE21_STOP`, or set `LIVE21` to `0`. |
+| Which market | When several qualify at once, the one with the shortest queue at 99c ahead of us (most likely to fill). |
+| Order tracking | The order is saved to state before anything else can fail. Every 30 s, any order of ours we are not tracking is cancelled. Orders you place by hand are never touched. |
+| Leftover positions | No new order while a position from an earlier job is still open. |
+| Crash recovery | State is committed every 15 min. On start, the pause and half-size rules are rebuilt from Kalshi's own settlement records. |
+| Privacy | The repo is public, so the live log never contains your balance. Tickers and order sizes are visible. |
 
 ## Steps (only after the Round 22 paper gate passes on Nov 13)
 

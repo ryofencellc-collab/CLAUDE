@@ -44,4 +44,6 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run paper18.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"
+        run: |
+          if [ "${{ job.status }}" != "success" ]; then sleep 300; fi  # no tight loop when a job keeps failing
+          gh workflow run paper18.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"

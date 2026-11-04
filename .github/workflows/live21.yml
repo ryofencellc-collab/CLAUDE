@@ -29,6 +29,9 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
       - run: pip install -r requirements.txt
+      - run: |
+          git config user.name "live21 bot"
+          git config user.email "actions@users.noreply.github.com"
       - if: ${{ inputs.selftest == '1' }}
         run: python -m edge.live21 selftest
       - if: ${{ inputs.selftest != '1' }}
@@ -46,4 +49,6 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run live21.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"
+        run: |
+          if [ "${{ job.status }}" != "success" ]; then sleep 300; fi  # no tight loop when a job keeps failing
+          gh workflow run live21.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"

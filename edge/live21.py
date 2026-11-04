@@ -44,6 +44,18 @@ BASE = "/trade-api/v2"
 LOG_COLS = ["time_utc", "mode", "event", "ticker", "side", "count", "z", "spot", "balance", "detail"]
 
 
+def num(d: dict, *keys, scale: float = 1.0) -> float:
+    """First present numeric field among keys (Kalshi returns some fields as fixed-point strings)."""
+    for k in keys:
+        v = d.get(k)
+        if v not in (None, ""):
+            try:
+                return float(v) * scale
+            except (TypeError, ValueError):
+                continue
+    return 0.0
+
+
 # ---------------------------------------------------------------------- Kalshi client
 class Kalshi:
     """Minimal authenticated client (RSA-PSS signed headers, as Kalshi's API requires)."""
@@ -79,14 +91,33 @@ class Kalshi:
         return r.json() if r.text else {}
 
     def balance_usd(self) -> float:
-        return float(self.call("GET", "/portfolio/balance").get("balance", 0)) / 100
+        b = self.call("GET", "/portfolio/balance")
+        return num(b, "balance", scale=0.01) if "balance" in b else num(b, "balance_dollars")
 
     def resting(self) -> list[dict]:
         return self.call("GET", "/portfolio/orders", params={"status": "resting", "limit": 200}).get("orders", [])
 
     def positions(self) -> list[dict]:
         ps = self.call("GET", "/portfolio/positions", params={"limit": 200}).get("market_positions", [])
-        return [p for p in ps if float(p.get("position_fp") or p.get("position") or 0) != 0]
+        return [p for p in ps if num(p, "position_fp", "position") != 0]
+
+    def filled(self, ticker: str) -> float:
+        fills = self.call("GET", "/portfolio/fills", params={"ticker": ticker, "limit": 200}).get("fills", [])
+        return sum(num(f, "count_fp", "count") for f in fills if f.get("action", "buy") == "buy" and f.get("ticker", ticker) == ticker)
+
+    def recent_settlement_pnls(self, since: float) -> list[tuple[float, float]]:
+        """(settled unix time, P&L in dollars) for our settlements since `since`."""
+        out = []
+        for x in self.call("GET", "/portfolio/settlements", params={"limit": 200}).get("settlements", []):
+            t = pd.Timestamp(x.get("settled_time")).timestamp() if x.get("settled_time") else 0
+            if t < since:
+                continue
+            revenue = num(x, "revenue", scale=0.01)
+            cost = (num(x, "yes_total_cost_dollars") or num(x, "yes_total_cost", scale=0.01)) + \
+                (num(x, "no_total_cost_dollars") or num(x, "no_total_cost", scale=0.01))
+            fee = num(x, "fee_cost_dollars") or num(x, "fee_cost", scale=0.01)
+            out.append((t, revenue - cost - fee))
+        return out
 
     def buy(self, ticker: str, side: str, count: int, cents: int = PRICE_CENTS) -> dict:
         body = order_body(ticker, side, count, cents)
@@ -144,15 +175,18 @@ def record_result(st: dict, now: float, pnl: float) -> None:
 
 # ---------------------------------------------------------------------- loop
 def log(mode: str, event: str, ticker="", side="", count=0, z=np.nan, spot=np.nan, balance=np.nan, detail=""):
+    if mode == "LIVE":
+        balance = np.nan  # the log is committed to a public repository: never write the real balance
     row = dict(time_utc=pd.Timestamp.now(tz="UTC").isoformat(), mode=mode, event=event, ticker=ticker, side=side,
                count=count, z=z, spot=spot, balance=balance, detail=str(detail)[:300])
     pd.DataFrame([row])[LOG_COLS].to_csv(LOG, mode="a", header=not (LOG.exists() and LOG.stat().st_size), index=False)
     print(f"{row['time_utc'][:19]} {mode} {event} {ticker} {side} {count} {detail}", flush=True)
 
 
-def decide(now: pd.Timestamp):
-    """The paper bot's placement rule, unchanged: first 15-minute market whose side is decided at z >= Z."""
+def candidates(now: pd.Timestamp) -> list:
+    """Every 15-minute market the paper bot would bid on right now (its placement rule, unchanged)."""
     spots = {sig.SERIES[s]: sig.spot_and_vol(sig.SERIES[s], now) for s in SERIES}
+    out = []
     for series in SERIES:
         s, v = spots[sig.SERIES[series]]
         if not np.isfinite(s):
@@ -160,10 +194,22 @@ def decide(now: pd.Timestamp):
         for m in sig.open_markets(series, now):
             zy, zn = sig.z_sides(m.get("strike_type"), m.get("floor_strike"), m.get("cap_strike"), s, v, m["_close"], now)
             if np.isfinite(zy) and zy >= sig.zmin(series):
-                return m, series, "yes", zy, s
-            if np.isfinite(zn) and zn >= sig.zmin(series):
-                return m, series, "no", zn, s
-    return None
+                out.append((m, series, "yes", zy, s))
+            elif np.isfinite(zn) and zn >= sig.zmin(series):
+                out.append((m, series, "no", zn, s))
+    return out
+
+
+def decide(now: pd.Timestamp):
+    """The paper bot bids on all of them; with one position at a time we take the one with the shortest queue
+    at 99c ahead of us, since that is the one most likely to fill (paper data: most fills had < 1k ahead)."""
+    best, best_q = None, math.inf
+    for c in candidates(now):
+        q = sig.queue_ahead(c[0]["ticker"], c[2])
+        q = q if np.isfinite(q) else math.inf
+        if best is None or q < best_q:
+            best, best_q = c, q
+    return None if best is None else (*best, best_q)
 
 
 def still_decided(o: dict, now: pd.Timestamp) -> bool:
@@ -185,8 +231,7 @@ def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     if m.get("result") not in ("yes", "no"):
         return
     if mode == "LIVE" and api.authed:
-        fills = api.call("GET", "/portfolio/fills", params={"ticker": o["ticker"], "limit": 200}).get("fills", [])
-        filled = sum(float(f.get("count_fp") or f.get("count") or 0) for f in fills if f.get("action") == "buy")
+        filled = api.filled(o["ticker"])
     else:  # dry run: the paper bot's fill accounting, so dry P&L is comparable 1:1 with the paper ledger
         until = pd.Timestamp(o["cancelled_at"]) if o.get("cancelled_at") else pd.Timestamp(o["close"])
         seen = sig.seen_since(o["ticker"], o["side"], pd.Timestamp(o["placed"]), until)
@@ -221,22 +266,29 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     why = blocked(st, now.timestamp(), balance)
     if why:
         return
+    if mode == "LIVE" and api.positions():
+        return  # a position from an earlier job is still open: wait until it settles
     pick = decide(now)
     if not pick:
         return
-    m, series, side, z, spot = pick
+    m, series, side, z, spot, q = pick
     count = size_for(balance, st, now.timestamp())
     if count < 1:
         log(mode, "skip", m["ticker"], side, 0, z, spot, balance, "balance too small")
         return
-    order_id = None
-    if mode == "LIVE":
-        order = api.buy(m["ticker"], side, count)
-        order_id = order.get("order_id")
-    log(mode, "place", m["ticker"], side, count, round(z, 2), spot, balance, json.dumps(order_body(m["ticker"], side, count)))
     st["open"] = dict(ticker=m["ticker"], series=series, side=side, count=count, close=m["_close"].isoformat(),
                       strike_type=m.get("strike_type"), floor=m.get("floor_strike"), cap=m.get("cap_strike"),
-                      order_id=order_id, placed=now.isoformat(), queue_ahead=sig.queue_ahead(m["ticker"], side))
+                      order_id=None, placed=now.isoformat(), queue_ahead=(q if np.isfinite(q) else None))
+    if mode == "LIVE":
+        try:
+            order = api.buy(m["ticker"], side, count)
+        except Exception:
+            st["open"] = None  # rejected (e.g. post-only would cross): nothing rests
+            raise
+        st["open"]["order_id"] = order.get("order_id")
+        save_state(st)  # tracked before anything else can fail
+    log(mode, "place", m["ticker"], side, count, round(z, 2), spot, balance,
+        f"queue_ahead={q:.0f} " + json.dumps(order_body(m["ticker"], side, count)))
 
 
 def summary() -> str:
@@ -264,6 +316,32 @@ def summary() -> str:
     return "\n".join(lines) + "\n"
 
 
+def sweep_strays(api: Kalshi, st: dict, mode: str) -> None:
+    """Cancel any resting order of ours that is not the one we are tracking."""
+    keep = (st.get("open") or {}).get("order_id")
+    for o in api.resting():
+        if str(o.get("client_order_id", "")).startswith("r21-") and o.get("order_id") != keep:
+            api.cancel(o["order_id"])
+            log(mode, "cancel", o.get("ticker", ""), detail="stray order")
+
+
+def rebuild_risk(api: Kalshi, st: dict, now: float) -> None:
+    """Re-apply the loss rules from Kalshi's own settlement records, in case a job died before saving state."""
+    for t, pnl in api.recent_settlement_pnls(now - (PAUSE_HOURS * 3600 + HALF_DAYS * 86400)):
+        if pnl < 0:
+            st["pause_until"] = max(st["pause_until"], t + PAUSE_HOURS * 3600)
+            st["half_until"] = max(st["half_until"], t + PAUSE_HOURS * 3600 + HALF_DAYS * 86400)
+
+
+def commit_logs() -> None:
+    import subprocess
+    files = [str(p.relative_to(ROOT.parent)) for p in (LOG, STATE, ROOT / "LIVE21.md") if p.exists()]
+    for c in (["git", "add", *files], ["git", "commit", "-q", "-m", "live21: log [skip ci]"],
+              ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
+        if subprocess.run(c, cwd=ROOT.parent).returncode != 0 and c[1] == "commit":
+            return
+
+
 def run():
     key_id, pem = os.environ.get("KALSHI_KEY_ID"), os.environ.get("KALSHI_PRIVATE_KEY")
     api = Kalshi(key_id, pem)
@@ -271,11 +349,11 @@ def run():
     st = load_state()
     log(mode, "start", detail=f"authed={api.authed} max={MAX_CONTRACTS} series={','.join(SERIES)}")
     if mode == "LIVE":
-        for o in api.resting():  # clean slate: nothing of ours rests from a previous job
-            if str(o.get("client_order_id", "")).startswith("r21-"):
-                api.cancel(o["order_id"])
-                log(mode, "cancel", o.get("ticker", ""), detail="startup clean-up")
-    t0 = time.time()
+        st["open"] = None
+        sweep_strays(api, st, mode)  # clean slate: nothing of ours rests from a previous job
+        rebuild_risk(api, st, time.time())
+        save_state(st)
+    t0, last_sweep, last_commit = time.time(), 0.0, time.time()
     seconds = int(os.environ.get("LIVE21_SECONDS", 20700))
     while time.time() - t0 < seconds:
         now = pd.Timestamp.now(tz="UTC")
@@ -288,9 +366,18 @@ def run():
                     api.cancel(st["open"]["order_id"])
                 except Exception:
                     pass
+        if mode == "LIVE" and time.time() - last_sweep > 30:
+            try:
+                sweep_strays(api, st, mode)
+            except Exception as e:
+                log(mode, "error", detail=f"sweep: {e!r}")
+            last_sweep = time.time()
         save_state(st)
-        if int(time.time() - t0) % 600 < 5:
+        if time.time() - last_commit > 900:  # state survives a crashed job
             (ROOT / "LIVE21.md").write_text(summary())
+            if os.environ.get("GITHUB_ACTIONS") == "true":
+                commit_logs()
+            last_commit = time.time()
         time.sleep(max(0.0, 5 - (time.time() - now.timestamp())))
     log(mode, "stop", detail="job time limit")
     (ROOT / "LIVE21.md").write_text(summary())
@@ -307,11 +394,19 @@ def selftest() -> None:
     m = next((m for s in SERIES for m in sig.open_markets(s, now)), None)
     if m is None:
         raise SystemExit("no open 15-minute market right now; try again in a minute")
-    order = api.buy(m["ticker"], "yes", 1, cents=1)
+    for side in ("yes", "no"):  # a 1c post-only bid is rejected only if it would cross; then try the other side
+        try:
+            order = api.buy(m["ticker"], side, 1, cents=1)
+            break
+        except RuntimeError as e:
+            print(f"{side} at 1c rejected: {e}")
+    else:
+        raise SystemExit("both sides rejected: check the error text above")
     print(f"placed test order {order.get('order_id')} on {m['ticker']}: status {order.get('status')}")
     ids = [o.get("order_id") for o in api.resting()]
     print("resting:", order.get("order_id") in ids)
     api.cancel(order["order_id"])
+    print("positions:", len(api.positions()), "| recent settlements read:", len(api.recent_settlement_pnls(time.time() - 86400 * 30)))
     print("cancelled; selftest OK")
 
 
