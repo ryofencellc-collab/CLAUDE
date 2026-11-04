@@ -27,8 +27,8 @@ ROOT.mkdir(exist_ok=True)
 OPEN = ROOT / "r21_open.csv"      # orders not yet settled (carried between jobs)
 FILLS = ROOT / "r21_fills.csv"    # settled markets that got any fill, or were wrong
 DAILY = ROOT / "r21_daily.csv"    # every settled market, aggregated by day and series
-CAPITAL = ROOT / "r21_capital.csv"
-PLACED15 = ROOT / "r21_15m_placed.csv"  # every 15-minute bid, for the paper vs live comparison  # collateral a real account would tie up, sampled every pass
+CAPITAL = ROOT / "r21_capital.csv"  # collateral a real account would tie up, sampled every pass
+PLACED15 = ROOT / "r21_15m_placed.csv"  # every 15-minute bid, for the paper vs live comparison
 Z, BID, ORDER = 6.0, 0.99, 1000.0
 SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "KXXRP15M": "XRP-USD",
           "KXDOGE15M": "DOGE-USD", "KXBTCD": "BTC-USD", "KXETHD": "ETH-USD", "KXSOLD": "SOL-USD", "KXXRPD": "XRP-USD"}
