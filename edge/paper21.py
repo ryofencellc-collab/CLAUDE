@@ -27,7 +27,8 @@ ROOT.mkdir(exist_ok=True)
 OPEN = ROOT / "r21_open.csv"      # orders not yet settled (carried between jobs)
 FILLS = ROOT / "r21_fills.csv"    # settled markets that got any fill, or were wrong
 DAILY = ROOT / "r21_daily.csv"    # every settled market, aggregated by day and series
-CAPITAL = ROOT / "r21_capital.csv"  # collateral a real account would tie up, sampled every pass
+CAPITAL = ROOT / "r21_capital.csv"
+PLACED15 = ROOT / "r21_15m_placed.csv"  # every 15-minute bid, for the paper vs live comparison  # collateral a real account would tie up, sampled every pass
 Z, BID, ORDER = 6.0, 0.99, 1000.0
 SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "KXXRP15M": "XRP-USD",
           "KXDOGE15M": "DOGE-USD", "KXBTCD": "BTC-USD", "KXETHD": "ETH-USD", "KXSOLD": "SOL-USD", "KXXRPD": "XRP-USD"}
@@ -223,6 +224,10 @@ def place(led: pd.DataFrame, now: pd.Timestamp) -> pd.DataFrame:
                             status="open", cancelled_utc="", result="", pnl=np.nan, settled_utc=""))
     if new:
         print(f"{now:%H:%M:%S} placed {len(new)}: {[x['ticker'] for x in new][:6]}", flush=True)
+        q15 = [x for x in new if x["series"].endswith("15M")]
+        if q15:  # small per-bid log of 15-minute markets, to check the live trader against 1:1
+            pd.DataFrame(q15)[["ticker", "series", "side", "placed_utc", "z_at_place", "queue_ahead"]].to_csv(
+                PLACED15, mode="a", header=not (PLACED15.exists() and PLACED15.stat().st_size), index=False)
         led = pd.concat([led, pd.DataFrame(new)[OCOLS]], ignore_index=True) if len(led) else pd.DataFrame(new)[OCOLS]
     return led
 
@@ -398,7 +403,7 @@ def save(led, now):
 
 def commit(now):
     cmds = [["git", "add", "paper/r21_open.csv", "paper/r21_fills.csv", "paper/r21_daily.csv", "paper/r21_capital.csv",
-             "paper/ROUND21_PAPER.md"],
+             "paper/r21_15m_placed.csv", "paper/ROUND21_PAPER.md"],
             ["git", "commit", "-q", "-m", f"paper21: ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
             ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]]
     for c in cmds:
@@ -407,7 +412,7 @@ def commit(now):
 
 
 def run():
-    for f in (FILLS, DAILY, CAPITAL):
+    for f in (FILLS, DAILY, CAPITAL, PLACED15):
         f.touch()
     t0 = time.time()
     led, last_commit, passes = ledger(), time.time(), 0
