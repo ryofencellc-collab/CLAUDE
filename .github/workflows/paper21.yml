@@ -9,6 +9,7 @@ on:
       seconds: {description: "loop length in seconds", default: "20700"}
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: paper21
   cancel-in-progress: false
@@ -28,3 +29,8 @@ jobs:
           git config user.name "paper21 bot"
           git config user.email "actions@users.noreply.github.com"
       - run: python -m edge.paper21
+      - name: Start the next run (GitHub's cron is unreliable; the concurrency group queues it)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run paper21.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"

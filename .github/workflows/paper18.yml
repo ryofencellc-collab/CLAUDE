@@ -10,6 +10,7 @@ on:
       passes: {description: "bot passes (5 minutes apart)", default: "69"}
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: paper18
   cancel-in-progress: false
@@ -39,3 +40,8 @@ jobs:
             left=$(( 300 - ($(date +%s) - start) ))
             if [ $left -gt 0 ]; then sleep $left; fi
           done
+      - name: Start the next run (GitHub's cron is unreliable; the concurrency group queues it)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run paper18.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"

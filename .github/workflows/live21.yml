@@ -10,6 +10,7 @@ on:
       selftest: {description: "1 = only run the 1-contract, 1c order check and exit", default: "0"}
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: live21
   cancel-in-progress: false
@@ -41,3 +42,8 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -q -m "live21: log $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+      - name: Start the next run (GitHub's cron is unreliable; the concurrency group queues it)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run live21.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"
