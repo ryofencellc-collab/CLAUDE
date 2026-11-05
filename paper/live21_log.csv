@@ -59,3 +59,4 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-05T20:13:53.910075+00:00,DRY,place,KXETH15M-26NOV051515-15,no,1000,6.01,2243.52,1050.0,"queue_ahead=15983 {""ticker"": ""KXETH15M-26NOV051515-15"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-2c52e97fdf8f4c45"", ""post_only"": true, ""no_price"": 99}"
 2026-11-05T20:17:03.303060+00:00,DRY,settled,KXETH15M-26NOV051515-15,no,1000.0,,,,result=no pnl=9.82
 2026-11-05T20:37:08.188720+00:00,DRY,stop,,,0,,,,job time limit
+2026-11-05T20:37:37.566710+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTC15M,KXETH15M,KXSOL15M,KXXRP15M,KXDOGE15M"
