@@ -48,3 +48,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-05T15:32:02.812270+00:00,DRY,settled,KXBTC15M-26NOV051030-30,no,0.0,,,,result=no pnl=0.00
 2026-11-05T15:59:08.471543+00:00,DRY,place,KXETH15M-26NOV051100-00,no,1000,6.22,2242.05,1050.0,"queue_ahead=69751 {""ticker"": ""KXETH15M-26NOV051100-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-cb8dbfb590dc4710"", ""post_only"": true, ""no_price"": 99}"
 2026-11-05T16:02:02.867417+00:00,DRY,settled,KXETH15M-26NOV051100-00,no,0.0,,,,result=no pnl=0.00
+2026-11-05T16:29:08.500079+00:00,DRY,place,KXETH15M-26NOV051130-30,yes,1000,6.09,2280.1,1050.0,"queue_ahead=105887 {""ticker"": ""KXETH15M-26NOV051130-30"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-cd5ce07e45344050"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-05T16:32:02.918117+00:00,DRY,settled,KXETH15M-26NOV051130-30,yes,0.0,,,,result=yes pnl=0.00
