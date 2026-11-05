@@ -38,6 +38,7 @@ INDEX_SERIES = {"KXINXU": "^GSPC", "KXINX": "^GSPC", "KXNASDAQ100U": "^NDX", "KX
 SERIES.update(INDEX_SERIES)
 Z_INDEX = 2.0
 STALE = pd.Timedelta(minutes=5)
+MIN_INDEX_BARS = 30  # minutes of today's session needed before the index volatility is trusted
 
 
 def zmin(series: str) -> float:
@@ -116,6 +117,8 @@ def index_spot_and_vol(ticker: str, now: pd.Timestamp):
     c = pd.Series(c.to_numpy(dtype=float), index=idx + pd.Timedelta(minutes=1)).dropna()
     c = c[c.index <= now]
     if c.empty or now - c.index[-1] > STALE:
+        return np.nan, np.nan
+    if len(c) < MIN_INDEX_BARS:  # right after the 9:30 open a few bars give a near-zero vol and a huge z: no bids
         return np.nan, np.nan
     return float(c.iloc[-1]), float(np.log(c).diff().tail(60).std())
 

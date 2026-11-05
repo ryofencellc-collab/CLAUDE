@@ -80,3 +80,14 @@ inputs:
 1. Paper profit ≥ $150.
 2. At most one losing filled market.
 3. Profitable on ≥ 70% of days with fills.
+
+## Fix during the forward test (2026-11-05)
+
+Three filled losses came from KXINXU-26NOV05H1000 bids placed at 14:33 UTC, 3 minutes after the open.
+With only 3 one-minute bars, the volatility estimate was near zero and z was inflated (4.8–6.1). The S&P
+then fell, and the bids were cancelled at 14:36, after 1 contract each had filled (−$3 in total).
+
+Fix: no index bids until today's session has at least 30 one-minute bars, i.e. from 10:00 ET. This
+corrects a data-sufficiency bug. The rule itself (Z = 2, sizing, accounting) is unchanged. The three
+losses stay in the record and count toward the gate (at most one losing filled market), so Round 24's
+forward test now fails on that rule, and the result will be reported as such.
