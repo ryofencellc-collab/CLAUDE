@@ -66,3 +66,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-05T21:17:02.812933+00:00,DRY,settled,KXXRP15M-26NOV051615-15,no,0.0,,,,result=no pnl=0.00
 2026-11-05T22:29:13.582698+00:00,DRY,place,KXDOGE15M-26NOV051730-30,no,1000,6.29,0.07156,1050.0,"queue_ahead=16342 {""ticker"": ""KXDOGE15M-26NOV051730-30"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-bf8ce515f70545d2"", ""post_only"": true, ""no_price"": 99}"
 2026-11-05T22:32:02.969126+00:00,DRY,settled,KXDOGE15M-26NOV051730-30,no,0.0,,,,result=no pnl=0.00
+2026-11-05T23:12:28.647906+00:00,DRY,place,KXDOGE15M-26NOV051815-15,no,1000,6.01,0.07037,1050.0,"queue_ahead=3551 {""ticker"": ""KXDOGE15M-26NOV051815-15"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-87495139e63f4811"", ""post_only"": true, ""no_price"": 99}"
+2026-11-05T23:17:03.054323+00:00,DRY,settled,KXDOGE15M-26NOV051815-15,no,1000.0,,,,result=no pnl=9.82
