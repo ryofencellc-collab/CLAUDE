@@ -1,3 +1,27 @@
 time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-04T13:27:19.558906+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTC15M,KXETH15M,KXSOL15M,KXXRP15M,KXDOGE15M"
 2026-11-04T13:57:19.621841+00:00,DRY,stop,,,0,,,,job time limit
+2026-11-04T21:35:08.716824+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTC15M,KXETH15M,KXSOL15M,KXXRP15M,KXDOGE15M"
+2026-11-04T22:13:43.914148+00:00,DRY,place,KXBTC15M-26NOV041715-15,yes,1000,6.09,80353.48,1050.0,"{""ticker"": ""KXBTC15M-26NOV041715-15"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-cf789c5aad6544f8"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-04T22:17:03.998359+00:00,DRY,settled,KXBTC15M-26NOV041715-15,yes,0.0,,,,result=yes pnl=0.00
+2026-11-04T22:28:24.042219+00:00,DRY,place,KXETH15M-26NOV041730-30,yes,1000,6.09,2431.94,1050.0,"{""ticker"": ""KXETH15M-26NOV041730-30"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-2c61949405044627"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-04T22:32:04.024019+00:00,DRY,settled,KXETH15M-26NOV041730-30,yes,0.0,,,,result=yes pnl=0.00
+2026-11-04T22:42:53.970958+00:00,DRY,place,KXBTC15M-26NOV041745-45,yes,1000,6.0,80828.8,1050.0,"{""ticker"": ""KXBTC15M-26NOV041745-45"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-4f51de5dc3de44af"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-04T22:47:04.081515+00:00,DRY,settled,KXBTC15M-26NOV041745-45,yes,1000.0,,,,result=yes pnl=9.82
+2026-11-04T22:59:29.023448+00:00,DRY,place,KXBTC15M-26NOV041800-00,no,1000,6.33,80667.5,1050.0,"{""ticker"": ""KXBTC15M-26NOV041800-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-053a2321b3984d06"", ""post_only"": true, ""no_price"": 99}"
+2026-11-04T23:02:04.110703+00:00,DRY,settled,KXBTC15M-26NOV041800-00,no,0.0,,,,result=no pnl=0.00
+2026-11-04T23:13:29.315954+00:00,DRY,place,KXSOL15M-26NOV041815-15,no,1000,6.06,95.46,1050.0,"{""ticker"": ""KXSOL15M-26NOV041815-15"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-6199f3771c8c4ec3"", ""post_only"": true, ""no_price"": 99}"
+2026-11-04T23:17:04.136969+00:00,DRY,settled,KXSOL15M-26NOV041815-15,no,1000.0,,,,result=no pnl=9.82
+2026-11-04T23:44:29.194329+00:00,DRY,place,KXBTC15M-26NOV041845-45,yes,1000,6.17,80622.13,1050.0,"{""ticker"": ""KXBTC15M-26NOV041845-45"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-4bbc22c6fac84088"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-04T23:47:04.236975+00:00,DRY,settled,KXBTC15M-26NOV041845-45,yes,0.0,,,,result=yes pnl=0.00
+2026-11-04T23:59:14.588536+00:00,DRY,place,KXDOGE15M-26NOV041900-00,no,1000,6.18,0.07699,1050.0,"{""ticker"": ""KXDOGE15M-26NOV041900-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-7f8f8d1f9b5d44a9"", ""post_only"": true, ""no_price"": 99}"
+2026-11-05T00:02:04.228889+00:00,DRY,settled,KXDOGE15M-26NOV041900-00,no,0.0,,,,result=no pnl=0.00
+2026-11-05T00:14:29.162717+00:00,DRY,place,KXBTC15M-26NOV041915-15,yes,1000,6.1,80574.48,1050.0,"{""ticker"": ""KXBTC15M-26NOV041915-15"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-7d85583ac73c4c13"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-05T00:17:04.255469+00:00,DRY,settled,KXBTC15M-26NOV041915-15,yes,0.0,,,,result=yes pnl=0.00
+2026-11-05T00:59:14.339352+00:00,DRY,place,KXETH15M-26NOV042000-00,no,1000,6.07,2419.11,1050.0,"{""ticker"": ""KXETH15M-26NOV042000-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-8f48fb191fdb42d9"", ""post_only"": true, ""no_price"": 99}"
+2026-11-05T01:02:04.343831+00:00,DRY,settled,KXETH15M-26NOV042000-00,no,0.0,,,,result=no pnl=0.00
+2026-11-05T01:29:29.641387+00:00,DRY,place,KXXRP15M-26NOV042030-30,no,1000,6.22,1.2985,1050.0,"{""ticker"": ""KXXRP15M-26NOV042030-30"", ""action"": ""buy"", ""side"": ""no"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-d53159479f7d4302"", ""post_only"": true, ""no_price"": 99}"
+2026-11-05T01:32:04.403846+00:00,DRY,settled,KXXRP15M-26NOV042030-30,no,0.0,,,,result=no pnl=0.00
+2026-11-05T01:43:29.463246+00:00,DRY,place,KXETH15M-26NOV042045-45,yes,1000,6.03,2424.31,1050.0,"{""ticker"": ""KXETH15M-26NOV042045-45"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-7ae702336d124f10"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-05T01:47:04.428648+00:00,DRY,settled,KXETH15M-26NOV042045-45,yes,0.0,,,,result=yes pnl=0.00
+2026-11-05T03:20:09.401511+00:00,DRY,stop,,,0,,,,job time limit
