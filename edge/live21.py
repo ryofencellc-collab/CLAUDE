@@ -35,6 +35,8 @@ LOG = ROOT / "live21_log.csv"
 STATE = ROOT / "live21_state.json"
 STOP = ROOT / "LIVE21_STOP"
 CONTROL = ROOT.parent / "control" / "live21.json"  # Claude's switch; re-read from GitHub every minute
+ZBINS = ROOT.parent / "control" / "r25_zbins.json"  # Round 25 reversal table (|z| x minutes left)
+P_MAX = 0.003  # Round 25's chosen entry gate: enter only when the table's reversal risk is below 0.3%
 SERIES = [s for s in sig.SERIES if s.endswith("15M")]  # capital-efficient part only (see PROTOCOL_ROUND22.md)
 MAX_CONTRACTS = int(os.environ.get("LIVE21_MAX", 1000))
 PRICE_CENTS = 99
@@ -43,6 +45,31 @@ PAUSE_HOURS, HALF_DAYS = 24, 7
 API = "https://api.elections.kalshi.com"
 BASE = "/trade-api/v2"
 LOG_COLS = ["time_utc", "mode", "event", "ticker", "side", "count", "z", "spot", "balance", "detail"]
+
+
+_table = {}
+
+
+def flip_risk(az: float, tau: float) -> float:
+    """Round 25: historical reversal rate for this |z| and minutes left (bins are right-closed, as fitted).
+    Without the table, fall back to Round 21's rule: z >= Z counts as decided (risk 0), below it as not (1)."""
+    if not _table:
+        if ZBINS.exists():
+            _table.update(json.loads(ZBINS.read_text()))
+        else:
+            return 0.0 if az >= sig.Z else 1.0
+    if not (np.isfinite(az) and np.isfinite(tau)):
+        return 1.0
+    zi = int(np.searchsorted(_table["z_edges"], az, side="left")) - 1
+    ti = int(np.searchsorted(_table["tau_edges"], tau, side="left")) - 1
+    if zi < 0 or ti < 0 or zi >= len(_table["rate"]) or ti >= len(_table["rate"][0]):
+        return 1.0
+    return float(_table["rate"][zi][ti])
+
+
+def kelly(p: float) -> float:
+    """Full Kelly for a 99c bet that pays 1c or loses 99c (Round 25's chosen multiplier is 1.0)."""
+    return max(0.0, (1 - p) - p * (0.99 / 0.01))
 
 
 def num(d: dict, *keys, scale: float = 1.0) -> float:
@@ -249,10 +276,10 @@ def candidates(now: pd.Timestamp) -> list:
             continue
         for m in sig.open_markets(series, now):
             zy, zn = sig.z_sides(m.get("strike_type"), m.get("floor_strike"), m.get("cap_strike"), s, v, m["_close"], now)
-            if np.isfinite(zy) and zy >= sig.zmin(series):
-                out.append((m, series, "yes", zy, s))
-            elif np.isfinite(zn) and zn >= sig.zmin(series):
-                out.append((m, series, "no", zn, s))
+            tau = max((m["_close"] - now).total_seconds() / 60, 0.5)
+            for side, z in (("yes", zy), ("no", zn)):
+                if np.isfinite(z) and z > 0 and flip_risk(z, tau) < P_MAX:
+                    out.append((m, series, side, z, s))
     return out
 
 
@@ -274,7 +301,8 @@ def still_decided(o: dict, now: pd.Timestamp) -> bool:
         return False  # stale data: treat as not decided, so the order is pulled
     zy, zn = sig.z_sides(o["strike_type"], o["floor"], o["cap"], s, v, pd.Timestamp(o["close"]), now)
     z = zy if o["side"] == "yes" else zn
-    return bool(np.isfinite(z) and z >= sig.zmin(o["series"]))
+    tau = max((pd.Timestamp(o["close"]) - now).total_seconds() / 60, 0.5)
+    return bool(np.isfinite(z) and z > 0 and flip_risk(z, tau) < P_MAX)
 
 
 def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
@@ -335,7 +363,9 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
         return  # this market just rejected our order; let the book change first
     if m["ticker"] in st.get("traded", []) or m["_close"] <= now:
         return  # never a second order on a market already traded, and never one on a closed market
-    count = size_for(balance, st, now.timestamp(), st.get("stake_fraction", 0.5), st.get("max_contracts"))
+    p = flip_risk(z, max((m["_close"] - now).total_seconds() / 60, 0.5))
+    frac = min(st.get("stake_fraction", 0.5), kelly(p))  # Round 25 sizing, never above Claude's stake cap
+    count = size_for(balance, st, now.timestamp(), frac, st.get("max_contracts"))
     if count < 1:
         log(mode, "skip", m["ticker"], side, 0, z, spot, balance, "balance too small")
         return
@@ -354,7 +384,7 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
         st["open"]["order_id"] = order.get("order_id")
         save_state(st)  # tracked before anything else can fail
     log(mode, "place", m["ticker"], side, count, round(z, 2), spot, balance,
-        f"queue_ahead={q:.0f} " + json.dumps(order_body(m["ticker"], side, count)))
+        f"queue_ahead={q:.0f} risk={p:.5f} frac={frac:.3f} " + json.dumps(order_body(m["ticker"], side, count)))
 
 
 def summary() -> str:

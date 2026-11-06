@@ -69,3 +69,36 @@ The z × minutes-left table captures most of the gain. Momentum against our side
 extra feature. Kelly sizing will bet large near the close and small with more than about 5 minutes left. I
 expect a PASS with faster growth than the fixed rule and similar drawdown. The model will likely be
 under-confident at very high |z|, because flips there are almost nonexistent.
+
+## Result and deployment (2026-11-07)
+
+**PASS.** The rule chosen on dev was "z-bin table, Kelly ×1.0, cap 0.95, enter only when the predicted
+reversal risk is < 0.3%".
+
+| October holdout, $1,000 start | Chosen rule | Live rule (z ≥ 6, stake 0.5) |
+|---|---:|---:|
+| Final balance | $30,155 | $4,111 |
+| Markets traded / lost | 993 / 0 | 424 / 0 |
+| Max drawdown | 0% | 0% |
+
+On dev the chosen rule had 3 losing markets and a −14% max drawdown. The scoring model was well calibrated
+on the holdout.
+
+These dollar figures assume we capture 25% of every long-shot fill at any size, so they overstate
+capacity. The comparison between the two rules is what matters.
+
+**Deployment to the live trader.** `edge/live21.py` now uses the z-bin table (`control/r25_zbins.json`, fit
+on 2024-01 to 2026-03) for three things:
+
+1. **Entry:** risk < 0.3%.
+2. **Cancel:** when the risk rises to ≥ 0.3%.
+3. **Size:** min(Claude's stake cap, Kelly(risk)).
+
+The stake cap stays under `control/RULES.md` (0.5 for the first 14 live days). If the table file is
+missing, the trader falls back to Round 21's z ≥ 6.
+
+**Live differences from the backtest:** one order per market, sized at placement (the backtest allowed
+adding to a position), and one market at a time.
+
+**Forward check:** the trader's dry run until go-live is the forward test, compared side by side with the
+Round 21 paper bot on the same markets.

@@ -181,3 +181,34 @@ def test_num_parses_cents_dollars_and_fixed_point():
     assert L.num({"count_fp": "250.00"}, "count_fp", "count") == 250.0
     assert L.num({"count": 7}, "count_fp", "count") == 7.0
     assert L.num({}, "x") == 0.0
+
+
+def test_round25_table_lookup_kelly_and_fallback(monkeypatch, tmp_path):
+    t = {"z_edges": [0, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20, 30, 1e9], "tau_edges": [0, 1, 2, 4, 7, 10, 15],
+         "rate": [[0.5] * 6] * 6 + [[0.0005, 0.001, 0.002, 0.004, 0.006, 0.01]] * 7}
+    p = tmp_path / "z.json"
+    p.write_text(__import__("json").dumps(t))
+    monkeypatch.setattr(L, "ZBINS", p)
+    L._table.clear()
+    assert L.flip_risk(9.0, 0.8) == 0.0005 and L.flip_risk(9.0, 5.0) == 0.004   # right-closed bins
+    assert L.flip_risk(3.0, 0.8) == 0.5 and L.flip_risk(float("nan"), 1) == 1.0
+    assert abs(L.kelly(0.001) - 0.9) < 1e-9 and L.kelly(0.02) == 0.0
+    L._table.clear()
+    monkeypatch.setattr(L, "ZBINS", tmp_path / "missing.json")
+    assert L.flip_risk(6.5, 3) == 0.0 and L.flip_risk(5.0, 3) == 1.0          # no table: Round 21's z >= 6
+    L._table.clear()
+
+
+def test_round25_size_is_kelly_capped_by_stake(monkeypatch, tmp_path):
+    monkeypatch.setattr(L, "LOG", tmp_path / "log.csv")
+    monkeypatch.setattr(L, "STOP", tmp_path / "STOP")
+    monkeypatch.setattr(L, "flip_risk", lambda z, tau: 0.002)                   # kelly 0.8
+    m = {"ticker": "KXXRP15M-K", "strike_type": "greater_or_equal", "floor_strike": 1.0, "cap_strike": None,
+         "_close": pd.Timestamp("2026-11-04 12:15", tz="UTC")}
+    monkeypatch.setattr(L, "decide", lambda now: (m, "KXXRP15M", "yes", 9.0, 1.05, 50.0))
+    for cap, want in ((0.5, 505), (0.95, 808)):
+        st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0,
+              "open": None, "results": [], "stake_fraction": cap, "max_contracts": 100000}
+        api = FakeApi()
+        L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))
+        assert api.bought[0][2] == want                                         # min(stake cap, kelly 0.8)
