@@ -221,12 +221,17 @@
   {
    "t": 1793974623.153252,
    "pnl": 0.0
+  },
+  {
+   "t": 1793976423.205118,
+   "pnl": 0.0
   }
  ],
  "stake_fraction": 0.5,
  "max_contracts": 100000,
  "control_stop": false,
  "traded": [
-  "KXBTC15M-26NOV060915-15"
+  "KXBTC15M-26NOV060915-15",
+  "KXDOGE15M-26NOV060945-45"
  ]
 }
