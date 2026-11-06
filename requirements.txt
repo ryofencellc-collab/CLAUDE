@@ -7,3 +7,4 @@ pytest>=8
 numba>=0.60
 histdata>=1.1
 cryptography>=42
+scikit-learn>=1.4

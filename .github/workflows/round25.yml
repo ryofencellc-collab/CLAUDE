@@ -1,0 +1,36 @@
+name: round25
+# Round 25 (PROTOCOL_ROUND25.md): confidence-scaled sizing. Downloads Binance minutes, reuses Round 21's
+# Kalshi fills (artifacts of run 40886253855), fits the reversal models and tests 91 policies.
+on:
+  workflow_dispatch:
+    inputs:
+      small: {description: "1 = XRP only, 2026 only", default: "1"}
+permissions:
+  contents: write
+  actions: read
+concurrency: round25-${{ inputs.small }}
+env:
+  R25_SMALL: ${{ inputs.small }}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r21-*", path: data/r21, merge-multiple: true, run-id: 40886253855, github-token: "${{ github.token }}"}
+      - run: ls data/r21 | head -30
+      - run: python run_round25.py data
+      - run: python run_round25.py run
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round25 bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND25* || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "round25: results (run ${{ github.run_id }}, small=${{ inputs.small }}) [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
