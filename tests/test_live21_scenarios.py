@@ -235,11 +235,13 @@ def test_small_balance_sizes_down(world):
 
 
 def test_job_end_cancels_anything_resting(world, monkeypatch):
-    ex, mk, st, _ = world
+    ex, mk, st, _ = world  # _ is the test's temporary folder
     monkeypatch.setattr(L, "Kalshi", lambda key_id, pem: ex)
     monkeypatch.setenv("LIVE21", "1")
     monkeypatch.setenv("LIVE21_SECONDS", "0")                               # the loop ends at once
     monkeypatch.setattr(L, "load_state", lambda: st)
+    monkeypatch.setattr(L, "ROOT", _ / "root")                              # keep the real paper/ report untouched
+    (_ / "root").mkdir()
     ex.orders["r"] = dict(order_id="r", ticker="KXXRP15M-T", side="yes", count=10, status="resting", client_order_id="r21-r")
     L.run()
     assert ex.orders["r"]["status"] == "canceled"
