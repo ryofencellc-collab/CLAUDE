@@ -119,18 +119,25 @@ class Kalshi:
             out.append((t, revenue - cost - fee))
         return out
 
-    def buy(self, ticker: str, side: str, count: int, cents: int = PRICE_CENTS) -> dict:
-        body = order_body(ticker, side, count, cents)
+    def buy(self, ticker: str, side: str, count: int, cents: int = PRICE_CENTS, expires: float | None = None) -> dict:
+        body = order_body(ticker, side, count, cents, expires)
         return self.call("POST", "/portfolio/orders", body=body).get("order", {})
 
     def cancel(self, order_id: str) -> None:
-        self.call("DELETE", f"/portfolio/orders/{order_id}")
+        try:
+            self.call("DELETE", f"/portfolio/orders/{order_id}")
+        except RuntimeError as e:  # already filled, expired or cancelled: nothing left to pull
+            if "-> 404" not in str(e) and "-> 409" not in str(e):
+                raise
 
 
-def order_body(ticker: str, side: str, count: int, cents: int = PRICE_CENTS) -> dict:
-    """Post-only limit buy for the decided side: it rests in the book and can never take liquidity."""
+def order_body(ticker: str, side: str, count: int, cents: int = PRICE_CENTS, expires: float | None = None) -> dict:
+    """Post-only limit buy for the decided side: it rests in the book and can never take liquidity. With
+    `expires` (unix seconds, the market's close) Kalshi drops it by itself even if this bot has died."""
     body = {"ticker": ticker, "action": "buy", "side": side, "count": int(count), "type": "limit",
             "client_order_id": f"r21-{uuid.uuid4().hex[:16]}", "post_only": True}
+    if expires:
+        body["expiration_ts"] = int(expires)
     body["yes_price" if side == "yes" else "no_price"] = int(cents)
     return body
 
@@ -175,8 +182,8 @@ def record_result(st: dict, now: float, pnl: float) -> None:
 
 # ---------------------------------------------------------------------- loop
 def log(mode: str, event: str, ticker="", side="", count=0, z=np.nan, spot=np.nan, balance=np.nan, detail=""):
-    if mode == "LIVE":
-        balance = np.nan  # the log is committed to a public repository: never write the real balance
+    if mode == "LIVE" or os.environ.get("KALSHI_KEY_ID"):
+        balance = np.nan  # the log is committed to a public repository: never write a real account balance
     row = dict(time_utc=pd.Timestamp.now(tz="UTC").isoformat(), mode=mode, event=event, ticker=ticker, side=side,
                count=count, z=z, spot=spot, balance=balance, detail=str(detail)[:300])
     pd.DataFrame([row])[LOG_COLS].to_csv(LOG, mode="a", header=not (LOG.exists() and LOG.stat().st_size), index=False)
@@ -229,6 +236,9 @@ def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     r = sig.wx._get(f"{sig.wx.KALSHI}/markets/{o['ticker']}")
     m = r.json().get("market", {}) if r is not None and r.status_code == 200 else {}
     if m.get("result") not in ("yes", "no"):
+        if now > pd.Timestamp(o["close"]) + pd.Timedelta(hours=3):  # void or stuck: unblock, risk comes from settlements
+            log(mode, "settled", o["ticker"], o["side"], 0, detail=f"result={m.get('result')!r} unresolved after 3h pnl=0.00")
+            st["open"] = None
         return
     if mode == "LIVE" and api.authed:
         filled = api.filled(o["ticker"])
@@ -272,18 +282,25 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     if not pick:
         return
     m, series, side, z, spot, q = pick
+    if st.get("cooldown", {}).get(m["ticker"], 0) > now.timestamp():
+        return  # this market just rejected our order; let the book change first
+    if m["ticker"] in st.get("traded", []) or m["_close"] <= now:
+        return  # never a second order on a market already traded, and never one on a closed market
     count = size_for(balance, st, now.timestamp())
     if count < 1:
         log(mode, "skip", m["ticker"], side, 0, z, spot, balance, "balance too small")
         return
+    st["traded"] = (st.get("traded", []) + [m["ticker"]])[-500:]
     st["open"] = dict(ticker=m["ticker"], series=series, side=side, count=count, close=m["_close"].isoformat(),
                       strike_type=m.get("strike_type"), floor=m.get("floor_strike"), cap=m.get("cap_strike"),
                       order_id=None, placed=now.isoformat(), queue_ahead=(q if np.isfinite(q) else None))
     if mode == "LIVE":
         try:
-            order = api.buy(m["ticker"], side, count)
+            order = api.buy(m["ticker"], side, count, expires=m["_close"].timestamp())
         except Exception:
             st["open"] = None  # rejected (e.g. post-only would cross): nothing rests
+            st["traded"] = [t for t in st["traded"] if t != m["ticker"]]  # a rejected order is not a trade
+            st.setdefault("cooldown", {})[m["ticker"]] = now.timestamp() + 60
             raise
         st["open"]["order_id"] = order.get("order_id")
         save_state(st)  # tracked before anything else can fail
@@ -326,11 +343,18 @@ def sweep_strays(api: Kalshi, st: dict, mode: str) -> None:
 
 
 def rebuild_risk(api: Kalshi, st: dict, now: float) -> None:
-    """Re-apply the loss rules from Kalshi's own settlement records, in case a job died before saving state."""
+    """Re-apply the loss rules from Kalshi's own settlement records (the source of truth in LIVE): the pause and
+    half size after any losing market, and today's realised loss for the daily stop. Run at start and every
+    minute, so a loss on a position left by an earlier job is never missed."""
+    day_start = math.floor(now / 86400) * 86400
+    day_loss = 0.0
     for t, pnl in api.recent_settlement_pnls(now - (PAUSE_HOURS * 3600 + HALF_DAYS * 86400)):
         if pnl < 0:
             st["pause_until"] = max(st["pause_until"], t + PAUSE_HOURS * 3600)
             st["half_until"] = max(st["half_until"], t + PAUSE_HOURS * 3600 + HALF_DAYS * 86400)
+            if t >= day_start:
+                day_loss += -pnl
+    st["day_loss"] = max(st["day_loss"], day_loss)
 
 
 def commit_logs() -> None:
@@ -353,8 +377,31 @@ def run():
         sweep_strays(api, st, mode)  # clean slate: nothing of ours rests from a previous job
         rebuild_risk(api, st, time.time())
         save_state(st)
+    import signal
+
+    def stop_signal(signum, frame):  # GitHub cancels a job with SIGINT/SIGTERM: leave nothing resting
+        raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM, stop_signal)
     t0, last_sweep, last_commit = time.time(), 0.0, time.time()
     seconds = int(os.environ.get("LIVE21_SECONDS", 20700))
+    try:
+        loop(api, st, mode, t0, seconds, last_sweep, last_commit)
+    finally:
+        if mode == "LIVE":
+            try:
+                for o in api.resting():
+                    if str(o.get("client_order_id", "")).startswith("r21-"):
+                        api.cancel(o["order_id"])
+                        log(mode, "cancel", o.get("ticker", ""), detail="job ending: nothing left resting")
+            except Exception as e:
+                log(mode, "error", detail=f"exit cancel: {e!r}")
+        save_state(st)
+        log(mode, "stop", detail="job ending")
+        (ROOT / "LIVE21.md").write_text(summary())
+
+
+def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
+    last_risk = 0.0
     while time.time() - t0 < seconds:
         now = pd.Timestamp.now(tz="UTC")
         try:
@@ -366,6 +413,12 @@ def run():
                     api.cancel(st["open"]["order_id"])
                 except Exception:
                     pass
+        if mode == "LIVE" and time.time() - last_risk > 60:
+            try:
+                rebuild_risk(api, st, time.time())
+            except Exception as e:
+                log(mode, "error", detail=f"risk rebuild: {e!r}")
+            last_risk = time.time()
         if mode == "LIVE" and time.time() - last_sweep > 30:
             try:
                 sweep_strays(api, st, mode)
@@ -379,8 +432,6 @@ def run():
                 commit_logs()
             last_commit = time.time()
         time.sleep(max(0.0, 5 - (time.time() - now.timestamp())))
-    log(mode, "stop", detail="job time limit")
-    (ROOT / "LIVE21.md").write_text(summary())
 
 
 def selftest() -> None:

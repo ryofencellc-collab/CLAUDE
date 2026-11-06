@@ -98,7 +98,7 @@ class FakeApi:
     def positions(self):
         return self._positions
 
-    def buy(self, ticker, side, count, cents=99):
+    def buy(self, ticker, side, count, cents=99, expires=None):
         if self.fail_buy:
             raise RuntimeError("post-only would cross")
         self.bought.append((ticker, side, count))

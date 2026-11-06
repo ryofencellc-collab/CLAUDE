@@ -38,6 +38,7 @@ INDEX_SERIES = {"KXINXU": "^GSPC", "KXINX": "^GSPC", "KXNASDAQ100U": "^NDX", "KX
 SERIES.update(INDEX_SERIES)
 Z_INDEX = 2.0
 STALE = pd.Timedelta(minutes=5)
+CRYPTO_STALE = pd.Timedelta(minutes=3)  # Coinbase candles older than this are treated as no data
 MIN_INDEX_BARS = 30  # minutes of today's session needed before the index volatility is trusted
 
 
@@ -136,8 +137,10 @@ def spot_and_vol(product: str, now: pd.Timestamp):
         return np.nan, np.nan
     c = pd.Series({pd.Timestamp(x[0] + 60, unit="s", tz="UTC"): float(x[4]) for x in rows}).sort_index()
     c = c[c.index <= now]
+    if len(c) < 30 or now - c.index[-1] > CRYPTO_STALE:  # never act on an old price or a too-short history
+        return np.nan, np.nan
     vol = np.log(c).diff().tail(60).std()
-    return (float(c.iloc[-1]) if len(c) else np.nan), float(vol)
+    return float(c.iloc[-1]), float(vol)
 
 
 def z_for(spot, vol, strike, close, now):
