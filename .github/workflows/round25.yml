@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       small: {description: "1 = XRP only, 2026 only", default: "1"}
+      export_only: {description: "1 = only rebuild control/r25_zbins.json (no policy runs)", default: "0"}
 permissions:
   contents: write
   actions: read
@@ -25,12 +26,14 @@ jobs:
       - run: ls data/r21 | head -30
       - run: python run_round25.py data
       - run: python run_round25.py run
+        env:
+          R25_EXPORT_ONLY: ${{ inputs.export_only }}
       - name: Commit report
         if: always()
         run: |
           git config user.name "round25 bot"
           git config user.email "actions@users.noreply.github.com"
-          git add reports/ROUND25* || true
+          git add reports/ROUND25* control/r25_zbins.json || true
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "round25: results (run ${{ github.run_id }}, small=${{ inputs.small }}) [skip ci]"
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

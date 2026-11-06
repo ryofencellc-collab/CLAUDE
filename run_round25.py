@@ -67,6 +67,15 @@ def run():
     dv = allf[(allf["time"] >= DEV[0]) & (allf["time"] < DEV[1])]
     ho = allf[(allf["time"] >= HOLD[0]) & (allf["time"] < HOLD[1])]
     print(f"samples |z|>=2: train {len(tr):,} (flips {int(tr.flip.sum()):,}), dev {len(dv):,}, hold {len(ho):,}", flush=True)
+    if os.environ.get("R25_EXPORT_ONLY") == "1":
+        zb = r.ZBins().fit(tr)
+        table = {"z_edges": r.ZBins.ZB, "tau_edges": r.ZBins.TB, "fit": f"{TRAIN[0].date()}..{TRAIN[1].date()}",
+                 "rate": [[float(zb.rate.loc[(zi, ti)]) for ti in zb.rate.index.levels[1]] for zi in zb.rate.index.levels[0]],
+                 "n": [[int(zb.n.loc[(zi, ti)]) for ti in zb.n.index.levels[1]] for zi in zb.n.index.levels[0]]}
+        Path("control").mkdir(exist_ok=True)
+        Path("control/r25_zbins.json").write_text(json.dumps(table, indent=1))
+        print("wrote control/r25_zbins.json", flush=True)
+        return
     models = {M.name: M().fit(tr) for M in (r.ZBins, r.Logit, r.GBM)}
     from sklearn.metrics import log_loss
     ll = {k: log_loss(dv["flip"].astype(int), np.clip(m.predict(dv), 1e-7, 1 - 1e-7)) for k, m in models.items()}
@@ -146,6 +155,13 @@ def run():
              res.sort_values("dev_score", ascending=False)[show].round(4).to_markdown(index=False)]
     REPORTS.mkdir(exist_ok=True)
     (REPORTS / ("ROUND25_SMOKE.md" if SMALL else "ROUND25.md")).write_text("\n".join(lines) + "\n")
+    if not SMALL:  # the reversal table the live trader uses (fit on the training years only)
+        zb = models["zbins"]
+        table = {"z_edges": r.ZBins.ZB, "tau_edges": r.ZBins.TB, "fit": f"{TRAIN[0].date()}..{TRAIN[1].date()}",
+                 "rate": [[float(zb.rate.loc[(zi, ti)]) for ti in zb.rate.index.levels[1]] for zi in zb.rate.index.levels[0]],
+                 "n": [[int(zb.n.loc[(zi, ti)]) for ti in zb.n.index.levels[1]] for zi in zb.n.index.levels[0]]}
+        Path("control").mkdir(exist_ok=True)
+        Path("control/r25_zbins.json").write_text(json.dumps(table, indent=1))
     print("\n".join(lines[:40]))
 
 
