@@ -218,5 +218,8 @@
    "t": 1793972823.222957,
    "pnl": 0.0
   }
- ]
+ ],
+ "stake_fraction": 0.5,
+ "max_contracts": 100000,
+ "control_stop": false
 }
