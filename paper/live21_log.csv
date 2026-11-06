@@ -99,3 +99,4 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-06T07:43:30.154905+00:00,DRY,place,KXBTC15M-26NOV060245-45,yes,1000,6.14,75623.8,1050.0,"queue_ahead=950565 {""ticker"": ""KXBTC15M-26NOV060245-45"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 1000, ""type"": ""limit"", ""client_order_id"": ""r21-16ecb0c39d834901"", ""post_only"": true, ""yes_price"": 99}"
 2026-11-06T07:47:04.513244+00:00,DRY,settled,KXBTC15M-26NOV060245-45,yes,0.0,,,,result=yes pnl=0.00
 2026-11-06T08:08:04.343702+00:00,DRY,stop,,,0,,,,job time limit
+2026-11-06T08:08:37.637040+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTC15M,KXETH15M,KXSOL15M,KXXRP15M,KXDOGE15M"
