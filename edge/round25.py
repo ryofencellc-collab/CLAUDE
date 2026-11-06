@@ -67,7 +67,12 @@ def features_at(spot: pd.Series, coin: int, times: pd.Series) -> pd.DataFrame:
     rows = f.iloc[np.clip(idx, 0, None)].reset_index()
     rows.loc[~ok, FEATURES] = np.nan
     # time left must be measured from the fill itself, not the minute
-    rows["tau"] = np.maximum((rows["close"] - pd.DatetimeIndex(times).tz_convert(rows["close"].dt.tz)).total_seconds() / 60, 0.5)
+    left = (rows["close"] - pd.Series(pd.DatetimeIndex(times).tz_convert("UTC"))).dt.total_seconds() / 60
+    tau_fill = np.maximum(left.to_numpy(), 0.5)
+    # z as the live bot computes it: last completed minute's price, time left from the fill itself
+    rows["z"] = rows["z"] * np.sqrt(rows["tau"].to_numpy() / tau_fill)
+    rows["az"] = rows["z"].abs()
+    rows["tau"] = tau_fill
     return rows
 
 

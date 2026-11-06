@@ -45,3 +45,13 @@ def test_models_fit_and_predict_probabilities():
     for M in (r.ZBins, r.Logit, r.GBM):
         p = M().fit(d).predict(d)
         assert np.all((p >= 0) & (p <= 1)) and abs(np.nanmean(p) - d["flip"].mean()) < 0.02
+
+
+def test_features_at_fill_times_use_the_last_completed_minute():
+    s = series()
+    times = pd.Series(pd.to_datetime(["2026-01-03 10:07:30", "2026-01-03 10:13:59"], utc=True))
+    f = r.features_at(s, 0, times)
+    d = r.frame(s, 0).set_index("time")
+    m = d.loc[pd.Timestamp("2026-01-03 10:07", tz="UTC")]                    # last completed minute
+    assert np.isclose(f.loc[0, "tau"], 7.5) and np.isclose(f.loc[1, "tau"], 61 / 60)
+    assert np.isclose(f.loc[0, "z"], m["z"] * np.sqrt(m["tau"] / 7.5))     # time left from the fill itself
