@@ -145,3 +145,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-06T21:17:04.588935+00:00,DRY,settled,KXXRP15M-26NOV061615-15,yes,0.0,,,,result=yes pnl=0.00
 2026-11-06T21:29:20.070074+00:00,DRY,place,KXBTC15M-26NOV061630-30,no,530,6.03,75689.87,1050.0,"queue_ahead=991693 {""ticker"": ""KXBTC15M-26NOV061630-30"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-20081f4e740a4b74"", ""post_only"": true, ""no_price"": 99}"
 2026-11-06T21:32:04.604633+00:00,DRY,settled,KXBTC15M-26NOV061630-30,no,0.0,,,,result=no pnl=0.00
+2026-11-06T21:58:45.028638+00:00,DRY,place,KXSOL15M-26NOV061700-00,yes,530,6.01,90.2,1050.0,"queue_ahead=22400 {""ticker"": ""KXSOL15M-26NOV061700-00"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-46e506bfbec0496b"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-06T22:02:04.650892+00:00,DRY,settled,KXSOL15M-26NOV061700-00,yes,0.0,,,,result=yes pnl=0.00
