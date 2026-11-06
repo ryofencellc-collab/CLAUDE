@@ -145,8 +145,15 @@ def order_body(ticker: str, side: str, count: int, cents: int = PRICE_CENTS, exp
 
 # ---------------------------------------------------------------------- risk state
 def load_state() -> dict:
+    """Saved state, or safe defaults if it is missing or unreadable (in LIVE the loss rules are then rebuilt
+    from Kalshi's settlement records)."""
     if STATE.exists():
-        return json.loads(STATE.read_text())
+        try:
+            st = json.loads(STATE.read_text())
+            if isinstance(st, dict) and "pause_until" in st:
+                return st
+        except ValueError:
+            pass
     return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0,
             "open": None, "results": []}
 
@@ -155,26 +162,40 @@ def save_state(st: dict) -> None:
     STATE.write_text(json.dumps(st, indent=1))
 
 
+_control_misses = [0]
+CONTROL_MAX_MISSES = 5  # ~5 minutes without reaching GitHub: stop, because a stop could not reach us either
+
+
 def read_control() -> dict:
-    """control/live21.json, preferring the latest version on GitHub so a commit reaches a running job."""
+    """control/live21.json, preferring the latest version on GitHub so a commit reaches a running job. On
+    GitHub Actions, if GitHub cannot be reached CONTROL_MAX_MISSES times in a row, the answer is "stopped"."""
     import subprocess
-    text = None
+    text, remote_failed = None, False
     if os.environ.get("GITHUB_ACTIONS") == "true":
         ref = os.environ.get("GITHUB_REF_NAME", "")
-        if subprocess.run(["git", "fetch", "-q", "origin", ref], cwd=ROOT.parent).returncode == 0:
+        ok = subprocess.run(["git", "fetch", "-q", "origin", ref], cwd=ROOT.parent).returncode == 0
+        if ok:
             r = subprocess.run(["git", "show", f"origin/{ref}:control/live21.json"], cwd=ROOT.parent,
                                capture_output=True, text=True)
             text = r.stdout if r.returncode == 0 else None
+        remote_failed = text is None
+        _control_misses[0] = _control_misses[0] + 1 if remote_failed else 0
     if text is None and CONTROL.exists():
         text = CONTROL.read_text()
     try:
         c = json.loads(text) if text else {}
+        if not isinstance(c, dict):
+            c = {}
     except ValueError:
         c = {}
+    try:
+        frac = min(0.95, max(0.0, float(c.get("stake_fraction", 0.25))))
+        cap = max(0, int(c.get("max_contracts", MAX_CONTRACTS)))
+    except (TypeError, ValueError):
+        frac, cap = 0.25, MAX_CONTRACTS
+    stop = bool(c.get("stop", True)) or _control_misses[0] >= CONTROL_MAX_MISSES
     # anything missing or unreadable means: not live, stopped, smallest stake
-    return {"live": bool(c.get("live", False)) and not c.get("stop", False), "stop": bool(c.get("stop", True)),
-            "stake_fraction": min(0.95, max(0.0, float(c.get("stake_fraction", 0.25)))),
-            "max_contracts": int(c.get("max_contracts", MAX_CONTRACTS))}
+    return {"live": bool(c.get("live", False)) and not stop, "stop": stop, "stake_fraction": frac, "max_contracts": cap}
 
 
 def live_allowed(api: "Kalshi", control: dict) -> bool:

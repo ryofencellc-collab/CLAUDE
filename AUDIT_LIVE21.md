@@ -51,3 +51,31 @@ and a controllable clock. The full suite has 97 tests, all passing.
 3. **A sudden crash in a coin's price.** Cancels run every ~5 s, but a jump faster than that can still
    fill a wrong-side order. The worst case is one market's stake (≤ $950 on $1,000). This is the strategy's
    inherent risk, and the reason the pause and half-size rules exist.
+
+## Failure scenarios (tests/test_live21_failures.py)
+
+Everything that can go wrong apart from the market itself. Each scenario runs the real code against the
+simulated exchange.
+
+| Scenario | What the bot does |
+|---|---|
+| Kalshi goes down (503) with our order resting | Logs the error and cancels the order; nothing is left exposed |
+| Rate-limited, or the API key is wrong or expired (401) | Logs errors, places nothing, keeps running |
+| A cancel keeps failing | Retries every pass; the order isn't marked cancelled until it really is, and it expires at close anyway |
+| An order is accepted but the response loses its id | The 30-second sweep cancels it, so nothing rests that we can't track |
+| Cancelling an order that already filled (404) | Treated as done; real failures (500) still surface |
+| Coinbase down, garbage response, too little history, or candles 9 minutes old | No price: bids are pulled and nothing new is placed |
+| Kalshi's market list unavailable | No candidates, no orders |
+| A market with missing or odd strike data | Never counts as decided |
+| GitHub unreachable, so a stop could not reach the bot | Keeps the last control file through brief blips; **stops after 5 failed checks in a row** |
+| Control file with corrupt values, or the wrong JSON shape | Falls back to the safe values: smallest stake, not live |
+| The owner withdraws the whole balance | Sizes to 0 and logs a skip |
+| Midnight UTC with a pause active | The day's loss counter resets; the 24 h pause does not |
+| Corrupt state file at startup | Starts from safe defaults (bug found and fixed in this audit); in LIVE, the loss rules are rebuilt from Kalshi |
+| GitHub cancels the job mid-trade (SIGTERM) | Every resting order of ours is cancelled on the way out |
+| An error right after a full fill | The position is still settled and booked correctly |
+
+**Not testable here, handled by the platform:**
+
+- **Two jobs running at once:** prevented by the workflow's concurrency group, so at most one trader runs.
+- **Kalshi's live field names:** confirmed by the 1c self-test before any live trade.
