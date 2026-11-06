@@ -1,0 +1,8 @@
+{
+  "live": false,
+  "stake_fraction": 0.5,
+  "max_contracts": 100000,
+  "stop": false,
+  "deposit": 1000,
+  "note": "Edited only by Claude under the rules in control/RULES.md. The owner's veto: repo variable LIVE21=0."
+}

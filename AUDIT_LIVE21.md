@@ -34,11 +34,12 @@ and a controllable clock. The full suite has 97 tests, all passing.
 
 | Risk | Guard |
 |---|---|
-| Trading by accident | LIVE needs both secrets **and** the repo variable `LIVE21` = `1`; otherwise it is DRY |
+| Trading by accident | LIVE needs both secrets **and** `"live": true` in Claude's `control/live21.json` **and** no owner veto (`LIVE21` = `0`). A missing or unreadable control file means stopped. |
 | Leaking the API key | It lives only in GitHub secrets and is never printed. Requests are signed (RSA-PSS); the signature is tested against the public key. |
 | Leaking the balance (public repo) | The balance is never written to the log when keys are present, in LIVE or DRY |
 | A wrong order format | The 1c self-test checks auth and format with ≤ $0.01 at risk |
-| Emergency stop | Commit the file `paper/LIVE21_STOP`, or set `LIVE21` = `0` |
+| Emergency stop | `"stop": true` in the control file. The running bot re-reads it from GitHub every minute, pulls its order and places nothing more. The owner's `LIVE21` = `0` also forces dry run. |
+| Stake too large for a one-time $1,000 | `stake_fraction` (default 0.5, hard cap 0.95) limits one market's share of the balance |
 
 ## What tests cannot prove (and what covers it)
 

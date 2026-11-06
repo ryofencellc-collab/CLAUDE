@@ -105,7 +105,7 @@ class Market:
 
 def fresh():
     return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None,
-            "results": []}
+            "results": [], "stake_fraction": 0.95, "max_contracts": 1000}
 
 
 @pytest.fixture
@@ -252,3 +252,47 @@ def test_dry_run_with_real_keys_never_logs_the_balance(monkeypatch, tmp_path):
     monkeypatch.setenv("KALSHI_KEY_ID", "kid")
     L.log("DRY", "place", "T", "yes", 10, balance=1234.56)
     assert pd.read_csv(tmp_path / "log.csv")["balance"].isna().all()
+
+
+
+def test_stake_fraction_limits_one_market(world):
+    ex, mk, st, _ = world
+    st["stake_fraction"], st["max_contracts"] = 0.5, 100000
+    L.step(ex, st, "LIVE", at(0))
+    assert ex.calls[0][3] == 505                                            # half of $1,000 at 99c
+
+
+def test_control_file_defaults_and_veto(monkeypatch, tmp_path):
+    monkeypatch.setattr(L, "CONTROL", tmp_path / "c.json")
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    c = L.read_control()                                                    # missing file: stopped, not live
+    assert c["live"] is False and c["stop"] is True and c["stake_fraction"] == 0.25
+    (tmp_path / "c.json").write_text('{"live": true, "stop": false, "stake_fraction": 3}')
+    c = L.read_control()
+    assert c["live"] is True and c["stake_fraction"] == 0.95                # capped at 0.95
+    class A:
+        authed = True
+    monkeypatch.delenv("LIVE21", raising=False)
+    assert L.live_allowed(A(), c) is True
+    monkeypatch.setenv("LIVE21", "0")                                       # the owner's veto wins
+    assert L.live_allowed(A(), c) is False
+    (tmp_path / "c.json").write_text('{"live": true, "stop": true}')
+    assert L.read_control()["live"] is False                                 # stop overrides live
+    (tmp_path / "c.json").write_text("not json")
+    assert L.read_control()["live"] is False
+
+
+def test_control_stop_pulls_order_and_blocks(world):
+    ex, mk, st, _ = world
+    L.step(ex, st, "LIVE", at(0))
+    oid = next(iter(ex.orders))
+    st["control_stop"] = True
+    L.step(ex, st, "LIVE", at(1))
+    assert ex.orders[oid]["status"] == "canceled"
+
+
+def test_switching_to_dry_pulls_everything(world):
+    ex, mk, st, _ = world
+    L.step(ex, st, "LIVE", at(0))
+    L.go_dry(ex, st)
+    assert all(o["status"] != "resting" for o in ex.orders.values()) and st["open"] is None

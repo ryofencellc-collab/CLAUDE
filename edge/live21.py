@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parent.parent / "paper"
 LOG = ROOT / "live21_log.csv"
 STATE = ROOT / "live21_state.json"
 STOP = ROOT / "LIVE21_STOP"
+CONTROL = ROOT.parent / "control" / "live21.json"  # Claude's switch; re-read from GitHub every minute
 SERIES = [s for s in sig.SERIES if s.endswith("15M")]  # capital-efficient part only (see PROTOCOL_ROUND22.md)
 MAX_CONTRACTS = int(os.environ.get("LIVE21_MAX", 1000))
 PRICE_CENTS = 99
@@ -154,16 +155,43 @@ def save_state(st: dict) -> None:
     STATE.write_text(json.dumps(st, indent=1))
 
 
-def size_for(balance: float, st: dict, now: float) -> int:
-    n = min(MAX_CONTRACTS, math.floor(balance * 0.95 / (PRICE_CENTS / 100)))
+def read_control() -> dict:
+    """control/live21.json, preferring the latest version on GitHub so a commit reaches a running job."""
+    import subprocess
+    text = None
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        ref = os.environ.get("GITHUB_REF_NAME", "")
+        if subprocess.run(["git", "fetch", "-q", "origin", ref], cwd=ROOT.parent).returncode == 0:
+            r = subprocess.run(["git", "show", f"origin/{ref}:control/live21.json"], cwd=ROOT.parent,
+                               capture_output=True, text=True)
+            text = r.stdout if r.returncode == 0 else None
+    if text is None and CONTROL.exists():
+        text = CONTROL.read_text()
+    try:
+        c = json.loads(text) if text else {}
+    except ValueError:
+        c = {}
+    # anything missing or unreadable means: not live, stopped, smallest stake
+    return {"live": bool(c.get("live", False)) and not c.get("stop", False), "stop": bool(c.get("stop", True)),
+            "stake_fraction": min(0.95, max(0.0, float(c.get("stake_fraction", 0.25)))),
+            "max_contracts": int(c.get("max_contracts", MAX_CONTRACTS))}
+
+
+def live_allowed(api: "Kalshi", control: dict) -> bool:
+    """LIVE only with both secrets, Claude's control file saying live, and no owner veto (LIVE21=0)."""
+    return api.authed and control["live"] and os.environ.get("LIVE21") != "0"
+
+
+def size_for(balance: float, st: dict, now: float, fraction: float = 0.95, cap: int | None = None) -> int:
+    n = min(cap if cap is not None else MAX_CONTRACTS, math.floor(balance * fraction / (PRICE_CENTS / 100)))
     if now < st["half_until"]:
         n //= 2
     return max(0, n)
 
 
 def blocked(st: dict, now: float, balance: float) -> str | None:
-    if STOP.exists():
-        return "stop file present"
+    if STOP.exists() or st.get("control_stop"):
+        return "stopped by control"
     if now < st["pause_until"]:
         return "paused after a losing market"
     if st["day_start_balance"] > 0 and st["day_loss"] >= DAILY_STOP * st["day_start_balance"]:
@@ -264,7 +292,7 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     if o and now < pd.Timestamp(o["close"]):
         if o.get("cancelled"):
             return
-        if not still_decided(o, now) or STOP.exists():
+        if not still_decided(o, now) or STOP.exists() or st.get("control_stop"):
             if mode == "LIVE" and o.get("order_id"):
                 api.cancel(o["order_id"])
             log(mode, "cancel", o["ticker"], o["side"], o["count"], detail="z below threshold, stale data or stop")
@@ -286,7 +314,7 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
         return  # this market just rejected our order; let the book change first
     if m["ticker"] in st.get("traded", []) or m["_close"] <= now:
         return  # never a second order on a market already traded, and never one on a closed market
-    count = size_for(balance, st, now.timestamp())
+    count = size_for(balance, st, now.timestamp(), st.get("stake_fraction", 0.5), st.get("max_contracts"))
     if count < 1:
         log(mode, "skip", m["ticker"], side, 0, z, spot, balance, "balance too small")
         return
@@ -369,8 +397,10 @@ def commit_logs() -> None:
 def run():
     key_id, pem = os.environ.get("KALSHI_KEY_ID"), os.environ.get("KALSHI_PRIVATE_KEY")
     api = Kalshi(key_id, pem)
-    mode = "LIVE" if os.environ.get("LIVE21") == "1" and api.authed else "DRY"
     st = load_state()
+    control = read_control()
+    apply_control(st, control)
+    mode = "LIVE" if live_allowed(api, control) else "DRY"
     log(mode, "start", detail=f"authed={api.authed} max={MAX_CONTRACTS} series={','.join(SERIES)}")
     if mode == "LIVE":
         st["open"] = None
@@ -387,7 +417,7 @@ def run():
     try:
         loop(api, st, mode, t0, seconds, last_sweep, last_commit)
     finally:
-        if mode == "LIVE":
+        if api.authed:  # whatever mode we ended in, nothing of ours stays resting
             try:
                 for o in api.resting():
                     if str(o.get("client_order_id", "")).startswith("r21-"):
@@ -400,10 +430,41 @@ def run():
         (ROOT / "LIVE21.md").write_text(summary())
 
 
+def apply_control(st: dict, control: dict) -> None:
+    st["stake_fraction"], st["max_contracts"], st["control_stop"] = (
+        control["stake_fraction"], control["max_contracts"], control["stop"])
+
+
+def go_dry(api, st) -> None:
+    """Leaving LIVE mid-run: pull every resting order of ours first."""
+    for o in api.resting():
+        if str(o.get("client_order_id", "")).startswith("r21-"):
+            api.cancel(o["order_id"])
+            log("LIVE", "cancel", o.get("ticker", ""), detail="switching to DRY")
+    st["open"] = None
+
+
 def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
-    last_risk = 0.0
+    last_risk, last_control = 0.0, time.time()
     while time.time() - t0 < seconds:
         now = pd.Timestamp.now(tz="UTC")
+        if time.time() - last_control > 60:  # Claude's control file, from GitHub
+            try:
+                control = read_control()
+                apply_control(st, control)
+                want = "LIVE" if live_allowed(api, control) else "DRY"
+                if want != mode:
+                    if mode == "LIVE":
+                        go_dry(api, st)
+                    else:
+                        st["open"] = None
+                        sweep_strays(api, st, "LIVE")
+                        rebuild_risk(api, st, time.time())
+                    log(want, "mode", detail=f"{mode} -> {want} (control file)")
+                    mode = want
+            except Exception as e:
+                log(mode, "error", detail=f"control: {e!r}")
+            last_control = time.time()
         try:
             step(api, st, mode, now)
         except Exception as e:  # never die silently with an order resting: log, pull orders, carry on

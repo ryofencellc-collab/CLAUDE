@@ -1,6 +1,6 @@
 name: live21
-# Live trader for the Round 21/22 edge (edge/live21.py). DRY unless the repository variable LIVE21 is "1"
-# AND the Kalshi secrets exist. Each job loops ~5.75 h; the next scheduled run queues behind it.
+# Live trader for the Round 21/22 edge (edge/live21.py). LIVE only when the Kalshi secrets exist, Claude's
+# control/live21.json says live (re-read from GitHub every minute), and the owner has not vetoed (LIVE21=0). Each job loops ~5.75 h; the next scheduled run queues behind it.
 on:
   schedule:
     - cron: "50 */3 * * *"
@@ -20,7 +20,6 @@ jobs:
     timeout-minutes: 355
     env:
       LIVE21: ${{ vars.LIVE21 }}
-      LIVE21_MAX: ${{ vars.LIVE21_MAX || '1000' }}
       LIVE21_SECONDS: ${{ inputs.seconds || '20700' }}
       KALSHI_KEY_ID: ${{ secrets.KALSHI_KEY_ID }}
       KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}

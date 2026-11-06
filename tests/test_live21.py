@@ -62,7 +62,8 @@ def test_dry_step_places_once_and_cancels_when_undecided(monkeypatch, tmp_path):
     market = {"ticker": "KXBTC15M-26NOV041215-15", "strike_type": "greater_or_equal", "floor_strike": 100.0,
               "cap_strike": None, "_close": pd.Timestamp("2026-11-04 12:15", tz="UTC")}
     monkeypatch.setattr(L, "decide", lambda now: (market, "KXBTC15M", "yes", 7.0, 101.0, 500.0))
-    st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None, "results": []}
+    st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None,
+          "results": [], "stake_fraction": 0.95, "max_contracts": 1000}
     api = L.Kalshi(None, None)
     L.step(api, st, "DRY", now)
     assert st["open"]["ticker"] == market["ticker"] and st["open"]["count"] == 1000
@@ -109,7 +110,8 @@ class FakeApi:
 
 
 def fresh():
-    return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None, "results": []}
+    return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None,
+            "results": [], "stake_fraction": 0.95, "max_contracts": 1000}
 
 
 MARKET = {"ticker": "KXXRP15M-X", "strike_type": "greater_or_equal", "floor_strike": 1.0, "cap_strike": None,

@@ -12,7 +12,7 @@ trades only the 15-minute crypto markets, one position at a time.
 | Stale price data, or the price moves back | The order is cancelled. The loop runs every ~5 seconds. |
 | Startup | Cancels any leftover order of ours. |
 | Errors | Logged, and the open order is pulled. |
-| Kill switch | Commit an empty file `paper/LIVE21_STOP`, or set `LIVE21` to `0`. |
+| Kill switch | Claude sets `"stop": true` in `control/live21.json` (it reaches the running bot within a minute). Your veto: `LIVE21` = `0`. |
 | Which market | When several qualify at once, the one with the shortest queue at 99c ahead of us (most likely to fill). |
 | Order tracking | The order is saved to state before anything else can fail. Every 30 s, any order of ours we are not tracking is cancelled. Orders you place by hand are never touched. |
 | Leftover positions | No new order while a position from an earlier job is still open. |
@@ -35,10 +35,14 @@ trades only the 15-minute crypto markets, one position at a time.
 5. **Dry run, 1–2 days.** Leave `LIVE21` unset. The trader logs every order it would send to
    `paper/LIVE21.md` and `paper/live21_log.csv`, using your real balance. I compare it against the paper
    bot.
-6. **Go live.** Settings → Secrets and variables → Actions → **Variables** → `LIVE21` = `1`. Optional:
-   `LIVE21_MAX` = the most contracts per order (default 1000).
-7. **Scale.** After about 2 clean weeks, deposit more and raise `LIVE21_MAX`, for example to 10,000 at
-   $10k.
+6. **Going live is Claude's call.** Claude switches the bot on by editing `control/live21.json`, under the
+   pre-registered rules in [control/RULES.md](control/RULES.md): the paper gate passes, the self-test
+   passes, and 24 h of clean dry run with your keys. The running bot re-reads that file every minute.
+7. **Stake is also Claude's call, within those rules:** 50% of the balance per market for the first
+   14 days, 95% after a clean run, 25% after any loss. Claude stops the bot at a −30% drawdown.
+
+**Your veto, any time:** Settings → Secrets and variables → Actions → **Variables** → `LIVE21` = `0`.
+That forces dry run whatever the control file says.
 
 ## Cashing out
 
