@@ -55,3 +55,18 @@ def test_features_at_fill_times_use_the_last_completed_minute():
     m = d.loc[pd.Timestamp("2026-01-03 10:07", tz="UTC")]                    # last completed minute
     assert np.isclose(f.loc[0, "tau"], 7.5) and np.isclose(f.loc[1, "tau"], 61 / 60)
     assert np.isclose(f.loc[0, "z"], m["z"] * np.sqrt(m["tau"] / 7.5))     # time left from the fill itself
+
+
+def test_models_survive_edge_values_and_never_enter_on_unscorable_rows():
+    d = r.frame(series(), 0)
+    tr = d[d["az"] >= 2]
+    bad = tr.head(6).copy()
+    bad.loc[bad.index[0], "az"] = 0.0                                       # fill exactly at the strike
+    bad.loc[bad.index[1], "jump"] = np.inf                                   # zero-volatility minute
+    bad.loc[bad.index[2], "volratio"] = np.nan                               # missing feature
+    bad.loc[bad.index[3], "mom5"] = -np.inf
+    for M in (r.ZBins, r.Logit, r.GBM):
+        p = M().fit(tr).predict(bad)
+        assert np.all(np.isfinite(p)) and np.all((p >= 0) & (p <= 1))
+        if M is not r.GBM:                                                   # GBM handles NaN natively
+            assert p[2] == 1.0                                               # unscorable: maximum risk, never entered

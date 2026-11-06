@@ -62,7 +62,9 @@ def frame(spot: pd.Series, coin: int) -> pd.DataFrame:
 def features_at(spot: pd.Series, coin: int, times: pd.Series) -> pd.DataFrame:
     """Features for arbitrary fill times, through the last completed minute before each time."""
     f = frame(spot, coin).set_index("time")
-    idx = f.index.searchsorted(pd.DatetimeIndex(times), side="right") - 1
+    grid = f.index.as_unit("ns").asi8
+    when = pd.DatetimeIndex(times).tz_convert("UTC").as_unit("ns").asi8      # same unit on both sides
+    idx = np.searchsorted(grid, when, side="right") - 1
     ok = idx >= 0
     rows = f.iloc[np.clip(idx, 0, None)].reset_index()
     rows.loc[~ok, FEATURES] = np.nan
@@ -77,6 +79,33 @@ def features_at(spot: pd.Series, coin: int, times: pd.Series) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------- models of P(flip)
+def clean(d: pd.DataFrame) -> pd.DataFrame:
+    """Finite, bounded features: a fill exactly at the strike (|z| = 0) or a zero-volatility minute must not
+    produce infinities that break a model."""
+    d = d.copy()
+    d[FEATURES] = d[FEATURES].replace([np.inf, -np.inf], np.nan)
+    d["az"] = d["az"].clip(1e-3, 1e3)
+    d["tau"] = d["tau"].clip(0.5, 15)
+    for c in ("mom1", "mom3", "mom5"):
+        d[c] = d[c].clip(-50, 50)
+    d["volratio"] = d["volratio"].clip(0.01, 100)
+    d["jump"] = d["jump"].clip(0.01, 1000)
+    d["logvol"] = d["logvol"].clip(-20, 0)
+    return d
+
+
+def safe(predict):
+    """Rows a model cannot score (missing features) get risk 1.0, so no policy ever enters on them."""
+    def wrapped(self, d):
+        d = clean(d)
+        ok = np.isfinite(d[FEATURES].to_numpy(dtype=float)).all(axis=1)
+        out = np.ones(len(d))
+        if ok.any():
+            out[ok] = predict(self, d[ok])
+        return np.where(np.isfinite(out), out, 1.0)
+    return wrapped
+
+
 class ZBins:
     """Empirical flip rate by (|z| bin, minutes-left bin), with a prior so empty cells are not zero."""
     name = "zbins"
@@ -84,11 +113,13 @@ class ZBins:
     TB = [0, 1, 2, 4, 7, 10, 15]
 
     def fit(self, d: pd.DataFrame):
+        d = clean(d)
         g = d.groupby([pd.cut(d["az"], self.ZB), pd.cut(d["tau"], self.TB)], observed=False)["flip"]
         self.n, self.k = g.size(), g.sum()
         self.rate = (self.k + 0.5) / (self.n + 1.0)                    # Jeffreys-style prior
         return self
 
+    @safe
     def predict(self, d: pd.DataFrame) -> np.ndarray:
         key = pd.MultiIndex.from_arrays([pd.cut(d["az"], self.ZB), pd.cut(d["tau"], self.TB)])
         return self.rate.reindex(key).to_numpy(dtype=float)
@@ -100,6 +131,8 @@ class Logit:
     def fit(self, d: pd.DataFrame):
         from sklearn.linear_model import LogisticRegression
         self.m = LogisticRegression(max_iter=500, C=1.0)
+        d = clean(d)
+        d = d[np.isfinite(d[FEATURES].to_numpy(dtype=float)).all(axis=1)]
         self.m.fit(self._x(d), d["flip"].astype(int))
         return self
 
@@ -108,6 +141,7 @@ class Logit:
                                 d["mom5"].clip(-10, 10), np.log(d["volratio"].clip(0.05, 20)), np.log(d["jump"].clip(0.1, 50)),
                                 d["logvol"]])
 
+    @safe
     def predict(self, d):
         return self.m.predict_proba(self._x(d))[:, 1]
 
@@ -121,9 +155,11 @@ class GBM:
         cst = [-1 if f == "az" else 1 if f == "tau" else 0 for f in FEATURES]
         self.m = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.05, max_leaf_nodes=31,
                                                 monotonic_cst=cst, categorical_features=[FEATURES.index("coin")])
+        d = clean(d)
         self.m.fit(d[FEATURES].to_numpy(dtype=float), d["flip"].astype(int))
         return self
 
+    @safe
     def predict(self, d):
         return self.m.predict_proba(d[FEATURES].to_numpy(dtype=float))[:, 1]
 
