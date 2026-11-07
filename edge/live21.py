@@ -1,20 +1,18 @@
-"""Live trader for the Round 21/22 edge on Kalshi 15-minute crypto markets.
+"""Live trader for the Round 21/22/25 edge on Kalshi 15-minute crypto markets.
 
-1:1 with the paper bot: the signal (markets, spot, z, threshold, side, cancel rule) is imported from
-edge.paper21 and not re-implemented. What this adds is the account side: authenticated orders, sizing from
-the real balance, and hard risk rules.
+Signal: markets, spot price and z come from edge.paper21 (the paper bot's code, imported, not copied).
+Entry, cancel and size follow Round 25: the |z| x minutes-left reversal table (control/r25_zbins.json),
+entry only when the reversal risk is < 0.3%, cancel when it reaches 0.3%, size = min(Claude's stake cap,
+Kelly(risk)). Without the table it falls back to Round 21's z >= 6.
 
-Modes:
-  DRY (default): every decision is made and logged with the order it would send; nothing is sent.
-                 With API keys present it also reads the real balance and positions (read-only).
-  LIVE:          only when env LIVE21=1 AND both secrets are set. Orders are post-only limit buys at 99c.
+Control: Claude's control/live21.json (live / stop / stake_fraction / max_contracts), re-read from GitHub
+every minute. LIVE only with both Kalshi secrets, "live": true and no owner veto (repo variable LIVE21=0).
+Otherwise DRY: every decision is made and logged, nothing is sent.
 
-Risk rules (persisted in paper/live21_state.json):
-  - one resting order or open position at a time, so the worst case is one market's stake;
-  - size = min(MAX_CONTRACTS, 95% of balance / 0.99), halved for 7 days after a losing market;
-  - any losing filled market: no new orders for 24 hours;
-  - realised loss today beyond DAILY_STOP of the starting balance: no new orders until tomorrow (UTC);
-  - stale spot data, or a STOP file at paper/LIVE21_STOP: cancel everything and place nothing.
+Risk rules: post-only 99c limit buys that expire at the market's close; one market at a time; never the
+same market twice; 24 h pause then 7 days at half size after any losing market; no new orders after losing
+10% of the day's starting balance; stale prices or a stop: pull the order and place nothing. In LIVE the
+loss rules are rebuilt from Kalshi's own settlement records every minute. Full list: AUDIT_LIVE21.md.
 """
 import base64
 import json
@@ -55,7 +53,11 @@ def flip_risk(az: float, tau: float) -> float:
     Without the table, fall back to Round 21's rule: z >= Z counts as decided (risk 0), below it as not (1)."""
     if not _table:
         if ZBINS.exists():
-            _table.update(json.loads(ZBINS.read_text()))
+            t = json.loads(ZBINS.read_text())
+            # a bigger lead is never riskier: within each minutes-left column, risk can only fall as |z| rises.
+            # (Sparse high-|z| cells otherwise show a prior near 50% and would cancel our safest orders.)
+            t["rate"] = np.minimum.accumulate(np.asarray(t["rate"], dtype=float), axis=0).tolist()
+            _table.update(t)
         else:
             return 0.0 if az >= sig.Z else 1.0
     if not (np.isfinite(az) and np.isfinite(tau)):
@@ -129,14 +131,26 @@ class Kalshi:
         ps = self.call("GET", "/portfolio/positions", params={"limit": 200}).get("market_positions", [])
         return [p for p in ps if num(p, "position_fp", "position") != 0]
 
+    def pages(self, path: str, key: str, params: dict, max_pages: int = 50) -> list[dict]:
+        """Every page of a cursor-paginated list endpoint."""
+        out, cursor = [], None
+        for _ in range(max_pages):
+            p = {**params, **({"cursor": cursor} if cursor else {})}
+            j = self.call("GET", path, params=p)
+            out += j.get(key, [])
+            cursor = j.get("cursor")
+            if not cursor or not j.get(key):
+                break
+        return out
+
     def filled(self, ticker: str) -> float:
-        fills = self.call("GET", "/portfolio/fills", params={"ticker": ticker, "limit": 200}).get("fills", [])
+        fills = self.pages("/portfolio/fills", "fills", {"ticker": ticker, "limit": 200})
         return sum(num(f, "count_fp", "count") for f in fills if f.get("action", "buy") == "buy" and f.get("ticker", ticker) == ticker)
 
     def recent_settlement_pnls(self, since: float) -> list[tuple[float, float]]:
         """(settled unix time, P&L in dollars) for our settlements since `since`."""
         out = []
-        for x in self.call("GET", "/portfolio/settlements", params={"limit": 200}).get("settlements", []):
+        for x in self.pages("/portfolio/settlements", "settlements", {"limit": 200, "min_ts": int(since)}):
             t = pd.Timestamp(x.get("settled_time")).timestamp() if x.get("settled_time") else 0
             if t < since:
                 continue

@@ -79,3 +79,11 @@ simulated exchange.
 
 - **Two jobs running at once:** prevented by the workflow's concurrency group, so at most one trader runs.
 - **Kalshi's live field names:** confirmed by the 1c self-test before any live trade.
+
+## Audit pass, Nov 7
+
+| Finding | Fix | Test |
+|---|---|---|
+| Sparse high-\|z\| table cells carry a prior near 50%, so a *bigger* lead could look riskier and cancel the safest orders | `flip_risk` makes the table monotone: risk never rises as \|z\| grows (`np.minimum.accumulate` down the z axis) | `test_table_is_made_monotone_so_a_bigger_lead_is_never_riskier` |
+| Settlement and fill reads stopped at one page (200 rows), so daily loss / pause could miss losses on a busy day | `Kalshi.pages()` follows the cursor; settlements read with `min_ts` | `test_settlements_and_fills_read_every_page` |
+| Module docstring still described the old z ≥ 6 rule | Rewritten for the Round 25 gate and the control system | — |

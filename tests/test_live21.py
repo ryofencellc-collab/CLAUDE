@@ -212,3 +212,33 @@ def test_round25_size_is_kelly_capped_by_stake(monkeypatch, tmp_path):
         api = FakeApi()
         L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))
         assert api.bought[0][2] == want                                         # min(stake cap, kelly 0.8)
+
+
+def test_table_is_made_monotone_so_a_bigger_lead_is_never_riskier(monkeypatch, tmp_path):
+    t = {"z_edges": [0, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20, 30, 1e9], "tau_edges": [0, 1, 2, 4, 7, 10, 15],
+         "rate": [[0.5] * 6, [0.006] * 6, [0.002] * 6, [0.001] * 6, [0.001] * 6, [0.0003] * 6, [0.0002] * 6,
+                  [0.0003] * 6, [0.0005] * 6, [0.0004] * 6, [0.1] * 6, [0.0625] * 6, [0.5] * 6]}   # sparse cells high
+    p = tmp_path / "z.json"
+    p.write_text(__import__("json").dumps(t))
+    monkeypatch.setattr(L, "ZBINS", p)
+    L._table.clear()
+    risks = [L.flip_risk(z, 1.5) for z in (2.5, 3.5, 6.5, 7.5, 9, 13, 17, 25, 40)]
+    assert all(b <= a for a, b in zip(risks, risks[1:]))                    # never rises with |z|
+    assert L.flip_risk(25, 1.5) < L.P_MAX and L.flip_risk(40, 1.5) < L.P_MAX  # huge leads stay tradable
+    L._table.clear()
+
+
+def test_settlements_and_fills_read_every_page():
+    k = L.Kalshi(None, None)
+    pages = {None: {"settlements": [{"settled_time": "2026-11-07T00:00:00Z", "revenue": 0, "no_total_cost": 9900}],
+                    "cursor": "c2"},
+             "c2": {"settlements": [{"settled_time": "2026-11-06T00:00:00Z", "revenue": 101000, "yes_total_cost": 99990}],
+                    "cursor": None}}
+    seen = []
+    k.call = lambda m, path, params=None, body=None: seen.append(params) or pages[params.get("cursor")]
+    out = k.recent_settlement_pnls(0)
+    assert len(out) == 2 and out[0][1] < 0 and out[1][1] > 0                 # the loss on page 1 is not missed
+    assert seen[0]["min_ts"] == 0 and seen[1]["cursor"] == "c2"
+    fp = {None: {"fills": [{"action": "buy", "count": 300}], "cursor": "x"}, "x": {"fills": [{"action": "buy", "count_fp": "200.00"}]}}
+    k.call = lambda m, path, params=None, body=None: fp[params.get("cursor")]
+    assert k.filled("T") == 500.0

@@ -102,3 +102,6 @@ adding to a position), and one market at a time.
 
 **Forward check:** the trader's dry run until go-live is the forward test, compared side by side with the
 Round 21 paper bot on the same markets.
+
+### Amendment (Nov 7, deployment)
+The live trader reads the table with one change: risk is made non-increasing in |z| within each tau column. This only lowers risk in cells that sit above a safer, smaller-|z| cell (sparse cells dominated by the prior). The fitted table file is unchanged.
