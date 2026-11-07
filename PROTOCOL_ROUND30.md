@@ -28,3 +28,12 @@ at A's price + 1c, paying the fee; $10 per bet.
 **Indicators help if:** B's holdout log-loss beats A's, and the betting simulation is profitable on 2026.
 
 Prediction written now: the indicators add almost nothing beyond z, and the betting loses to fees.
+
+## Result (2026-11-07, reports/ROUND30.md)
+
+Small real signal, eaten by fees. Holdout 2026: before fees and spread +$7,609 (BTC) and +$9,602 (ETH) on
+~15k $10 bets each; after taker fee + spread −$432 (BTC) and +$1,152 (ETH, $3.79/day). Log-loss gain over the
+price-only model: +0.00024 (BTC, not meaningful), +0.00064 (ETH, meaningful). The weight is on short-term
+reversal (RSI 7) and 5-minute momentum. Caveat: the "market price" here is a model, not Kalshi's real quotes.
+Follow-up: Round 31 tests these and other theories on Kalshi's actual minute prices, including as resting
+(maker) orders, whose fee is ~1/4 of the taker fee.
