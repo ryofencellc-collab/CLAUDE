@@ -1,11 +1,11 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-07 18:53 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 2525; settled: 496.
+Updated 2026-11-07 19:54 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 3532; settled: 994.
 
-Total paper P&L: **$22.47**; filled markets 4; wrong calls 0, of which filled 0.
+Total paper P&L: **$103.48**; filled markets 18; wrong calls 155, of which filled 0.
 
 | series     |   markets |   filled |   contracts |   median_queue |    reach |   pnl |   wrong |   wrong_filled |
 |:-----------|----------:|---------:|------------:|---------------:|---------:|------:|--------:|---------------:|
-| KXBTCD     |       188 |        2 |     2000    |        7066.01 | 21138.7  | 19.64 |       0 |              0 |
-| KXETHD     |       299 |        1 |      242.01 |       29001    |   404.01 |  2.37 |       0 |              0 |
-| KXTEMPMIAH |         9 |        1 |       46.79 |         668.5  |    58.79 |  0.46 |       0 |              0 |
+| KXBTCD     |       376 |       11 |     9915.26 |        7066.01 | 85421.7  | 97.37 |       0 |              0 |
+| KXETHD     |       599 |        5 |      467.02 |           1    |   629.02 |  4.56 |     152 |              0 |
+| KXTEMPMIAH |        19 |        2 |      157.79 |         571.39 |   169.79 |  1.55 |       3 |              0 |
