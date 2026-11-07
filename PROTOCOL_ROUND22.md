@@ -58,3 +58,13 @@ this test measures.
 
 PASS on profit, at about $150–400/day. The risk is one filled wrong call;
 about a 30% chance of that within 14 days.
+
+## Scoring note (2026-11-07, before the window closes)
+
+Round 24 (2026-11-02) added S&P 500 / Nasdaq-100 markets to the same paper ledger. They are not in this
+test's pre-registered markets (the 15-minute and hourly crypto series above), but the scorer had been
+counting them: 3 losing 1-contract index fills on 2026-11-05 at the open (the Round 24 open-volatility bug,
+since fixed). The scorer now uses only the pre-registered series and reports index losses on their own row,
+so nothing is hidden. As of 2026-11-07 15:00 UTC on the pre-registered markets: +$6,702.76, 0 losing filled
+markets (10 wrong calls, none filled), 8/8 green days, worst day +$402.69. The live trader trades only the
+15-minute crypto series.

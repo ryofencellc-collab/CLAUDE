@@ -75,6 +75,15 @@ def test_round22_sizing_uses_excess_over_queue():
     assert f"${want:+,.2f}" in text
 
 
+def test_round22_scores_only_its_preregistered_markets():
+    f = pd.concat([row(ticker="A", series="KXBTC15M", status="won", seen=60000.0, queue_ahead=20000.0, filled=1000.0,
+                       close_utc="2026-11-01T12:00:00+00:00"),
+                   row(ticker="I", series="KXINXU", status="lost", seen=5.0, queue_ahead=0.0, filled=1.0,
+                       close_utc="2026-11-05T15:00:00+00:00")], ignore_index=True)
+    text = "\n".join(p.round22(f))
+    assert "| Losing filled markets | 0 |" in text and "(Round 24) losing filled | 1 |" in text
+
+
 def test_index_z_sides_by_strike_type():
     now, close = pd.Timestamp("2026-11-02 19:55", tz="UTC"), pd.Timestamp("2026-11-02 20:00", tz="UTC")
     zy, zn = p.z_sides("greater", 6800, None, 6850.0, 0.0003, close, now)

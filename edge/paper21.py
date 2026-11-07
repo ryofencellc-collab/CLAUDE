@@ -34,6 +34,7 @@ SERIES = {"KXBTC15M": "BTC-USD", "KXETH15M": "ETH-USD", "KXSOL15M": "SOL-USD", "
           "KXDOGE15M": "DOGE-USD", "KXBTCD": "BTC-USD", "KXETHD": "ETH-USD", "KXSOLD": "SOL-USD", "KXXRPD": "XRP-USD"}
 # KXBNB15M is in the backtest, but BNB has no Coinbase market, so it is left out here.
 # Round 24 (PROTOCOL_ROUND24.md, forward test): S&P 500 / Nasdaq-100 binaries, Yahoo 1-minute index bars, Z = 2.
+R22_SERIES = frozenset(SERIES)  # Round 21/22's pre-registered markets: crypto only (index markets came later)
 INDEX_SERIES = {"KXINXU": "^GSPC", "KXINX": "^GSPC", "KXNASDAQ100U": "^NDX", "KXNASDAQ100": "^NDX"}
 SERIES.update(INDEX_SERIES)
 Z_INDEX = 2.0
@@ -318,6 +319,9 @@ def round22(f: pd.DataFrame) -> list[str]:
     f = f.copy()
     close = pd.to_datetime(f["close_utc"], utc=True)
     f = f[(close >= R22_START) & (close < R22_END)]
+    other = f[~f["series"].isin(R22_SERIES)]  # Round 24 index markets share the ledger; not part of this test
+    other_lost = other[(other["status"] != "won") & (pd.to_numeric(other["filled"], errors="coerce").fillna(0) > 0)]
+    f = f[f["series"].isin(R22_SERIES)]
     lines = ["", f"## Round 22 sizing (10k contracts on 15-minute markets), window {R22_START.date()} to "
                  f"{(R22_END - pd.Timedelta(days=1)).date()}", ""]
     if f.empty:
@@ -333,7 +337,8 @@ def round22(f: pd.DataFrame) -> list[str]:
     lost = f[(~right) & (n > 0)]
     lines += ["| | |", "|---|---|", f"| Paper profit at Round 22 size | **${f['pnl22'].sum():+,.2f}** |",
               f"| Losing filled markets | {len(lost)} |", f"| Days with fills | {len(daily)} (green {(daily > 0).mean():.0%}) |",
-              f"| Worst day | ${daily.min():+,.2f} |"]
+              f"| Worst day | ${daily.min():+,.2f} |",
+              f"| Not in this test: index markets (Round 24) losing filled | {len(other_lost)} |"]
     return lines
 
 
