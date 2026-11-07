@@ -1,15 +1,15 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-07 16:45 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-07 18:45 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 144,809 (cancelled before close 3,469); open now 826 |
-| Markets that got any fill | 621 (0.4%) |
+| Markets bid and settled | 146,525 (cancelled before close 3,483); open now 850 |
+| Markets that got any fill | 626 (0.4%) |
 | Losing filled markets | 3 |
-| Contracts filled | 201,702 |
-| **Paper profit** | **$+1,974.97** |
-| Average queue ahead at placement | 19,473 contracts |
+| Contracts filled | 202,768 |
+| **Paper profit** | **$+1,985.41** |
+| Average queue ahead at placement | 19,484 contracts |
 
 | Day | Settled | Filled markets | Contracts | P&L |
 |---|---:|---:|---:|---:|
@@ -22,23 +22,23 @@ Updated 2026-11-07 16:45 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-04 | 13,197 | 55 | 23,770 | $+233.26 |
 | 2026-11-05 | 18,252 | 142 | 35,255 | $+342.42 |
 | 2026-11-06 | 21,747 | 90 | 31,860 | $+312.51 |
-| 2026-11-07 | 14,664 | 56 | 18,342 | $+179.85 |
+| 2026-11-07 | 16,380 | 61 | 19,408 | $+190.29 |
 
 | Series | Settled | Filled markets | Contracts | P&L | Avg queue |
 |---|---:|---:|---:|---:|---:|
-| KXBTC15M | 123 | 17 | 17,000 | $+166.94 | 603,624 |
-| KXBTCD | 29,866 | 97 | 56,834 | $+557.93 | 19,015 |
+| KXBTC15M | 124 | 18 | 18,000 | $+176.76 | 602,770 |
+| KXBTCD | 30,238 | 97 | 56,834 | $+557.93 | 18,995 |
 | KXDOGE15M | 103 | 17 | 17,000 | $+166.94 | 25,384 |
 | KXETH15M | 95 | 4 | 4,000 | $+39.28 | 85,710 |
-| KXETHD | 47,723 | 60 | 13,119 | $+128.54 | 20,379 |
+| KXETHD | 48,318 | 62 | 13,155 | $+128.88 | 20,387 |
 | KXINX | 116 | 11 | 2,422 | $+23.73 | 1,273 |
 | KXINXU | 2,335 | 135 | 16,397 | $+157.20 | 4,933 |
 | KXNASDAQ100 | 117 | 2 | 1,009 | $+9.90 | 1,287 |
 | KXNASDAQ100U | 4,280 | 31 | 2,867 | $+27.93 | 5,277 |
-| KXSOL15M | 113 | 15 | 14,880 | $+146.12 | 35,698 |
-| KXSOLD | 47,665 | 89 | 11,405 | $+111.62 | 19,227 |
+| KXSOL15M | 115 | 15 | 14,880 | $+146.12 | 35,608 |
+| KXSOLD | 48,263 | 90 | 11,405 | $+111.61 | 19,245 |
 | KXXRP15M | 129 | 30 | 29,147 | $+286.22 | 35,320 |
-| KXXRPD | 12,144 | 113 | 15,622 | $+152.62 | 19,346 |
+| KXXRPD | 12,292 | 114 | 15,652 | $+152.91 | 19,366 |
 
 ## Capital a real account would tie up (resting bids x size x 99c)
 
@@ -76,9 +76,10 @@ Updated 2026-11-07 16:45 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 
 | | |
 |---|---|
-| Paper profit at Round 22 size | **$+7,133.81** |
-| Losing filled markets | 3 |
+| Paper profit at Round 22 size | **$+7,013.90** |
+| Losing filled markets | 0 |
 | Days with fills | 8 (green 100%) |
 | Worst day | $+402.69 |
+| Not in this test: index markets (Round 24) losing filled | 3 |
 
-Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (671 rows).
+Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (676 rows).
