@@ -209,3 +209,6 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-07T06:29:03.661872+00:00,DRY,cancel,KXETH15M-26NOV070130-30,no,830,,,,"z below threshold, stale data or stop"
 2026-11-07T06:32:03.796289+00:00,DRY,settled,KXETH15M-26NOV070130-30,no,830.0,,,,result=no pnl=8.15
 2026-11-07T06:34:58.658462+00:00,DRY,stop,,,0,,,,job ending
+2026-11-07T06:35:40.123472+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTC15M,KXETH15M,KXSOL15M,KXXRP15M,KXDOGE15M"
+2026-11-07T06:43:50.637493+00:00,DRY,place,KXSOL15M-26NOV070145-45,yes,530,3.05,90.14,1050.0,"queue_ahead=23802 risk=0.00217 frac=0.500 {""ticker"": ""KXSOL15M-26NOV070145-45"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-0d4bc6958af54213"", ""post_only"": true, ""yes_price"": 99}"
+2026-11-07T06:47:00.382783+00:00,DRY,settled,KXSOL15M-26NOV070145-45,yes,0.0,,,,result=yes pnl=0.00

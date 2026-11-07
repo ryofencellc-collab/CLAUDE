@@ -369,9 +369,13 @@
   {
    "t": 1794033123.652917,
    "pnl": 8.150000000000007
+  },
+  {
+   "t": 1794034020.149152,
+   "pnl": 0.0
   }
  ],
- "stake_fraction": 0.95,
+ "stake_fraction": 0.5,
  "max_contracts": 100000,
  "control_stop": false,
  "traded": [
@@ -412,6 +416,9 @@
   "KXXRP15M-26NOV070045-45",
   "KXSOL15M-26NOV070100-00",
   "KXXRP15M-26NOV070115-15",
-  "KXETH15M-26NOV070130-30"
- ]
+  "KXETH15M-26NOV070130-30",
+  "KXSOL15M-26NOV070145-45"
+ ],
+ "gov_stake": 0.5,
+ "gov_halt": null
 }
