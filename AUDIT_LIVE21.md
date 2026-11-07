@@ -101,3 +101,18 @@ simulated exchange.
 | Self-chain broken (dispatch failed) → up to 3 h idle | 4 dispatch retries; hourly cron backup | workflow |
 | Dry run sized at the control cap (0.78) while live would use the governor's 0.5 | the governor also runs in dry run, on the paper ledger | `test_dry_run_sizes_with_the_same_rules_as_live` |
 | `live_since` left blank → the account would look old and jump to 0.95 | with no live_since, days count from the first settlement | `test_a_missing_live_since_never_skips_the_first_14_days` |
+
+## Kalshi API 3.36 migration (Nov 7) — found by reading the published spec, before any live order
+
+| Finding (spec v3.36.0, `tests/fixtures/kalshi_openapi_3.36.yaml`) | Would have caused | Fix |
+|---|---|---|
+| `POST /portfolio/orders` and `DELETE /portfolio/orders/{id}` are no longer in the API (legacy, retired after May 6, 2026) | every live order and cancel failing | Create/Cancel Order V2: `POST /portfolio/events/orders`, `DELETE /portfolio/events/orders/{id}?market_ticker=` |
+| V2 body: YES-book `bid`/`ask`, string `count`/`price`, required `time_in_force` + `self_trade_prevention_type`, `expiration_time` | orders rejected | `order_body` rewritten; buy NO at 99c = `ask` at 0.0100; `cancel_order_on_pause` on |
+| V2 response has `order_id` at the top level (no `order` wrapper) | bot losing track of every order | `buy()` reads it, raises if missing |
+| Fill `action`/`side` deprecated; a NO buy is a YES `ask` | NO fills counted as 0 | fills counted by `order_id` |
+| Settlement `fee_cost` is dollars, not cents | fees 100x too small in loss rules | read as dollars |
+| `balance` is whole cents; direct members carry 0.01c | small balance rounding | `balance_dollars` first |
+| resting orders / positions read one page | strays beyond 200 missed | paginated |
+
+`tests/test_live21_api_contract.py` replays every client call against the spec: path + method exist and are
+not deprecated, query parameters are known, order bodies match `CreateOrderV2Request` exactly.

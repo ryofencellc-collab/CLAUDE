@@ -38,6 +38,7 @@ P_MAX = 0.003  # Round 25's chosen entry gate: enter only when the table's rever
 SERIES = [s for s in sig.SERIES if s.endswith("15M")]  # capital-efficient part only (see PROTOCOL_ROUND22.md)
 MAX_CONTRACTS = int(os.environ.get("LIVE21_MAX", 1000))
 PRICE_CENTS = 99
+ORDERS_V2 = "/portfolio/events/orders"  # Kalshi API 3.36: create (POST) and cancel (DELETE /{id}); legacy POST is gone
 DAILY_STOP = 0.10
 PAUSE_HOURS, HALF_DAYS = 24, 7
 # control/RULES.md, enforced by the bot itself from Kalshi's settlement records (no one has to be watching)
@@ -126,14 +127,15 @@ class Kalshi:
         return r.json() if r.text else {}
 
     def balance_usd(self) -> float:
+        """Available cash, all exchange shards (Kalshi API 3.36: balance_dollars string, or balance in cents)."""
         b = self.call("GET", "/portfolio/balance")
-        return num(b, "balance", scale=0.01) if "balance" in b else num(b, "balance_dollars")
+        return num(b, "balance_dollars") if b.get("balance_dollars") is not None else num(b, "balance", scale=0.01)
 
     def resting(self) -> list[dict]:
-        return self.call("GET", "/portfolio/orders", params={"status": "resting", "limit": 200}).get("orders", [])
+        return self.pages("/portfolio/orders", "orders", {"status": "resting", "limit": 200})
 
     def positions(self) -> list[dict]:
-        ps = self.call("GET", "/portfolio/positions", params={"limit": 200}).get("market_positions", [])
+        ps = self.pages("/portfolio/positions", "market_positions", {"limit": 200, "count_filter": "position"})
         return [p for p in ps if num(p, "position_fp", "position") != 0]
 
     def pages(self, path: str, key: str, params: dict, max_pages: int = 50) -> list[dict]:
@@ -148,9 +150,13 @@ class Kalshi:
                 break
         return out
 
-    def filled(self, ticker: str) -> float:
-        fills = self.pages("/portfolio/fills", "fills", {"ticker": ticker, "limit": 200})
-        return sum(num(f, "count_fp", "count") for f in fills if f.get("action", "buy") == "buy" and f.get("ticker", ticker) == ticker)
+    def filled(self, ticker: str, order_id: str | None = None) -> float:
+        """Contracts our order bought. By order id when known (V2: buying NO is an 'ask' on the YES book, so the
+        legacy action/side fields cannot be trusted to say 'buy'); otherwise every fill on the ticker."""
+        params = {"order_id": order_id, "limit": 200} if order_id else {"ticker": ticker, "limit": 200}
+        fills = self.pages("/portfolio/fills", "fills", params)
+        return sum(num(f, "count_fp", "count") for f in fills
+                   if (f.get("order_id") == order_id if order_id else f.get("ticker", ticker) == ticker))
 
     def recent_settlement_pnls(self, since: float) -> list[tuple[float, float]]:
         """(settled unix time, P&L in dollars) for our settlements since `since`."""
@@ -162,30 +168,43 @@ class Kalshi:
             revenue = num(x, "revenue", scale=0.01)
             cost = (num(x, "yes_total_cost_dollars") or num(x, "yes_total_cost", scale=0.01)) + \
                 (num(x, "no_total_cost_dollars") or num(x, "no_total_cost", scale=0.01))
-            fee = num(x, "fee_cost_dollars") or num(x, "fee_cost", scale=0.01)
+            fee = num(x, "fee_cost")  # 3.36: fee_cost is a fixed-point DOLLAR string
             out.append((t, revenue - cost - fee))
         return out
 
     def buy(self, ticker: str, side: str, count: int, cents: int = PRICE_CENTS, expires: float | None = None) -> dict:
+        """Create Order V2 (POST /portfolio/events/orders). Returns {order_id, client_order_id, fill_count,
+        remaining_count, status} with status 'resting' or 'executed'."""
         body = order_body(ticker, side, count, cents, expires)
-        return self.call("POST", "/portfolio/orders", body=body).get("order", {})
+        j = self.call("POST", ORDERS_V2, body=body)
+        if not j.get("order_id"):
+            raise RuntimeError(f"POST {ORDERS_V2} -> no order_id in response: {str(j)[:200]}")
+        left = num(j, "remaining_count", "remaining_count_fp")
+        return {**j, "status": "resting" if left > 0 else "executed"}
 
-    def cancel(self, order_id: str) -> None:
+    def cancel(self, order_id: str, ticker: str | None = None) -> None:
+        """Cancel Order V2. The market ticker lets Kalshi route it to the right exchange shard."""
         try:
-            self.call("DELETE", f"/portfolio/orders/{order_id}")
+            self.call("DELETE", f"{ORDERS_V2}/{order_id}", params={"market_ticker": ticker} if ticker else None)
         except RuntimeError as e:  # already filled, expired or cancelled: nothing left to pull
             if "-> 404" not in str(e) and "-> 409" not in str(e):
                 raise
 
 
 def order_body(ticker: str, side: str, count: int, cents: int = PRICE_CENTS, expires: float | None = None) -> dict:
-    """Post-only limit buy for the decided side: it rests in the book and can never take liquidity. With
-    `expires` (unix seconds, the market's close) Kalshi drops it by itself even if this bot has died."""
-    body = {"ticker": ticker, "action": "buy", "side": side, "count": int(count), "type": "limit",
-            "client_order_id": f"r21-{uuid.uuid4().hex[:16]}", "post_only": True}
+    """Create Order V2 body (Kalshi API 3.36), a post-only buy of the decided side at `cents`: it rests in the
+    book and can never take liquidity. V2 quotes everything on the YES book: buying YES at 99c is a 'bid' at
+    0.9900; buying NO at 99c is an 'ask' (sell YES) at 0.0100. With `expires` (the market's close) Kalshi drops
+    it by itself even if this bot has died; cancel_order_on_pause pulls it if the exchange halts trading."""
+    if side not in ("yes", "no") or not 1 <= int(cents) <= 99 or int(count) < 1:
+        raise ValueError(f"bad order: side={side!r} cents={cents!r} count={count!r}")
+    yes_px = int(cents) if side == "yes" else 100 - int(cents)
+    body = {"ticker": ticker, "client_order_id": f"r21-{uuid.uuid4().hex[:16]}",
+            "side": "bid" if side == "yes" else "ask", "count": str(int(count)), "price": f"{yes_px / 100:.4f}",
+            "time_in_force": "good_till_canceled", "self_trade_prevention_type": "taker_at_cross",
+            "post_only": True, "cancel_order_on_pause": True}
     if expires:
-        body["expiration_ts"] = int(expires)
-    body["yes_price" if side == "yes" else "no_price"] = int(cents)
+        body["expiration_time"] = int(expires)
     return body
 
 
@@ -393,7 +412,7 @@ def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
             st["open"] = None
         return
     if mode == "LIVE" and api.authed:
-        filled = api.filled(o["ticker"])
+        filled = api.filled(o["ticker"], o.get("order_id"))
     else:  # dry run: the paper bot's fill accounting, so dry P&L is comparable 1:1 with the paper ledger
         until = pd.Timestamp(o["cancelled_at"]) if o.get("cancelled_at") else pd.Timestamp(o["close"])
         seen = sig.seen_since(o["ticker"], o["side"], pd.Timestamp(o["placed"]), until)
@@ -418,7 +437,7 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
             return
         if not still_decided(o, now) or STOP.exists() or st.get("control_stop") or st.get("gov_halt"):
             if mode == "LIVE" and o.get("order_id"):
-                api.cancel(o["order_id"])
+                api.cancel(o["order_id"], o.get("ticker"))
             log(mode, "cancel", o["ticker"], o["side"], o["count"], detail="z below threshold, stale data or stop")
             o["cancelled"] = True
             o["cancelled_at"] = now.isoformat()
@@ -492,7 +511,7 @@ def sweep_strays(api: Kalshi, st: dict, mode: str) -> None:
     keep = (st.get("open") or {}).get("order_id")
     for o in api.resting():
         if str(o.get("client_order_id", "")).startswith("r21-") and o.get("order_id") != keep:
-            api.cancel(o["order_id"])
+            api.cancel(o["order_id"], o.get("ticker"))
             log(mode, "cancel", o.get("ticker", ""), detail="stray order")
 
 
@@ -549,7 +568,7 @@ def run():
             try:
                 for o in api.resting():
                     if str(o.get("client_order_id", "")).startswith("r21-"):
-                        api.cancel(o["order_id"])
+                        api.cancel(o["order_id"], o.get("ticker"))
                         log(mode, "cancel", o.get("ticker", ""), detail="job ending: nothing left resting")
             except Exception as e:
                 log(mode, "error", detail=f"exit cancel: {e!r}")
@@ -567,7 +586,7 @@ def go_dry(api, st) -> None:
     """Leaving LIVE mid-run: pull every resting order of ours first."""
     for o in api.resting():
         if str(o.get("client_order_id", "")).startswith("r21-"):
-            api.cancel(o["order_id"])
+            api.cancel(o["order_id"], o.get("ticker"))
             log("LIVE", "cancel", o.get("ticker", ""), detail="switching to DRY")
     st["open"] = None
 
@@ -600,7 +619,7 @@ def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
             log(mode, "error", detail=repr(e))
             if mode == "LIVE" and st.get("open") and st["open"].get("order_id"):
                 try:
-                    api.cancel(st["open"]["order_id"])
+                    api.cancel(st["open"]["order_id"], st["open"].get("ticker"))
                 except Exception:
                     pass
         if mode == "LIVE" and time.time() - last_risk > 60:
@@ -646,7 +665,7 @@ def selftest() -> None:
     print(f"placed test order {order.get('order_id')} on {m['ticker']}: status {order.get('status')}")
     ids = [o.get("order_id") for o in api.resting()]
     print("resting:", order.get("order_id") in ids)
-    api.cancel(order["order_id"])
+    api.cancel(order["order_id"], m["ticker"])
     print("positions:", len(api.positions()), "| recent settlements read:", len(api.recent_settlement_pnls(time.time() - 86400 * 30)))
     print("cancelled; selftest OK")
 

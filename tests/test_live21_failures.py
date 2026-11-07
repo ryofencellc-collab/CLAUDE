@@ -50,7 +50,7 @@ def test_cancel_that_keeps_failing_is_retried_every_pass(world, monkeypatch):
     ex, mk, st, _ = world
     L.step(ex, st, "LIVE", at(0))
     tries = []
-    monkeypatch.setattr(ex, "cancel", lambda oid: tries.append(oid) or (_ for _ in ()).throw(RuntimeError("-> 500")))
+    monkeypatch.setattr(ex, "cancel", lambda oid, ticker=None: tries.append(oid) or (_ for _ in ()).throw(RuntimeError("-> 500")))
     mk.decided = False
     for k in range(3):
         with pytest.raises(RuntimeError):

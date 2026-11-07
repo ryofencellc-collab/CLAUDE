@@ -45,14 +45,14 @@ class Exchange:
         self.balance -= count * cents / 100
         return {"order_id": oid, "status": "resting"}
 
-    def cancel(self, order_id):
+    def cancel(self, order_id, ticker=None):
         self.calls.append(("cancel", order_id))
         o = self.orders.get(order_id)
         if o and o["status"] == "resting":
             o["status"] = "canceled"
             self.balance += (o["count"] - self.fills.get(o["ticker"], 0)) * 0.99
 
-    def filled(self, ticker):
+    def filled(self, ticker, order_id=None):
         return float(self.fills.get(ticker, 0))
 
     def recent_settlement_pnls(self, since):

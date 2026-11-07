@@ -28,11 +28,20 @@ def test_signature_verifies_with_public_key(key_pem):
     assert h["KALSHI-ACCESS-KEY"] == "kid"
 
 
-def test_order_is_post_only_99c_limit_buy():
-    b = L.order_body("KXBTC15M-X", "no", 1000)
-    assert b["action"] == "buy" and b["type"] == "limit" and b["post_only"] is True
-    assert b["no_price"] == 99 and "yes_price" not in b and b["count"] == 1000
+def test_order_is_post_only_99c_buy_in_v2_shape():
+    b = L.order_body("KXBTC15M-X", "no", 1000, expires=1_800_000_000)
+    assert b["side"] == "ask" and b["price"] == "0.0100"                    # buy NO at 99c = sell YES at 1c
+    assert b["count"] == "1000" and b["post_only"] is True and b["time_in_force"] == "good_till_canceled"
+    assert b["expiration_time"] == 1_800_000_000 and b["cancel_order_on_pause"] is True
     assert b["client_order_id"].startswith("r21-")
+    y = L.order_body("KXBTC15M-X", "yes", 7)
+    assert y["side"] == "bid" and y["price"] == "0.9900" and "expiration_time" not in y
+    assert L.order_body("T", "yes", 1, cents=1)["price"] == "0.0100"       # selftest: YES bid at 1c
+    assert L.order_body("T", "no", 1, cents=1)["price"] == "0.9900"        # selftest: NO bid at 1c = YES ask at 99c
+    import pytest
+    for bad in (dict(side="maybe"), dict(cents=0), dict(cents=100), dict(count=0)):
+        with pytest.raises(ValueError):
+            L.order_body("T", **{"side": "yes", "count": 1, **bad})
 
 
 def test_sizing_and_risk_rules():
@@ -105,7 +114,7 @@ class FakeApi:
         self.bought.append((ticker, side, count))
         return {"order_id": "oid-1", "status": "resting"}
 
-    def cancel(self, order_id):
+    def cancel(self, order_id, ticker=None):
         self.cancelled.append(order_id)
 
 
