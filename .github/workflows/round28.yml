@@ -1,0 +1,36 @@
+name: round28
+# Round 28 live queue survey (PROTOCOL_ROUND28.md). Each job loops ~5.75 h and queues the next.
+on:
+  schedule:
+    - cron: "35 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: round28
+  cancel-in-progress: false
+jobs:
+  survey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      R28_COMMIT: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: |
+          git config user.name "round28 bot"
+          git config user.email "actions@users.noreply.github.com"
+      - run: python -m edge.round28
+      - name: Start the next run
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ job.status }}" != "success" ]; then sleep 300; fi
+          for i in 1 2 3; do gh workflow run round28.yml --ref "${{ github.ref_name }}" && exit 0; sleep 20; done

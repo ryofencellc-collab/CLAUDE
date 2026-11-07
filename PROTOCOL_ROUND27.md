@@ -39,3 +39,14 @@ not).
 Confirmed series go into a forward paper test with real queues (the Round 21 paper method) before any money.
 Prediction written now: few series confirm; the favorite-longshot edge is strongest where a price signal
 lets us bid before the crowd (crypto) and weakest where incumbents already sit at 99c (weather, sports).
+
+## Result (2026-11-07, reports/ROUND27.md)
+
+407 series, 20,499 markets. Long-shot buyers at 1–2c lose almost everywhere: 202 of 260 dev candidates
+confirmed on the holdout, mostly sports (spreads, totals, tennis), plus commodities and a few weather series.
+Big losers where long shots win often: TV/news "mention" markets, some weather highs, esports, golf leaders.
+
+**The control failed:** the 15-minute crypto series "confirmed", although queue-aware recounts show they barely
+fill (reports/FILLCHECK.md). Without the line of 99c bids ahead of us, the scan cannot tell where a newcomer
+gets filled. So no series is accepted from this scan alone. Next: a live queue survey of the confirmed
+whole-cent series (PROTOCOL_ROUND28.md).
