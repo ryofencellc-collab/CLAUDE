@@ -4,7 +4,7 @@ Mode now: **DRY** (DRY = decides and logs, sends nothing). Log: [live21_log.csv]
 
 | | |
 |---|---|
-| Orders placed | 125 |
+| Orders placed | 126 |
 | Cancelled before close | 12 |
 | Settled markets / with fills | 125 / 49 |
 | Losing filled markets | 0 |

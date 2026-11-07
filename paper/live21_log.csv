@@ -284,3 +284,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-07T15:47:02.960983+00:00,DRY,settled,KXSOL15M-26NOV071045-45,no,530.0,,,,result=no pnl=5.20
 2026-11-07T15:58:13.422983+00:00,DRY,place,KXBTC15M-26NOV071100-00,no,530,3.04,75637.15,1050.0,"queue_ahead=26541 risk=0.00217 frac=0.500 {""ticker"": ""KXBTC15M-26NOV071100-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-f48391b668b347d7"", ""post_only"": true, ""no_price"": 99}"
 2026-11-07T16:02:03.519886+00:00,DRY,settled,KXBTC15M-26NOV071100-00,no,530.0,,,,result=no pnl=5.20
+2026-11-07T16:23:56.395236+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTCD,KXETHD,KXSOLD,KXXRPD"
+2026-11-07T16:25:37.633261+00:00,DRY,place,KXETHD-26NOV0712-T2404.99,no,530,25.98,2235.06,1050.0,"queue_ahead=0 risk=nan frac=0.500 {""ticker"": ""KXETHD-26NOV0712-T2404.99"", ""client_order_id"": ""r21-9b802986cac04a5f"", ""side"": ""ask"", ""count"": ""530"", ""price"": ""0.0100"", ""time_in_force"": ""good_till_canceled"", ""self_trade_prevention_type"": ""taker_at_cross"", ""post_only"": true, ""cancel_order_on_pause"": tr"
