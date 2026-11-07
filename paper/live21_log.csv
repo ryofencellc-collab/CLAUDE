@@ -247,3 +247,7 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-07T11:47:00.971753+00:00,DRY,settled,KXSOL15M-26NOV070645-45,yes,530.0,,,,result=yes pnl=5.20
 2026-11-07T11:59:01.285799+00:00,DRY,place,KXDOGE15M-26NOV070700-00,no,530,3.45,0.07182,1050.0,"queue_ahead=13672 risk=0.00162 frac=0.500 {""ticker"": ""KXDOGE15M-26NOV070700-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-26ac950e52f54a30"", ""post_only"": true, ""no_price"": 99}"
 2026-11-07T12:02:01.005149+00:00,DRY,settled,KXDOGE15M-26NOV070700-00,no,0.0,,,,result=no pnl=0.00
+2026-11-07T12:12:16.200128+00:00,DRY,place,KXXRP15M-26NOV070715-15,no,530,4.04,1.1691,1050.0,"queue_ahead=9187 risk=0.00212 frac=0.500 {""ticker"": ""KXXRP15M-26NOV070715-15"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-c994016e22df4094"", ""post_only"": true, ""no_price"": 99}"
+2026-11-07T12:13:00.842246+00:00,DRY,cancel,KXXRP15M-26NOV070715-15,no,530,,,,"z below threshold, stale data or stop"
+2026-11-07T12:17:01.022724+00:00,DRY,settled,KXXRP15M-26NOV070715-15,no,530.0,,,,result=no pnl=5.20
+2026-11-07T12:20:40.844697+00:00,DRY,stop,,,0,,,,job ending
