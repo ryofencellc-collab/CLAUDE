@@ -23,3 +23,10 @@ the bid with the maker fee (fills not verified).
 
 Prediction written now: most cells lose by about the fee; any edge is in weather/climate favourites near the
 close or in long shots being overpriced (which favours our maker 99c approach, not taking).
+
+## Fix after the first run (2026-11-07, before any result was used)
+
+The first run had almost no dev data (market listing pages ran newest-first, so the dev window was crowded out)
+and was dominated by empty books quoted as bid 3c / ask 97c (both sides then look like 97c favourites that win
+half the time). Now: dev and holdout are listed separately (75 markets each per series), and only quotes with a
+spread ≤ 5c count. Same cells, same pass rule.

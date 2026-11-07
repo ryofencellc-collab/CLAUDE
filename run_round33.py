@@ -13,6 +13,7 @@ A, B, SPLIT = pd.Timestamp("2026-09-10", tz="UTC"), pd.Timestamp("2026-11-07", t
 HORIZONS = (48, 24, 12, 6, 3, 1)
 BANDS = [(0.02, 0.05), (0.05, 0.10), (0.10, 0.20), (0.20, 0.40), (0.40, 0.60), (0.60, 0.80), (0.80, 0.90), (0.90, 0.95), (0.95, 0.99)]
 PER_SERIES = 150
+MAX_SPREAD = 0.05
 
 
 def candles(ms: list[dict]) -> pd.DataFrame:
@@ -35,10 +36,12 @@ def fetch() -> pd.DataFrame:
     sc = sc[~sc["series"].str.endswith("15M")]
     rows = []
     for j, (s, cat) in enumerate(sc.itertuples(index=False)):
-        ms = sorted([m for m in round20.markets(s, A, B) if m.get("close_time")], key=lambda m: m["close_time"])
+        ms = []
+        for lo, hi in ((A, SPLIT), (SPLIT, B)):          # each period listed on its own, so dev is not crowded out
+            part = sorted([m for m in round20.markets(s, lo, hi) if m.get("close_time")], key=lambda m: m["close_time"])
+            ms += part[::max(1, -(-len(part) // (PER_SERIES // 2)))]
         if not ms:
             continue
-        ms = ms[::max(1, -(-len(ms) // PER_SERIES))]
         q = candles(ms)
         if q.empty:
             continue
@@ -64,7 +67,8 @@ def maker_fee(p):
 
 
 def bets(d: pd.DataFrame) -> pd.DataFrame:
-    d = d[(d["ask"] > d["bid"]) & d["ask"].between(0.01, 0.99) & d["bid"].between(0.01, 0.99)]
+    # a real, tradable price only: both sides quoted and at most 5c apart (empty books show bid 3 / ask 97)
+    d = d[(d["ask"] > d["bid"]) & (d["ask"] - d["bid"] <= MAX_SPREAD) & d["ask"].between(0.01, 0.99) & d["bid"].between(0.01, 0.99)]
     yes = d.assign(side="yes", px=d["ask"], px_maker=d["bid"], won=d["up"] == 1)
     no = d.assign(side="no", px=1 - d["bid"], px_maker=1 - d["ask"], won=d["up"] == 0)
     b = pd.concat([yes, no], ignore_index=True)
