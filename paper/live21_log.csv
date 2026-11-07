@@ -282,3 +282,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-07T15:41:23.226337+00:00,DRY,place,KXSOL15M-26NOV071045-45,no,530,4.0,89.33,1050.0,"queue_ahead=1178 risk=0.00212 frac=0.500 {""ticker"": ""KXSOL15M-26NOV071045-45"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-a4f22826c83043ca"", ""post_only"": true, ""no_price"": 99}"
 2026-11-07T15:42:02.793892+00:00,DRY,cancel,KXSOL15M-26NOV071045-45,no,530,,,,"z below threshold, stale data or stop"
 2026-11-07T15:47:02.960983+00:00,DRY,settled,KXSOL15M-26NOV071045-45,no,530.0,,,,result=no pnl=5.20
+2026-11-07T15:58:13.422983+00:00,DRY,place,KXBTC15M-26NOV071100-00,no,530,3.04,75637.15,1050.0,"queue_ahead=26541 risk=0.00217 frac=0.500 {""ticker"": ""KXBTC15M-26NOV071100-00"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-f48391b668b347d7"", ""post_only"": true, ""no_price"": 99}"
+2026-11-07T16:02:03.519886+00:00,DRY,settled,KXBTC15M-26NOV071100-00,no,530.0,,,,result=no pnl=5.20
