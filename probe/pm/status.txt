@@ -1,3 +1,0 @@
-lb_month_pnl.json 410 159
-lb_all_pnl.json 410 159
-lb_crypto_month.json 410 159

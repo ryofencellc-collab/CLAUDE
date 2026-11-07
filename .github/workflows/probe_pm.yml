@@ -17,17 +17,15 @@ jobs:
           get() { curl -sS -m 30 -L -A "Mozilla/5.0 research" -o "$1" -w "$1 %{http_code} %{size_download}\n" "$2" || echo "$1 FAILED"; }
           {
           D=https://data-api.polymarket.com
-          get lb_month_pnl.json "$D/v1/leaderboard?category=OVERALL&timePeriod=MONTH&orderBy=PNL&limit=50"
-          get lb_all_pnl.json "$D/v1/leaderboard?category=OVERALL&timePeriod=ALL&orderBy=PNL&limit=50"
-          get lb_crypto_month.json "$D/v1/leaderboard?category=CRYPTO&timePeriod=MONTH&orderBy=PNL&limit=50"
-          W=$(python3 -c "import json;d=json.load(open('lb_month_pnl.json'));d=d if isinstance(d,list) else d.get('data',d);print(d[0].get('proxyWallet') or d[0].get('user') or d[0].get('address'))" 2>/dev/null)
-          echo "wallet=$W"
-          get trades_top.json "$D/trades?user=$W&limit=500"
-          get closed_top.json "$D/closed-positions?user=$W&limit=500"
-          get activity_top.json "$D/activity?user=$W&limit=500"
-          get positions_top.json "$D/positions?user=$W&limit=500"
-          get gamma_sample.json "https://gamma-api.polymarket.com/markets?limit=5&closed=true"
           get docs_llms.txt https://docs.polymarket.com/llms.txt
+          get docs_data_overview.md https://docs.polymarket.com/api-reference/data-api/overview.md
+          get v2_root.json "$D/v2/"
+          for p in "v2/leaderboard?timePeriod=MONTH&orderBy=PNL&limit=50" "v2/leaderboard?period=month&limit=50" "v2/leaderboard" "leaderboard?timePeriod=MONTH&orderBy=PNL&limit=50"; do
+            get "lb_$(echo $p | tr '/?&=' '____' | cut -c1-60).json" "$D/$p"
+          done
+          get trades_recent.json "$D/v2/trades?limit=200" || true
+          get trades_recent_v1.json "$D/trades?limit=200" || true
+          get gamma_sample.json "https://gamma-api.polymarket.com/markets?limit=5&closed=true"
           get art_telonex.html https://telonex.io/research/top-crypto-traders-polymarket-15m
           get art_botforkalshi.html https://www.botforkalshi.com/blog/kalshi-trading-strategies-guide
           get art_medium_kalshi.html https://medium.com/coinmonks/i-spent-six-months-trading-on-kalshi-heres-what-actually-works-c5fd9b7d6fe2
