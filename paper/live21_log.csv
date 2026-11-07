@@ -170,3 +170,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-07T02:13:03.642264+00:00,DRY,place,KXETH15M-26NOV062115-15,yes,830,3.82,2246.31,1050.0,"queue_ahead=14888 risk=0.00217 frac=0.783 {""ticker"": ""KXETH15M-26NOV062115-15"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 830, ""type"": ""limit"", ""client_order_id"": ""r21-677dbdc12df541b1"", ""post_only"": true, ""yes_price"": 99}"
 2026-11-07T02:14:03.183605+00:00,DRY,cancel,KXETH15M-26NOV062115-15,yes,830,,,,"z below threshold, stale data or stop"
 2026-11-07T02:17:03.327549+00:00,DRY,settled,KXETH15M-26NOV062115-15,yes,830.0,,,,result=yes pnl=8.15
+2026-11-07T02:27:58.655701+00:00,DRY,place,KXXRP15M-26NOV062130-30,no,921,6.22,1.1727,1050.0,"queue_ahead=13370 risk=0.00131 frac=0.869 {""ticker"": ""KXXRP15M-26NOV062130-30"", ""action"": ""buy"", ""side"": ""no"", ""count"": 921, ""type"": ""limit"", ""client_order_id"": ""r21-60f4e87fafa24bca"", ""post_only"": true, ""no_price"": 99}"
+2026-11-07T02:32:03.358028+00:00,DRY,settled,KXXRP15M-26NOV062130-30,no,921.0,,,,result=no pnl=9.05
