@@ -1,0 +1,30 @@
+name: round26
+# Round 26 backtest (run_round26.py): the live trader as it now stands vs earlier versions, on Round 21's
+# Kalshi long-shot fills (artifacts of run 40886253855).
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r21-*", path: data/r21, merge-multiple: true, run-id: 40886253855, github-token: "${{ github.token }}"}
+      - run: ls -la data/r21
+      - run: python run_round26.py
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round26 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND26_BACKTEST.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round26: backtest report [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
