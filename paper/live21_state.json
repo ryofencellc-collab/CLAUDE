@@ -1,7 +1,7 @@
 {
  "pause_until": 0.0,
  "half_until": 0.0,
- "day": "2026-11-06",
+ "day": "2026-11-07",
  "day_start_balance": 1050.0,
  "day_loss": 0.0,
  "open": null,
@@ -269,6 +269,10 @@
   {
    "t": 1794005224.534718,
    "pnl": 0.0
+  },
+  {
+   "t": 1794009724.66073,
+   "pnl": 0.0
   }
  ],
  "stake_fraction": 0.5,
@@ -287,6 +291,7 @@
   "KXXRP15M-26NOV061615-15",
   "KXBTC15M-26NOV061630-30",
   "KXSOL15M-26NOV061700-00",
-  "KXXRP15M-26NOV061745-45"
+  "KXXRP15M-26NOV061745-45",
+  "KXBTC15M-26NOV061900-00"
  ]
 }
