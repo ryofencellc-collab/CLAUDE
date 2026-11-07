@@ -296,3 +296,21 @@ def test_switching_to_dry_pulls_everything(world):
     L.step(ex, st, "LIVE", at(0))
     L.go_dry(ex, st)
     assert all(o["status"] != "resting" for o in ex.orders.values()) and st["open"] is None
+
+
+def test_dry_run_counts_only_flow_that_reaches_99c(world, monkeypatch):
+    ex, mk, st, _ = world
+    L.step(ex, st, "DRY", at(0))
+    assert st["open"] and st["open"]["order_id"] is None
+    st["open"]["queue_ahead"] = 100.0
+    ex.results["KXXRP15M-T"] = "yes"
+    monkeypatch.setattr(L.fc, "flow", lambda t, s, a, b: (5000.0, 400.0))   # 5,000 long-shot buys, 400 at >= 1c
+    L.step(ex, st, "DRY", CLOSE + pd.Timedelta(minutes=3))
+    last = L.LOG.read_text().strip().splitlines()[-1]
+    assert ",settled," in last and ",300.0," in last                         # 400 - 100 queue, not 4,900
+    monkeypatch.setattr(L.fc, "flow", lambda t, s, a, b: (float("nan"), float("nan")))
+    st["open"] = None
+    st["traded"] = []
+    L.step(ex, st, "DRY", at(0))
+    L.step(ex, st, "DRY", CLOSE + pd.Timedelta(minutes=3))
+    assert ",settled," in L.LOG.read_text().strip().splitlines()[-1] and ",0.0," in L.LOG.read_text().strip().splitlines()[-1]

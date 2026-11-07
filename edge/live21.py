@@ -27,6 +27,7 @@ import pandas as pd
 import requests
 
 from edge import paper21 as sig
+from edge import fillcheck as fc
 from edge import prices as px
 
 ROOT = Path(__file__).resolve().parent.parent / "paper"
@@ -450,7 +451,9 @@ def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
         filled = api.filled(o["ticker"], o.get("order_id"))
     else:  # dry run: the paper bot's fill accounting, so dry P&L is comparable 1:1 with the paper ledger
         until = pd.Timestamp(o["cancelled_at"]) if o.get("cancelled_at") else pd.Timestamp(o["close"])
-        seen = sig.seen_since(o["ticker"], o["side"], pd.Timestamp(o["placed"]), until)
+        # only long-shot buys at >= 1c can reach a 99c bid (0.1c steps above 90c: cheaper ones fill higher bids)
+        seen = fc.flow(o["ticker"], o["side"], pd.Timestamp(o["placed"]), until)[1]
+        seen = seen if np.isfinite(seen) else 0.0
         q = o.get("queue_ahead")
         filled = float(min(o["count"], max(0.0, seen - (float(q) if q is not None and np.isfinite(q) else 0.0))))
     right = m["result"] == o["side"]
@@ -701,6 +704,10 @@ def selftest() -> None:
     ids = [o.get("order_id") for o in api.resting()]
     print("resting:", order.get("order_id") in ids)
     api.cancel(order["order_id"], m["ticker"])
+    still = [o.get("order_id") for o in api.resting()]
+    if order["order_id"] in still:
+        raise SystemExit("cancel did not remove the test order: check it on Kalshi now")
+    print("cancel confirmed: the order is gone")
     print("positions:", len(api.positions()), "| recent settlements read:", len(api.recent_settlement_pnls(time.time() - 86400 * 30)))
     print("cancelled; selftest OK")
 
