@@ -1,17 +1,20 @@
-"""Live trader for the Round 21/22/25 edge on Kalshi 15-minute crypto markets.
+"""Live trader on Kalshi's HOURLY crypto markets (Round 26, PROTOCOL_ROUND26.md).
 
-Signal: markets, spot price and z come from edge.paper21 (the paper bot's code, imported, not copied).
-Entry, cancel and size follow Round 25: the |z| x minutes-left reversal table (control/r25_zbins.json),
-entry only when the reversal risk is < 0.3%, cancel when it reaches 0.3%, size = min(Claude's stake cap,
-Kelly(risk)). Without the table it falls back to Round 21's z >= 6.
+Signal: markets and z come from edge.paper21 (the paper bot's code); spot comes from three exchanges
+(edge/prices.py: Coinbase, Kraken, Bitstamp; >= 2 fresh and agreeing within 0.3%) and z is the smallest lead
+any of them shows. Hourly markets: bid when z >= 6 and cancel below 6 (the paper rule). The Round 25 reversal
+table (control/r25_zbins.json) still governs 15-minute series if they are ever re-enabled.
 
-Control: Claude's control/live21.json (live / stop / stake_fraction / max_contracts), re-read from GitHub
+Orders: Kalshi API 3.36 Create Order V2, post-only 99c buys that expire at the market's close.
+
+Control: Claude's control/live21.json (live / stop / stake cap / deposit / live_since), re-read from GitHub
 every minute. LIVE only with both Kalshi secrets, "live": true and no owner veto (repo variable LIVE21=0).
 Otherwise DRY: every decision is made and logged, nothing is sent.
 
-Risk rules: post-only 99c limit buys that expire at the market's close; one market at a time; never the
-same market twice; 24 h pause then 7 days at half size after any losing market; no new orders after losing
-10% of the day's starting balance; stale prices or a stop: pull the order and place nothing. In LIVE the
+Risk rules: one market at a time; never the same market twice; the governor (control/RULES.md as code:
+stake 0.5 / 0.95 / 0.25, halt at 70% equity or 2 losses in 7 days); the cash audit (halt on unexplained cash
+moves); 24 h pause then 7 days at half size after any losing market; no new orders after losing 10% of the
+day's starting balance; stale or disagreeing prices or a stop: pull the order and place nothing. In LIVE the
 loss rules are rebuilt from Kalshi's own settlement records every minute. Full list: AUDIT_LIVE21.md.
 """
 import base64
@@ -37,7 +40,11 @@ STOP = ROOT / "LIVE21_STOP"
 CONTROL = ROOT.parent / "control" / "live21.json"  # Claude's switch; re-read from GitHub every minute
 ZBINS = ROOT.parent / "control" / "r25_zbins.json"  # Round 25 reversal table (|z| x minutes left)
 P_MAX = 0.003  # Round 25's chosen entry gate: enter only when the table's reversal risk is below 0.3%
-SERIES = [s for s in sig.SERIES if s.endswith("15M")]  # capital-efficient part only (see PROTOCOL_ROUND22.md)
+# Round 26 (PROTOCOL_ROUND26.md): the HOURLY crypto markets. They are priced in whole cents, so 99c is the top
+# bid and the long-shot flow reaches it. The 15-minute markets quote 0.1c steps above 90c and ~96% of that flow
+# trades with bids above 99c (reports/FILLCHECK.md), so they are left out.
+SERIES = ["KXBTCD", "KXETHD", "KXSOLD", "KXXRPD"]
+Z_HOURLY = 6.0  # the Round 21 paper rule for hourly markets: bid at z >= 6, cancel below 6
 MAX_CONTRACTS = int(os.environ.get("LIVE21_MAX", 1000))
 PRICE_CENTS = 99
 ORDERS_V2 = "/portfolio/events/orders"  # Kalshi API 3.36: create (POST) and cancel (DELETE /{id}); legacy POST is gone
@@ -54,6 +61,17 @@ LOG_COLS = ["time_utc", "mode", "event", "ticker", "side", "count", "z", "spot",
 
 
 _table = {}
+
+
+def decided(series: str, z: float, tau: float) -> bool:
+    """The entry/keep rule. 15-minute series: Round 25 reversal table (risk < P_MAX; fitted on tau <= 15 min).
+    Hourly series: z >= Z_HOURLY, the rule the paper bot has run forward since Oct 29 (the table does not cover
+    the ~60 minutes before an hourly close)."""
+    if not np.isfinite(z) or z <= 0:
+        return False
+    if series.endswith("15M"):
+        return flip_risk(z, tau) < P_MAX
+    return z >= Z_HOURLY
 
 
 def flip_risk(az: float, tau: float) -> float:
@@ -408,7 +426,7 @@ def candidates(now: pd.Timestamp) -> list:
                                 m["_close"], now)
             tau = max((m["_close"] - now).total_seconds() / 60, 0.5)
             for side, z in (("yes", zy), ("no", zn)):
-                if np.isfinite(z) and z > 0 and flip_risk(z, tau) < P_MAX:
+                if decided(series, z, tau):
                     out.append((m, series, side, z, s))
     return out
 
@@ -432,7 +450,7 @@ def still_decided(o: dict, now: pd.Timestamp) -> bool:
     zy, zn = px.worst_z(sig.z_sides, spots, v, o["strike_type"], o["floor"], o["cap"], pd.Timestamp(o["close"]), now)
     z = zy if o["side"] == "yes" else zn
     tau = max((pd.Timestamp(o["close"]) - now).total_seconds() / 60, 0.5)
-    return bool(np.isfinite(z) and z > 0 and flip_risk(z, tau) < P_MAX)
+    return bool(decided(o["series"], z, tau))
 
 
 def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
@@ -495,8 +513,12 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
         return  # this market just rejected our order; let the book change first
     if m["ticker"] in st.get("traded", []) or m["_close"] <= now:
         return  # never a second order on a market already traded, and never one on a closed market
-    p = flip_risk(z, max((m["_close"] - now).total_seconds() / 60, 0.5))
-    frac = min(st.get("stake_fraction", 0.5), kelly(p))  # Round 25 sizing, never above Claude's stake cap
+    if series.endswith("15M"):
+        p = flip_risk(z, max((m["_close"] - now).total_seconds() / 60, 0.5))
+        frac = min(st.get("stake_fraction", 0.5), kelly(p))  # Round 25 sizing, never above the stake cap
+    else:
+        p = float("nan")  # hourly: no fitted risk; the governor's stake schedule alone sizes it
+        frac = st.get("stake_fraction", 0.5)
     count = size_for(balance, st, now.timestamp(), frac, st.get("max_contracts"))
     if count < 1:
         log(mode, "skip", m["ticker"], side, 0, z, spot, balance, "balance too small")

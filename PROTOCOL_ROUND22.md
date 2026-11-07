@@ -68,3 +68,11 @@ since fixed). The scorer now uses only the pre-registered series and reports ind
 so nothing is hidden. As of 2026-11-07 15:00 UTC on the pre-registered markets: +$6,702.76, 0 losing filled
 markets (10 wrong calls, none filled), 8/8 green days, worst day +$402.69. The live trader trades only the
 15-minute crypto series.
+
+## Fill-count correction (2026-11-07, reports/FILLCHECK.md)
+
+The 15-minute markets quote 0.1c steps above 90c. ~96% of the long-shot flow counted as reaching our 99c bid
+actually traded with higher bids. Recounted honestly, the 15-minute profit at 10k is $150–270 over the window,
+not ~$6,300. The scorer's ledger is left as it was (it is the pre-registered method); this note records that
+its 15-minute numbers overstate what a real bid would have earned. The hourly markets (whole-cent prices) are
+unaffected. The live trader moves to them: PROTOCOL_ROUND26.md.

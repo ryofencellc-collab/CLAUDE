@@ -110,3 +110,20 @@ def test_live_trader_bids_only_when_every_exchange_says_decided(monkeypatch):
     assert L.candidates(NOW) == [] and not L.still_decided(o, NOW)          # Kraken 1.2% off: pull, don't bid
     monkeypatch.setattr(px, "fetch", fake({"coinbase": 76000}, vol=0.0003))
     assert L.candidates(NOW) == [] and not L.still_decided(o, NOW)          # only one exchange answering
+
+
+def test_hourly_markets_use_the_z6_rule_on_every_exchange(monkeypatch):
+    from edge import live21 as L
+    assert L.SERIES == ["KXBTCD", "KXETHD", "KXSOLD", "KXXRPD"]
+    close = NOW + pd.Timedelta(minutes=55)
+    m = {"ticker": "KXBTCD-T", "strike_type": "greater", "floor_strike": 75000.0, "cap_strike": None, "_close": close}
+    monkeypatch.setattr(L, "SERIES", ["KXBTCD"])
+    monkeypatch.setattr(L.sig, "open_markets", lambda series, now: [m])
+    vol = 0.0005
+    lead = lambda z: 75000.0 * np.exp(z * vol * np.sqrt(55))                    # spot that gives exactly z
+    o = dict(series="KXBTCD", side="yes", strike_type="greater", floor=75000.0, cap=None, close=close.isoformat())
+    for z, want in ((6.3, True), (5.8, False)):
+        monkeypatch.setattr(px, "quote", lambda prod, now, z=z: ([lead(z), lead(z + 1)], vol, "coinbase,kraken"))
+        assert bool(L.candidates(NOW)) is want and L.still_decided(o, NOW) is want
+    assert L.decided("KXBTCD", 6.0, 55) and not L.decided("KXBTCD", float("nan"), 55)
+    assert not L.decided("KXBTCD", -7.0, 55)

@@ -314,3 +314,14 @@ def test_dry_run_counts_only_flow_that_reaches_99c(world, monkeypatch):
     L.step(ex, st, "DRY", at(0))
     L.step(ex, st, "DRY", CLOSE + pd.Timedelta(minutes=3))
     assert ",settled," in L.LOG.read_text().strip().splitlines()[-1] and ",0.0," in L.LOG.read_text().strip().splitlines()[-1]
+
+
+def test_hourly_bet_is_sized_by_the_stake_alone(world, monkeypatch):
+    ex, mk, st, _ = world
+    mk.m["ticker"] = "KXBTCD-T"
+    monkeypatch.setattr(L, "decide", lambda now: (mk.m, "KXBTCD", "yes", 7.0, 75000.0, 0.0))
+    st["stake_fraction"] = 0.5
+    L.step(ex, st, "LIVE", at(0))
+    buy = next(c for c in ex.calls if c[0] == "buy")
+    assert buy[3] == int(1000 * 0.5 / 0.99)                                   # 505 contracts at half the balance
+    assert "risk=nan frac=0.500" in L.LOG.read_text()

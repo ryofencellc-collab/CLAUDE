@@ -52,3 +52,9 @@ A halt is recomputed from the whole history each minute, so it never wears off a
 commit, with the reason. That starts a fresh history. It is never done to clear a halt.
 
 The remaining stops (live vs paper drift, anything unexplained) stay Claude's judgment, reviewed daily.
+
+## Going live, revised 2026-11-07 (PROTOCOL_ROUND26.md)
+
+The Round 22 gate (condition 1 above) no longer applies: its 15-minute profit was mostly flow a 99c bid could
+not receive (reports/FILLCHECK.md). Replaced by the Round 26 dry-run test: 7 full days from 2026-11-08 on the
+hourly markets, then the self-test and 24 h with the real key. Conditions 2 and 3 above still apply.
