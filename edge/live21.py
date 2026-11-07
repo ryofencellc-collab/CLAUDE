@@ -431,16 +431,22 @@ def candidates(now: pd.Timestamp) -> list:
     return out
 
 
+QUEUE_OK = 1000.0  # contracts already at 99c above which a market is a last resort
+
+
 def decide(now: pd.Timestamp):
-    """The paper bot bids on all of them; with one position at a time we take the one with the shortest queue
-    at 99c ahead of us, since that is the one most likely to fill (paper data: most fills had < 1k ahead)."""
-    best, best_q = None, math.inf
+    """One market at a time, so take the one most likely to FILL. Paper hourly data (Oct 29 - Nov 7): filled
+    markets at z 6-10 got ~280-300 contracts, at z > 15 ~90, at z > 30 ~40 (lottery buyers rarely touch far
+    strikes). So: markets with <= QUEUE_OK already at 99c first, and among them the smallest z (still >= the
+    entry rule); ties by shorter queue."""
+    best, best_key = None, None
     for c in candidates(now):
         q = sig.queue_ahead(c[0]["ticker"], c[2])
         q = q if np.isfinite(q) else math.inf
-        if best is None or q < best_q:
-            best, best_q = c, q
-    return None if best is None else (*best, best_q)
+        key = (q > QUEUE_OK, c[3], q)
+        if best is None or key < best_key:
+            best, best_key = (*c, q), key
+    return best
 
 
 def still_decided(o: dict, now: pd.Timestamp) -> bool:

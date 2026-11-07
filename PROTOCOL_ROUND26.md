@@ -23,7 +23,7 @@ market over the same 8 days, and a single loss at 99.9c costs ~1,000 wins: not w
 - Entry: the paper rule, z ≥ 6, where z is the **smallest** lead over Coinbase, Kraken and Bitstamp
   (`edge/prices.py`: ≥ 2 fresh exchanges, agreeing within 0.3%). Post-only 99c buy, expiring at the close.
 - Cancel: the moment that z < 6, or prices are stale or disagree.
-- One market at a time (the shortest queue). Size = the governor's stake (0.5 for the first 14 live days)
+- One market at a time: among markets with ≤ 1,000 contracts already at 99c, the smallest z ≥ 6 (amended 2026-11-07 18:00 UTC, before the window: see below). Size = the governor's stake (0.5 for the first 14 live days)
   × balance / 99c. No Round 25 Kelly here (its table covers only the last 15 minutes).
 - All other guards unchanged (governor, cash audit, pause/half size, daily stop, control file, veto).
 
@@ -44,3 +44,10 @@ Window: the first 7 full UTC days the dry run runs this code, starting 2026-11-0
 
 Round 22 keeps running as a record, but no longer decides going live: its 15-minute profit was mostly flow
 our bid could never have received.
+
+## Amendment before the window (2026-11-07 ~18:00 UTC)
+
+The first dry-run hours picked by shortest queue and chose ETH strikes at z = 18–26: queue 0, but lottery buyers
+rarely touch strikes that far away (paper hourly fills: ~280–300 contracts per filled market at z 6–10, ~90 at
+z > 15, ~40 at z > 30). The choice is now: queue ≤ 1,000 first, then the smallest z (still ≥ 6), then the
+shorter queue. Entry and cancel rules are unchanged. Made before the 2026-11-08 00:00 UTC window opens.

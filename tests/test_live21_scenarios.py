@@ -325,3 +325,19 @@ def test_hourly_bet_is_sized_by_the_stake_alone(world, monkeypatch):
     buy = next(c for c in ex.calls if c[0] == "buy")
     assert buy[3] == int(1000 * 0.5 / 0.99)                                   # 505 contracts at half the balance
     assert "risk=nan frac=0.500" in L.LOG.read_text()
+
+
+def test_decide_prefers_the_market_most_likely_to_fill(monkeypatch):
+    m = lambda t: {"ticker": t}
+    cands = [(m("FAR"), "KXETHD", "no", 26.0, 1.0), (m("NEAR"), "KXETHD", "no", 6.2, 1.0),
+             (m("NEAR_BUT_CROWDED"), "KXETHD", "no", 6.1, 1.0), (m("MID"), "KXBTCD", "yes", 8.0, 1.0)]
+    queues = {"FAR": 0.0, "NEAR": 400.0, "NEAR_BUT_CROWDED": 25000.0, "MID": 0.0}
+    monkeypatch.setattr(L, "candidates", lambda now: cands)
+    monkeypatch.setattr(L.sig, "queue_ahead", lambda t, side: queues[t])
+    assert L.decide(T0)[0]["ticker"] == "NEAR"                                # smallest z with a short queue
+    queues["NEAR"] = 5000.0
+    assert L.decide(T0)[0]["ticker"] == "MID"
+    monkeypatch.setattr(L, "candidates", lambda now: [cands[2]])
+    assert L.decide(T0)[0]["ticker"] == "NEAR_BUT_CROWDED"                   # last resort still allowed
+    monkeypatch.setattr(L, "candidates", lambda now: [])
+    assert L.decide(T0) is None
