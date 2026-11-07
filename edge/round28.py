@@ -49,10 +49,13 @@ def queue_99(m: dict, side: str) -> float:
 
 
 def decided_side(m: dict):
+    """A side counts as decided only on a real two-sided book: its bid is 98-99c AND the other side is really
+    offered at 1-2c. (A new market with an empty book lists a placeholder bid of $1.00: ignored.)"""
     yb, nb = f(m, "yes_bid_dollars"), f(m, "no_bid_dollars")
-    if np.isfinite(yb) and yb >= JOIN_AT - 1e-9:
+    ya = f(m, "yes_ask_dollars")
+    if np.isfinite(yb) and JOIN_AT - 1e-9 <= yb <= 0.99 + 1e-9 and np.isfinite(ya) and ya <= 1.0 - 1e-9:
         return "yes", yb
-    if np.isfinite(nb) and nb >= JOIN_AT - 1e-9:
+    if np.isfinite(nb) and JOIN_AT - 1e-9 <= nb <= 0.99 + 1e-9 and np.isfinite(ya) and 0.01 - 1e-9 <= ya <= 0.02 + 1e-9:
         return "no", nb
     return None, np.nan
 
@@ -76,7 +79,8 @@ def open_markets(series: str) -> list[dict]:
 
 def load() -> pd.DataFrame:
     if LEDGER.exists() and LEDGER.stat().st_size:
-        return pd.read_csv(LEDGER)
+        d = pd.read_csv(LEDGER)
+        return d[~(pd.to_numeric(d["best_bid"], errors="coerce") > 0.99 + 1e-9)].reset_index(drop=True)  # placeholder joins
     return pd.DataFrame(columns=COLS)
 
 

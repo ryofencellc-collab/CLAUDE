@@ -18,3 +18,9 @@ per contract if right, −99c if wrong, minus maker fee. No cancel rule.
 **Prediction written now:** most sports series fail on queue (incumbent market makers sit at 99c) or on a filled
 wrong call (late comebacks); hourly crypto passes less well here than with the z-model entry, because joining
 at 98c is later than the model.
+
+## Fix (2026-11-07 22:00 UTC)
+
+New hourly markets open with an empty book that the listing shows as a $1.00 bid; the survey wrongly "joined"
+152 ETH markets that way (none filled, so no P&L effect, but it blocked real joins). A side now counts as decided
+only with a 98–99c bid and the other side really offered at 1–2c. Placeholder rows were removed.
