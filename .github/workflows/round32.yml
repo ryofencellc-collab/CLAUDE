@@ -1,0 +1,24 @@
+name: round32
+# Round 32 (PROTOCOL_ROUND32.md): independent test of the AP3X-style grid bot with honest accounting.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: python run_round32.py
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round32 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND32.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round32: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
