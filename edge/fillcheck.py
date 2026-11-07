@@ -25,7 +25,10 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "reports" / "FILLCHECK.md"
 
 
-def flow(ticker: str, side: str, since: pd.Timestamp, until: pd.Timestamp) -> tuple[float, float]:
+LEVELS = [round(0.990 + 0.001 * i, 3) for i in range(10)]  # bid prices 99.0c .. 99.9c
+
+
+def flow(ticker: str, side: str, since: pd.Timestamp, until: pd.Timestamp, hist: dict | None = None) -> tuple[float, float]:
     """(long-shot contracts at other price <= 2c, of which at >= 1c) between since and until. Reads both the
     live and the historical trade endpoints (trades older than Kalshi's cutoff move to /historical/trades) and
     counts each trade once."""
@@ -52,6 +55,9 @@ def flow(ticker: str, side: str, since: pd.Timestamp, until: pd.Timestamp) -> tu
                 if t.get("taker_side") == other and px <= 0.02 + 1e-9 and since < ts <= until:
                     n = float(t.get("count_fp") or t.get("count") or 0)
                     allc += n
+                    if hist is not None:
+                        k = round(px, 3)
+                        hist[k] = hist.get(k, 0.0) + n
                     if px >= 0.01 - 1e-9:
                         reach += n
             cursor = j.get("cursor")
@@ -70,10 +76,14 @@ def main(limit: int | None = None) -> None:
     for _, x in f.iterrows():
         placed = pd.Timestamp(x["placed_utc"])
         until = pd.Timestamp(x["cancelled_utc"]) if isinstance(x["cancelled_utc"], str) and x["cancelled_utc"] else pd.Timestamp(x["close_utc"])
-        allc, reach = flow(x["ticker"], x["side"], placed, until)
+        hist: dict = {}
+        allc, reach = flow(x["ticker"], x["side"], placed, until, hist)
         q = float(pd.to_numeric(x["queue_ahead"], errors="coerce") or 0)
-        rows.append(dict(ticker=x["ticker"], series=x["series"], status=x["status"], queue=q, seen_logged=float(x["seen"]),
-                         flow_all=allc, flow_reach=reach))
+        row = dict(ticker=x["ticker"], series=x["series"], status=x["status"], queue=q, seen_logged=float(x["seen"]),
+                   flow_all=allc, flow_reach=reach)
+        for b in LEVELS:  # long-shot flow that a bid at b would meet: other-side price >= 1 - b
+            row[f"reach_{b:.3f}"] = sum(n for px, n in hist.items() if px >= round(1 - b, 3) - 1e-9)
+        rows.append(row)
     d = pd.DataFrame(rows)
     d = d[np.isfinite(d["flow_all"])]
     for size in (1000.0, 10000.0):
@@ -96,6 +106,22 @@ def main(limit: int | None = None) -> None:
         lines.append(f"| markets filled at {tag} | {fo} | {fn} | {fn - fo:+d} |")
     by = d.groupby("series")[["pnl_old_1k", "pnl_new_1k", "pnl_old_10k", "pnl_new_10k"]].sum().round(2)
     lines += ["", "By series:", "", by.to_markdown()]
+    lines += ["", "## If we bid higher than 99c (15-minute markets, 10k cap)", "",
+              "Flow a bid at each price would meet. 'no queue' assumes nobody ahead of us at that price (upper "
+              "bound); 'full queue' subtracts everything that rested at >= 99c when we bid (lower bound). Profit per "
+              "filled contract is 1 - price, minus the maker fee. Markets that lost would lose ~price per contract.", "",
+              "| bid | flow met | P&L, no queue | P&L, full queue |", "|---|---:|---:|---:|"]
+    k15 = d[d["series"].str.endswith("15M")]
+    for b in LEVELS:
+        fl = k15[f"reach_{b:.3f}"]
+        right = (k15["status"] == "won").astype(float)
+        for name, n in (("hi", fl.clip(upper=10000)), ("lo", (fl - k15["queue"]).clip(lower=0, upper=10000))):
+            pnl = (n * (right - b)).sum() - sum(P.r15._maker_fee(v, b) if v > 0 else 0 for v in n)
+            if name == "hi":
+                hi = pnl
+            else:
+                lo = pnl
+        lines.append(f"| {b * 100:.1f}c | {fl.sum():,.0f} | ${hi:,.2f} | ${lo:,.2f} |")
     lost = d[d["status"] != "won"]
     lines += ["", f"Losing markets in the recount: {len(lost)}; filled under new count: {(lost['new_1k'] > 0).sum()}."]
     OUT.parent.mkdir(exist_ok=True)

@@ -33,6 +33,11 @@ jobs:
             get "markets_$s.json" "$K/markets?series_ticker=$s&status=open&limit=3"
             get "series_$s.json" "$K/series/$s"
           done
+          for s in KXBTCD KXETHD KXSOLD KXXRPD; do get "markets_$s.json" "$K/markets?series_ticker=$s&status=open&limit=3"; done
+          for s in KXBTC15M KXXRP15M KXBTCD; do
+            t=$(python3 -c "import json;print(json.load(open('markets_$s.json'))['markets'][0]['ticker'])" 2>/dev/null)
+            [ -n "$t" ] && get "book_$s.json" "$K/markets/$t/orderbook"
+          done
           for p in XBTUSD ETHUSD SOLUSD XRPUSD XDGUSD; do get "kraken_$p.json" "https://api.kraken.com/0/public/OHLC?pair=$p&interval=1"; done
           for p in btcusd ethusd solusd xrpusd dogeusd; do get "bitstamp_$p.json" "https://www.bitstamp.net/api/v2/ohlc/$p/?step=60&limit=120"; done
           for p in BTC-USD ETH-USD SOL-USD XRP-USD DOGE-USD; do get "coinbase_$p.json" "https://api.exchange.coinbase.com/products/$p/candles?granularity=60"; done
