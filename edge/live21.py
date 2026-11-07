@@ -301,7 +301,8 @@ def governor(pnls: list[tuple[float, float]], deposit: float, live_since: float,
             return 0.0, f"{LOSSES_TO_STOP} losing markets within {LOSS_WINDOW_DAYS} days"
     if losses and now - losses[-1] < AFTER_LOSS_DAYS * 86400:
         return STAKE_AFTER_LOSS, None
-    if now - live_since >= GROW_DAYS * 86400 and sum(p for _, p in pnls) >= 0:
+    start = live_since or (pnls[0][0] if pnls else now)  # no live_since: days count from the first settlement
+    if now - start >= GROW_DAYS * 86400 and sum(p for _, p in pnls) >= 0:
         return STAKE_GROWN, None
     return STAKE_START, None
 
@@ -310,11 +311,14 @@ def govern(api: "Kalshi", st: dict, control: dict, now: float) -> None:
     """Apply the governor: stake = min(Claude's cap, the rules' stake); a halt blocks all new trades. If Kalshi
     cannot be read, keep the last answer (smallest stake until there is one)."""
     try:
-        stake, halt = governor(api.recent_settlement_pnls(control["live_since"]), control["deposit"],
-                               control["live_since"], now)
+        if api.authed and control.get("live"):
+            pnls = api.recent_settlement_pnls(control["live_since"])
+        else:  # dry run: the same rules on the paper ledger, so dry sizes exactly as live would
+            pnls = [(r["t"], r["pnl"]) for r in st.get("results", []) if r["t"] >= control["live_since"]]
+        stake, halt = governor(pnls, control["deposit"], control["live_since"], now)
         st["gov_stake"], st["gov_halt"] = stake, halt
     except Exception as e:
-        log("LIVE", "error", detail=f"governor: {e!r}")
+        log("LIVE" if api.authed else "DRY", "error", detail=f"governor: {e!r}")
     st["stake_fraction"] = min(st["stake_fraction"], st.get("gov_stake", STAKE_AFTER_LOSS))
 
 
@@ -523,8 +527,7 @@ def run():
     st = load_state()
     control = read_control()
     apply_control(st, control)
-    if live_allowed(api, control):
-        govern(api, st, control, time.time())
+    govern(api, st, control, time.time())
     mode = "LIVE" if live_allowed(api, control) and not st.get("gov_halt") else "DRY"
     log(mode, "start", detail=f"authed={api.authed} max={MAX_CONTRACTS} series={','.join(SERIES)}")
     if mode == "LIVE":
@@ -577,8 +580,7 @@ def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
             try:
                 control = read_control()
                 apply_control(st, control)
-                if live_allowed(api, control):
-                    govern(api, st, control, time.time())
+                govern(api, st, control, time.time())
                 want = "LIVE" if live_allowed(api, control) and not st.get("gov_halt") else "DRY"
                 if want != mode:
                     if mode == "LIVE":

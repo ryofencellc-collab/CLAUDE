@@ -36,7 +36,7 @@ def test_equity_floor_halts_for_good_even_after_recovering():
 
 def test_govern_takes_the_smaller_stake_and_keeps_the_last_answer_on_errors(world):
     ex, mk, st, _ = world
-    control = {"live_since": START, "deposit": 1000.0}
+    control = {"live": True, "live_since": START, "deposit": 1000.0}
     st["stake_fraction"] = 0.95
     L.govern(ex, st, control, START + DAY)
     assert st["stake_fraction"] == 0.5 and st["gov_halt"] is None             # Claude's cap 0.95, rules 0.5
@@ -60,7 +60,7 @@ def test_a_halt_blocks_and_pulls_the_resting_order(world):
     L.step(ex, st, "LIVE", at(0))
     oid = next(iter(ex.orders))
     ex.settlements += [(at(-3000).timestamp(), -5.0), (at(-1000).timestamp(), -5.0)]
-    L.govern(ex, st, {"live_since": 0.0, "deposit": 1000.0}, at(1).timestamp())
+    L.govern(ex, st, {"live": True, "live_since": 0.0, "deposit": 1000.0}, at(1).timestamp())
     assert st["gov_halt"]
     L.step(ex, st, "LIVE", at(1))
     assert ex.orders[oid]["status"] == "canceled"
@@ -110,3 +110,25 @@ def test_a_hung_git_fetch_counts_as_a_miss_instead_of_freezing(monkeypatch, tmp_
     assert c["stop"] is True and c["live"] is False and L._control_misses[0] == L.CONTROL_MAX_MISSES
     L._control_misses[0] = 0
     L.commit_logs()                                                           # must return, not hang or raise
+
+
+def test_dry_run_sizes_with_the_same_rules_as_live(world):
+    ex, mk, st, _ = world
+
+    def Unauthed():
+        e = Exchange()
+        e.authed = False
+        return e
+    st["stake_fraction"] = 0.95
+    control = {"live": False, "live_since": 0.0, "deposit": 1000.0}
+    L.govern(Unauthed(), st, control, START)
+    assert st["stake_fraction"] == 0.5                                        # first 14 days, like live
+    st["results"] = [{"t": START - 2 * DAY, "pnl": -5.0}, {"t": START - DAY, "pnl": -5.0}]
+    L.govern(Unauthed(), st, control, START)
+    assert st["gov_halt"]                                                     # the paper ledger can halt it too
+
+
+def test_a_missing_live_since_never_skips_the_first_14_days():
+    assert L.governor([], 1000.0, 0.0, START) == (0.5, None)
+    assert L.governor([(START, 5.0)], 1000.0, 0.0, START + 3 * DAY) == (0.5, None)
+    assert L.governor([(START, 5.0)], 1000.0, 0.0, START + 14 * DAY) == (0.95, None)

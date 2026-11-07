@@ -99,3 +99,5 @@ simulated exchange.
 | A failed `git pull --rebase` left the checkout mid-rebase | `rebase --abort`, retry at the next commit | same test |
 | A run queued hours earlier started on old code and old state | checkout uses the branch tip at job start | workflow |
 | Self-chain broken (dispatch failed) → up to 3 h idle | 4 dispatch retries; hourly cron backup | workflow |
+| Dry run sized at the control cap (0.78) while live would use the governor's 0.5 | the governor also runs in dry run, on the paper ledger | `test_dry_run_sizes_with_the_same_rules_as_live` |
+| `live_since` left blank → the account would look old and jump to 0.95 | with no live_since, days count from the first settlement | `test_a_missing_live_since_never_skips_the_first_14_days` |
