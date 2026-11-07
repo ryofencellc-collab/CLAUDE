@@ -4,9 +4,9 @@ Mode now: **DRY** (DRY = decides and logs, sends nothing). Log: [live21_log.csv]
 
 | | |
 |---|---|
-| Orders placed | 89 |
+| Orders placed | 90 |
 | Cancelled before close | 7 |
-| Settled markets / with fills | 89 / 32 |
+| Settled markets / with fills | 90 / 32 |
 | Losing filled markets | 0 |
 | **P&L** | **$+274.99** |
 | Errors | 0 |
@@ -16,4 +16,4 @@ Mode now: **DRY** (DRY = decides and logs, sends nothing). Log: [live21_log.csv]
 | 2026-11-04 | 6 | 2 | $+19.64 |
 | 2026-11-05 | 25 | 8 | $+78.56 |
 | 2026-11-06 | 35 | 6 | $+45.06 |
-| 2026-11-07 | 23 | 16 | $+131.73 |
+| 2026-11-07 | 24 | 16 | $+131.73 |
