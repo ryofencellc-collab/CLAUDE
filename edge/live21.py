@@ -336,10 +336,42 @@ def govern(api: "Kalshi", st: dict, control: dict, now: float) -> None:
         else:  # dry run: the same rules on the paper ledger, so dry sizes exactly as live would
             pnls = [(r["t"], r["pnl"]) for r in st.get("results", []) if r["t"] >= control["live_since"]]
         stake, halt = governor(pnls, control["deposit"], control["live_since"], now)
-        st["gov_stake"], st["gov_halt"] = stake, halt
+        if api.authed and control.get("live"):
+            audit_balance(api, st, pnls, control["live_since"])
+        st["gov_stake"], st["gov_halt"] = stake, halt or (st.get("audit") or {}).get("halt")
     except Exception as e:
         log("LIVE" if api.authed else "DRY", "error", detail=f"governor: {e!r}")
     st["stake_fraction"] = min(st["stake_fraction"], st.get("gov_stake", STAKE_AFTER_LOSS))
+
+
+AUDIT_CHECKS = 10  # minutes a mismatch must last (settlement records and cash can lag each other briefly)
+
+
+def audit_balance(api: "Kalshi", st: dict, pnls: list[tuple[float, float]], live_since: float) -> None:
+    """"Anything unexplained" (control/RULES.md) as code: whenever we hold nothing, cash must have moved by
+    exactly what Kalshi's settlement records say since the last such check (within max($1, 1%)). A mismatch
+    that lasts AUDIT_CHECKS minutes (a deposit or withdrawal nobody recorded, a trade this bot did not make,
+    or a bookkeeping error) halts trading until a fresh start (new live_since). Compared step by step, so small
+    fee differences never pile up. The halt reason gives no dollar amounts (the log is public)."""
+    a = st.get("audit")
+    if not a or a.get("since") != live_since:
+        a = st["audit"] = {"since": live_since, "snap": None, "bad": 0, "halt": None}
+    if a["halt"] or st.get("open"):
+        return
+    if any(str(o.get("client_order_id", "")).startswith("r21-") for o in api.resting()) or api.positions():
+        return
+    bal, cum = api.balance_usd(), float(sum(p for _, p in pnls))
+    if a["snap"] is None:
+        a["snap"] = {"bal": bal, "cum": cum}
+        return
+    expected = a["snap"]["bal"] + (cum - a["snap"]["cum"])
+    if abs(bal - expected) <= max(1.0, 0.01 * a["snap"]["bal"]):
+        a["snap"], a["bad"] = {"bal": bal, "cum": cum}, 0
+        return
+    a["bad"] += 1
+    if a["bad"] >= AUDIT_CHECKS:
+        off = (bal - expected) / max(expected, 1e-9)
+        a["halt"] = f"cash moved {off:+.1%} more than the settlement records explain (deposit/withdrawal? unknown trade?)"
 
 
 def record_result(st: dict, now: float, pnl: float) -> None:

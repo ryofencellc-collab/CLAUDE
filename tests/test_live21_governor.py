@@ -132,3 +132,48 @@ def test_a_missing_live_since_never_skips_the_first_14_days():
     assert L.governor([], 1000.0, 0.0, START) == (0.5, None)
     assert L.governor([(START, 5.0)], 1000.0, 0.0, START + 3 * DAY) == (0.5, None)
     assert L.governor([(START, 5.0)], 1000.0, 0.0, START + 14 * DAY) == (0.95, None)
+
+
+def test_unexplained_cash_change_halts_after_ten_minutes(world):
+    ex, mk, st, _ = world
+    control = {"live": True, "live_since": 0.0, "deposit": 1000.0}
+    L.govern(ex, st, control, START)                                           # first flat check: snapshot
+    ex.settlements.append((START + 60, 5.25))
+    ex.balance += 5.30                                                         # a win, a few cents of fee drift
+    for i in range(12):
+        L.govern(ex, st, control, START + 120 + 60 * i)
+    assert not st["gov_halt"]                                                  # explained: no halt
+    ex.balance += 500.0                                                        # someone deposited $500
+    for i in range(9):
+        L.govern(ex, st, control, START + 2000 + 60 * i)
+    assert not st["gov_halt"]                                                  # 9 minutes: could still be lag
+    L.govern(ex, st, control, START + 3000)
+    assert st["gov_halt"] and "$" not in st["gov_halt"]                        # 10th: halt, no amounts logged
+    ex.balance -= 500.0
+    L.govern(ex, st, control, START + 4000)
+    assert st["gov_halt"]                                                      # sticky until a fresh start
+    L.govern(ex, st, {**control, "live_since": START + 5000}, START + 5000)
+    assert not st["gov_halt"]
+
+
+def test_a_brief_lag_between_cash_and_records_is_tolerated(world):
+    ex, mk, st, _ = world
+    control = {"live": True, "live_since": 0.0, "deposit": 1000.0}
+    L.govern(ex, st, control, START)
+    ex.balance += 10.0                                                         # cash credited first...
+    for i in range(5):
+        L.govern(ex, st, control, START + 60 * (i + 1))
+    ex.settlements.append((START + 30, 10.0))                                  # ...record shows up 5 min later
+    for i in range(10):
+        L.govern(ex, st, control, START + 600 + 60 * i)
+    assert not st["gov_halt"]
+
+
+def test_audit_waits_while_anything_is_open(world):
+    ex, mk, st, _ = world
+    control = {"live": True, "live_since": 0.0, "deposit": 1000.0}
+    L.govern(ex, st, control, START)
+    L.step(ex, st, "LIVE", at(0))                                              # an order rests: cash is reserved
+    for i in range(15):
+        L.govern(ex, st, control, START + 60 * (i + 1))
+    assert not st["gov_halt"]

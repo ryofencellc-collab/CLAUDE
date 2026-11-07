@@ -133,3 +133,17 @@ close; the market's own `rules_primary`), built from several exchanges' trades. 
 
 The paper bot (`edge/paper21.py`) is unchanged so Round 22 is not altered mid-window.
 Tests: `tests/test_prices.py` (real saved responses, staleness, disagreement, broken data, worst-case lead).
+
+## Unexplained cash (Nov 7)
+
+RULES.md's "anything unexplained" stop, as code (`audit_balance`): whenever the bot holds nothing (no open
+market, no resting order, no position), Kalshi cash must have moved by exactly what the settlement records say
+since the previous such check (within max($1, 1%)). A mismatch lasting 10 minutes halts until a fresh start.
+It catches an unrecorded deposit or withdrawal, a trade this bot did not make (e.g. a leaked key, or manual
+trading on the account), and bookkeeping errors. Checked step by step so fee rounding never accumulates.
+The halt message carries no dollar amounts (the log is public).
+Tests: `test_unexplained_cash_change_halts_after_ten_minutes`, `test_a_brief_lag_between_cash_and_records_is_tolerated`,
+`test_audit_waits_while_anything_is_open`.
+
+Owner rule that follows: **no manual trading on this Kalshi account**, and tell Claude before any deposit or
+withdrawal (Claude then sets a new `deposit` and `live_since`).
