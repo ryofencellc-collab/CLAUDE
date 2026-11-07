@@ -40,6 +40,11 @@ MAX_CONTRACTS = int(os.environ.get("LIVE21_MAX", 1000))
 PRICE_CENTS = 99
 DAILY_STOP = 0.10
 PAUSE_HOURS, HALF_DAYS = 24, 7
+# control/RULES.md, enforced by the bot itself from Kalshi's settlement records (no one has to be watching)
+FLOOR = 0.70             # equity ever <= 70% of the deposit: stop for good
+LOSSES_TO_STOP, LOSS_WINDOW_DAYS = 2, 7
+STAKE_START, STAKE_GROWN, STAKE_AFTER_LOSS = 0.5, 0.95, 0.25
+GROW_DAYS, AFTER_LOSS_DAYS = 14, 14
 API = "https://api.elections.kalshi.com"
 BASE = "/trade-api/v2"
 LOG_COLS = ["time_utc", "mode", "event", "ticker", "side", "count", "z", "spot", "balance", "detail"]
@@ -207,18 +212,25 @@ _control_misses = [0]
 CONTROL_MAX_MISSES = 5  # ~5 minutes without reaching GitHub: stop, because a stop could not reach us either
 
 
+def _git(args: list[str], timeout: float = 60, **kw):
+    """git with a time limit: a hung network call must never freeze the trading loop. None = failed/timed out."""
+    import subprocess
+    try:
+        r = subprocess.run(["git", *args], cwd=ROOT.parent, timeout=timeout, **kw)
+        return r if r.returncode == 0 else None
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+
+
 def read_control() -> dict:
     """control/live21.json, preferring the latest version on GitHub so a commit reaches a running job. On
     GitHub Actions, if GitHub cannot be reached CONTROL_MAX_MISSES times in a row, the answer is "stopped"."""
-    import subprocess
     text, remote_failed = None, False
     if os.environ.get("GITHUB_ACTIONS") == "true":
         ref = os.environ.get("GITHUB_REF_NAME", "")
-        ok = subprocess.run(["git", "fetch", "-q", "origin", ref], cwd=ROOT.parent).returncode == 0
-        if ok:
-            r = subprocess.run(["git", "show", f"origin/{ref}:control/live21.json"], cwd=ROOT.parent,
-                               capture_output=True, text=True)
-            text = r.stdout if r.returncode == 0 else None
+        if _git(["fetch", "-q", "origin", ref], timeout=30):
+            r = _git(["show", f"origin/{ref}:control/live21.json"], timeout=10, capture_output=True, text=True)
+            text = r.stdout if r else None
         remote_failed = text is None
         _control_misses[0] = _control_misses[0] + 1 if remote_failed else 0
     if text is None and CONTROL.exists():
@@ -234,9 +246,19 @@ def read_control() -> dict:
         cap = max(0, int(c.get("max_contracts", MAX_CONTRACTS)))
     except (TypeError, ValueError):
         frac, cap = 0.25, MAX_CONTRACTS
+    try:
+        deposit = float(c.get("deposit", 1000))
+        deposit = deposit if deposit > 0 else 1000.0
+    except (TypeError, ValueError):
+        deposit = 1000.0
+    try:
+        since = pd.Timestamp(c.get("live_since")).timestamp() if c.get("live_since") else 0.0
+    except (TypeError, ValueError):
+        since = 0.0
     stop = bool(c.get("stop", True)) or _control_misses[0] >= CONTROL_MAX_MISSES
     # anything missing or unreadable means: not live, stopped, smallest stake
-    return {"live": bool(c.get("live", False)) and not stop, "stop": stop, "stake_fraction": frac, "max_contracts": cap}
+    return {"live": bool(c.get("live", False)) and not stop, "stop": stop, "stake_fraction": frac, "max_contracts": cap,
+            "deposit": deposit, "live_since": since}
 
 
 def live_allowed(api: "Kalshi", control: dict) -> bool:
@@ -254,11 +276,46 @@ def size_for(balance: float, st: dict, now: float, fraction: float = 0.95, cap: 
 def blocked(st: dict, now: float, balance: float) -> str | None:
     if STOP.exists() or st.get("control_stop"):
         return "stopped by control"
+    if st.get("gov_halt"):
+        return f"stopped by the rules: {st['gov_halt']}"
     if now < st["pause_until"]:
         return "paused after a losing market"
     if st["day_start_balance"] > 0 and st["day_loss"] >= DAILY_STOP * st["day_start_balance"]:
         return "daily loss limit"
     return None
+
+
+def governor(pnls: list[tuple[float, float]], deposit: float, live_since: float, now: float) -> tuple[float, str | None]:
+    """control/RULES.md as code. pnls = (settled time, P&L $) of every settlement since going live.
+    Returns (stake fraction, halt reason or None). Both are worked out from the whole history every time, so a
+    halt never wears off by itself and survives lost state; only a new live_since (a fresh start) clears it."""
+    pnls = sorted(pnls)
+    equity = deposit
+    for _, pnl in pnls:
+        equity += pnl
+        if equity <= FLOOR * deposit:
+            return 0.0, f"equity fell to ${equity:,.2f} (floor {FLOOR:.0%} of ${deposit:,.0f})"
+    losses = [t for t, pnl in pnls if pnl < 0]
+    for a, b in zip(losses, losses[LOSSES_TO_STOP - 1:]):
+        if b - a <= LOSS_WINDOW_DAYS * 86400:
+            return 0.0, f"{LOSSES_TO_STOP} losing markets within {LOSS_WINDOW_DAYS} days"
+    if losses and now - losses[-1] < AFTER_LOSS_DAYS * 86400:
+        return STAKE_AFTER_LOSS, None
+    if now - live_since >= GROW_DAYS * 86400 and sum(p for _, p in pnls) >= 0:
+        return STAKE_GROWN, None
+    return STAKE_START, None
+
+
+def govern(api: "Kalshi", st: dict, control: dict, now: float) -> None:
+    """Apply the governor: stake = min(Claude's cap, the rules' stake); a halt blocks all new trades. If Kalshi
+    cannot be read, keep the last answer (smallest stake until there is one)."""
+    try:
+        stake, halt = governor(api.recent_settlement_pnls(control["live_since"]), control["deposit"],
+                               control["live_since"], now)
+        st["gov_stake"], st["gov_halt"] = stake, halt
+    except Exception as e:
+        log("LIVE", "error", detail=f"governor: {e!r}")
+    st["stake_fraction"] = min(st["stake_fraction"], st.get("gov_stake", STAKE_AFTER_LOSS))
 
 
 def record_result(st: dict, now: float, pnl: float) -> None:
@@ -355,7 +412,7 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     if o and now < pd.Timestamp(o["close"]):
         if o.get("cancelled"):
             return
-        if not still_decided(o, now) or STOP.exists() or st.get("control_stop"):
+        if not still_decided(o, now) or STOP.exists() or st.get("control_stop") or st.get("gov_halt"):
             if mode == "LIVE" and o.get("order_id"):
                 api.cancel(o["order_id"])
             log(mode, "cancel", o["ticker"], o["side"], o["count"], detail="z below threshold, stale data or stop")
@@ -451,12 +508,13 @@ def rebuild_risk(api: Kalshi, st: dict, now: float) -> None:
 
 
 def commit_logs() -> None:
-    import subprocess
     files = [str(p.relative_to(ROOT.parent)) for p in (LOG, STATE, ROOT / "LIVE21.md") if p.exists()]
-    for c in (["git", "add", *files], ["git", "commit", "-q", "-m", "live21: log [skip ci]"],
-              ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
-        if subprocess.run(c, cwd=ROOT.parent).returncode != 0 and c[1] == "commit":
-            return
+    if not _git(["add", *files]) or not _git(["commit", "-q", "-m", "live21: log [skip ci]"]):
+        return
+    if not _git(["pull", "--rebase", "-q"], timeout=90):
+        _git(["rebase", "--abort"])  # never leave the checkout mid-rebase; the next commit tries again
+        return
+    _git(["push", "-q"], timeout=90)
 
 
 def run():
@@ -465,7 +523,9 @@ def run():
     st = load_state()
     control = read_control()
     apply_control(st, control)
-    mode = "LIVE" if live_allowed(api, control) else "DRY"
+    if live_allowed(api, control):
+        govern(api, st, control, time.time())
+    mode = "LIVE" if live_allowed(api, control) and not st.get("gov_halt") else "DRY"
     log(mode, "start", detail=f"authed={api.authed} max={MAX_CONTRACTS} series={','.join(SERIES)}")
     if mode == "LIVE":
         st["open"] = None
@@ -517,7 +577,9 @@ def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
             try:
                 control = read_control()
                 apply_control(st, control)
-                want = "LIVE" if live_allowed(api, control) else "DRY"
+                if live_allowed(api, control):
+                    govern(api, st, control, time.time())
+                want = "LIVE" if live_allowed(api, control) and not st.get("gov_halt") else "DRY"
                 if want != mode:
                     if mode == "LIVE":
                         go_dry(api, st)
@@ -525,7 +587,7 @@ def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
                         st["open"] = None
                         sweep_strays(api, st, "LIVE")
                         rebuild_risk(api, st, time.time())
-                    log(want, "mode", detail=f"{mode} -> {want} (control file)")
+                    log(want, "mode", detail=f"{mode} -> {want} ({st.get('gov_halt') or 'control file'})")
                     mode = want
             except Exception as e:
                 log(mode, "error", detail=f"control: {e!r}")

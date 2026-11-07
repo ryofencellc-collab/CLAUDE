@@ -30,3 +30,25 @@ the file says. The owner also controls the account itself (deposits, withdrawals
 
 Each change to `control/live21.json` is a commit with the reason in its message, so the decision trail is
 public and auditable.
+
+## Enforced by the bot itself (added 2026-11-07)
+
+So the rules hold even when nobody is watching, `edge/live21.py` (`governor`) applies the stake and stopping
+rules above every minute from Kalshi's own settlement records since `live_since`:
+
+| Rule | Bot behaviour |
+|---|---|
+| First 14 live days | stake 0.5 |
+| 14 days live, P&L ≥ 0, no loss in the last 14 days | stake 0.95 |
+| A losing market in the last 14 days | stake 0.25 (plus the 24 h pause and 7-day half size) |
+| Equity (deposit + settled P&L) ever ≤ 70% of the deposit | halt: pull orders, dry run, for good |
+| 2 losing markets within 7 days | halt, for good |
+| Kalshi settlements unreadable | keep the last answer; 0.25 until there is one |
+
+The stake used is the smaller of the governor's and `stake_fraction` in the control file (Claude's cap).
+A halt is recomputed from the whole history each minute, so it never wears off and survives lost state.
+
+**Adding money (the $10k step):** set `deposit` to the new balance and `live_since` to that moment, in one
+commit, with the reason. That starts a fresh history. It is never done to clear a halt.
+
+The remaining stops (live vs paper drift, anything unexplained) stay Claude's judgment, reviewed daily.

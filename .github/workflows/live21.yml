@@ -1,9 +1,10 @@
 name: live21
 # Live trader for the Round 21/22 edge (edge/live21.py). LIVE only when the Kalshi secrets exist, Claude's
-# control/live21.json says live (re-read from GitHub every minute), and the owner has not vetoed (LIVE21=0). Each job loops ~5.75 h; the next scheduled run queues behind it.
+# control/live21.json says live (re-read from GitHub every minute), the owner has not vetoed (LIVE21=0) and the
+# bot's own governor (control/RULES.md as code) has not halted. Each job loops ~5.75 h and queues the next.
 on:
   schedule:
-    - cron: "50 */3 * * *"
+    - cron: "50 * * * *"   # hourly backup: if the self-chain ever breaks, trading resumes within the hour
   workflow_dispatch:
     inputs:
       seconds: {description: "loop length in seconds", default: "20700"}
@@ -25,6 +26,8 @@ jobs:
       KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}  # the branch tip when the job STARTS (newest code and state), not when it was queued
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
       - run: pip install -r requirements.txt
@@ -50,4 +53,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "${{ job.status }}" != "success" ]; then sleep 300; fi  # no tight loop when a job keeps failing
-          gh workflow run live21.yml --ref "${{ github.ref_name }}" || echo "could not queue next run"
+          for i in 1 2 3 4; do gh workflow run live21.yml --ref "${{ github.ref_name }}" && exit 0; sleep $((i * 15)); done
+          echo "could not queue next run; the hourly cron picks it up"

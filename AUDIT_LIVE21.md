@@ -87,3 +87,15 @@ simulated exchange.
 | Sparse high-\|z\| table cells carry a prior near 50%, so a *bigger* lead could look riskier and cancel the safest orders | `flip_risk` makes the table monotone: risk never rises as \|z\| grows (`np.minimum.accumulate` down the z axis) | `test_table_is_made_monotone_so_a_bigger_lead_is_never_riskier` |
 | Settlement and fill reads stopped at one page (200 rows), so daily loss / pause could miss losses on a busy day | `Kalshi.pages()` follows the cursor; settlements read with `min_ts` | `test_settlements_and_fills_read_every_page` |
 | Module docstring still described the old z ≥ 6 rule | Rewritten for the Round 25 gate and the control system | — |
+
+## Running unattended (Nov 7)
+
+| Risk | Guard | Test |
+|---|---|---|
+| RULES.md stops/stake depended on Claude editing the control file | `governor()` enforces them from Kalshi settlements every minute | `tests/test_live21_governor.py` (stake schedule, 2-in-7 halt, floor halt never wears off, errors keep last answer) |
+| A halt left an already-resting order on the book | halt cancels the open order like a control stop | `test_a_halt_blocks_and_pulls_the_resting_order` |
+| A halted account restarting in LIVE | startup applies the governor before choosing the mode | `test_a_halted_account_starts_in_dry_run` |
+| A hung `git fetch` (control file) froze the trading loop | every git call has a time limit; a timeout counts as a missed read (5 misses = stop) | `test_a_hung_git_fetch_counts_as_a_miss_instead_of_freezing` |
+| A failed `git pull --rebase` left the checkout mid-rebase | `rebase --abort`, retry at the next commit | same test |
+| A run queued hours earlier started on old code and old state | checkout uses the branch tip at job start | workflow |
+| Self-chain broken (dispatch failed) → up to 3 h idle | 4 dispatch retries; hourly cron backup | workflow |
