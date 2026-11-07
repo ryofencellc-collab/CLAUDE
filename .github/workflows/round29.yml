@@ -1,0 +1,69 @@
+name: round29
+# Round 29 (PROTOCOL_ROUND29.md): crypto big-move reversal, intraday momentum, overnight drift.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  crypto:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round29.py crypto
+      - uses: actions/upload-artifact@v4
+        with: {name: r29-crypto, path: reports/round29_parts/}
+  nq:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: data/histdata
+          key: histdata-nsxusd-v1-${{ github.run_id }}
+          restore-keys: histdata-nsxusd-v1-
+      - run: python fetch_nq.py
+      - run: python run_round29.py nq
+      - uses: actions/upload-artifact@v4
+        with: {name: r29-nq, path: reports/round29_parts/}
+  overnight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python run_round29.py overnight
+      - uses: actions/upload-artifact@v4
+        with: {name: r29-overnight, path: reports/round29_parts/}
+  report:
+    needs: [crypto, nq, overnight]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r29-*", path: reports/round29_parts, merge-multiple: true}
+      - run: python run_round29.py report
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round29 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND29.md reports/round29_parts 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round29: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
