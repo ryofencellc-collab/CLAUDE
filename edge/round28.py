@@ -53,7 +53,8 @@ def decided_side(m: dict):
     offered at 1-2c. (A new market with an empty book lists a placeholder bid of $1.00: ignored.)"""
     yb, nb = f(m, "yes_bid_dollars"), f(m, "no_bid_dollars")
     ya = f(m, "yes_ask_dollars")
-    if np.isfinite(yb) and JOIN_AT - 1e-9 <= yb <= 0.99 + 1e-9 and np.isfinite(ya) and ya <= 1.0 - 1e-9:
+    ybs = f(m, "yes_bid_size_fp")
+    if np.isfinite(yb) and JOIN_AT - 1e-9 <= yb <= 0.99 + 1e-9 and not (np.isfinite(ybs) and ybs <= 0):
         return "yes", yb
     if np.isfinite(nb) and JOIN_AT - 1e-9 <= nb <= 0.99 + 1e-9 and np.isfinite(ya) and 0.01 - 1e-9 <= ya <= 0.02 + 1e-9:
         return "no", nb
