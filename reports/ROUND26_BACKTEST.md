@@ -62,3 +62,25 @@ Sampling: Round 21 tested at most 1,500 markets per series per period (every k-t
 | E. NEW: hourly, z>=6 + governor (Round 26)                               | $1,131      |    4.88 | 0.46%          |        97 |        0 | -0%            | 93%          | no                          |
 | F. hourly + 15-min (15-min on the Round 25 rule), honest                 | $692        |  -11.42 | -1.36%         |       395 |        3 | -56%           | 88%          | Oct 24 (equity floor)       |
 
+
+## What this says (written by Claude after the run)
+
+1. **The simulator matches the earlier runs.** Version A reproduces Round 25's reported holdout (~$31k from
+   $1,000).
+2. **The old live bot would have lost money.** With only the fills a 99c bid can actually get (C), the Round 25
+   rule loses in the holdout ($1,000 → $679, stopped at the 70% floor on Oct 10) and in dev hits the 2-losses
+   stop on Aug 1. The fills that still reach 99c are disproportionately the uncertain markets: the wins vanish,
+   the losses stay. Even counting every fill (B), the governor stops it twice.
+3. **The problem grew over time:** the share of 15-minute long-shot volume priced under 1c rose from ~35%
+   (Mar–May) to 83% (Sep–Oct).
+4. **The new version (E, hourly, z ≥ 6): 0 losses, no halts, no drawdown in either period.** Its dollar figures
+   here are far too low to use: Round 21 sampled only ~1 in 350 hourly markets (hourly events have many strikes),
+   and this backtest has no queue model. The forward paper ledger (every market, real queues) is the better
+   estimate: ~$21/day on $1,000 one market at a time (PROTOCOL_ROUND26.md).
+5. **15-minute at z ≥ 6 with honest fills (D)** looks positive here, but the forward data with real queues says
+   otherwise: honest 15-minute profit at 1k per market was ~$42 over 8 days for all five coins together, against
+   $935 for hourly (reports/FILLCHECK.md). The backtest's 25% capture ignores the ~9.5k-contract queue that sits at
+   99c on 15-minute markets. It stays out of the live bot.
+
+Verdict: the change **helps**. It replaces a rule that loses money once fills are counted honestly with one that
+had no losses in any test. The live dollar figure stays an estimate until the Round 26 dry run (Nov 8–15).
