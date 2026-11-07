@@ -4,7 +4,19 @@
  "day": "2026-11-07",
  "day_start_balance": 1050.0,
  "day_loss": 0.0,
- "open": null,
+ "open": {
+  "ticker": "KXSOL15M-26NOV061945-45",
+  "series": "KXSOL15M",
+  "side": "no",
+  "count": 530,
+  "close": "2026-11-07T00:45:00+00:00",
+  "strike_type": "greater_or_equal",
+  "floor": 90.1808,
+  "cap": null,
+  "order_id": null,
+  "placed": "2026-11-07T00:44:29.521489+00:00",
+  "queue_ahead": 13652.300000000001
+ },
  "results": [
   {
    "t": 1793830623.807834,
@@ -302,6 +314,7 @@
   "KXXRP15M-26NOV061745-45",
   "KXBTC15M-26NOV061900-00",
   "KXETH15M-26NOV061915-15",
-  "KXXRP15M-26NOV061930-30"
+  "KXXRP15M-26NOV061930-30",
+  "KXSOL15M-26NOV061945-45"
  ]
 }
