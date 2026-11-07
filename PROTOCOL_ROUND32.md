@@ -29,3 +29,13 @@ enforced the way a broker would?
 Reported: share of runs that end up, median and worst outcome, liquidations, and realized-vs-true gap.
 Prediction written now: realized P&L is positive in almost every run; true equity is negative in a large
 share; leveraged runs get liquidated in sustained drops.
+
+## Result (2026-11-07, reports/ROUND32.md)
+
+- **Dashboard settings (20% margin):** true equity up in only 8–24% of XRP runs and 15% of SOL runs; median
+  −$265 to −$380 per $2,000; the broker liquidates 69–100% of runs. Replaying the dashboard's own 50 days: a broker
+  would have liquidated it; without margin calls the account ends at −$49 (wiped out), not +$1,899.
+- **No leverage (you own the coins):** realized profit is positive in **100%** of runs (the dashboard would always
+  look green), yet true equity is up in only 27–48% and the median run loses money. That is the whole trick: the
+  dashboard counts the small wins and leaves out the coins bought on the way down.
+- Tighter/wider spacing and a stop-loss under the grid do not fix it.
