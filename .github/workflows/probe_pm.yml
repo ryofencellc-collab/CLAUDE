@@ -1,0 +1,53 @@
+name: probe_pm
+# One-off: Polymarket data API shape (leaderboard, trades, closed positions) + forum/research articles as text.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - name: Fetch
+        run: |
+          mkdir -p probe/pm && cd probe/pm
+          get() { curl -sS -m 30 -L -A "Mozilla/5.0 research" -o "$1" -w "$1 %{http_code} %{size_download}\n" "$2" || echo "$1 FAILED"; }
+          {
+          D=https://data-api.polymarket.com
+          get lb_month_pnl.json "$D/v1/leaderboard?category=OVERALL&timePeriod=MONTH&orderBy=PNL&limit=50"
+          get lb_all_pnl.json "$D/v1/leaderboard?category=OVERALL&timePeriod=ALL&orderBy=PNL&limit=50"
+          get lb_crypto_month.json "$D/v1/leaderboard?category=CRYPTO&timePeriod=MONTH&orderBy=PNL&limit=50"
+          W=$(python3 -c "import json;d=json.load(open('lb_month_pnl.json'));d=d if isinstance(d,list) else d.get('data',d);print(d[0].get('proxyWallet') or d[0].get('user') or d[0].get('address'))" 2>/dev/null)
+          echo "wallet=$W"
+          get trades_top.json "$D/trades?user=$W&limit=500"
+          get closed_top.json "$D/closed-positions?user=$W&limit=500"
+          get activity_top.json "$D/activity?user=$W&limit=500"
+          get positions_top.json "$D/positions?user=$W&limit=500"
+          get gamma_sample.json "https://gamma-api.polymarket.com/markets?limit=5&closed=true"
+          get docs_llms.txt https://docs.polymarket.com/llms.txt
+          get art_telonex.html https://telonex.io/research/top-crypto-traders-polymarket-15m
+          get art_botforkalshi.html https://www.botforkalshi.com/blog/kalshi-trading-strategies-guide
+          get art_medium_kalshi.html https://medium.com/coinmonks/i-spent-six-months-trading-on-kalshi-heres-what-actually-works-c5fd9b7d6fe2
+          get art_launchpoly.html https://launchpoly.com/blog/polymarket-whale-tracking-study
+          get art_moonsat.html https://moonsat.medium.com/6-main-types-of-trading-bots-on-up-down-markets-on-polymarket-12893a484f28
+          get art_kalshi_iabvek.html https://news.kalshi.com/p/interview-kalshi-trader-iabvek-new-york-mayor-race
+          get art_4am.html https://4amclub.substack.com/p/how-to-make-money-trading-on-kalshi
+          } | tee status.txt
+          python3 - <<'PY'
+          import re, glob, html
+          for f in glob.glob('art_*.html'):
+              t = open(f, errors='ignore').read()
+              t = re.sub(r'(?s)<(script|style)[^>]*>.*?</\1>', ' ', t)
+              t = html.unescape(re.sub(r'<[^>]+>', ' ', t))
+              t = re.sub(r'\s+', ' ', t)
+              open(f.replace('.html', '.txt'), 'w').write(t[:60000])
+          PY
+          rm -f art_*.html
+          find . -size +3M -delete
+      - name: Commit
+        run: |
+          git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe/pm && git commit -q -m "probe: Polymarket API + research articles [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
