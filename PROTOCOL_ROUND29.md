@@ -40,3 +40,13 @@ for $100/day with the drawdown that leverage implies.
 
 Prediction written now: crypto reversal is the only one with a chance; intraday momentum has likely decayed
 since publication; overnight drift is real but too small after costs to matter at $1,000.
+
+## Result (2026-11-07, reports/ROUND29.md): 0/3 pass
+
+- Crypto reversal: every one of the 9 configs lost money on dev (2024–25); the least-bad one made 10.6% on 2026
+  (Sharpe 1.4) but fails the deflated-Sharpe check: a 1-in-9 pick that lost in the earlier period. $0.34/day on $1,000.
+- Intraday momentum: lost on dev, small gain since 2020 (Sharpe 0.55). $0.10/day on $1,000.
+- Overnight drift: real but small (Sharpe 0.59, −20% drops). $0.24/day on $1,000.
+
+None comes near $100/day on $1,000; the leverage needed (290–990×) turns their normal dips into a wipe-out.
+The prediction was right except that crypto reversal did not survive either.
