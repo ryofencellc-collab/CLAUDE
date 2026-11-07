@@ -224,3 +224,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-07T08:47:00.591713+00:00,DRY,settled,KXSOL15M-26NOV070345-45,yes,0.0,,,,result=yes pnl=0.00
 2026-11-07T08:58:36.108069+00:00,DRY,place,KXBTC15M-26NOV070400-00,yes,530,4.71,76085.95,1050.0,"queue_ahead=448146 risk=0.00102 frac=0.500 {""ticker"": ""KXBTC15M-26NOV070400-00"", ""action"": ""buy"", ""side"": ""yes"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-dfac27a58f7a48f9"", ""post_only"": true, ""yes_price"": 99}"
 2026-11-07T09:02:00.626030+00:00,DRY,settled,KXBTC15M-26NOV070400-00,yes,0.0,,,,result=yes pnl=0.00
+2026-11-07T09:13:25.703781+00:00,DRY,place,KXSOL15M-26NOV070415-15,no,530,3.46,90.1,1050.0,"queue_ahead=3078 risk=0.00217 frac=0.500 {""ticker"": ""KXSOL15M-26NOV070415-15"", ""action"": ""buy"", ""side"": ""no"", ""count"": 530, ""type"": ""limit"", ""client_order_id"": ""r21-db961c51e4ab4378"", ""post_only"": true, ""no_price"": 99}"
+2026-11-07T09:17:00.980282+00:00,DRY,settled,KXSOL15M-26NOV070415-15,no,530.0,,,,result=no pnl=5.20
