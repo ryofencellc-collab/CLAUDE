@@ -27,6 +27,7 @@ import pandas as pd
 import requests
 
 from edge import paper21 as sig
+from edge import prices as px
 
 ROOT = Path(__file__).resolve().parent.parent / "paper"
 LOG = ROOT / "live21_log.csv"
@@ -361,15 +362,17 @@ def log(mode: str, event: str, ticker="", side="", count=0, z=np.nan, spot=np.na
 
 
 def candidates(now: pd.Timestamp) -> list:
-    """Every 15-minute market the paper bot would bid on right now (its placement rule, unchanged)."""
-    spots = {sig.SERIES[s]: sig.spot_and_vol(sig.SERIES[s], now) for s in SERIES}
+    """Every 15-minute market to bid on right now: the Round 25 gate on the smallest lead any of the three
+    exchanges shows (edge/prices.py), and only when at least two are fresh and they agree."""
     out = []
     for series in SERIES:
-        s, v = spots[sig.SERIES[series]]
-        if not np.isfinite(s):
+        spots, v, _ = px.quote(sig.SERIES[series], now)
+        if not spots:
             continue
+        s = float(np.median(spots))
         for m in sig.open_markets(series, now):
-            zy, zn = sig.z_sides(m.get("strike_type"), m.get("floor_strike"), m.get("cap_strike"), s, v, m["_close"], now)
+            zy, zn = px.worst_z(sig.z_sides, spots, v, m.get("strike_type"), m.get("floor_strike"), m.get("cap_strike"),
+                                m["_close"], now)
             tau = max((m["_close"] - now).total_seconds() / 60, 0.5)
             for side, z in (("yes", zy), ("no", zn)):
                 if np.isfinite(z) and z > 0 and flip_risk(z, tau) < P_MAX:
@@ -390,10 +393,10 @@ def decide(now: pd.Timestamp):
 
 
 def still_decided(o: dict, now: pd.Timestamp) -> bool:
-    s, v = sig.spot_and_vol(sig.SERIES[o["series"]], now)
-    if not np.isfinite(s):
-        return False  # stale data: treat as not decided, so the order is pulled
-    zy, zn = sig.z_sides(o["strike_type"], o["floor"], o["cap"], s, v, pd.Timestamp(o["close"]), now)
+    spots, v, _ = px.quote(sig.SERIES[o["series"]], now)
+    if not spots:
+        return False  # stale or disagreeing data: treat as not decided, so the order is pulled
+    zy, zn = px.worst_z(sig.z_sides, spots, v, o["strike_type"], o["floor"], o["cap"], pd.Timestamp(o["close"]), now)
     z = zy if o["side"] == "yes" else zn
     tau = max((pd.Timestamp(o["close"]) - now).total_seconds() / 60, 0.5)
     return bool(np.isfinite(z) and z > 0 and flip_risk(z, tau) < P_MAX)

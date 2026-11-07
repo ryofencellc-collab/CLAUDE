@@ -116,3 +116,20 @@ simulated exchange.
 
 `tests/test_live21_api_contract.py` replays every client call against the spec: path + method exist and are
 not deprecated, query parameters are known, order bodies match `CreateOrderV2Request` exactly.
+
+## Three-exchange prices (Nov 7)
+
+Kalshi's 15-minute crypto markets settle on the CF Benchmarks Real Time Index (60-second average before the
+close; the market's own `rules_primary`), built from several exchanges' trades. The trader used Coinbase alone.
+`edge/prices.py` now reads Coinbase, Kraken and Bitstamp 1-minute candles:
+
+| Rule | Why |
+|---|---|
+| ≥ 2 exchanges with complete candles ≤ 3 min old and ≥ 30 bars | one exchange down or lagging can't drive a bid |
+| every close within 0.30% of the median, else no price (no bid; a resting bid is pulled) | a glitch on one exchange can't fake a lead; normal spread is ~1–10 bp (probe, Nov 7) |
+| lead = smallest over the exchanges; vol = largest | bid only when all agree it's decided |
+| the forming minute is dropped; candles sorted by time | Kraken/Bitstamp include the open minute; Coinbase lists newest first (a test caught this) |
+| 10 s cache | ≤ 0.5 requests/s per exchange |
+
+The paper bot (`edge/paper21.py`) is unchanged so Round 22 is not altered mid-window.
+Tests: `tests/test_prices.py` (real saved responses, staleness, disagreement, broken data, worst-case lead).

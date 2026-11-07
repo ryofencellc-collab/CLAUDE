@@ -108,7 +108,7 @@ def test_coinbase_down_garbage_or_short_history_means_no_price(monkeypatch):
 
 def test_kalshi_market_list_down_means_no_candidates(monkeypatch):
     monkeypatch.setattr(P.wx, "_get", lambda url, params=None: None)
-    monkeypatch.setattr(P, "spot_and_vol", lambda prod, now: (80000.0, 0.0005))
+    monkeypatch.setattr(L.px, "quote", lambda prod, now: ([80000.0, 80001.0], 0.0005, "coinbase,kraken"))
     assert L.candidates(pd.Timestamp("2026-11-10 12:00", tz="UTC")) == []
 
 

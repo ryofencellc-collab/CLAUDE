@@ -15,5 +15,10 @@ def _live21_tests_use_no_reversal_table(monkeypatch, tmp_path):
     root.mkdir()
     monkeypatch.setattr(live21, "ROOT", root)
     live21._table.clear()
+    # no test may reach a real exchange: every price source answers "no data" unless a test installs one
+    import pandas as pd
+    from edge import prices
+    monkeypatch.setattr(prices, "fetch", lambda source, product: pd.Series(dtype=float))
+    prices._cache.clear()
     yield
     live21._table.clear()
