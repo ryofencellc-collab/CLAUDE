@@ -27,7 +27,7 @@ CONFIGS = {  # name: (spacing, levels, margin, stop_below_levels, contract_scale
     "tighter 0.5% x 50": (0.005, 50, MARGIN, 0, 1.0),
     "wider 2% x 50": (0.02, 50, MARGIN, 0, 1.0),
     "stop-loss 5 steps under the grid": (0.01, 50, MARGIN, 5, 1.0),
-    "no leverage (grid sized to $2,000)": (0.01, 50, 1.0, 0, None),
+    "no leverage (grid sized to $2,000; you own the coins, no margin calls)": (0.01, 50, 0.0, 0, None),
 }
 
 
