@@ -1,21 +1,46 @@
-name: probe-data-sources
+name: probe
+# One-off fact-finding for the live trader: Kalshi's API spec, a 15-minute market's settlement rules,
+# and 1-minute candles from three exchanges. Saves raw responses under probe/ and commits them.
 on:
-  push:
-    paths: [".github/workflows/probe.yml"]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - name: Kalshi historical endpoints
-        continue-on-error: true
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Fetch
         run: |
+          mkdir -p probe && cd probe
+          get() { curl -sS -m 30 -L -A "probe" -o "$1" -w "$1 %{http_code} %{size_download}\n" "$2" || echo "$1 FAILED"; }
+          {
+          get openapi.yaml https://docs.kalshi.com/openapi.yaml
+          get openapi.json https://docs.kalshi.com/openapi.json
+          get llms.txt https://docs.kalshi.com/llms.txt
+          get doc_create_order.md https://docs.kalshi.com/api-reference/orders/create-order.md
+          get doc_positions.md https://docs.kalshi.com/api-reference/portfolio/get-positions.md
+          get doc_settlements.md https://docs.kalshi.com/api-reference/portfolio/get-settlements.md
+          get doc_balance.md https://docs.kalshi.com/api-reference/portfolio/get-balance.md
+          get doc_fills.md https://docs.kalshi.com/api-reference/portfolio/get-fills.md
+          get doc_orders.md https://docs.kalshi.com/api-reference/portfolio/get-orders.md
+          get doc_fees.md https://docs.kalshi.com/getting_started/fee_rounding.md
           K=https://api.elections.kalshi.com/trade-api/v2
-          for u in "$K/historical/markets?series_ticker=KXHIGHNY&limit=5" "$K/historical/cutoff" \
-                   "$K/markets?series_ticker=KXHIGHNY&status=settled&limit=5&max_close_ts=1750000000" \
-                   "$K/events?series_ticker=KXHIGHNY&status=settled&limit=5&min_close_ts=1700000000&max_close_ts=1750000000" \
-                   "$K/markets?event_ticker=KXHIGHNY-25JUL01" "$K/markets?event_ticker=HIGHNY-24JUL01" \
-                   "$K/historical/markets?event_ticker=KXHIGHNY-25JUL01" ; do
-            echo "== $u"; curl -sS -m 30 "$u" | head -c 700; echo
+          for s in KXBTC15M KXETH15M KXSOL15M KXXRP15M KXDOGE15M; do
+            get "markets_$s.json" "$K/markets?series_ticker=$s&status=open&limit=3"
+            get "series_$s.json" "$K/series/$s"
           done
+          for p in XBTUSD ETHUSD SOLUSD XRPUSD XDGUSD; do get "kraken_$p.json" "https://api.kraken.com/0/public/OHLC?pair=$p&interval=1"; done
+          for p in btcusd ethusd solusd xrpusd dogeusd; do get "bitstamp_$p.json" "https://www.bitstamp.net/api/v2/ohlc/$p/?step=60&limit=120"; done
+          for p in BTC-USD ETH-USD SOL-USD XRP-USD DOGE-USD; do get "coinbase_$p.json" "https://api.exchange.coinbase.com/products/$p/candles?granularity=60"; done
+          get gemini_btcusd.json https://api.gemini.com/v2/candles/btcusd/1m
+          } | tee status.txt
+          date -u +%FT%TZ >> status.txt
+          find . -size +3M -delete
+      - name: Commit
+        run: |
+          git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe && git commit -q -m "probe: raw API facts [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
