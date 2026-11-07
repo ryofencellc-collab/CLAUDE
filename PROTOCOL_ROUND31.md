@@ -38,3 +38,17 @@ because 37 configs are tried). Maker passes are provisional until a live paper t
 
 Prediction written now: taker theories fail on fees; if anything passes it is a maker version of the
 fair-value or indicator gap, and it must then survive a live test with real queues.
+
+## Result (2026-11-07, reports/ROUND31.md): 0 of 37 pass
+
+23,100 markets, 322,518 quote-minutes of real Kalshi prices. Nothing passes; almost everything loses on both
+periods. What the data say:
+- **Kalshi's 15-minute prices are honest.** Holdout calibration: a 50c market went YES 51.6%, 80c → 80.6%,
+  90c → 91.2%, 95c → 96.8%. There is no mispricing big enough to beat the fee.
+- **Our own fair-value model loses to Kalshi's price** (T1: when they disagree, Kalshi is right ~64% of the
+  time). Kalshi's quotes react to the settlement index faster than a 1-minute Binance model can.
+- **Chart indicators lose** (T3, T9) once real prices and fees are used; Round 30's small signal was the model
+  price, not Kalshi's.
+- **Buying long shots is the worst idea tested** (T5: −$23k to −$32k): lottery tickets are overpriced slightly
+  and the fee does the rest. That is the flip side of the only edge we have found: being the 99c bid that sells
+  them (the hourly live bot).
