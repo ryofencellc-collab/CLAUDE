@@ -41,3 +41,11 @@ so and gives the per-dollar return a $1–5-wide real spread would need.
 
 Prediction written now: put spreads and condors make money most of the time but fail the Sharpe/drawdown bar
 after natural fills (2020 and 2022); earnings iron flies are the best candidate; long debit spreads lose.
+
+## Amendment before any real result (2026-11-08)
+
+The backtester's synthetic check (Black-Scholes chains, options priced 60% above realized vol) showed the
+pre-registered management (take 50%, stop at 2× credit, exit at 21 days) **losing** even when premium is rich:
+it pays the bid/ask twice and cuts trades before the premium is earned; held to expiry the same spreads earn
+(engine verified to the cent against a hand count). Added before any real data was run: **S1h**, the put credit
+spread held to expiry, d ∈ {0.16, 0.30} × {no filter, trend} (4 configs). Total 21 configs; deflated Sharpe uses 21.
