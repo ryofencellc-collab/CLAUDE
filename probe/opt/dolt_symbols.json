@@ -1,0 +1,1 @@
+{"query_execution_status":"Error","query_execution_message":"query error: context deadline exceeded","repository_owner":"post-no-preference","repository_name":"options","commit_ref":"master","sql_query":"SELECT COUNT(DISTINCT act_symbol) FROM option_chain","schema":[{"columnName":"COUNT(DISTINCT act_symbol)","columnType":"bigint"}],"rows":[]}
