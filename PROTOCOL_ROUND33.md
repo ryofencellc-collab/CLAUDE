@@ -30,3 +30,12 @@ The first run had almost no dev data (market listing pages ran newest-first, so 
 and was dominated by empty books quoted as bid 3c / ask 97c (both sides then look like 97c favourites that win
 half the time). Now: dev and holdout are listed separately (75 markets each per series), and only quotes with a
 spread ≤ 5c count. Same cells, same pass rule.
+
+## Result (2026-11-08, reports/ROUND33.md): no edge
+
+With only tradable quotes (spread ≤ 5c), 2,437 markets in 148 series. The dev window still loaded almost no
+quotes (Kalshi's batch candlestick endpoint returned little for markets that closed before mid-October), so
+the formal pass test could not run. It does not matter for the verdict: on the holdout alone, **no cell is off
+by more than ~3c and no cell has a t-stat above 1.2** across every category, horizon and price band. Buying at
+Kalshi's quoted price, anywhere, pays about the fee to the house. Kalshi's prices are honest; the money is on
+the maker side.
