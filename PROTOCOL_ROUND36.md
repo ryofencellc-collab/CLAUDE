@@ -41,3 +41,13 @@ holdout Sharpe ≥ 1.0, and holdout t-stat of mean daily return ≥ 3.0 (strict,
 
 Prediction written now: frenzy fade and the MAX short leg are the best candidates; panic bounce and gap
 continuation are coin flips after costs; turn-of-month is small but real.
+
+## First run (2026-11-08) rejected as a data artefact; strict rerun
+
+The first run "passed" frenzy fades at +100% to +430%/yr with −60% to −95% drawdowns, while every long strategy lost
+85–96%/yr. That pattern is the signature of two known traps, not of an edge: (1) Yahoo's adjusted prices inflate the
+past prices of stocks that later reverse-split, so the "$3" filter admitted real penny stocks (mostly unshortable);
+(2) the universe is today's listings, heavy with small caps that collapsed but survived. **Rerun (pre-registered here,
+same tests and pass rule):** price filter on the real unadjusted close ≥ $10, 20-day dollar volume (real price) ≥ $50M,
+returns from split/dividend-adjusted prices, costs 0.15% per side, hot-short borrow 20%/yr. The first run's table is
+kept in git history only.

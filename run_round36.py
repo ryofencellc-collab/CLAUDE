@@ -13,7 +13,7 @@ import requests
 
 D, OUT = Path("data/r36"), Path("reports/ROUND36.md")
 DEV_END, HOLD_END = pd.Timestamp("2022-01-01"), pd.Timestamp("2026-12-01")
-COST, BORROW_HOT, BORROW = 0.0010, 0.10, 0.05
+COST, BORROW_HOT, BORROW = 0.0015, 0.20, 0.05   # strict run: 0.30% round trip, 20%/yr borrow on hot shorts
 SLOTS = 10
 
 
@@ -35,12 +35,12 @@ def data():
     D.mkdir(parents=True, exist_ok=True)
     tick = universe()
     print(f"universe: {len(tick)} tickers", flush=True)
-    panels = {k: [] for k in ("Open", "Close", "Volume")}
+    panels = {k: [] for k in ("Open", "Close", "Adj Close", "Volume")}
     for i in range(0, len(tick), 200):
         chunk = tick[i:i + 200]
         for attempt in range(3):
             try:
-                df = yf.download(chunk, start="2014-06-01", auto_adjust=True, progress=False, group_by="column", threads=True)
+                df = yf.download(chunk, start="2014-06-01", auto_adjust=False, progress=False, group_by="column", threads=True)
                 break
             except Exception as e:
                 print("retry", e, flush=True)
@@ -54,7 +54,7 @@ def data():
     for k, parts in panels.items():
         p = pd.concat(parts, axis=1)
         p = p.loc[:, ~p.columns.duplicated()].dropna(axis=1, how="all")
-        p.to_pickle(D / f"{k}.pkl")
+        p.to_pickle(D / f"{k.replace(' ', '')}.pkl")
         print(k, p.shape, flush=True)
     spy = yf.download("SPY", start="2014-06-01", auto_adjust=True, progress=False)
     if isinstance(spy.columns, pd.MultiIndex):
@@ -152,14 +152,17 @@ def metrics(r: pd.Series) -> dict:
 
 # ------------------------------------------------------------------ run
 def run():
-    O, C, V = (pd.read_pickle(D / f"{k}.pkl") for k in ("Open", "Close", "Volume"))
-    cols = C.columns.intersection(O.columns).intersection(V.columns)
-    O, C, V = O[cols].astype(float), C[cols].astype(float), V[cols].astype(float)
+    O, Craw, V = (pd.read_pickle(D / f"{k}.pkl") for k in ("Open", "Close", "Volume"))
+    A = pd.read_pickle(D / "AdjClose.pkl") if (D / "AdjClose.pkl").exists() else Craw
+    cols = Craw.columns.intersection(O.columns).intersection(V.columns).intersection(A.columns)
+    Craw, V, A = Craw[cols].astype(float), V[cols].astype(float), A[cols].astype(float)
+    adj = (A / Craw).replace([np.inf, -np.inf], np.nan)
+    O, C = O[cols].astype(float) * adj, A            # split/dividend-adjusted open and close for returns
     spy = pd.read_pickle(D / "SPY.pkl")["Close"]
     C = C[C.index >= "2014-06-01"]
     O, V = O.reindex(C.index), V.reindex(C.index)
-    dv20 = (C * V).rolling(20, min_periods=15).mean()
-    ok = (C >= 3) & (dv20 >= 5e6)
+    dv20 = (Craw * V).rolling(20, min_periods=15).mean()          # real (unadjusted) price x shares traded
+    ok = (Craw >= 10) & (dv20 >= 50e6)                              # strict: real price >= $10, >= $50M a day
     r1 = C.pct_change(fill_method=None)
     vr = V / V.rolling(50, min_periods=30).mean().shift(1)
     start = pd.Timestamp("2015-01-01")
@@ -191,7 +194,7 @@ def run():
         x = intr.where(sig)
         n_per_day = sig.sum(axis=1).clip(upper=SLOTS)
         daily = (x.apply(lambda row: row.dropna().sort_values().iloc[:SLOTS].sum() if row.notna().any() else 0.0, axis=1) / SLOTS)
-        tr = x.stack().reset_index()
+        tr = x.stack().dropna().reset_index()
         tr.columns = ["date", "ticker", "ret"]
         res[f"6 gap-up fade intraday >= {int(g*100)}%"] = (daily.fillna(0), tr[["date", "ret"]])
     # cross-sectional
@@ -206,8 +209,8 @@ def run():
     res["5 52-week high, long near / short far"] = (xsec_portfolio(C, hi52, ok, month_ends, long_top=True, legs="ls"), None)
     r5 = C.pct_change(5, fill_method=None)
     res["8 weekly reversal, long losers / short winners"] = (xsec_portfolio(C, r5, ok, fridays, long_top=False, legs="ls"), None)
-    penny_ok = (C >= 1) & (dv20 >= 1e6)
-    score = -C.where(penny_ok)                      # high score = cheap
+    penny_ok = (Craw >= 1) & (dv20 >= 1e6)
+    score = -Craw.where(penny_ok)                      # high score = cheap
     res["9 penny stocks: short < $5 decile vs long the rest"] = (xsec_portfolio(C, score, penny_ok, month_ends, long_top=False, legs="ls", q=0.1), None)
     # 10 turn of month on SPY
     sp = spy.reindex(C.index).ffill()
