@@ -1,0 +1,392 @@
+{
+ "Lucerys": {
+  "n_trades_page": 500,
+  "pagination": {
+   "limit": 500,
+   "offset": 0,
+   "has_more": true,
+   "next_cursor": "eyJkYXRhIjp7InR5cGUiOiJ0cmFkZXMiLCJwYXJhbXMiOnsibCI6NTAwLCJ0cyI6MTc5NDA5Mjc2NCwic3EiOiI5NjkyNDg3MjAwMDQ2MDczOTAiLCJkIjo1MDB9fSwic2lnIjoiMGQxNGUzY2MyNWJlNzUyZDI4YjhiY2Q5NzM5YzljZDEifQ"
+  },
+  "first_trade": {
+   "proxy_wallet": "0x1387d145aaf01f6e33b66525dda6e1f51f6955f8",
+   "side": "BUY",
+   "token_id": "56158994199690531784718201341552968303499729573301383407221081785342947109462",
+   "condition_id": "0xa8bb7738db141b71fab704279ec20860255b896a210b45543e71b01efee69f75",
+   "size": 5.0,
+   "price": 0.998,
+   "timestamp": 1794104517,
+   "title": "Will the price of Bitcoin be between $70,000 and $72,000 on November 8?",
+   "slug": "will-the-price-of-bitcoin-be-between-70000-72000-on-november-8-2026",
+   "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/BTC+fullsize.png",
+   "event_slug": "bitcoin-price-on-november-8-2026",
+   "outcome": "No",
+   "outcome_index": 1,
+   "name": "Lucerys",
+   "pseudonym": "Starry-Studio",
+   "bio": "boom!",
+   "profile_image": "https://polymarket-upload.s3.us-east-2.amazonaws.com/profile-image-9666742-fc749fa8-5b28-46cd-b7af-0a6c94d07b16.gif",
+   "profile_image_optimized": "",
+   "transaction_hash": "0x6c74eb551429b55b7a2002ad122904cbcb11506802a07ccc397d98671d45d5aa"
+  },
+  "last_ts": 1794092764,
+  "slugs": [
+   "will-the-price-of-bitcoin-be-between-70000-72000-on-november-8-2026",
+   "will-the-price-of-bitcoin-be-between-74000-76000-on-november-8-2026",
+   "will-the-price-of-bitcoin-be-between-72000-74000-on-november-8-2026"
+  ],
+  "gamma": {
+   "will-the-price-of-bitcoin-be-between-70000-72000-on-november-8-2026": {
+    "status": 200,
+    "n": 1,
+    "first": {
+     "closed": false,
+     "outcomePrices": "[\"0.003\", \"0.997\"]",
+     "endDate": "2026-11-08T17:00:00Z",
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": true
+    },
+    "closed_query_n": 0
+   },
+   "will-the-price-of-bitcoin-be-between-74000-76000-on-november-8-2026": {
+    "status": 200,
+    "n": 1,
+    "first": {
+     "closed": false,
+     "outcomePrices": "[\"0.6465\", \"0.3535\"]",
+     "endDate": "2026-11-08T17:00:00Z",
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": true
+    },
+    "closed_query_n": 0
+   },
+   "will-the-price-of-bitcoin-be-between-72000-74000-on-november-8-2026": {
+    "status": 200,
+    "n": 1,
+    "first": {
+     "closed": false,
+     "outcomePrices": "[\"0.024\", \"0.976\"]",
+     "endDate": "2026-11-08T17:00:00Z",
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": true
+    },
+    "closed_query_n": 0
+   }
+  },
+  "activity_types": [
+   "CONVERSION",
+   "MERGE",
+   "REDEEM",
+   "TRADE"
+  ],
+  "activity_sample": [
+   {
+    "proxy_wallet": "0x1387d145aaf01f6e33b66525dda6e1f51f6955f8",
+    "timestamp": 1794104707,
+    "condition_id": "0x2e7a46bdc26e8daadfb5d4295e605fe95011e8a7e2524df368292fb48bbbce00",
+    "type": "CONVERSION",
+    "size": 0.9,
+    "usdc_size": 0.0,
+    "transaction_hash": "0x265426cfc56cf6ffde447cd1bd374983ef8dd728e1177d5ea65887834209acc0",
+    "price": 0.0,
+    "token_id": "",
+    "side": "",
+    "outcome_index": 999,
+    "title": "Nozempic 2: Who loses the most weight?",
+    "slug": "nozempic-2-who-loses-the-most-weight",
+    "icon": "",
+    "event_slug": "nozempic-2-who-loses-the-most-weight",
+    "outcome": "",
+    "name": "Lucerys",
+    "pseudonym": "Starry-Studio",
+    "bio": "boom!",
+    "profile_image": "https://polymarket-upload.s3.us-east-2.amazonaws.com/profile-image-9666742-fc749fa8-5b28-46cd-b7af-0a6c94d07b16.gif",
+    "profile_image_optimized": ""
+   },
+   {
+    "proxy_wallet": "0x1387d145aaf01f6e33b66525dda6e1f51f6955f8",
+    "timestamp": 1794104703,
+    "condition_id": "0x0e30efa62e711ccaebbfa6cce07a58ef4ab733f537b72eb9ca418eeafc276c6d",
+    "type": "TRADE",
+    "size": 0.9,
+    "usdc_size": 0.783,
+    "transaction_hash": "0x08e99d3f3e6e70580079bf637662233f107576b779481bf5b3bbe2d1cd881ade",
+    "price": 0.87,
+    "token_id": "89121098265526656571106160296821779596239268808368585175218907727156653646851",
+    "side": "BUY",
+    "outcome_index": 1,
+    "title": "Will Adin Ross lose the most weight in Nozempic 2?",
+    "slug": "will-adin-ross-lose-the-most-weight-in-nozempic-2",
+    "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/nozempic-2-adin-ross-v2-2acf46d7a9.jpg",
+    "event_slug": "nozempic-2-who-loses-the-most-weight",
+    "outcome": "No",
+    "name": "Lucerys",
+    "pseudonym": "Starry-Studio",
+    "bio": "boom!",
+    "profile_image": "https://polymarket-upload.s3.us-east-2.amazonaws.com/profile-image-9666742-fc749fa8-5b28-46cd-b7af-0a6c94d07b16.gif",
+    "profile_image_optimized": ""
+   }
+  ]
+ },
+ "k9Q2": {
+  "n_trades_page": 500,
+  "pagination": {
+   "limit": 500,
+   "offset": 0,
+   "has_more": true,
+   "next_cursor": "eyJkYXRhIjp7InR5cGUiOiJ0cmFkZXMiLCJwYXJhbXMiOnsibCI6NTAwLCJ0cyI6MTc3NDM1MjM1OSwic3EiOiI4NDYxNjE2MjAwMTUzMjA5MzEiLCJkIjo1MDB9fSwic2lnIjoiOWE1MDk1YzU0MjVhNTc2NjZkNDMwMmMwMDQ2OTFhYTgifQ"
+  },
+  "first_trade": {
+   "proxy_wallet": "0xd0d6053c3c37e727402d84c14069780d360993aa",
+   "side": "SELL",
+   "token_id": "106321015771996003843951031116798387360396092381038356576150508114564342386617",
+   "condition_id": "0x8fe2ec3961b5151878793f5ee9f3386462ab2cffa341f521ea4af3c943f4f1e1",
+   "size": 194.59,
+   "price": 0.002,
+   "timestamp": 1775479047,
+   "title": "XRP Up or Down - February 24, 2:00AM-2:05AM ET",
+   "slug": "xrp-updown-5m-1771916400",
+   "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/XRP-logo.png",
+   "event_slug": "xrp-updown-5m-1771916400",
+   "outcome": "Up",
+   "outcome_index": 0,
+   "name": "k9Q2mX4L8A7ZP3R",
+   "pseudonym": "Uncommon-Oat",
+   "bio": "",
+   "profile_image": "",
+   "profile_image_optimized": "",
+   "transaction_hash": "0xf59d993dacfaf8544ae92772a6774ec0f7c672bcf794de2d787c5316e199858f"
+  },
+  "last_ts": 1774352359,
+  "slugs": [
+   "xrp-updown-5m-1771916400",
+   "btc-updown-5m-1774354200",
+   "btc-updown-5m-1774353900"
+  ],
+  "gamma": {
+   "xrp-updown-5m-1771916400": {
+    "status": 200,
+    "n": 1,
+    "first": {
+     "closed": false,
+     "outcomePrices": "[\"0.4995\", \"0.5005\"]",
+     "endDate": "2026-02-24T07:05:00Z",
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": true
+    },
+    "closed_query_n": 0
+   },
+   "btc-updown-5m-1774354200": {
+    "status": 200,
+    "n": 0,
+    "first": {
+     "closed": null,
+     "outcomePrices": null,
+     "endDate": null,
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": null
+    },
+    "closed_query_n": 1
+   },
+   "btc-updown-5m-1774353900": {
+    "status": 200,
+    "n": 0,
+    "first": {
+     "closed": null,
+     "outcomePrices": null,
+     "endDate": null,
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": null
+    },
+    "closed_query_n": 1
+   }
+  },
+  "activity_types": [
+   "MAKER_REBATE",
+   "REDEEM",
+   "TRADE"
+  ],
+  "activity_sample": [
+   {
+    "proxy_wallet": "0xd0d6053c3c37e727402d84c14069780d360993aa",
+    "timestamp": 1775479047,
+    "condition_id": "0x8fe2ec3961b5151878793f5ee9f3386462ab2cffa341f521ea4af3c943f4f1e1",
+    "type": "TRADE",
+    "size": 194.59,
+    "usdc_size": 0.38918,
+    "transaction_hash": "0xf59d993dacfaf8544ae92772a6774ec0f7c672bcf794de2d787c5316e199858f",
+    "price": 0.002,
+    "token_id": "106321015771996003843951031116798387360396092381038356576150508114564342386617",
+    "side": "SELL",
+    "outcome_index": 0,
+    "title": "XRP Up or Down - February 24, 2:00AM-2:05AM ET",
+    "slug": "xrp-updown-5m-1771916400",
+    "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/XRP-logo.png",
+    "event_slug": "xrp-updown-5m-1771916400",
+    "outcome": "Up",
+    "name": "k9Q2mX4L8A7ZP3R",
+    "pseudonym": "Uncommon-Oat",
+    "bio": "",
+    "profile_image": "",
+    "profile_image_optimized": ""
+   },
+   {
+    "proxy_wallet": "0xd0d6053c3c37e727402d84c14069780d360993aa",
+    "timestamp": 1775478999,
+    "condition_id": "0x8fe2ec3961b5151878793f5ee9f3386462ab2cffa341f521ea4af3c943f4f1e1",
+    "type": "TRADE",
+    "size": 215.54,
+    "usdc_size": 213.60014,
+    "transaction_hash": "0x77ed729c58be5ef39f039355379e90d0e5d9b0f0e61bc1f54e093bcccf8c82ec",
+    "price": 0.991,
+    "token_id": "63871622315168997250449926595191905329567685141975937804940439076331565817724",
+    "side": "SELL",
+    "outcome_index": 1,
+    "title": "XRP Up or Down - February 24, 2:00AM-2:05AM ET",
+    "slug": "xrp-updown-5m-1771916400",
+    "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/XRP-logo.png",
+    "event_slug": "xrp-updown-5m-1771916400",
+    "outcome": "Down",
+    "name": "k9Q2mX4L8A7ZP3R",
+    "pseudonym": "Uncommon-Oat",
+    "bio": "",
+    "profile_image": "",
+    "profile_image_optimized": ""
+   }
+  ]
+ },
+ "0x50f7": {
+  "n_trades_page": 500,
+  "pagination": {
+   "limit": 500,
+   "offset": 0,
+   "has_more": true,
+   "next_cursor": "eyJkYXRhIjp7InR5cGUiOiJ0cmFkZXMiLCJwYXJhbXMiOnsibCI6NTAwLCJ0cyI6MTc5MzQ5MTE3MCwic3EiOiI5NjUyMzgwOTAwMDE4MDE3MDAiLCJkIjo1MDB9fSwic2lnIjoiYmY5YjA1MDI3NGNiM2YxNzFlZTU1M2Q0ZWRjNjNiMDQifQ"
+  },
+  "first_trade": {
+   "proxy_wallet": "0xee65685de42f8de9a03b4c53ee77d56a20d2cfc9",
+   "side": "BUY",
+   "token_id": "87881674491600614576058207466999310033625312238401402643278087538129127503951",
+   "condition_id": "0x99ee18f783508bba597eff50fd428a458255f5154f679372360c78c1628dbc88",
+   "size": 10.0,
+   "price": 0.999,
+   "timestamp": 1794104388,
+   "title": "BNB Up or Down - November 7, 9:15PM-9:20PM ET",
+   "slug": "bnb-updown-5m-1794104100",
+   "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/bnb%20logo-247a9f7a39.png",
+   "event_slug": "bnb-updown-5m-1794104100",
+   "outcome": "Up",
+   "outcome_index": 0,
+   "name": "0x50f7",
+   "pseudonym": "Haunting-Cheese",
+   "bio": "",
+   "profile_image": "",
+   "profile_image_optimized": "",
+   "transaction_hash": "0xe6ec62b1d76604e909d90a99017910d3e706cf322e7b5c111f4bade49a7edc96"
+  },
+  "last_ts": 1793491170,
+  "slugs": [
+   "bnb-updown-5m-1794104100",
+   "btc-updown-5m-1794099900",
+   "xrp-updown-5m-1794096000"
+  ],
+  "gamma": {
+   "bnb-updown-5m-1794104100": {
+    "status": 200,
+    "n": 0,
+    "first": {
+     "closed": null,
+     "outcomePrices": null,
+     "endDate": null,
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": null
+    },
+    "closed_query_n": 1
+   },
+   "btc-updown-5m-1794099900": {
+    "status": 200,
+    "n": 0,
+    "first": {
+     "closed": null,
+     "outcomePrices": null,
+     "endDate": null,
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": null
+    },
+    "closed_query_n": 1
+   },
+   "xrp-updown-5m-1794096000": {
+    "status": 200,
+    "n": 0,
+    "first": {
+     "closed": null,
+     "outcomePrices": null,
+     "endDate": null,
+     "closedTime": null,
+     "umaResolutionStatus": null,
+     "active": null
+    },
+    "closed_query_n": 1
+   }
+  },
+  "activity_types": [
+   "REDEEM",
+   "TRADE"
+  ],
+  "activity_sample": [
+   {
+    "proxy_wallet": "0xee65685de42f8de9a03b4c53ee77d56a20d2cfc9",
+    "timestamp": 1794104490,
+    "condition_id": "0x99ee18f783508bba597eff50fd428a458255f5154f679372360c78c1628dbc88",
+    "type": "REDEEM",
+    "size": 10.0,
+    "usdc_size": 10.0,
+    "transaction_hash": "0x1a216f5d4928f663503fca58bdb7e0c6a9d65c59a6b6f150564e5c077c64b7b1",
+    "price": 0.0,
+    "token_id": "87881674491600614576058207466999310033625312238401402643278087538129127503951",
+    "side": "",
+    "outcome_index": 0,
+    "title": "BNB Up or Down - November 7, 9:15PM-9:20PM ET",
+    "slug": "bnb-updown-5m-1794104100",
+    "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/bnb%20logo-247a9f7a39.png",
+    "event_slug": "bnb-updown-5m-1794104100",
+    "outcome": "Up",
+    "name": "0x50f7",
+    "pseudonym": "Haunting-Cheese",
+    "bio": "",
+    "profile_image": "",
+    "profile_image_optimized": ""
+   },
+   {
+    "proxy_wallet": "0xee65685de42f8de9a03b4c53ee77d56a20d2cfc9",
+    "timestamp": 1794104388,
+    "condition_id": "0x99ee18f783508bba597eff50fd428a458255f5154f679372360c78c1628dbc88",
+    "type": "TRADE",
+    "size": 10.0,
+    "usdc_size": 9.99069,
+    "transaction_hash": "0xe6ec62b1d76604e909d90a99017910d3e706cf322e7b5c111f4bade49a7edc96",
+    "price": 0.999,
+    "token_id": "87881674491600614576058207466999310033625312238401402643278087538129127503951",
+    "side": "BUY",
+    "outcome_index": 0,
+    "title": "BNB Up or Down - November 7, 9:15PM-9:20PM ET",
+    "slug": "bnb-updown-5m-1794104100",
+    "icon": "https://polymarket-upload.s3.us-east-2.amazonaws.com/bnb%20logo-247a9f7a39.png",
+    "event_slug": "bnb-updown-5m-1794104100",
+    "outcome": "Up",
+    "name": "0x50f7",
+    "pseudonym": "Haunting-Cheese",
+    "bio": "",
+    "profile_image": "",
+    "profile_image_optimized": ""
+   }
+  ]
+ }
+}
