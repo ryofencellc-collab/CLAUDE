@@ -49,3 +49,20 @@ pre-registered management (take 50%, stop at 2× credit, exit at 21 days) **losi
 it pays the bid/ask twice and cuts trades before the premium is earned; held to expiry the same spreads earn
 (engine verified to the cent against a hand count). Added before any real data was run: **S1h**, the put credit
 spread held to expiry, d ∈ {0.16, 0.30} × {no filter, trend} (4 configs). Total 21 configs; deflated Sharpe uses 21.
+
+## Result (2026-11-08, reports/ROUND35.md): 0 of 21 pass; one real but small edge
+
+Holdout benchmark, SPY buy-and-hold: 16.8%/yr, Sharpe 1.07, worst drop −19%.
+
+- **Best and most consistent: S1h, 16-delta SPY put credit spread, only above the 200-day average, held to expiry.**
+  Dev 4.8%/yr (Sharpe 1.67); holdout **6.9%/yr, Sharpe 1.51, worst drop −6%, 93% of trades won** ($25k → $30,257).
+  It fails only the 15%/yr bar (and deflated Sharpe over 21 trials). Good risk-adjusted, too small at this risk level.
+- The trend filter helps every put-spread variant; holding to expiry beats the 50%/2×/21-day management in 3 of 4.
+- Iron condors, call spreads in downtrends, put debit spreads on breakdowns: lose in both periods.
+- Call debit spreads on breakouts: lose on dev, +4.7%/yr on holdout (Sharpe 0.55): not reliable.
+- Earnings (iron fly, condor): roughly flat. Data limit: the chains carry only expirations ≥ ~2 weeks out, so these
+  trades could not use the weekly options where the post-earnings IV crush is concentrated. Long straddles could
+  not be sized at 3% risk on these stocks (no trades).
+- The combo (dev-best of each family) made 17%/yr on dev but 4.2%/yr on holdout: the dev winners did not hold up.
+
+Losses cluster in sharp selloffs (Jul 2024, Feb–Apr 2025, Feb–Apr 2026): the worst single spreads lose ~$1,000 (4%).
