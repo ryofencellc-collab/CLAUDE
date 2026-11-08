@@ -1,6 +1,6 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-08 20:21 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 23002; settled: 12668.
+Updated 2026-11-08 21:02 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 23453; settled: 12668.
 
 Total paper P&L: **$471.98**; filled markets 524; wrong calls 4, of which filled 4.
 
