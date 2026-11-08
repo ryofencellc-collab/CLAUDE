@@ -68,7 +68,7 @@ def maker_fee(p, c):
 
 def settle(d: pd.DataFrame, side: pd.Series, price: pd.Series, maker: bool = False, fill: pd.Series | None = None) -> pd.DataFrame:
     """One bet per market: the first row where side is set (and filled, for makers)."""
-    m = side.notna() & price.between(0.01, 0.99)
+    m = side.notna() & price.between(0.001, 0.999)
     if fill is not None:
         m &= fill
     x = d[m].assign(side=side[m], price=price[m]).groupby("ticker", sort=False).head(1)
