@@ -1,0 +1,53 @@
+name: probe_opt
+# One-off: free historical option-chain sources (philippdubach/options-data, DoltHub post-no-preference/options).
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - name: Fetch
+        run: |
+          mkdir -p probe/opt && cd probe/opt
+          get() { curl -sS -m 60 -L -A "Mozilla/5.0 research" -o "$1" -w "$1 %{http_code} %{size_download}\n" "$2" || echo "$1 FAILED"; }
+          {
+          get pd_readme.md https://raw.githubusercontent.com/philippdubach/options-data/main/README.md
+          get pd_readme2.md https://raw.githubusercontent.com/philippdubach/options-data/master/README.md
+          get pd_tree.json "https://api.github.com/repos/philippdubach/options-data/git/trees/HEAD?recursive=1"
+          DQ='https://www.dolthub.com/api/v1alpha1/post-no-preference/options/master?q='
+          get dolt_tables.json "${DQ}SHOW%20TABLES"
+          get dolt_chain_cols.json "${DQ}DESCRIBE%20option_chain"
+          get dolt_spy_dates.json "${DQ}SELECT%20MIN(date),MAX(date),COUNT(*)%20FROM%20option_chain%20WHERE%20act_symbol='SPY'"
+          get dolt_spy_sample.json "${DQ}SELECT%20*%20FROM%20option_chain%20WHERE%20act_symbol='SPY'%20AND%20date='2024-03-15'%20LIMIT%2040"
+          get dolt_symbols.json "${DQ}SELECT%20COUNT(DISTINCT%20act_symbol)%20FROM%20option_chain"
+          } | tee status.txt
+          python3 - <<'PY'
+          import json, re
+          try:
+              t = json.load(open('pd_tree.json'))
+              paths = [x['path'] for x in t.get('tree', [])]
+              open('pd_paths.txt', 'w').write('\n'.join(paths[:3000]))
+          except Exception as e:
+              open('pd_paths.txt', 'w').write(repr(e))
+          for f in ('pd_readme.md', 'pd_readme2.md'):
+              try:
+                  s = open(f).read()
+                  urls = sorted(set(re.findall(r'https?://[^\s)\]"\'>]+', s)))
+                  open(f + '.urls.txt', 'w').write('\n'.join(urls))
+              except Exception:
+                  pass
+          PY
+          for u in $(grep -hoE 'https://[^ ]*(r2\.dev|cloudflarestorage|pub-)[^ ]*' pd_readme*.md.urls.txt 2>/dev/null | head -5); do
+            get "r2_$(echo $u | md5sum | cut -c1-6).bin" "$u"
+          done
+          ls -la
+          find . -size +3M -delete
+      - name: Commit
+        run: |
+          git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe/opt && git commit -q -m "probe: options data sources [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
