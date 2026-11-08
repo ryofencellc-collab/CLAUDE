@@ -389,3 +389,7 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-08T17:02:04.940537+00:00,DRY,settled,KXSOLD-26NOV0812-T87.7499,yes,0.0,,,,result=yes pnl=0.00
 2026-11-08T17:02:05.304250+00:00,DRY,settled,KXSOLD-26NOV0812-T89.9999,no,0.0,,,,result=no pnl=0.00
 2026-11-08T17:02:05.659867+00:00,DRY,settled,KXSOLD-26NOV0812-T90.2499,no,0.0,,,,result=no pnl=0.00
+2026-11-08T17:10:06.057360+00:00,DRY,cancel,KXSOLD-26NOV0813-T86.7499,yes,53,,,,"z below threshold, stale data or stop"
+2026-11-08T17:10:08.961979+00:00,DRY,place,KXETHD-26NOV0813-T2274.99,no,53,6.11,2223.4750000000004,1050.0,"queue_ahead=1 risk=nan frac=0.050 slots=10 {""ticker"": ""KXETHD-26NOV0813-T2274.99"", ""client_order_id"": ""r21-4193194bbd3d471f"", ""side"": ""ask"", ""count"": ""53"", ""price"": ""0.0100"", ""time_in_force"": ""good_till_canceled"", ""self_trade_prevention_type"": ""taker_at_cross"", ""post_only"": true, ""cancel_order_on_pa"
+2026-11-08T17:20:00.708445+00:00,DRY,cancel,KXSOLD-26NOV0813-T91.2499,no,53,,,,"z below threshold, stale data or stop"
+2026-11-08T17:20:03.307446+00:00,DRY,place,KXXRPD-26NOV0813-T1.1199,yes,53,6.49,1.154805,1050.0,"queue_ahead=0 risk=nan frac=0.050 slots=10 {""ticker"": ""KXXRPD-26NOV0813-T1.1199"", ""client_order_id"": ""r21-a59917bfc61e4dfa"", ""side"": ""bid"", ""count"": ""53"", ""price"": ""0.9900"", ""time_in_force"": ""good_till_canceled"", ""self_trade_prevention_type"": ""taker_at_cross"", ""post_only"": true, ""cancel_order_on_pau"
