@@ -59,3 +59,13 @@ Polymarket wallet 0x50f7 (+$568k) buys the winning side at 99.9c about a minute 
 end: 479 of its last 503 resolved buys were at ≥ 99.5c, all won; its one loss in the sample was a buy at 90.4c.
 T11 tests the same thing on Kalshi's 15-minute markets with the Round 31 data and rules: at minute 13 or 14,
 buy the side whose ask is ≥ 99.0 / 99.5 / 99.8c (taker, Kalshi fee). Six new configs, same pass rule.
+
+### T11 result (2026-11-08)
+
+All six lose slightly on the holdout (−$28 to −$80 over 2,353–5,570 $10 bets; win rates 99.6–99.9%). Kalshi's
+15-minute prices are already right at 99.5–99.9c, and the fee (rounded up to the cent per order) plus the rare
+loss eat the 0.1–0.5c margin. The Polymarket wallet profits from the same move because those markets charge it
+no fee and pay maker rebates, and it trades ~$500k a week. On Kalshi the "sell certainty" edge exists only as a
+**resting** 99c bid in whole-cent markets (the hourly live bot), not as a taker snipe.
+(Note: the earlier 0.99 price cap in settle() was lifted for this run, which also re-scored the other theories;
+none pass, 0 of 43.)
