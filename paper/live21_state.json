@@ -792,6 +792,18 @@
   {
    "t": 1794168123.164528,
    "pnl": 0.0
+  },
+  {
+   "t": 1794168673.182385,
+   "pnl": 0.0
+  },
+  {
+   "t": 1794168678.182535,
+   "pnl": 0.0
+  },
+  {
+   "t": 1794168683.18273,
+   "pnl": 0.0
   }
  ],
  "stake_fraction": 0.5,
@@ -960,47 +972,6 @@
  "gov_halt": null,
  "max_positions": 10,
  "opens": [
-  {
-   "ticker": "KXETHD-26NOV0815-T2199.99",
-   "series": "KXETHD",
-   "side": "yes",
-   "count": 53,
-   "close": "2026-11-08T20:00:00+00:00",
-   "strike_type": "greater",
-   "floor": 2199.99,
-   "cap": null,
-   "order_id": null,
-   "placed": "2026-11-08T19:00:23.043405+00:00",
-   "queue_ahead": 0.0,
-   "cancelled": true,
-   "cancelled_at": "2026-11-08T19:01:03.044613+00:00"
-  },
-  {
-   "ticker": "KXETHD-26NOV0815-T2269.99",
-   "series": "KXETHD",
-   "side": "no",
-   "count": 53,
-   "close": "2026-11-08T20:00:00+00:00",
-   "strike_type": "greater",
-   "floor": 2269.99,
-   "cap": null,
-   "order_id": null,
-   "placed": "2026-11-08T19:00:23.043405+00:00",
-   "queue_ahead": 0.0
-  },
-  {
-   "ticker": "KXETHD-26NOV0815-T2194.99",
-   "series": "KXETHD",
-   "side": "yes",
-   "count": 53,
-   "close": "2026-11-08T20:00:00+00:00",
-   "strike_type": "greater",
-   "floor": 2194.99,
-   "cap": null,
-   "order_id": null,
-   "placed": "2026-11-08T19:00:23.043405+00:00",
-   "queue_ahead": 0.0
-  },
   {
    "ticker": "KXSOLD-26NOV0816-T91.4999",
    "series": "KXSOLD",

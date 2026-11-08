@@ -467,3 +467,6 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-08T20:02:06.710080+00:00,DRY,settled,KXBTCD-26NOV0815-T74899.99,yes,0.0,,,,result=yes pnl=0.00
 2026-11-08T20:02:07.072614+00:00,DRY,settled,KXSOLD-26NOV0815-T85.7499,yes,0.0,,,,result=yes pnl=0.00
 2026-11-08T20:02:07.433509+00:00,DRY,settled,KXSOLD-26NOV0815-T92.4999,no,0.0,,,,result=no pnl=0.00
+2026-11-08T20:11:13.724147+00:00,DRY,settled,KXETHD-26NOV0815-T2194.99,yes,0.0,,,,result=yes pnl=0.00
+2026-11-08T20:11:18.486432+00:00,DRY,settled,KXETHD-26NOV0815-T2199.99,yes,0.0,,,,result=yes pnl=0.00
+2026-11-08T20:11:23.492803+00:00,DRY,settled,KXETHD-26NOV0815-T2269.99,no,0.0,,,,result=no pnl=0.00
