@@ -18,17 +18,20 @@ def market(slug):
     if slug in _m:
         return _m[slug]
     out = None
-    for i in range(3):
-        try:
-            r = r34.S.get(f"{G}/markets", params={"slug": slug}, timeout=30)
-            if r.status_code == 200 and r.json():
-                out = r.json()[0]
+    for params in ({"slug": slug, "closed": "true"}, {"slug": slug}):   # Gamma hides closed markets by default
+        for i in range(4):
+            try:
+                r = r34.S.get(f"{G}/markets", params=params, timeout=30)
+                if r.status_code == 429:
+                    time.sleep(5 * (i + 1))
+                    continue
+                if r.status_code == 200 and r.json():
+                    out = r.json()[0]
                 break
-            if r.status_code == 200:
-                break
-        except Exception:
-            pass
-        time.sleep(1 + i)
+            except Exception:
+                time.sleep(2 * (i + 1))
+        if out:
+            break
     _m[slug] = out
     time.sleep(0.12)
     return out
@@ -59,7 +62,11 @@ def analyse(name, wallet):
                    "closed": pd.to_datetime(m.get("closedTime"), utc=True, errors="coerce"),
                    "resolved": bool(prices) and max(prices) >= 0.99 and m.get("closed"), "prices": prices,
                    "category": m.get("category")}
-    tr = tr[tr["slug"].isin(info)].copy()
+    for s_ in set(tr["slug"]) - set(info):
+        e = r34.updown_end(s_)
+        info[s_] = {"end": pd.Timestamp(e, unit="s", tz="UTC") if e else pd.NaT, "closed": pd.NaT, "resolved": False,
+                    "prices": [], "category": None}
+    tr = tr.copy()
     tr["t"] = pd.to_datetime(tr["timestamp"], unit="s", utc=True)
     tr["end"] = pd.to_datetime(tr["slug"].map(lambda s: info[s]["closed"] if pd.notna(info[s]["closed"]) else info[s]["end"]),
                                utc=True, errors="coerce")
@@ -98,6 +105,7 @@ def main():
     summs, secs = [], []
     for x in w.itertuples(index=False):
         try:
+            time.sleep(5)
             s, sec = analyse(x.name[:30], x.wallet)
         except Exception as e:  # one wallet's odd data must not sink the report
             print(f"{x.name[:30]} failed: {e!r}", flush=True)

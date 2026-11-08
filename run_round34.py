@@ -17,14 +17,14 @@ S = requests.Session()
 S.headers["User-Agent"] = "research"
 
 
-def get(path, params, tries=4):
+def get(path, params, tries=6):
     for i in range(tries):
         try:
             r = S.get(f"{D}/{path}", params=params, timeout=30)
             if r.status_code == 200:
                 return r.json()
             if r.status_code in (429, 500, 502, 503):
-                time.sleep(2 ** i)
+                time.sleep(5 * 2 ** i)
                 continue
             return None
         except (requests.RequestException, ValueError):
