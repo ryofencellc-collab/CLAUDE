@@ -1,0 +1,28 @@
+name: round37
+# Round 37 (PROTOCOL_ROUND37.md): retail-behavior battery on all Binance USDT pairs.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: python run_round37.py data
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: r36-data, path: data/r36/}
+      - run: python run_round37.py run
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round37 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND36.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round37: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
