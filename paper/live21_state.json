@@ -5,16 +5,16 @@
  "day_start_balance": 1050.0,
  "day_loss": 0.0,
  "open": {
-  "ticker": "KXETHD-26NOV0808-T2204.99",
-  "series": "KXETHD",
+  "ticker": "KXSOLD-26NOV0809-T87.7499",
+  "series": "KXSOLD",
   "side": "yes",
   "count": 530,
-  "close": "2026-11-08T13:00:00+00:00",
+  "close": "2026-11-08T14:00:00+00:00",
   "strike_type": "greater",
-  "floor": 2204.99,
+  "floor": 87.7499,
   "cap": null,
   "order_id": null,
-  "placed": "2026-11-08T12:02:04.453639+00:00",
+  "placed": "2026-11-08T13:02:01.408807+00:00",
   "queue_ahead": 0.0
  },
  "results": [
@@ -597,6 +597,10 @@
   {
    "t": 1794139324.453639,
    "pnl": 0.0
+  },
+  {
+   "t": 1794142921.408807,
+   "pnl": 0.0
   }
  ],
  "stake_fraction": 0.5,
@@ -695,7 +699,8 @@
   "KXSOLD-26NOV0805-T90.2499",
   "KXSOLD-26NOV0806-T87.4999",
   "KXETHD-26NOV0807-T2254.99",
-  "KXETHD-26NOV0808-T2204.99"
+  "KXETHD-26NOV0808-T2204.99",
+  "KXSOLD-26NOV0809-T87.7499"
  ],
  "gov_stake": 0.5,
  "gov_halt": null
