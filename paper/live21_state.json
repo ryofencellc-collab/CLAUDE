@@ -1020,7 +1020,25 @@
   "KXSOLD-26NOV0817-T84.9999",
   "KXXRPD-26NOV0817-T1.0999",
   "KXSOLD-26NOV0817-T90.9999",
-  "KXXRPD-26NOV0817-T1.0799"
+  "KXXRPD-26NOV0817-T1.0799",
+  "KXETHD-26NOV0817-T2239.99",
+  "KXBTCD-26NOV0817-T74499.99",
+  "KXBTCD-26NOV0817-T74249.99",
+  "KXBTCD-26NOV0817-T76749.99",
+  "KXBTCD-26NOV0817-T73999.99",
+  "KXSOLD-26NOV0817-T83.9999",
+  "KXETHD-26NOV0817-T2159.99",
+  "KXSOLD-26NOV0817-T82.9999",
+  "KXSOLD-26NOV0817-T81.9999",
+  "KXSOLD-26NOV0817-T93.9999",
+  "KXSOLD-26NOV0817-T94.9999",
+  "KXSOLD-26NOV0817-T80.9999",
+  "KXETHD-26NOV0817-T2119.99",
+  "KXETHD-26NOV0817-T2079.99",
+  "KXETHD-26NOV0817-T2319.99",
+  "KXXRPD-26NOV0817-T1.0599",
+  "KXETHD-26NOV0817-T2039.99",
+  "KXETHD-26NOV0817-T2359.99"
  ],
  "gov_stake": 0.5,
  "gov_halt": null,
@@ -1082,7 +1100,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:00:08.268219+00:00",
-   "queue_ahead": 0.0
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:46:03.718700+00:00"
   },
   {
    "ticker": "KXSOLD-26NOV0817-T85.9999",
@@ -1095,7 +1115,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:00:08.268219+00:00",
-   "queue_ahead": 0.0
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:46:03.718700+00:00"
   },
   {
    "ticker": "KXBTCD-26NOV0817-T76499.99",
@@ -1121,7 +1143,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:00:13.268369+00:00",
-   "queue_ahead": 0.0
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:08.722185+00:00"
   },
   {
    "ticker": "KXXRPD-26NOV0817-T1.1999",
@@ -1134,7 +1158,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:00:13.268369+00:00",
-   "queue_ahead": 151.0
+   "queue_ahead": 151.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:03.722036+00:00"
   },
   {
    "ticker": "KXSOLD-26NOV0817-T92.9999",
@@ -1147,7 +1173,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:00:13.268369+00:00",
-   "queue_ahead": 151.0
+   "queue_ahead": 151.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:46:03.718700+00:00"
   },
   {
    "ticker": "KXBTCD-26NOV0817-T76249.99",
@@ -1175,7 +1203,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:01:03.269889+00:00",
-   "queue_ahead": 651.0
+   "queue_ahead": 651.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:46:03.718700+00:00"
   },
   {
    "ticker": "KXXRPD-26NOV0817-T1.0999",
@@ -1188,7 +1218,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:05:03.276461+00:00",
-   "queue_ahead": 651.0
+   "queue_ahead": 651.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:03.722036+00:00"
   },
   {
    "ticker": "KXSOLD-26NOV0817-T90.9999",
@@ -1201,7 +1233,9 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:17:03.296035+00:00",
-   "queue_ahead": 203.78
+   "queue_ahead": 203.78,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:46:03.718700+00:00"
   },
   {
    "ticker": "KXXRPD-26NOV0817-T1.0799",
@@ -1214,7 +1248,261 @@
    "cap": null,
    "order_id": null,
    "placed": "2026-11-08T21:17:08.296181+00:00",
-   "queue_ahead": 0.0
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:03.722036+00:00"
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2239.99",
+   "series": "KXETHD",
+   "side": "no",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2239.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:46:03.718700+00:00",
+   "queue_ahead": 557.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:03.722036+00:00"
+  },
+  {
+   "ticker": "KXBTCD-26NOV0817-T74499.99",
+   "series": "KXBTCD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 74499.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:46:03.718700+00:00",
+   "queue_ahead": 4064.81,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:08.722185+00:00"
+  },
+  {
+   "ticker": "KXBTCD-26NOV0817-T74249.99",
+   "series": "KXBTCD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 74249.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:46:03.718700+00:00",
+   "queue_ahead": 5078.01
+  },
+  {
+   "ticker": "KXBTCD-26NOV0817-T76749.99",
+   "series": "KXBTCD",
+   "side": "no",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 76749.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:46:08.718814+00:00",
+   "queue_ahead": 4782.01
+  },
+  {
+   "ticker": "KXBTCD-26NOV0817-T73999.99",
+   "series": "KXBTCD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 73999.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:46:08.718814+00:00",
+   "queue_ahead": 4737.14
+  },
+  {
+   "ticker": "KXSOLD-26NOV0817-T83.9999",
+   "series": "KXSOLD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 83.9999,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:03.722036+00:00",
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:52:03.728880+00:00"
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2159.99",
+   "series": "KXETHD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2159.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:03.722036+00:00",
+   "queue_ahead": 703.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:48:08.722185+00:00"
+  },
+  {
+   "ticker": "KXSOLD-26NOV0817-T82.9999",
+   "series": "KXSOLD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 82.9999,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:03.722036+00:00",
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:52:03.728880+00:00"
+  },
+  {
+   "ticker": "KXSOLD-26NOV0817-T81.9999",
+   "series": "KXSOLD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 81.9999,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:08.722185+00:00",
+   "queue_ahead": 246.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:52:03.728880+00:00"
+  },
+  {
+   "ticker": "KXSOLD-26NOV0817-T93.9999",
+   "series": "KXSOLD",
+   "side": "no",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 93.9999,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:08.722185+00:00",
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:52:03.728880+00:00"
+  },
+  {
+   "ticker": "KXSOLD-26NOV0817-T94.9999",
+   "series": "KXSOLD",
+   "side": "no",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 94.9999,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:08.722185+00:00",
+   "queue_ahead": 0.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:52:03.728880+00:00"
+  },
+  {
+   "ticker": "KXSOLD-26NOV0817-T80.9999",
+   "series": "KXSOLD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 80.9999,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:48:13.722330+00:00",
+   "queue_ahead": 291.0,
+   "cancelled": true,
+   "cancelled_at": "2026-11-08T21:52:03.728880+00:00"
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2119.99",
+   "series": "KXETHD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2119.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:52:03.728880+00:00",
+   "queue_ahead": 118.0
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2079.99",
+   "series": "KXETHD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2079.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:52:03.728880+00:00",
+   "queue_ahead": 500.0
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2319.99",
+   "series": "KXETHD",
+   "side": "no",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2319.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:52:03.728880+00:00",
+   "queue_ahead": 868.0
+  },
+  {
+   "ticker": "KXXRPD-26NOV0817-T1.0599",
+   "series": "KXXRPD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 1.0599,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:52:08.729014+00:00",
+   "queue_ahead": 273.01
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2039.99",
+   "series": "KXETHD",
+   "side": "yes",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2039.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:52:08.729014+00:00",
+   "queue_ahead": 887.0
+  },
+  {
+   "ticker": "KXETHD-26NOV0817-T2359.99",
+   "series": "KXETHD",
+   "side": "no",
+   "count": 53,
+   "close": "2026-11-08T22:00:00+00:00",
+   "strike_type": "greater",
+   "floor": 2359.99,
+   "cap": null,
+   "order_id": null,
+   "placed": "2026-11-08T21:52:08.729014+00:00",
+   "queue_ahead": 651.0
   }
  ]
 }
