@@ -129,6 +129,11 @@ def theories(d: pd.DataFrame, fair: pd.Series, fair_b: pd.Series, up_hours: set)
     out["T9 RSI2 reversal"] = settle(d, s, price_for(s))
     s = pick(mid_ok & (d["rsi2"] > 0.4), mid_ok & (d["rsi2"] < -0.4))
     out["T9 RSI2 trend"] = settle(d, s, price_for(s))
+    # T11 (Round 34b: wallet 0x50f7 buys at 99.9c ~1 minute before 5-minute crypto markets end): certainty snipe
+    for k in (13, 14):
+        for lo in (0.99, 0.995, 0.998):
+            s = pick((d["k"] == k) & (yes_ask >= lo), (d["k"] == k) & (no_ask >= lo) & (yes_ask < lo))
+            out[f"T11 certainty snipe >= {lo*100:.1f}c at min {k}"] = settle(d, s, price_for(s))
     if "btc_dz" in d:
         for th in (0.5, 1.0):
             lag = d["mid_chg1"].abs() < 0.02

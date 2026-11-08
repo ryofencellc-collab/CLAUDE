@@ -52,3 +52,10 @@ periods. What the data say:
 - **Buying long shots is the worst idea tested** (T5: −$23k to −$32k): lottery tickets are overpriced slightly
   and the fee does the rest. That is the flip side of the only edge we have found: being the 99c bid that sells
   them (the hourly live bot).
+
+## Addendum (2026-11-08): T11 certainty snipe, from Round 34b
+
+Polymarket wallet 0x50f7 (+$568k) buys the winning side at 99.9c about a minute before 5-minute crypto markets
+end: 479 of its last 503 resolved buys were at ≥ 99.5c, all won; its one loss in the sample was a buy at 90.4c.
+T11 tests the same thing on Kalshi's 15-minute markets with the Round 31 data and rules: at minute 13 or 14,
+buy the side whose ask is ≥ 99.0 / 99.5 / 99.8c (taker, Kalshi fee). Six new configs, same pass rule.

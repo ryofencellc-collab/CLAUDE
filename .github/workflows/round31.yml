@@ -2,10 +2,14 @@ name: round31
 # Round 31 (PROTOCOL_ROUND31.md): theory factory on Kalshi 15-minute crypto markets with real 1-minute quotes.
 on:
   workflow_dispatch:
+    inputs:
+      reuse_run: {description: "run id whose r31-* data to reuse (skip fetching)", default: ""}
 permissions:
   contents: write
+  actions: read
 jobs:
   data:
+    if: ${{ inputs.reuse_run == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
     strategy:
@@ -23,7 +27,7 @@ jobs:
         with: {name: "r31-${{ matrix.series }}", path: data/r31/}
   run:
     needs: data
-    if: always()
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -33,7 +37,11 @@ jobs:
         with: {python-version: "3.12"}
       - run: pip install -r requirements.txt tabulate
       - uses: actions/download-artifact@v4
+        if: ${{ inputs.reuse_run == '' }}
         with: {pattern: "r31-*", path: data/r31, merge-multiple: true}
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.reuse_run != '' }}
+        with: {pattern: "r31-*", path: data/r31, merge-multiple: true, run-id: "${{ inputs.reuse_run }}", github-token: "${{ github.token }}"}
       - run: ls -la data/r31
       - run: python run_round31.py run
       - name: Commit report
