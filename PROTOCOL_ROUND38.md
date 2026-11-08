@@ -60,3 +60,8 @@ breakouts win less often; nothing reaches $100/day on $1,000.
 The stock section used Yahoo prices whose "unadjusted" close is split-adjusted (Round 36's artefact). The stock part is
 rerun with returns from split/dividend-adjusted prices and the price filter on the price that actually traded (split
 history undone); report: reports/ROUND38_stocks.md. ETF and crypto results are unaffected.
+
+### Stocks on clean prices: 0 of 13 pass (reports/ROUND38_stocks.md)
+Best: IBS < 0.2 dip-buy in uptrends, −0.1%/yr dev, +12.2%/yr holdout (61% wins, Sharpe 0.76, −13% drop) — flat on dev,
+so not stable; SPY made 10.9%/yr on the same holdout. Other dip-buys ~+2%/yr. Breakouts lose (−10% to −20%/yr) or ~0
+with a trailing stop.
