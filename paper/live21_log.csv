@@ -444,3 +444,5 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-08T19:02:18.977168+00:00,DRY,settled,KXBTCD-26NOV0814-T74599.99,yes,0.0,,,,result=yes pnl=0.00
 2026-11-08T19:02:23.347999+00:00,DRY,settled,KXBTCD-26NOV0814-T76799.99,no,14.4,,,,result=no pnl=0.13
 2026-11-08T19:02:23.710507+00:00,DRY,settled,KXBTCD-26NOV0814-T74399.99,yes,53.0,,,,result=yes pnl=0.52
+2026-11-08T19:07:04.119018+00:00,DRY,cancel,KXXRPD-26NOV0815-T1.1199,yes,53,,,,"z below threshold, stale data or stop"
+2026-11-08T19:07:06.204121+00:00,DRY,place,KXSOLD-26NOV0815-T92.4999,no,53,6.17,89.18,1050.0,"queue_ahead=0 risk=nan frac=0.050 slots=10 {""ticker"": ""KXSOLD-26NOV0815-T92.4999"", ""client_order_id"": ""r21-33f7f2ce5f64484b"", ""side"": ""ask"", ""count"": ""53"", ""price"": ""0.0100"", ""time_in_force"": ""good_till_canceled"", ""self_trade_prevention_type"": ""taker_at_cross"", ""post_only"": true, ""cancel_order_on_pa"
