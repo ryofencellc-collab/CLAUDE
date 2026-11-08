@@ -1,16 +1,16 @@
 # Round 18 live paper test: resting 99c bids on decided Kalshi weather outcomes
 
-Updated 2026-11-08 12:56 UTC. Rules: [PROTOCOL_ROUND18.md](../PROTOCOL_ROUND18.md), "Forward test". 1000 contracts bid per decided market; fills only after the live queue ahead.
+Updated 2026-11-08 13:01 UTC. Rules: [PROTOCOL_ROUND18.md](../PROTOCOL_ROUND18.md), "Forward test". 1000 contracts bid per decided market; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Decided markets bid | 414 (open 48) |
-| Settled | 366 (wrong calls: 0) |
+| Decided markets bid | 414 (open 47) |
+| Settled | 367 (wrong calls: 0) |
 | Contracts filled (settled) | 1,000 (uncapped: 6,161) |
 | **Paper profit** | **$+9.82** |
 | Median queue ahead at placement | 33,132 contracts |
 | Orders that got any fill | 0% |
-| Round 18 paper profit | $+9.82 on 213 settled (0 wrong) |
+| Round 18 paper profit | $+9.82 on 214 settled (0 wrong) |
 | Round 19 paper profit | $+0.00 on 153 settled (0 wrong) |
 
 Green days: 1 of 10; average $+0.98 a day; peak capital filled in one day $990
@@ -26,4 +26,4 @@ Green days: 1 of 10; average $+0.98 a day; peak capital filled in one day $990
 | 2026-11-04 | 40 | 0 | $+0.00 |
 | 2026-11-05 | 53 | 0 | $+0.00 |
 | 2026-11-06 | 44 | 0 | $+0.00 |
-| 2026-11-07 | 13 | 0 | $+0.00 |
+| 2026-11-07 | 14 | 0 | $+0.00 |
