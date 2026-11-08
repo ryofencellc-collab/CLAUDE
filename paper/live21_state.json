@@ -15,7 +15,9 @@
   "cap": null,
   "order_id": null,
   "placed": "2026-11-08T11:02:01.515096+00:00",
-  "queue_ahead": 0.0
+  "queue_ahead": 0.0,
+  "cancelled": true,
+  "cancelled_at": "2026-11-08T11:22:04.384111+00:00"
  },
  "results": [
   {
