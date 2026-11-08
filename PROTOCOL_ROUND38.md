@@ -55,3 +55,8 @@ breakouts win less often; nothing reaches $100/day on $1,000.
 - **Stock breakouts lose heavily** (−23% to −35%/yr holdout). Caveat: the stock data has the same adjusted-price /
   survivorship issue found in Round 36 (small caps that reverse-split pass the $10 filter); a strict rerun would be
   needed before reading the stock numbers literally.
+
+## Stocks rerun on clean prices (2026-11-08)
+The stock section used Yahoo prices whose "unadjusted" close is split-adjusted (Round 36's artefact). The stock part is
+rerun with returns from split/dividend-adjusted prices and the price filter on the price that actually traded (split
+history undone); report: reports/ROUND38_stocks.md. ETF and crypto results are unaffected.

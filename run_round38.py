@@ -24,13 +24,15 @@ SPLITS = {"stocks": ("2015-01-01", "2022-01-01", "2026-12-01"), "etfs": ("2015-0
 
 # ------------------------------------------------------------------ data
 def yahoo(tickers, name):
+    """Daily bars, split/dividend-adjusted for returns, plus the price that actually traded (split history undone)
+    saved as {name}_R.pkl for price filters (Yahoo's own "Close" is already split-adjusted)."""
     import yfinance as yf
-    panels = {k: [] for k in ("Open", "High", "Low", "Close", "Volume")}
+    panels = {k: [] for k in ("Open", "High", "Low", "Close", "Adj Close", "Volume", "Stock Splits")}
     for i in range(0, len(tickers), 200):
         chunk = tickers[i:i + 200]
         for _ in range(3):
             try:
-                df = yf.download(chunk, start="2014-01-01", auto_adjust=True, progress=False, group_by="column", threads=True)
+                df = yf.download(chunk, start="2014-01-01", auto_adjust=False, actions=True, progress=False, group_by="column", threads=True)
                 break
             except Exception as e:
                 print("retry", e, flush=True)
@@ -43,10 +45,23 @@ def yahoo(tickers, name):
                     x = x.to_frame(chunk[0])
                 panels[k].append(x.astype("float32"))
         print(name, i + len(chunk), "/", len(tickers), flush=True)
+    P = {}
     for k, parts in panels.items():
+        if not parts:
+            continue
         p = pd.concat(parts, axis=1)
-        p = p.loc[:, ~p.columns.duplicated()].dropna(axis=1, how="all")
-        p.to_pickle(D / f"{name}_{k[0]}.pkl")
+        P[k] = p.loc[:, ~p.columns.duplicated()]
+    C = P["Close"].dropna(axis=1, how="all")
+    cols = C.columns
+    ratio = (P["Adj Close"].reindex(columns=cols) / C).replace([np.inf, -np.inf], np.nan).fillna(1.0)
+    for k in ("Open", "High", "Low"):
+        (P[k].reindex(columns=cols) * ratio).astype("float32").to_pickle(D / f"{name}_{k[0]}.pkl")
+    (C * ratio).astype("float32").to_pickle(D / f"{name}_C.pkl")
+    P["Volume"].reindex(columns=cols).astype("float32").to_pickle(D / f"{name}_V.pkl")
+    spl = P.get("Stock Splits", pd.DataFrame(index=C.index, columns=cols)).reindex(index=C.index, columns=cols).astype(float)
+    spl = spl.where(spl > 0, 1.0).fillna(1.0)
+    later = spl[::-1].cumprod()[::-1].shift(-1).fillna(1.0)
+    (C * later).astype("float32").to_pickle(D / f"{name}_R.pkl")
 
 
 def binance(sym):
@@ -73,14 +88,20 @@ def binance(sym):
 def data():
     import run_round36 as R36
     D.mkdir(parents=True, exist_ok=True)
-    yahoo(ETFS, "etfs")
+    import os
+    only = os.environ.get("R38_MARKETS", "etfs,crypto,stocks").split(",")
+    if "etfs" in only:
+        yahoo(ETFS, "etfs")
+    if "stocks" in only:
+        yahoo(R36.universe(), "stocks")
+    if "crypto" not in only:
+        return
     with ThreadPoolExecutor(8) as ex:
         got = dict(zip(COINS, ex.map(lambda c: binance(f"{c}USDT"), COINS)))
     got = {c: f for c, f in got.items() if f is not None and len(f) > 200}
     for k in "OHLCV":
         pd.DataFrame({c: f[k] for c, f in got.items()}).sort_index().to_pickle(D / f"crypto_{k}.pkl")
     print("crypto", list(got), flush=True)
-    yahoo(R36.universe(), "stocks")
 
 
 # ------------------------------------------------------------------ strategies
@@ -111,12 +132,20 @@ def rsi(c, n):
     return 100 - 100 / (1 + up / dn.replace(0, np.nan))
 
 
+REAL: dict = {}
+
+
 def features(O, H, L, C, V, market):
     f = {"O": O, "H": H, "L": L, "C": C}
     tr = pd.concat([H - L, (H - C.shift()).abs(), (L - C.shift()).abs()]).groupby(level=0).max()
     f["atr"] = tr.reindex(C.index).rolling(14, min_periods=10).mean()
     dv = (C * V).rolling(20, min_periods=15).mean()
-    f["ok"] = ((C >= 10) & (dv >= 20e6)) if market == "stocks" else (dv >= 1e6) if market == "etfs" else (dv >= 5e6)
+    R = REAL.get(market)
+    if R is not None:
+        R = R.reindex(index=C.index, columns=C.columns)
+        dv = (R * V).rolling(20, min_periods=15).mean()
+    px = R if R is not None else C
+    f["ok"] = ((px >= 10) & (dv >= 20e6)) if market == "stocks" else (dv >= 1e6) if market == "etfs" else (dv >= 5e6)
     f["vr"] = V / V.rolling(50, min_periods=30).mean().shift(1)
     f["hi20"], f["hi55"] = H.rolling(20).max().shift(1), H.rolling(55).max().shift(1)
     f["lo10"] = L.rolling(10).min().shift(1)
@@ -278,7 +307,9 @@ def run():
              "Rules: [PROTOCOL_ROUND38.md](../PROTOCOL_ROUND38.md). Next-open entries, stop-before-target, 0.10% per side, ≤ 3 new trades/week, ≤ 5 open, "
              "risk 2% to the stop (breakouts) or 20% of equity per trade (dip-buys).", ""]
     allrows = []
-    for market in ("etfs", "crypto", "stocks"):
+    import os
+    only = os.environ.get("R38_MARKETS", "etfs,crypto,stocks").split(",")
+    for market in [m for m in ("etfs", "crypto", "stocks") if m in only]:
         try:
             O, H, L, C, V = (pd.read_pickle(D / f"{market}_{k}.pkl").astype(float) for k in "OHLCV")
         except FileNotFoundError:
@@ -286,6 +317,8 @@ def run():
             continue
         cols = C.columns
         O, H, L, V = (x.reindex(index=C.index, columns=cols) for x in (O, H, L, V))
+        if (D / f"{market}_R.pkl").exists():
+            REAL[market] = pd.read_pickle(D / f"{market}_R.pkl").astype(float)
         f = features(O, H, L, C, V, market)
         s0, split, s1 = (pd.Timestamp(x) for x in SPLITS[market])
         rows = []
@@ -321,7 +354,8 @@ def run():
     lines += [pd.DataFrame(srows).to_markdown(index=False)]
     n_pass = len(passed)
     lines.insert(4, f"**{n_pass} of {len(allrows)} configs pass.**\n")
-    OUT.write_text("\n".join(lines) + "\n")
+    out = OUT if os.environ.get("R38_MARKETS") in (None, "", "etfs,crypto,stocks") else OUT.with_name(f"ROUND38_{os.environ['R38_MARKETS'].replace(',', '_')}.md")
+    out.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
 
