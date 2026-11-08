@@ -710,3 +710,4 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-08T22:02:29.542055+00:00,DRY,cancel,KXBTCD-26NOV0818-T82099.99,no,53,,,,"z below threshold, stale data or stop"
 2026-11-08T22:02:29.962240+00:00,DRY,cancel,KXETHD-26NOV0818-T1814.99,yes,53,,,,"z below threshold, stale data or stop"
 2026-11-08T22:02:29.963910+00:00,DRY,cancel,KXETHD-26NOV0818-T1809.99,yes,53,,,,"z below threshold, stale data or stop"
+2026-11-08T22:21:29.578834+00:00,DRY,stop,,,0,,,,job ending
