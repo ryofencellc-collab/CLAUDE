@@ -59,3 +59,15 @@ stocks, which is implausible for liquid stocks. Cause: Yahoo's unadjusted `Close
 that later did a 1-for-50 reverse split still showed a fake $10 history. Fix: download split history and rebuild the
 price that actually traded (multiply by every later split ratio); filters use that. Added a sanity line: the
 equal-weighted average tradable stock's return; if it is far from ~10%/yr the table is not to be trusted.
+
+## Result (clean data, 2026-11-08): 0 of 20 pass
+
+Sanity check passed: the average tradable stock returned 13.8%/yr on dev and 7.5%/yr on the holdout (SPY 14.8% / 10.9%).
+With real traded prices the spectacular numbers are gone:
+- **Frenzy fade, short 20 days:** −10.6%/yr on dev, +54%/yr on the holdout (Sharpe 1.14, t 2.5, −48% drop) — fails,
+  and the sign flips between periods. The 1- and 5-day versions: about 0 to +7%/yr.
+- **Gap-up fade intraday ≥ 20%:** +9%/yr dev, +7%/yr holdout (Sharpe ~0.6–1.1) — small and consistent, not enough.
+- Panic bounce: ~0 to +5%/yr. Frenzy chase and gap-continuation longs lose (−10% to −43%/yr). MAX/lottery, 52-week
+  high, weekly reversal, penny-stock shorts, turn of the month: all ≤ 0.
+The documented retail-mistake effects are either too small after costs or not stable across 2015–21 vs 2022–26 in
+liquid stocks.
