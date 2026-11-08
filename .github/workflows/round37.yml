@@ -17,12 +17,12 @@ jobs:
       - run: python run_round37.py data
       - uses: actions/upload-artifact@v4
         if: always()
-        with: {name: r36-data, path: data/r36/}
+        with: {name: r36-data, path: data/r37/}
       - run: python run_round37.py run
       - name: Commit report
         if: always()
         run: |
           git config user.name "round37 bot"; git config user.email "actions@users.noreply.github.com"
-          git add reports/ROUND36.md 2>/dev/null || true
+          git add reports/ROUND37.md 2>/dev/null || true
           git diff --cached --quiet || git commit -q -m "round37: results [skip ci]"
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

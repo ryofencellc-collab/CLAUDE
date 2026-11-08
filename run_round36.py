@@ -24,9 +24,9 @@ def universe() -> list[str]:
                                 ("https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt", "ACT Symbol", "ETF", "Test Issue")):
         t = pd.read_csv(io.StringIO(requests.get(url, timeout=60).text), sep="|")
         t = t[(t[etf] == "N") & (t[test] == "N")]
-        name = t["Security Name"].astype(str).str.lower()
+        name = t["Security Name"].fillna("").astype(str).str.lower()
         bad = name.str.contains("warrant|unit|right|preferred|depositary|notes|debenture|%|trust|fund|etn", regex=True)
-        out += [s for s in t.loc[~bad, sym].astype(str) if s.isalpha() and len(s) <= 5]
+        out += [s for s in t.loc[~bad, sym].tolist() if isinstance(s, str) and s.isalpha() and len(s) <= 5]
     return sorted(set(out))
 
 
