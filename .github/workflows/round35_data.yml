@@ -1,0 +1,25 @@
+name: round35_data
+# Round 35 data: real EOD option chains from DoltHub (one job per symbol), uploaded as artifacts.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        symbol: [SPY, AAPL, MSFT, NVDA, AMZN, META, TSLA, GOOGL]
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: timeout 19800 python run_round35_data.py ${{ matrix.symbol }} || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: "opt-${{ matrix.symbol }}", path: data/opt/}
