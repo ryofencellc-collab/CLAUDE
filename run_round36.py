@@ -35,12 +35,12 @@ def data():
     D.mkdir(parents=True, exist_ok=True)
     tick = universe()
     print(f"universe: {len(tick)} tickers", flush=True)
-    panels = {k: [] for k in ("Open", "Close", "Adj Close", "Volume")}
+    panels = {k: [] for k in ("Open", "Close", "Adj Close", "Volume", "Stock Splits")}
     for i in range(0, len(tick), 200):
         chunk = tick[i:i + 200]
         for attempt in range(3):
             try:
-                df = yf.download(chunk, start="2014-06-01", auto_adjust=False, progress=False, group_by="column", threads=True)
+                df = yf.download(chunk, start="2014-06-01", auto_adjust=False, actions=True, progress=False, group_by="column", threads=True)
                 break
             except Exception as e:
                 print("retry", e, flush=True)
@@ -156,7 +156,15 @@ def run():
     A = pd.read_pickle(D / "AdjClose.pkl") if (D / "AdjClose.pkl").exists() else Craw
     cols = Craw.columns.intersection(O.columns).intersection(V.columns).intersection(A.columns)
     Craw, V, A = Craw[cols].astype(float), V[cols].astype(float), A[cols].astype(float)
-    adj = (A / Craw).replace([np.inf, -np.inf], np.nan)
+    # Yahoo's "Close" is already split-adjusted. Rebuild the price that actually traded: multiply by every split
+    # ratio that happens AFTER the day (a later 1-for-50 reverse split has ratio 0.02 and shrinks the old price).
+    sp_path = D / "StockSplits.pkl"
+    if sp_path.exists():
+        spl = pd.read_pickle(sp_path).reindex(index=Craw.index, columns=cols).astype(float)
+        spl = spl.where(spl > 0, 1.0).fillna(1.0)
+        later = spl[::-1].cumprod()[::-1].shift(-1).fillna(1.0)       # product of ratios strictly after each day
+        Craw = Craw * later
+    adj = (A / (Craw if not sp_path.exists() else Craw / later)).replace([np.inf, -np.inf], np.nan)
     O, C = O[cols].astype(float) * adj, A            # split/dividend-adjusted open and close for returns
     spy = pd.read_pickle(D / "SPY.pkl")["Close"]
     C = C[C.index >= "2014-06-01"]
@@ -224,6 +232,8 @@ def run():
     chg = pos.diff().abs().fillna(0)
     res["10 turn of the month (SPY)"] = (tom - chg * COST, None)
     spym = {"dev": metrics(sr[(sr.index >= start) & (sr.index < DEV_END)]), "hold": metrics(sr[(sr.index >= DEV_END) & (sr.index < HOLD_END)])}
+    ew = r1.where(ok.shift(1).fillna(False)).clip(-0.5, 1.0).mean(axis=1).fillna(0)
+    ewm = {"dev": metrics(ew[(ew.index >= start) & (ew.index < DEV_END)]), "hold": metrics(ew[(ew.index >= DEV_END) & (ew.index < HOLD_END)])}
     rows = []
     for name, (daily, tr) in res.items():
         dv = metrics(daily[(daily.index >= start) & (daily.index < DEV_END)])
@@ -238,10 +248,14 @@ def run():
                      "$25k/day": round(25000 * ho["ann"] / 365, 2), "PASS": "YES" if ok_ else ""})
     tab = pd.DataFrame(rows).sort_values("hold Sharpe", ascending=False)
     lines = ["# Round 36: beating retail traders' documented mistakes (US stocks)", "",
-             "Rules: [PROTOCOL_ROUND36.md](../PROTOCOL_ROUND36.md). Next-open entry, 0.20% round trip, short borrow (10%/yr hot, 5% other). "
+             "Rules: [PROTOCOL_ROUND36.md](../PROTOCOL_ROUND36.md). Next-open entry, 0.30% round trip, short borrow (20%/yr hot, 5% other); "
+             "filters on the real traded price (split history undone) >= $10 and >= $50M a day. "
              f"Universe {C.shape[1]:,} stocks; dev 2015–2021, holdout 2022–2026. Survivorship bias: delisted stocks missing.", "",
              f"SPY buy-and-hold: dev {spym['dev']['ann']:.1%}/yr (Sharpe {spym['dev']['sharpe']:.2f}); holdout {spym['hold']['ann']:.1%}/yr "
-             f"(Sharpe {spym['hold']['sharpe']:.2f}, worst drop {spym['hold']['maxdd']:.0%}).", "",
+             f"(Sharpe {spym['hold']['sharpe']:.2f}, worst drop {spym['hold']['maxdd']:.0%}).",
+             f"**Sanity check — the average tradable stock, equal-weighted, daily:** dev {ewm['dev']['ann']:.1%}/yr, holdout "
+             f"{ewm['hold']['ann']:.1%}/yr. If this is far from the market's ~10%/yr, the universe is contaminated and the table "
+             "below should not be trusted.", "",
              f"**{(tab['PASS'] == 'YES').sum()} of {len(tab)} pass.**", "", tab.to_markdown(index=False)]
     OUT.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))

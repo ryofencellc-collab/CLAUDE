@@ -51,3 +51,11 @@ past prices of stocks that later reverse-split, so the "$3" filter admitted real
 same tests and pass rule):** price filter on the real unadjusted close ≥ $10, 20-day dollar volume (real price) ≥ $50M,
 returns from split/dividend-adjusted prices, costs 0.15% per side, hot-short borrow 20%/yr. The first run's table is
 kept in git history only.
+
+## Second rerun (2026-11-08): the "raw" close was still split-adjusted
+
+The strict rerun still showed frenzy-fade shorts at +256%/yr and long gap-ups at −75%/yr among "≥ $10, $50M/day"
+stocks, which is implausible for liquid stocks. Cause: Yahoo's unadjusted `Close` is already split-adjusted, so a stock
+that later did a 1-for-50 reverse split still showed a fake $10 history. Fix: download split history and rebuild the
+price that actually traded (multiply by every later split ratio); filters use that. Added a sanity line: the
+equal-weighted average tradable stock's return; if it is far from ~10%/yr the table is not to be trusted.
