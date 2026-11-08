@@ -21,3 +21,17 @@ holding day; 10 slots of 10%. Costs 0.10% per side; shorts (perpetual futures) p
 
 Dev 2019-01 → 2022-12, holdout 2023-01 → 2026-10. Pass: dev return > 0; holdout return > 0, Sharpe ≥ 1.0,
 t-stat ≥ 3.0. Prediction written now: pump fade and new-listing fade are the strongest candidates.
+
+## Result (2026-11-08, reports/ROUND37.md): 1 of 13 pass — with large caveats
+
+- **Pump fade is real in this data:** every pump-fade config made money on the holdout (+45% to +78%/yr, Sharpe
+  1.0–1.3); ≥ 30% pumps shorted for 3 days passes (avg trade +4.8% net, t = 3.08). Dev was weaker (+2% to +13%/yr,
+  Sharpe ~0.5; the 7-day holds lost on dev). Drawdowns are large (−28% to −77%).
+- **Dump bounce loses badly** (retail is right to sell crashed coins); momentum and weekly reversal lose; BTC weekend
+  is flat. New-listing fade: +38%/yr holdout but lost on dev.
+
+**Why the pass is not a trading plan yet:** (1) it needs shorting small altcoins right after a pump; Binance
+perpetuals are not available to US residents, and US venues (Coinbase, Kraken) offer futures on only a few large
+coins; (2) shorts in freshly pumped coins pay far more than the assumed 10%/yr when funding spikes, and fills at the
+next daily open on thin coins can slip much more than 0.10%; (3) a −41% drawdown at 10% per position. A forward paper
+test on coins that are actually shortable from the US would be needed before any money.
