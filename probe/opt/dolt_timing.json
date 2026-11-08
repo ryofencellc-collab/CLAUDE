@@ -1,0 +1,272 @@
+{
+ "2019-02-15": [
+  "Success",
+  "",
+  1,
+  0.38,
+  [
+   {
+    "n": "0",
+    "MIN(expiration)": null,
+    "MAX(expiration)": null
+   }
+  ]
+ ],
+ "2019-06-14": [
+  "Success",
+  "",
+  1,
+  6.57,
+  [
+   {
+    "n": "0",
+    "MIN(expiration)": null,
+    "MAX(expiration)": null
+   }
+  ]
+ ],
+ "2020-03-16": [
+  "Success",
+  "",
+  1,
+  2.7,
+  [
+   {
+    "n": "66",
+    "MIN(expiration)": "2020-03-30",
+    "MAX(expiration)": "2020-05-15"
+   }
+  ]
+ ],
+ "2021-06-18": [
+  "Success",
+  "",
+  1,
+  2.3,
+  [
+   {
+    "n": "160",
+    "MIN(expiration)": "2021-07-02",
+    "MAX(expiration)": "2021-08-20"
+   }
+  ]
+ ],
+ "2022-06-17": [
+  "Success",
+  "",
+  1,
+  6.29,
+  [
+   {
+    "n": "162",
+    "MIN(expiration)": "2022-07-01",
+    "MAX(expiration)": "2022-08-19"
+   }
+  ]
+ ],
+ "2023-06-16": [
+  "Success",
+  "",
+  1,
+  1.68,
+  [
+   {
+    "n": "146",
+    "MIN(expiration)": "2023-06-30",
+    "MAX(expiration)": "2023-08-18"
+   }
+  ]
+ ],
+ "2024-06-14": [
+  "Success",
+  "",
+  1,
+  3.09,
+  [
+   {
+    "n": "126",
+    "MIN(expiration)": "2024-06-28",
+    "MAX(expiration)": "2024-08-02"
+   }
+  ]
+ ],
+ "2025-06-13": [
+  "Success",
+  "",
+  1,
+  1.01,
+  [
+   {
+    "n": "118",
+    "MIN(expiration)": "2025-06-27",
+    "MAX(expiration)": "2025-08-01"
+   }
+  ]
+ ],
+ "2025-12-12": [
+  "Success",
+  "",
+  1,
+  2.65,
+  [
+   {
+    "n": "192",
+    "MIN(expiration)": "2025-12-26",
+    "MAX(expiration)": "2026-01-30"
+   }
+  ]
+ ],
+ "2026-06-12": [
+  "Success",
+  "",
+  1,
+  3.53,
+  [
+   {
+    "n": "208",
+    "MIN(expiration)": "2026-06-26",
+    "MAX(expiration)": "2026-07-31"
+   }
+  ]
+ ],
+ "2026-11-06": [
+  "Success",
+  "",
+  1,
+  5.31,
+  [
+   {
+    "n": "216",
+    "MIN(expiration)": "2026-11-20",
+    "MAX(expiration)": "2026-12-31"
+   }
+  ]
+ ],
+ "QQQ": [
+  "Success",
+  "",
+  1,
+  12.12,
+  [
+   {
+    "n": "0"
+   }
+  ]
+ ],
+ "IWM": [
+  "Success",
+  "",
+  1,
+  24.09,
+  [
+   {
+    "n": "0"
+   }
+  ]
+ ],
+ "AAPL": [
+  "Success",
+  "",
+  1,
+  6.71,
+  [
+   {
+    "n": "154"
+   }
+  ]
+ ],
+ "NVDA": [
+  "Success",
+  "",
+  1,
+  3.16,
+  [
+   {
+    "n": "148"
+   }
+  ]
+ ],
+ "TSLA": [
+  "Success",
+  "",
+  1,
+  0.73,
+  [
+   {
+    "n": "138"
+   }
+  ]
+ ],
+ "MSFT": [
+  "Success",
+  "",
+  1,
+  0.34,
+  [
+   {
+    "n": "146"
+   }
+  ]
+ ],
+ "AMZN": [
+  "Success",
+  "",
+  1,
+  0.79,
+  [
+   {
+    "n": "144"
+   }
+  ]
+ ],
+ "META": [
+  "Success",
+  "",
+  1,
+  1.43,
+  [
+   {
+    "n": "162"
+   }
+  ]
+ ],
+ "page_1000": [
+  "Success",
+  "",
+  126,
+  0.46
+ ],
+ "june2024_dates": [
+  "Error",
+  "query error: context deadline exceeded",
+  0,
+  54.06,
+  []
+ ],
+ "vol_hist": [
+  "Success",
+  "",
+  1,
+  12.74,
+  [
+   {
+    "date": "2024-06-14",
+    "act_symbol": "SPY",
+    "hv_current": "0.0843",
+    "hv_week_ago": "0.1039",
+    "hv_month_ago": null,
+    "hv_year_high": "0.1499",
+    "hv_year_high_date": "2023-11-14",
+    "hv_year_low": "0.0825",
+    "hv_year_low_date": "2023-12-28",
+    "iv_current": "0.1038",
+    "iv_week_ago": "0.1074",
+    "iv_month_ago": null,
+    "iv_year_high": "0.1892",
+    "iv_year_high_date": "2023-10-27",
+    "iv_year_low": "0.0996",
+    "iv_year_low_date": "2024-06-13"
+   }
+  ]
+ ]
+}
