@@ -41,3 +41,17 @@ small wins and big losses is how accounts die.
 
 Prediction written now: dip-buys in uptrends (D1/D2/D4) on ETFs have high win rates and positive but modest returns;
 breakouts win less often; nothing reaches $100/day on $1,000.
+
+## Result (2026-11-08, reports/ROUND38.md): 0 of 39 pass
+
+- **High win rate did not mean profit.** Every dip-buy (RSI(2), IBS, 3 down days) won 56–65% of its trades, yet made
+  roughly nothing on ETFs (−4% to +1%/yr), little on stocks (−12% to +4%) and modest amounts on crypto (+3% to +11%):
+  the average loss (−4.5% to −6.5%) is bigger than the average win (+3% to +4.5%).
+- **Best: crypto 55-day breakout with a trailing stop** — dev +112%/yr, holdout +44%/yr, Sharpe 0.96, worst drop
+  −32%, but it wins only **33%** of trades (avg win +31%, avg loss −9.5%) and trades ~1×/week. Fails on Sharpe (0.96
+  < 1) and t-stat (1.89 < 3). The 20-day version: +158% dev / +35% holdout, −54% drop. Classic trend-following:
+  few big winners, many small losers.
+- **ETF breakouts and dip-buys:** all within about ±4%/yr.
+- **Stock breakouts lose heavily** (−23% to −35%/yr holdout). Caveat: the stock data has the same adjusted-price /
+  survivorship issue found in Round 36 (small caps that reverse-split pass the $10 filter); a strict rerun would be
+  needed before reading the stock numbers literally.
