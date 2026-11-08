@@ -61,7 +61,8 @@ def analyse(name, wallet):
                    "category": m.get("category")}
     tr = tr[tr["slug"].isin(info)].copy()
     tr["t"] = pd.to_datetime(tr["timestamp"], unit="s", utc=True)
-    tr["end"] = tr["slug"].map(lambda s: info[s]["closed"] if pd.notna(info[s]["closed"]) else info[s]["end"])
+    tr["end"] = pd.to_datetime(tr["slug"].map(lambda s: info[s]["closed"] if pd.notna(info[s]["closed"]) else info[s]["end"]),
+                               utc=True, errors="coerce")
     tr["hours_left"] = (tr["end"] - tr["t"]).dt.total_seconds() / 3600
     tr["resolved"] = tr["slug"].map(lambda s: info[s]["resolved"])
     tr["won"] = [float(info[s]["prices"][i] >= 0.99) if info[s]["resolved"] and i < len(info[s]["prices"]) else np.nan
@@ -96,11 +97,16 @@ def main():
              "PnL here = per-trade P&L on resolved markets (before fees), to recover the rule, not to rank.", ""]
     summs, secs = [], []
     for x in w.itertuples(index=False):
-        s, sec = analyse(x.name[:30], x.wallet)
+        try:
+            s, sec = analyse(x.name[:30], x.wallet)
+        except Exception as e:  # one wallet's odd data must not sink the report
+            print(f"{x.name[:30]} failed: {e!r}", flush=True)
+            s, sec = None, []
         print(x.name[:30], s, flush=True)
         if s:
             summs.append(s)
             secs += sec
+        OUT.write_text("\n".join(lines + ["## Summary (partial)", "", pd.DataFrame(summs).to_markdown(index=False), ""] + secs) + "\n")
     lines += ["## Summary", "", pd.DataFrame(summs).to_markdown(index=False), ""] + secs
     OUT.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
