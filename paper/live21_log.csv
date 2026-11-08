@@ -344,3 +344,4 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-08T15:02:10.962675+00:00,DRY,settled,KXBTCD-26NOV0810-T76799.99,no,0.0,,,,result=no pnl=0.00
 2026-11-08T15:03:52.329763+00:00,DRY,place,KXETHD-26NOV0811-T2209.99,yes,530,6.25,2238.04,1050.0,"queue_ahead=0 risk=nan frac=0.500 {""ticker"": ""KXETHD-26NOV0811-T2209.99"", ""client_order_id"": ""r21-68eb0062d01746c3"", ""side"": ""bid"", ""count"": ""530"", ""price"": ""0.9900"", ""time_in_force"": ""good_till_canceled"", ""self_trade_prevention_type"": ""taker_at_cross"", ""post_only"": true, ""cancel_order_on_pause"": tr"
 2026-11-08T15:26:02.373113+00:00,DRY,stop,,,0,,,,job ending
+2026-11-08T15:26:41.849960+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTCD,KXETHD,KXSOLD,KXXRPD"
