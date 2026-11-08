@@ -5,5 +5,6 @@
   "stop": false,
   "deposit": 1000,
   "note": "Edited only by Claude under control/RULES.md. stake_fraction is Claude's CAP; the bot's governor applies the RULES.md stake schedule and stops under it (min of the two). live_since = go-live time; with deposit it defines the history the governor judges. The owner's veto: repo variable LIVE21=0.",
-  "live_since": null
+  "live_since": null,
+  "max_positions": 10
 }

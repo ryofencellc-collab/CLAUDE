@@ -104,7 +104,7 @@ class Market:
 
 
 def fresh():
-    return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None,
+    return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "opens": [], "max_positions": 1,
             "results": [], "stake_fraction": 0.95, "max_contracts": 1000}
 
 
@@ -130,7 +130,7 @@ def test_winning_market_end_to_end(world):
     assert len([c for c in ex.calls if c[0] == "buy"]) == 1                  # one position at a time
     ex.settle("KXXRP15M-T", "yes", CLOSE)
     L.step(ex, st, "LIVE", at(8))                                           # after close + 2 min
-    assert st["open"] is None and st["results"][-1]["pnl"] > 0
+    assert not L.opens(st) and st["results"][-1]["pnl"] > 0
     assert len([c for c in ex.calls if c[0] == "buy"]) == 1                  # never re-trades the same market
     assert L.blocked(st, at(8).timestamp(), ex.balance) is None
 
@@ -146,7 +146,7 @@ def test_reversal_cancels_and_a_loss_pauses_then_halves(world):
     ex.settle("KXXRP15M-T", "no", CLOSE)                                    # the long shot wins
     L.step(ex, st, "LIVE", at(8))
     L.rebuild_risk(ex, st, at(8).timestamp())
-    assert st["open"] is None and st["results"][-1]["pnl"] < 0
+    assert not L.opens(st) and st["results"][-1]["pnl"] < 0
     mk.decided = True
     L.step(ex, st, "LIVE", at(30))
     assert len([c for c in ex.calls if c[0] == "buy"]) == 1                 # paused: no new order for 24 h
@@ -208,8 +208,7 @@ def test_daily_stop_from_settlements(world):
 def test_rejected_order_cools_down_instead_of_hammering(world):
     ex, mk, st, _ = world
     ex.reject_next = True
-    with pytest.raises(RuntimeError):
-        L.step(ex, st, "LIVE", at(0))
+    L.step(ex, st, "LIVE", at(0))                                           # rejected: logged, not raised
     L.step(ex, st, "LIVE", at(0.2))                                         # within 60 s: no retry
     assert len([c for c in ex.calls if c[0] == "buy"]) == 1
     L.step(ex, st, "LIVE", at(1.5))                                         # after the cool-down it tries again
@@ -222,9 +221,9 @@ def test_void_market_unblocks_after_three_hours(world):
     L.step(ex, st, "LIVE", at(0))
     mk.decided = False
     L.step(ex, st, "LIVE", at(10))                                          # closed, no result yet
-    assert st["open"] is not None
+    assert L.opens(st)
     L.step(ex, st, "LIVE", at(60 * 3 + 10))
-    assert st["open"] is None
+    assert not L.opens(st)
 
 
 def test_small_balance_sizes_down(world):
@@ -295,21 +294,21 @@ def test_switching_to_dry_pulls_everything(world):
     ex, mk, st, _ = world
     L.step(ex, st, "LIVE", at(0))
     L.go_dry(ex, st)
-    assert all(o["status"] != "resting" for o in ex.orders.values()) and st["open"] is None
+    assert all(o["status"] != "resting" for o in ex.orders.values()) and not L.opens(st)
 
 
 def test_dry_run_counts_only_flow_that_reaches_99c(world, monkeypatch):
     ex, mk, st, _ = world
     L.step(ex, st, "DRY", at(0))
-    assert st["open"] and st["open"]["order_id"] is None
-    st["open"]["queue_ahead"] = 100.0
+    assert L.opens(st) and L.opens(st)[0]["order_id"] is None
+    L.opens(st)[0]["queue_ahead"] = 100.0
     ex.results["KXXRP15M-T"] = "yes"
     monkeypatch.setattr(L.fc, "flow", lambda t, s, a, b: (5000.0, 400.0))   # 5,000 long-shot buys, 400 at >= 1c
     L.step(ex, st, "DRY", CLOSE + pd.Timedelta(minutes=3))
     last = L.LOG.read_text().strip().splitlines()[-1]
     assert ",settled," in last and ",300.0," in last                         # 400 - 100 queue, not 4,900
     monkeypatch.setattr(L.fc, "flow", lambda t, s, a, b: (float("nan"), float("nan")))
-    st["open"] = None
+    st["opens"] = []
     st["traded"] = []
     L.step(ex, st, "DRY", at(0))
     L.step(ex, st, "DRY", CLOSE + pd.Timedelta(minutes=3))
@@ -341,3 +340,104 @@ def test_decide_prefers_the_market_most_likely_to_fill(monkeypatch):
     assert L.decide(T0)[0]["ticker"] == "NEAR_BUT_CROWDED"                   # last resort still allowed
     monkeypatch.setattr(L, "candidates", lambda now: [])
     assert L.decide(T0) is None
+
+
+
+# ---------------------------------------------------------------- several markets at once (Nov 8 fix)
+def multi_world(monkeypatch, n_markets=5, slots=10):
+    ex = Exchange()
+    mk = Market(ex)
+    mk.install(monkeypatch, None) if False else None
+    ms = [{"ticker": f"KXBTCD-T{i}", "strike_type": "greater", "floor_strike": 1.0, "cap_strike": None, "_close": CLOSE}
+          for i in range(n_markets)]
+    state = {"decided": {m["ticker"]: True for m in ms}}
+    monkeypatch.setattr(L, "decide_many", lambda now, exclude=frozenset(), look=12: [
+        (m, "KXBTCD", "yes", 6.5 + i, 1.05, 0.0) for i, m in enumerate(ms)
+        if m["ticker"] not in exclude and state["decided"][m["ticker"]]])
+    monkeypatch.setattr(L, "still_decided", lambda o, now: state["decided"][o["ticker"]])
+
+    class R:
+        def __init__(s, j):
+            s.status_code, s._j = 200, j
+
+        def json(s):
+            return s._j
+    monkeypatch.setattr(L.sig.wx, "_get", lambda url, params=None: R({"market": {"result": ex.results.get(url.rsplit("/", 1)[-1], "")}}))
+    st = fresh()
+    st["max_positions"] = slots
+    return ex, st, ms, state
+
+
+def test_spreads_the_stake_over_several_markets(monkeypatch):
+    ex, st, ms, state = multi_world(monkeypatch, n_markets=5, slots=10)
+    st["stake_fraction"] = 0.5
+    for k in range(3):                                                          # 3 new bids per step at most
+        L.step(ex, st, "LIVE", at(k * 0.1))
+    buys = [c for c in ex.calls if c[0] == "buy"]
+    assert len(buys) == 5 and len({c[1] for c in buys}) == 5                    # every market once, never twice
+    equity = 1000.0
+    assert all(c[3] == int(equity * 0.5 / 10 / 0.99) for c in buys[:3])        # each slot: 5% of equity (50)
+    assert sum(c[3] for c in buys) * 0.99 <= 1000 * 0.5 + 1                    # total stays within the stake
+
+
+def test_slots_cap_and_each_bid_is_pulled_on_its_own(monkeypatch):
+    ex, st, ms, state = multi_world(monkeypatch, n_markets=6, slots=4)
+    for k in range(3):
+        L.step(ex, st, "LIVE", at(k * 0.1))
+    assert len(L.active(st, at(0.3))) == 4                                      # never more than the slots
+    state["decided"]["KXBTCD-T1"] = False
+    L.step(ex, st, "LIVE", at(0.5))                                            # that one is pulled, the others stay
+    pulled = [o for o in L.opens(st) if o.get("cancelled")]
+    assert [o["ticker"] for o in pulled] == ["KXBTCD-T1"]
+    resting = [o for o in ex.orders.values() if o["status"] == "resting"]
+    assert len(resting) == 4                                                    # 3 kept + the freed slot refilled
+    assert "KXBTCD-T1" not in {o["ticker"] for o in resting}
+
+
+def test_one_wrong_call_costs_one_slot_and_pauses_new_bids(monkeypatch):
+    ex, st, ms, state = multi_world(monkeypatch, n_markets=3, slots=10)
+    st["stake_fraction"] = 0.5
+    L.step(ex, st, "LIVE", at(0))
+    for oid in list(ex.orders):
+        ex.fill(oid, ex.orders[oid]["count"])
+    ex.settle("KXBTCD-T0", "no", CLOSE + pd.Timedelta(seconds=30))             # one of the three goes wrong
+    ex.settle("KXBTCD-T1", "yes", CLOSE + pd.Timedelta(seconds=30))
+    ex.settle("KXBTCD-T2", "yes", CLOSE + pd.Timedelta(seconds=30))
+    L.step(ex, st, "LIVE", CLOSE + pd.Timedelta(minutes=3))
+    pnls = sorted(r["pnl"] for r in st["results"])
+    assert len(pnls) == 3 and pnls[0] < 0 and pnls[0] > -1000 * 0.5 / 10 - 1  # the loss is one slot, not the stake
+    assert st["pause_until"] > (CLOSE + pd.Timedelta(minutes=3)).timestamp()   # and the 24 h pause starts
+    assert not L.opens(st)
+
+
+def test_untracked_position_blocks_new_bids_but_tracked_ones_do_not(monkeypatch):
+    ex, st, ms, state = multi_world(monkeypatch, n_markets=4, slots=10)
+    L.step(ex, st, "LIVE", at(0))
+    oid = next(iter(ex.orders))
+    ex.fill(oid, 10)                                                            # our own fill: still free to bid more
+    L.step(ex, st, "LIVE", at(0.1))
+    assert len([c for c in ex.calls if c[0] == "buy"]) == 4
+    ex.fills["SOMEONE-ELSES"] = 5                                               # a position we never placed
+    st["traded"] = []
+    n = len([c for c in ex.calls if c[0] == "buy"])
+    for o in L.opens(st):
+        o["cancelled"] = True
+    L.step(ex, st, "LIVE", at(0.2))
+    assert len([c for c in ex.calls if c[0] == "buy"]) == n                    # blocked until it is explained
+
+
+def test_old_single_open_state_is_migrated():
+    st = {"open": {"ticker": "X", "close": "2026-11-10T12:15:00+00:00"}}
+    assert L.opens(st) == [{"ticker": "X", "close": "2026-11-10T12:15:00+00:00"}] and "open" not in st
+    assert L.opens({"open": None}) == []
+
+
+def test_real_decide_many_ranks_and_excludes(monkeypatch):
+    m = lambda t: {"ticker": t}
+    cands = [(m("FAR"), "KXETHD", "no", 26.0, 1.0), (m("NEAR"), "KXETHD", "no", 6.2, 1.0),
+             (m("CROWDED"), "KXETHD", "no", 6.1, 1.0), (m("HELD"), "KXBTCD", "yes", 6.0, 1.0)]
+    queues = {"FAR": 0.0, "NEAR": 400.0, "CROWDED": 25000.0, "HELD": 0.0}
+    monkeypatch.setattr(L, "candidates", lambda now: cands)
+    monkeypatch.setattr(L.sig, "queue_ahead", lambda t, side: queues[t])
+    got = [x[0]["ticker"] for x in L._decide_many(T0, exclude={"HELD"})]
+    assert got == ["NEAR", "FAR", "CROWDED"]

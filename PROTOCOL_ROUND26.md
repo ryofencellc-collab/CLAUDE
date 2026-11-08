@@ -51,3 +51,19 @@ The first dry-run hours picked by shortest queue and chose ETH strikes at z = 18
 rarely touch strikes that far away (paper hourly fills: ~280–300 contracts per filled market at z 6–10, ~90 at
 z > 15, ~40 at z > 30). The choice is now: queue ≤ 1,000 first, then the smallest z (still ≥ 6), then the
 shorter queue. Entry and cancel rules are unchanged. Made before the 2026-11-08 00:00 UTC window opens.
+
+## Amendment (2026-11-08 ~16:30 UTC): several markets at once; the test window restarts
+
+The first 15 hours of the window showed the one-market-at-a-time design barely fills: 16 bids, 1 fill (+$0.12),
+while the paper bot (every qualifying market) filled 50 markets (+$83) over the same hours. Paper daily counts
+explain it: only ~0.5% of qualifying hourly markets ever get a long-shot fill (Nov 8: 14 of 2,619 BTC hourly),
+so one slot almost always sits on a market that never trades.
+
+Change: up to `max_positions` = 10 bids at once; the governor's stake is split across them (stake 0.5 → 5% of
+equity per market, about 50 contracts on $1,000). The total at risk is the same as before; one wrong call now
+costs ~5% instead of ~50%. Entry, cancel, governor, audit and every other rule unchanged. A position we are not
+tracking still blocks new bids. Tests: 164 pass (6 new for the multi-market logic).
+
+**The 7-day dry-run window restarts at this deploy** (2026-11-08 ~16:30 UTC → 2026-11-15 ~16:30 UTC); same pass
+rules. Expectation revised honestly: the one-slot replay's ~$21/day is overstated (that replay only saw markets
+that filled); the dry run will measure the real figure.

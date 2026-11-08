@@ -46,7 +46,7 @@ def test_order_is_post_only_99c_buy_in_v2_shape():
 
 def test_sizing_and_risk_rules():
     st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 1000.0, "day_loss": 0.0,
-          "open": None, "results": []}
+          "opens": [], "max_positions": 1, "results": []}
     now = 1_000_000.0
     assert L.size_for(1000.0, st, now) == 959                    # 95% of balance at 99c
     assert L.size_for(50_000.0, st, now) == L.MAX_CONTRACTS        # capped
@@ -60,7 +60,7 @@ def test_sizing_and_risk_rules():
 
 def test_daily_stop():
     st = {"pause_until": 0.0, "half_until": 0.0, "day": "d", "day_start_balance": 1000.0, "day_loss": 120.0,
-           "open": None, "results": []}
+           "opens": [], "max_positions": 1, "results": []}
     assert L.blocked(st, 0.0, 1000.0) == "daily loss limit"
 
 
@@ -71,16 +71,16 @@ def test_dry_step_places_once_and_cancels_when_undecided(monkeypatch, tmp_path):
     market = {"ticker": "KXBTC15M-26NOV041215-15", "strike_type": "greater_or_equal", "floor_strike": 100.0,
               "cap_strike": None, "_close": pd.Timestamp("2026-11-04 12:15", tz="UTC")}
     monkeypatch.setattr(L, "decide", lambda now: (market, "KXBTC15M", "yes", 7.0, 101.0, 500.0))
-    st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None,
+    st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "opens": [], "max_positions": 1,
           "results": [], "stake_fraction": 0.95, "max_contracts": 1000}
     api = L.Kalshi(None, None)
     L.step(api, st, "DRY", now)
-    assert st["open"]["ticker"] == market["ticker"] and st["open"]["count"] == 1000
+    assert L.opens(st)[0]["ticker"] == market["ticker"] and L.opens(st)[0]["count"] == 1000
     L.step(api, st, "DRY", now)                                         # one position at a time
     assert len(pd.read_csv(tmp_path / "log.csv").query("event == 'place'")) == 1
     monkeypatch.setattr(L, "still_decided", lambda o, now: False)
     L.step(api, st, "DRY", now + pd.Timedelta(seconds=30))
-    assert st["open"]["cancelled"] is True
+    assert L.opens(st)[0]["cancelled"] is True
 
 
 def test_summary_reads_settled_pnl(monkeypatch, tmp_path):
@@ -119,7 +119,7 @@ class FakeApi:
 
 
 def fresh():
-    return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "open": None,
+    return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0, "opens": [], "max_positions": 1,
             "results": [], "stake_fraction": 0.95, "max_contracts": 1000}
 
 
@@ -143,7 +143,7 @@ def test_live_tracks_order_and_redacts_balance(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "decide", lambda now: (MARKET, "KXXRP15M", "yes", 7.0, 1.05, 200.0))
     api, st = FakeApi(), fresh()
     L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))
-    assert api.bought == [("KXXRP15M-X", "yes", 959)] and st["open"]["order_id"] == "oid-1"
+    assert api.bought == [("KXXRP15M-X", "yes", 959)] and L.opens(st)[0]["order_id"] == "oid-1"
     assert pd.read_csv(tmp_path / "log.csv")["balance"].isna().all()       # never written in LIVE
 
 
@@ -152,9 +152,8 @@ def test_rejected_order_leaves_nothing_tracked(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "STOP", tmp_path / "STOP")
     monkeypatch.setattr(L, "decide", lambda now: (MARKET, "KXXRP15M", "yes", 7.0, 1.05, 200.0))
     api, st = FakeApi(fail_buy=True), fresh()
-    with pytest.raises(RuntimeError):
-        L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))
-    assert st["open"] is None
+    L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))   # logged and skipped, other markets still bid
+    assert not L.opens(st) and ",error," in L.LOG.read_text() and "order rejected" in L.LOG.read_text()
 
 
 def test_open_position_blocks_new_orders(monkeypatch, tmp_path):
@@ -163,7 +162,7 @@ def test_open_position_blocks_new_orders(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "decide", lambda now: (MARKET, "KXXRP15M", "yes", 7.0, 1.05, 200.0))
     api, st = FakeApi(positions=[{"ticker": "OLD", "position": 500}]), fresh()
     L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))
-    assert api.bought == [] and st["open"] is None
+    assert api.bought == [] and not L.opens(st)
 
 
 def test_sweep_cancels_only_untracked_orders_of_ours(monkeypatch, tmp_path):
@@ -171,7 +170,7 @@ def test_sweep_cancels_only_untracked_orders_of_ours(monkeypatch, tmp_path):
     api = FakeApi(resting=[{"order_id": "keep", "client_order_id": "r21-a"}, {"order_id": "stray", "client_order_id": "r21-b"},
                            {"order_id": "manual", "client_order_id": "my-own-order"}])
     st = fresh()
-    st["open"] = {"order_id": "keep"}
+    st["opens"] = [{"order_id": "keep"}]
     L.sweep_strays(api, st, "LIVE")
     assert api.cancelled == ["stray"]                                    # never touches orders the bot did not place
 
@@ -217,7 +216,7 @@ def test_round25_size_is_kelly_capped_by_stake(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "decide", lambda now: (m, "KXXRP15M", "yes", 9.0, 1.05, 50.0))
     for cap, want in ((0.5, 505), (0.95, 808)):
         st = {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0,
-              "open": None, "results": [], "stake_fraction": cap, "max_contracts": 100000}
+              "opens": [], "max_positions": 1, "results": [], "stake_fraction": cap, "max_contracts": 100000}
         api = FakeApi()
         L.step(api, st, "LIVE", pd.Timestamp("2026-11-04 12:10", tz="UTC"))
         assert api.bought[0][2] == want                                         # min(stake cap, kelly 0.8)

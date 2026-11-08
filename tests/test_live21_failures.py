@@ -55,7 +55,7 @@ def test_cancel_that_keeps_failing_is_retried_every_pass(world, monkeypatch):
     for k in range(3):
         with pytest.raises(RuntimeError):
             L.step(ex, st, "LIVE", at(1 + k * 0.1))
-    assert len(tries) == 3 and not st["open"].get("cancelled")              # not marked done until it really is
+    assert len(tries) == 3 and not L.opens(st)[0].get("cancelled")              # not marked done until it really is
 
 
 def test_order_accepted_without_an_id_is_swept_not_left(world):
@@ -63,7 +63,7 @@ def test_order_accepted_without_an_id_is_swept_not_left(world):
     orig = ex.buy
     ex.buy = lambda *a, **k: (orig(*a, **k), {})[1]                          # the response lost the order id
     L.step(ex, st, "LIVE", at(0))
-    assert st["open"]["order_id"] is None
+    assert L.opens(st)[0]["order_id"] is None
     L.sweep_strays(ex, st, "LIVE")
     assert all(o["status"] != "resting" for o in ex.orders.values())        # nothing rests that we cannot track
 
@@ -166,7 +166,7 @@ def test_corrupt_state_file_starts_safe(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "STATE", tmp_path / "s.json")
     (tmp_path / "s.json").write_text("{not json")
     st = L.load_state()
-    assert st["open"] is None and st["pause_until"] == 0.0
+    assert not L.opens(st) and st["pause_until"] == 0.0
 
 
 def test_github_cancels_the_job_mid_trade(world, monkeypatch):
@@ -198,4 +198,4 @@ def test_filled_position_survives_an_error_and_still_settles(world, monkeypatch)
     mk.install(monkeypatch, _)
     ex.settle("KXXRP15M-T", "yes", CLOSE)
     L.step(ex, st, "LIVE", at(8))
-    assert st["open"] is None and st["results"][-1]["pnl"] > 0               # still booked correctly
+    assert not L.opens(st) and st["results"][-1]["pnl"] > 0               # still booked correctly

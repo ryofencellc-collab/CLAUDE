@@ -240,7 +240,7 @@ def load_state() -> dict:
         except ValueError:
             pass
     return {"pause_until": 0.0, "half_until": 0.0, "day": "", "day_start_balance": 0.0, "day_loss": 0.0,
-            "open": None, "results": []}
+            "opens": [], "results": []}
 
 
 def save_state(st: dict) -> None:
@@ -286,6 +286,10 @@ def read_control() -> dict:
     except (TypeError, ValueError):
         frac, cap = 0.25, MAX_CONTRACTS
     try:
+        slots = min(20, max(1, int(c.get("max_positions", MAX_POSITIONS))))
+    except (TypeError, ValueError):
+        slots = MAX_POSITIONS
+    try:
         deposit = float(c.get("deposit", 1000))
         deposit = deposit if deposit > 0 else 1000.0
     except (TypeError, ValueError):
@@ -297,7 +301,7 @@ def read_control() -> dict:
     stop = bool(c.get("stop", True)) or _control_misses[0] >= CONTROL_MAX_MISSES
     # anything missing or unreadable means: not live, stopped, smallest stake
     return {"live": bool(c.get("live", False)) and not stop, "stop": stop, "stake_fraction": frac, "max_contracts": cap,
-            "deposit": deposit, "live_since": since}
+            "deposit": deposit, "live_since": since, "max_positions": slots}
 
 
 def live_allowed(api: "Kalshi", control: dict) -> bool:
@@ -375,7 +379,7 @@ def audit_balance(api: "Kalshi", st: dict, pnls: list[tuple[float, float]], live
     a = st.get("audit")
     if not a or a.get("since") != live_since:
         a = st["audit"] = {"since": live_since, "snap": None, "bad": 0, "halt": None}
-    if a["halt"] or st.get("open"):
+    if a["halt"] or opens(st):
         return
     if any(str(o.get("client_order_id", "")).startswith("r21-") for o in api.resting()) or api.positions():
         return
@@ -449,6 +453,21 @@ def decide(now: pd.Timestamp):
     return best
 
 
+def decide_many(now: pd.Timestamp, exclude: set = frozenset(), look: int = 12) -> list:
+    """Candidates ranked as decide() ranks them (queue <= QUEUE_OK first, then smallest z, then shorter queue),
+    skipping markets we already hold or traded. Queue reads only for the `look` smallest-z candidates."""
+    cs = sorted((c for c in candidates(now) if c[0]["ticker"] not in exclude), key=lambda c: c[3])[:look]
+    ranked = []
+    for c in cs:
+        q = sig.queue_ahead(c[0]["ticker"], c[2])
+        q = q if np.isfinite(q) else math.inf
+        ranked.append(((q > QUEUE_OK, c[3], q), (*c, q)))
+    return [x for _, x in sorted(ranked, key=lambda r: r[0])]
+
+
+_decide_many = decide_many  # the real one (tests replace decide_many with a one-candidate stub)
+
+
 def still_decided(o: dict, now: pd.Timestamp) -> bool:
     spots, v, _ = px.quote(sig.SERIES[o["series"]], now)
     if not spots:
@@ -459,18 +478,34 @@ def still_decided(o: dict, now: pd.Timestamp) -> bool:
     return bool(decided(o["series"], z, tau))
 
 
-def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
-    """After the open market closes, read its result and our fill, and apply the risk rules."""
-    o = st["open"]
-    if not o or now < pd.Timestamp(o["close"]) + pd.Timedelta(minutes=2):
-        return
+MAX_POSITIONS = 10        # markets held at once; the stake is split across them (control: max_positions)
+PLACE_PER_STEP = 3        # new bids per 5-second step, so one step never stalls on order-book calls
+
+
+def opens(st: dict) -> list:
+    """Every bid/position we are tracking. (Older state files held a single "open"; migrated here.)"""
+    if "opens" not in st:
+        st["opens"] = [st["open"]] if st.get("open") else []
+    st.pop("open", None)
+    return st["opens"]
+
+
+def active(st: dict, now: pd.Timestamp) -> list:
+    """Bids still resting (not cancelled, market not closed)."""
+    return [o for o in opens(st) if not o.get("cancelled") and now < pd.Timestamp(o["close"])]
+
+
+def settle_one(api: Kalshi, st: dict, mode: str, now: pd.Timestamp, o: dict) -> bool:
+    """After a market closes, read its result and our fill and apply the risk rules. True = done with it."""
+    if now < pd.Timestamp(o["close"]) + pd.Timedelta(minutes=2):
+        return False
     r = sig.wx._get(f"{sig.wx.KALSHI}/markets/{o['ticker']}")
     m = r.json().get("market", {}) if r is not None and r.status_code == 200 else {}
     if m.get("result") not in ("yes", "no"):
-        if now > pd.Timestamp(o["close"]) + pd.Timedelta(hours=3):  # void or stuck: unblock, risk comes from settlements
+        if now > pd.Timestamp(o["close"]) + pd.Timedelta(hours=3):  # void or stuck: let go, risk comes from settlements
             log(mode, "settled", o["ticker"], o["side"], 0, detail=f"result={m.get('result')!r} unresolved after 3h pnl=0.00")
-            st["open"] = None
-        return
+            return True
+        return False
     if mode == "LIVE" and api.authed:
         filled = api.filled(o["ticker"], o.get("order_id"))
     else:  # dry run: the paper bot's fill accounting, so dry P&L is comparable 1:1 with the paper ledger
@@ -484,7 +519,27 @@ def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     pnl = filled * ((1.0 if right else 0.0) - PRICE_CENTS / 100) - (sig.r15._maker_fee(filled, 0.99) if filled else 0.0)
     record_result(st, now.timestamp(), pnl)
     log(mode, "settled", o["ticker"], o["side"], filled, detail=f"result={m['result']} pnl={pnl:.2f}")
-    st["open"] = None
+    return True
+
+
+def settle(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
+    st["opens"] = [o for o in opens(st) if not settle_one(api, st, mode, now, o)]
+
+
+def pull(api: Kalshi, mode: str, o: dict, now: pd.Timestamp, why: str) -> None:
+    if mode == "LIVE" and o.get("order_id"):
+        api.cancel(o["order_id"], o.get("ticker"))
+    log(mode, "cancel", o["ticker"], o["side"], o["count"], detail=why)
+    o["cancelled"] = True
+    o["cancelled_at"] = now.isoformat()
+
+
+def manage(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
+    """Pull every resting bid whose market is no longer decided, whose data went stale, or on any stop."""
+    stop = STOP.exists() or st.get("control_stop") or st.get("gov_halt")
+    for o in active(st, now):
+        if stop or not still_decided(o, now):
+            pull(api, mode, o, now, "z below threshold, stale data or stop")
 
 
 def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
@@ -493,58 +548,66 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     if st["day"] != day:
         st.update(day=day, day_start_balance=balance, day_loss=0.0)
     settle(api, st, mode, now)
-    o = st["open"]
-    if o and now < pd.Timestamp(o["close"]):
-        if o.get("cancelled"):
-            return
-        if not still_decided(o, now) or STOP.exists() or st.get("control_stop") or st.get("gov_halt"):
-            if mode == "LIVE" and o.get("order_id"):
-                api.cancel(o["order_id"], o.get("ticker"))
-            log(mode, "cancel", o["ticker"], o["side"], o["count"], detail="z below threshold, stale data or stop")
-            o["cancelled"] = True
-            o["cancelled_at"] = now.isoformat()
+    manage(api, st, mode, now)
+    if blocked(st, now.timestamp(), balance):
         return
-    if o:
-        return  # closed, waiting for its result
-    why = blocked(st, now.timestamp(), balance)
-    if why:
+    mine = {o["ticker"] for o in opens(st)}
+    if mode == "LIVE":
+        unknown = [p for p in api.positions() if p.get("ticker") not in mine]
+        if unknown:
+            return  # a position we are not tracking (an earlier job, or someone else): wait until it settles
+    slots = int(st.get("max_positions", MAX_POSITIONS)) - len(active(st, now))
+    if slots <= 0:
         return
-    if mode == "LIVE" and api.positions():
-        return  # a position from an earlier job is still open: wait until it settles
-    pick = decide(now)
-    if not pick:
-        return
+    # equity = free cash + what our resting bids hold back (Kalshi reserves it); the stake is split across slots
+    held = sum(o["count"] * PRICE_CENTS / 100 for o in active(st, now)) if mode == "LIVE" else 0.0
+    equity = balance + held
+    placed = 0
+    for pick in decide_many(now, exclude=mine | set(st.get("traded", []))):
+        if placed >= min(slots, PLACE_PER_STEP):
+            break
+        if place(api, st, mode, now, pick, equity, balance):
+            placed += 1
+            if mode == "LIVE":
+                balance -= opens(st)[-1]["count"] * PRICE_CENTS / 100
+
+
+def place(api, st, mode, now, pick, equity, cash) -> bool:
     m, series, side, z, spot, q = pick
-    if st.get("cooldown", {}).get(m["ticker"], 0) > now.timestamp():
-        return  # this market just rejected our order; let the book change first
-    if m["ticker"] in st.get("traded", []) or m["_close"] <= now:
-        return  # never a second order on a market already traded, and never one on a closed market
+    if st.get("cooldown", {}).get(m["ticker"], 0) > now.timestamp() or m["_close"] <= now:
+        return False  # this market just rejected our order (let the book change first), or it has closed
+    n_slots = max(1, int(st.get("max_positions", MAX_POSITIONS)))
     if series.endswith("15M"):
         p = flip_risk(z, max((m["_close"] - now).total_seconds() / 60, 0.5))
         frac = min(st.get("stake_fraction", 0.5), kelly(p))  # Round 25 sizing, never above the stake cap
     else:
         p = float("nan")  # hourly: no fitted risk; the governor's stake schedule alone sizes it
         frac = st.get("stake_fraction", 0.5)
-    count = size_for(balance, st, now.timestamp(), frac, st.get("max_contracts"))
+    count = size_for(equity, st, now.timestamp(), frac / n_slots, st.get("max_contracts"))
+    count = min(count, math.floor(cash / (PRICE_CENTS / 100)))  # never more than the free cash
     if count < 1:
-        log(mode, "skip", m["ticker"], side, 0, z, spot, balance, "balance too small")
-        return
+        log(mode, "skip", m["ticker"], side, 0, z, spot, cash, "balance too small")
+        return False
     st["traded"] = (st.get("traded", []) + [m["ticker"]])[-500:]
-    st["open"] = dict(ticker=m["ticker"], series=series, side=side, count=count, close=m["_close"].isoformat(),
-                      strike_type=m.get("strike_type"), floor=m.get("floor_strike"), cap=m.get("cap_strike"),
-                      order_id=None, placed=now.isoformat(), queue_ahead=(q if np.isfinite(q) else None))
+    o = dict(ticker=m["ticker"], series=series, side=side, count=count, close=m["_close"].isoformat(),
+             strike_type=m.get("strike_type"), floor=m.get("floor_strike"), cap=m.get("cap_strike"),
+             order_id=None, placed=now.isoformat(), queue_ahead=(q if np.isfinite(q) else None))
     if mode == "LIVE":
         try:
             order = api.buy(m["ticker"], side, count, expires=m["_close"].timestamp())
-        except Exception:
-            st["open"] = None  # rejected (e.g. post-only would cross): nothing rests
+        except Exception as e:
             st["traded"] = [t for t in st["traded"] if t != m["ticker"]]  # a rejected order is not a trade
             st.setdefault("cooldown", {})[m["ticker"]] = now.timestamp() + 60
-            raise
-        st["open"]["order_id"] = order.get("order_id")
+            log(mode, "error", m["ticker"], side, count, detail=f"order rejected: {e!r}"[:300])
+            return False
+        o["order_id"] = order.get("order_id")
+        opens(st).append(o)
         save_state(st)  # tracked before anything else can fail
-    log(mode, "place", m["ticker"], side, count, round(z, 2), spot, balance,
-        f"queue_ahead={q:.0f} risk={p:.5f} frac={frac:.3f} " + json.dumps(order_body(m["ticker"], side, count)))
+    else:
+        opens(st).append(o)
+    log(mode, "place", m["ticker"], side, count, round(z, 2), spot, cash,
+        f"queue_ahead={q:.0f} risk={p:.5f} frac={frac / n_slots:.3f} slots={n_slots} " + json.dumps(order_body(m["ticker"], side, count)))
+    return True
 
 
 def summary() -> str:
@@ -574,9 +637,9 @@ def summary() -> str:
 
 def sweep_strays(api: Kalshi, st: dict, mode: str) -> None:
     """Cancel any resting order of ours that is not the one we are tracking."""
-    keep = (st.get("open") or {}).get("order_id")
+    keep = {o.get("order_id") for o in opens(st) if not o.get("cancelled")}
     for o in api.resting():
-        if str(o.get("client_order_id", "")).startswith("r21-") and o.get("order_id") != keep:
+        if str(o.get("client_order_id", "")).startswith("r21-") and o.get("order_id") not in keep:
             api.cancel(o["order_id"], o.get("ticker"))
             log(mode, "cancel", o.get("ticker", ""), detail="stray order")
 
@@ -616,7 +679,8 @@ def run():
     mode = "LIVE" if live_allowed(api, control) and not st.get("gov_halt") else "DRY"
     log(mode, "start", detail=f"authed={api.authed} max={MAX_CONTRACTS} series={','.join(SERIES)}")
     if mode == "LIVE":
-        st["open"] = None
+        for o in opens(st):  # the last job pulled its resting bids on exit; what it had filled stays tracked
+            o["cancelled"] = True
         sweep_strays(api, st, mode)  # clean slate: nothing of ours rests from a previous job
         rebuild_risk(api, st, time.time())
         save_state(st)
@@ -646,6 +710,7 @@ def run():
 def apply_control(st: dict, control: dict) -> None:
     st["stake_fraction"], st["max_contracts"], st["control_stop"] = (
         control["stake_fraction"], control["max_contracts"], control["stop"])
+    st["max_positions"] = control.get("max_positions", MAX_POSITIONS)
 
 
 def go_dry(api, st) -> None:
@@ -654,7 +719,7 @@ def go_dry(api, st) -> None:
         if str(o.get("client_order_id", "")).startswith("r21-"):
             api.cancel(o["order_id"], o.get("ticker"))
             log("LIVE", "cancel", o.get("ticker", ""), detail="switching to DRY")
-    st["open"] = None
+    st["opens"] = []
 
 
 def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
@@ -671,7 +736,7 @@ def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
                     if mode == "LIVE":
                         go_dry(api, st)
                     else:
-                        st["open"] = None
+                        st["opens"] = []  # paper bids are not real ones
                         sweep_strays(api, st, "LIVE")
                         rebuild_risk(api, st, time.time())
                     log(want, "mode", detail=f"{mode} -> {want} ({st.get('gov_halt') or 'control file'})")
@@ -683,11 +748,13 @@ def loop(api, st, mode, t0, seconds, last_sweep, last_commit):
             step(api, st, mode, now)
         except Exception as e:  # never die silently with an order resting: log, pull orders, carry on
             log(mode, "error", detail=repr(e))
-            if mode == "LIVE" and st.get("open") and st["open"].get("order_id"):
-                try:
-                    api.cancel(st["open"]["order_id"], st["open"].get("ticker"))
-                except Exception:
-                    pass
+            if mode == "LIVE":
+                for o in active(st, now):
+                    try:
+                        api.cancel(o["order_id"], o.get("ticker")) if o.get("order_id") else None
+                        o["cancelled"], o["cancelled_at"] = True, now.isoformat()
+                    except Exception:
+                        pass
         if mode == "LIVE" and time.time() - last_risk > 60:
             try:
                 rebuild_risk(api, st, time.time())
