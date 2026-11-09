@@ -1,0 +1,20 @@
+name: probe_loss
+# One-off: the Nov 8 22:00 UTC settlement.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install requests && python probe_loss.py
+      - name: Commit
+        run: |
+          git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe/loss && git commit -q -m "probe: loss forensics [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
