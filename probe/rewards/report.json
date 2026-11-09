@@ -1,0 +1,39 @@
+{
+ "kalshi_status": [
+  [
+   "active",
+   200,
+   "{\"incentive_programs\":[{\"discount_factor_bps\":5000,\"end_date\":\"2026-11-16T05:00:00Z\",\"id\":\"362e21ee-896d-4d49-9d38-c428479ffd3a\",\"incentive_description\":\"series_lip\",\"incentive_type\":\"liquidity\",\"market_id\":\"01a1ba63-9866-7614-9ac5-bb730e3036c3\",\"market_ticker\":\"KXC4POS-26DEC03-T127.5\",\"paid_out\":fa"
+  ],
+  [
+   "active",
+   200,
+   "{\"incentive_programs\":[{\"discount_factor_bps\":5000,\"end_date\":\"2026-11-15T05:00:00Z\",\"id\":\"d1ffba39-35e4-420f-b4e6-95c3f7de07b3\",\"incentive_description\":\"series_lip\",\"incentive_type\":\"liquidity\",\"market_id\":\"db2da5da-fefe-4928-ab3e-dd1b2eefc544\",\"market_ticker\":\"KXHEADLINE-MIN27DEC31-TAM\",\"paid_out\""
+  ],
+  [
+   "active",
+   200,
+   "{\"incentive_programs\":[{\"discount_factor_bps\":5000,\"end_date\":\"2026-11-13T05:00:00Z\",\"id\":\"9ffc7a1c-320b-4812-91a0-d7a867a9bc27\",\"incentive_description\":\"series_lip\",\"incentive_type\":\"liquidity\",\"market_id\":\"30bf5af8-8e93-4519-aeb1-0080ebcdf7de\",\"market_ticker\":\"KXART-VANCHAT18NOV26-140000000\",\"paid"
+  ],
+  [
+   "active",
+   200,
+   "{\"incentive_programs\":[{\"discount_factor_bps\":5000,\"end_date\":\"2026-11-12T05:00:00Z\",\"id\":\"142d5b55-768a-4006-8803-0629f0ff40a5\",\"incentive_description\":\"series_lip\",\"incentive_type\":\"liquidity\",\"market_id\":\"905d210c-8953-40c3-96a7-9933abf927ec\",\"market_ticker\":\"KXNCAAFTFUT-30ARK-Y\",\"paid_out\":false"
+  ],
+  [
+   "active",
+   200,
+   "{\"incentive_programs\":[{\"discount_factor_bps\":5000,\"end_date\":\"2026-11-10T15:00:00Z\",\"id\":\"2a2fda24-5eab-4e17-be9c-9f27ff99e85c\",\"incentive_description\":\"series_lip\",\"incentive_type\":\"liquidity\",\"market_id\":\"01a19cc7-2f16-75e6-890d-9bb8a1d0156b\",\"market_ticker\":\"KXYTVIEWSW-BAD26NOV08-28.0M\",\"paid_ou"
+  ]
+ ],
+ "kalshi_n": 4102,
+ "poly_n": 446,
+ "https://clob.polymarket.com/rewards/markets/current": [
+  200,
+  "{\"data\":[{\"condition_id\":\"0x0002b6b6b307b97bf91a56b57209270db8bece06f3b86c3db50f58c8b3b0a2b0\",\"rewards_config\":[{\"asset_address\":\"0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB\",\"start_date\":\"2026-11-09\",\"end_date\":\"2500-12-31\",\"rate_per_day\":6,\"total_rewards\":0,\"id\":0}],\"rewards_max_spread\":4.5,\"rewards_min_size\":20,\"native_daily_rate\":6,\"total_daily_rate\":6},{\"condition_id\":\"0x000b846dea9028b82c34294d4b0cef8d106159db7ee511cea43cbbb4cb8bb656\",\"rewards_config\":[{\"asset_address\":\"0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB\",\"start_date\":\"2026-11-08\",\"end_date\":\"2500-12-31\",\"rate_per_day\":1,\"total_rewards\":0,\"id\":0}],\"rewards_max_spread\":6.5,\"rewards_min_size\":20,\"native_daily_rate\":1,\"total_daily_rate\":1},{\"condition_id\":\"0x000c7a50900321bab3ffc498b1f8d5493820ce68edfa8ab669885fd9b8c7d339\",\"rewards_config\":[{\"asset_address\":\"0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB\",\"start_date\":\"2026-11-02\",\"end_date\":\"2500-12-31\",\"rate_per_day\":3,\"total_rewards\":0,\"id\":0}],\"rewards_max_spread\":6.5,\"rewards_min_size\":30,\"native_daily_rate\":3,\"total_daily_rate\":3},{\"condition_id\":\"0x001650dac1c729f1dd7fc4d8a5e26d7da50beaab9baabc9dc40bfb2165b6caae\",\"rewards_config\":[{\"asset_address\":\"0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB\",\"start_date\":\"2026-10-03\",\"end_date\":\"2500-12-31\",\"rate_per_day\":3,\"total_rewards\":0,\"id\":0}],\"rewards_max_spread\":4.5,\"rewards_min_size\":30,\"native_daily_rate\":3,\"total_daily_rate\":3},{\"condition_id\":\"0x00234b7ecc671c6b4ee3942bb7a85b1ea87e5b09de2976d2979165a6eac5d6d5\",\"rewar"
+ ],
+ "https://clob.polymarket.com/sampling-markets": [
+  200,
+  "{\"data\":[{\"enable_order_book\":true,\"active\":true,\"closed\":false,\"archived\":false,\"accepting_orders\":true,\"accepting_order_timestamp\":\"2025-07-03T20:36:33Z\",\"minimum_order_size\":5,\"minimum_tick_size\":0.001,\"condition_id\":\"0xa467b14d51f01b957109d9cbb1d6c124fab2a089d52ed8f471d23c2812e743b7\",\"question_id\":\"0x1d925c6933062c2e38031293612d8680ffa097c5d3ba2f87a8ecc565bd47183e\",\"question\":\"Xi Jinping out before 2027?\",\"description\":\"This market will resolve to \\\"Yes\\\" if China's General Secretary of the Communist Party, Xi Jinping, is removed from power for any length of time between July 3, 2025, and December 31, 2026, 11:59 PM ET. Otherwise, this market will resolve to \\\"No\\\".\\n\\nCCP General Secretary Xi Jinping will be considered removed from power if he announces his resignation from his role as General Secretary, or is otherwise dismissed, detained, disqualified, or otherwise loses his position or is prevented from fulfilling his duties as General Secretary within this market's timeframe.\\n\\nThe primary resolution source for this market will be a consensus of credible reporting.\",\"market_slug\":\"xi-jinping-out-before-2027\",\"end_date_iso\":\"2027-01-01T00:00:00Z\",\"game_start_time\":null,\"seconds_delay\":0,\"fpmm\":\"\",\"maker_base_fee\":1000,\"taker_base_fee\":1000,\"notifications_enabled\":true,\"neg_risk\":false,\"neg_risk_market_id\":\"\",\"neg_risk_request_id\":\"\",\"icon\":\"https://polymarket-upload.s3.us-east-2.amazonaws.com/xi-jinping-out-in-2025-EjF4SM20eaa3.jpg\",\"image\":\"https://polymarket-upload"
+ ]
+}
