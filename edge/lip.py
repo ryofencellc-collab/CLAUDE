@@ -24,6 +24,8 @@ RUN_SECONDS = int(os.environ.get("R44_SECONDS", str(5 * 3600 + 40 * 60)))
 STEP = 60
 RANK_EVERY = 3600
 MIN_POOL_DAY = 3.0
+MAX_PER_EVENT = 3          # strikes of one event move together (Round 40/41 lesson)
+MAX_EVENT_COLLATERAL = 1500.0
 
 
 def fnum(x, d=0.0):
@@ -227,11 +229,16 @@ def rank(now: pd.Timestamp, held: dict) -> dict:
     for v in keep.values():
         v["active"] = False
     used = sum(collateral(v) for v in keep.values())
+    ev_n, ev_cap = {}, {}
+    for t, v in keep.items():
+        e = t.rsplit("-", 1)[0]; ev_cap[e] = ev_cap.get(e, 0.0) + collateral(v)
     chosen = 0
     for per, rew, cap, p in cands:
         t = p["market_ticker"]
-        if used + cap > BUDGET:
+        e = t.rsplit("-", 1)[0]
+        if used + cap > BUDGET or ev_n.get(e, 0) >= MAX_PER_EVENT or ev_cap.get(e, 0.0) + cap > MAX_EVENT_COLLATERAL:
             continue
+        ev_n[e] = ev_n.get(e, 0) + 1; ev_cap[e] = ev_cap.get(e, 0.0) + cap
         if t in keep:
             keep[t]["active"] = True
             keep[t].update({k: new_pos(p)[k] for k in ("program", "pool_day", "end", "q", "target", "disc")})

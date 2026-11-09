@@ -26,3 +26,9 @@ fill (charged even where the series has none). A dropped market keeps its invent
 **Known gaps:** competitors re-pegging faster than once a minute, rewards for snapshots between our minute samples,
 real queue position, and whether rewards actually pay out as estimated. All of those are settled by a small live test,
 which needs the Kalshi API key and is outside this paper test.
+
+## Amendment 1 (2026-11-09, after a 20-minute smoke run, before the forward test starts)
+The smoke run worked: 65 markets quoted, $9.8k collateral, about $0.40 of reward a minute, no fills. Most of it sat in
+Rotten Tomatoes score ladders (KXRT): several strikes of one film, which all move at once when the score is revealed.
+Per the Nov 8 lesson (correlated strikes are one bet), each event is now capped at 3 markets and $1,500 of collateral.
+The smoke ledger is discarded. Everything else is unchanged.
