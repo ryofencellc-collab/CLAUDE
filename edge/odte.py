@@ -77,7 +77,7 @@ def write(frames: dict, day: str, tag: str) -> list[str]:
 def commit(paths: list[str], msg: str) -> None:
     if not paths:
         return
-    for c in (["git", "add", *paths], ["git", "commit", "-q", "-m", msg],
+    for c in (["git", "add", "-f", *paths], ["git", "commit", "-q", "-m", msg],
               ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
         try:
             if subprocess.run(c, cwd=ROOT, timeout=180).returncode != 0 and c[1] == "commit":
