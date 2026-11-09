@@ -20,7 +20,7 @@ for name, fn in RULES.items():
             got = np.clip(cum - Q, 0, 1000); got = np.diff(np.concatenate([[0], got]))
             fills.append(pd.DataFrame({"ts": x.ts.values, "n": got, "won": x.won.values, "event": x.event.values}))
         f = pd.concat(fills) if fills else pd.DataFrame(columns=["ts", "n", "won", "event"])
-        f = f[f.n > 0]
+        f = f[f.n > 0].copy(); f["ts"] = pd.to_datetime(f["ts"], utc=True)
         for per, y in [("dev", f[f.ts < HOLD]), ("holdout", f[f.ts >= HOLD]), ("Oct 29+", f[f.ts >= pd.Timestamp("2026-10-29", tz="UTC")])]:
             tot = y.n.sum(); L = y.n[~y.won.astype(bool)].sum() / tot if tot else np.nan
             rows.append(dict(rule=name, queue=Q, period=per, our_fills=round(tot), L=f"{L:.2%}" if tot else "",
