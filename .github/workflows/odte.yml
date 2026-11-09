@@ -1,15 +1,21 @@
 name: odte
-# Round 39 collector (PROTOCOL_ROUND39.md): free Cboe delayed 0DTE quotes, Mon-Fri.
-# Two jobs per day cover 12:50-21:20 UTC (early start absorbs cron delay); each writes its own part file.
+# Round 39 collector (PROTOCOL_ROUND39.md): free Cboe delayed 0DTE quotes, Mon-Fri 12:50-21:20 UTC.
+# Self-chaining: each job collects (or waits for the next window) and then starts the next job, so it does not
+# depend on GitHub's cron (which skipped the first day). The cron stays as a backup; the concurrency group merges chains.
 on:
   schedule:
     - cron: "50 12 * * 1-5"
-    - cron: "20 18 * * 1-5"
   workflow_dispatch:
     inputs:
-      max_seconds: {description: "smoke-test length", default: "20400"}
+      max_seconds: {description: "collection length (smoke test: small)", default: "20400"}
+      start_utc: {description: "override today's window start HH:MM (UTC)", default: ""}
+      chain: {description: "start the next job when done", default: "yes"}
 permissions:
   contents: write
+  actions: write
+concurrency:
+  group: odte
+  cancel-in-progress: false
 jobs:
   collect:
     runs-on: ubuntu-latest
@@ -17,6 +23,7 @@ jobs:
     env:
       ODTE_COMMIT: "1"
       ODTE_MAX_SECONDS: ${{ inputs.max_seconds || '20400' }}
+      ODTE_START_UTC: ${{ inputs.start_utc || '' }}
     steps:
       - uses: actions/checkout@v4
         with: {ref: "claude/eloquent-darwin-2lipsh"}
@@ -29,4 +36,11 @@ jobs:
       - run: python -m edge.odte
       - uses: actions/upload-artifact@v4
         if: always()
-        with: {name: "odte-${{ github.run_id }}", path: data/odte/, retention-days: 90, if-no-files-found: warn}
+        with: {name: "odte-${{ github.run_id }}", path: data/odte/, retention-days: 90, if-no-files-found: ignore}
+      - name: Start the next job
+        if: always() && (inputs.chain || 'yes') == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ job.status }}" != "success" ]; then sleep 120; fi
+          for i in 1 2 3; do gh workflow run odte.yml --ref claude/eloquent-darwin-2lipsh && exit 0; sleep 20; done

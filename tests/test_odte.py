@@ -17,3 +17,13 @@ def test_parse_keeps_near_dated_near_money():
 
 def test_parse_no_spot_is_empty():
     assert odte.parse({"data": {"options": []}}, datetime.now(timezone.utc)).empty
+
+
+def test_windows_skip_weekends_and_wait_before_open():
+    mon_early = datetime(2026, 11, 9, 3, 0, tzinfo=timezone.utc)
+    a, b = odte.next_window(mon_early)
+    assert (a.hour, a.minute, a.day) == (12, 50, 9) and (b.hour, b.minute) == (21, 20)
+    fri_late = datetime(2026, 11, 13, 22, 0, tzinfo=timezone.utc)
+    assert odte.next_window(fri_late)[0].day == 16          # Saturday/Sunday skipped -> Monday
+    inside = datetime(2026, 11, 9, 15, 0, tzinfo=timezone.utc)
+    assert odte.next_window(inside)[0] <= inside < odte.next_window(inside)[1]

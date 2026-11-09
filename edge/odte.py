@@ -19,6 +19,8 @@ POLL = int(os.environ.get("ODTE_POLL", "60"))
 MAX_DTE = 3
 BAND = 0.04
 STOP_UTC = os.environ.get("ODTE_STOP_UTC", "21:20")
+START_UTC = os.environ.get("ODTE_START_UTC") or "12:50"
+WAIT_MAX = 5 * 3600 + 30 * 60
 MAX_SECONDS = int(os.environ.get("ODTE_MAX_SECONDS", str(5 * 3600 + 40 * 60)))
 SYM = re.compile(r"^([A-Z]+?)(\d{6})([CP])(\d{8})$")
 KEEP = ["bid", "ask", "bid_size", "ask_size", "iv", "delta", "gamma", "theo",
@@ -86,7 +88,34 @@ def commit(paths: list[str], msg: str) -> None:
             return
 
 
+def _at(day: datetime, hhmm: str) -> datetime:
+    hh, mm = map(int, hhmm.split(":"))
+    return day.replace(hour=hh, minute=mm, second=0, microsecond=0)
+
+
+def next_window(now: datetime) -> tuple[datetime, datetime]:
+    """The collection window [start, stop) that is open now, or the next one (weekdays only)."""
+    d = now
+    for _ in range(8):
+        a, b = _at(d, START_UTC), _at(d, STOP_UTC)
+        if d.weekday() < 5 and now < b:
+            return a, b
+        d = (d + timedelta(days=1)).replace(hour=0, minute=0)
+    raise RuntimeError("no window within a week")
+
+
 def run() -> None:
+    now = datetime.now(timezone.utc)
+    a, b = next_window(now)
+    if now < a:  # outside market hours: wait (at most ~5.5 h per job), then let the workflow start the next link
+        wait = min((a - now).total_seconds(), WAIT_MAX)
+        print(f"{now:%a %H:%M}Z: next window {a:%a %H:%M}Z, waiting {wait / 60:.0f} min", flush=True)
+        time.sleep(wait)
+        return
+    collect()
+
+
+def collect() -> None:
     t0 = time.time()
     start = datetime.now(timezone.utc)
     day, tag = start.strftime("%Y-%m-%d"), start.strftime("%H%M")
