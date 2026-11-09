@@ -1,15 +1,15 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-09 20:38 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-09 22:38 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 189,176 (cancelled before close 4,229); open now 1,298 |
+| Markets bid and settled | 189,514 (cancelled before close 4,230); open now 2,120 |
 | Markets that got any fill | 845 (0.4%) |
 | Losing filled markets | 9 |
 | Contracts filled | 286,991 |
 | **Paper profit** | **$-1,455.53** |
-| Average queue ahead at placement | 19,659 contracts |
+| Average queue ahead at placement | 19,666 contracts |
 
 | Day | Settled | Filled markets | Contracts | P&L |
 |---|---:|---:|---:|---:|
@@ -24,7 +24,7 @@ Updated 2026-11-09 20:38 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-06 | 21,747 | 90 | 31,860 | $+312.51 |
 | 2026-11-07 | 20,071 | 88 | 31,191 | $+305.93 |
 | 2026-11-08 | 20,023 | 108 | 42,963 | $-3845.67 |
-| 2026-11-09 | 18,937 | 84 | 29,477 | $+289.09 |
+| 2026-11-09 | 19,275 | 84 | 29,477 | $+289.09 |
 
 | Series | Settled | Filled markets | Contracts | P&L | Avg queue |
 |---|---:|---:|---:|---:|---:|
@@ -38,9 +38,9 @@ Updated 2026-11-09 20:38 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | KXNASDAQ100 | 117 | 2 | 1,009 | $+9.90 | 1,287 |
 | KXNASDAQ100U | 4,879 | 34 | 2,936 | $+28.60 | 5,298 |
 | KXSOL15M | 160 | 19 | 18,880 | $+185.40 | 39,558 |
-| KXSOLD | 62,677 | 115 | 15,466 | $+151.42 | 19,610 |
+| KXSOLD | 62,946 | 115 | 15,466 | $+151.42 | 19,624 |
 | KXXRP15M | 168 | 40 | 38,907 | $+382.07 | 37,053 |
-| KXXRPD | 15,944 | 150 | 17,056 | $+161.46 | 20,150 |
+| KXXRPD | 16,013 | 150 | 17,056 | $+161.46 | 20,172 |
 
 ## Capital a real account would tie up (resting bids x size x 99c)
 
