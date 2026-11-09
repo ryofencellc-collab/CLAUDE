@@ -19,8 +19,8 @@ def fnum(x, d=np.nan):
 
 
 def collect():
-    p = f"{OUT}/trades.pkl"
-    if os.path.exists(p): return pd.read_pickle(p)
+    path = f"{OUT}/trades.pkl"
+    if os.path.exists(path): return pd.read_pickle(path)
     ser = r27.series_list(); print("series", len(ser), flush=True)
     meta = {s["ticker"]: (s.get("category") or "?", "maker" in str(s.get("fee_type") or "")) for s in ser}
     rng = np.random.default_rng(45); pairs = []
@@ -40,16 +40,23 @@ def collect():
         for t in r27.trades(m["ticker"], close, cut, max_pages=5):
             side = t.get("taker_side")
             if side not in ("yes", "no"): continue
-            p = fnum(t.get("yes_price_dollars"), fnum(t.get("yes_price"), np.nan) / 100)
-            if not 0 < p < 1: continue
+            px = fnum(t.get("yes_price_dollars"), fnum(t.get("yes_price"), np.nan) / 100)
+            if not 0 < px < 1: continue
             rows.append((s, m.get("event_ticker") or m["ticker"].rsplit("-", 1)[0], m["ticker"], m["result"], close,
-                         pd.Timestamp(t["created_time"]), side, p, fnum(t.get("count_fp") or t.get("count"), 0)))
+                         pd.Timestamp(t["created_time"]), side, px, fnum(t.get("count_fp") or t.get("count"), 0)))
         if k % 500 == 0:
             print(f"  {k}/{len(pairs)} markets, {len(rows)} trades, {time.time() - t0:.0f}s", flush=True)
+        if k % 5000 == 4999:
+            frame(rows, meta).to_pickle(path)        # checkpoint: a crash later never loses the download
+    d = frame(rows, meta)
+    d.to_pickle(path); return d
+
+
+def frame(rows, meta):
     d = pd.DataFrame(rows, columns=["series", "event", "ticker", "result", "close", "ts", "taker", "p", "n"])
     d["category"] = d.series.map(lambda s: meta.get(s, ("?", False))[0])
     d["maker_fee"] = d.series.map(lambda s: meta.get(s, ("?", False))[1])
-    d.to_pickle(p); return d
+    return d
 
 
 def prep(d):

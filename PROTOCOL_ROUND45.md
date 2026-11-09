@@ -20,3 +20,8 @@ event-clustered t ≥ 3. It passes if the holdout has ≥ 30 events, return > 0 
 calibration curve (a sanity check against the literature: longshots should win less often than their price implies).
 **Caveat.** These are returns of makers who got filled. Our own fills depend on the queue, as Round 41b showed. A
 passing cell becomes a forward paper test (or a tilt in Round 44), not a funded strategy.
+
+## Amendment 1 (2026-11-09 21:10 UTC, no data seen)
+The first run downloaded 11.4M trades from 44k of the 84k sampled markets, then crashed while saving. A loop variable
+had overwritten the file path. Nothing was analysed and the data was lost. Fixed, checked offline with stubbed
+endpoints, and the download now checkpoints every 5,000 markets. Re-run unchanged otherwise.
