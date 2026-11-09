@@ -24,6 +24,7 @@ RUN_SECONDS = int(os.environ.get("R44_SECONDS", str(5 * 3600 + 40 * 60)))
 STEP = 60
 RANK_EVERY = 3600
 MIN_POOL_DAY = 3.0
+BANK: dict = {}               # reward/realized/fees of markets we stopped quoting (state['bank'])
 MAX_PER_EVENT = 3          # strikes of one event move together (Round 40/41 lesson)
 MAX_EVENT_COLLATERAL = 1500.0
 
@@ -239,13 +240,18 @@ def rank(now: pd.Timestamp, held: dict) -> dict:
         if used + cap > BUDGET or ev_n.get(e, 0) >= MAX_PER_EVENT or ev_cap.get(e, 0.0) + cap > MAX_EVENT_COLLATERAL:
             continue
         ev_n[e] = ev_n.get(e, 0) + 1; ev_cap[e] = ev_cap.get(e, 0.0) + cap
-        if t in keep:
+        if t in held:                                   # same object: its running reward/fees/P&L carry over
+            keep[t] = held[t]
             keep[t]["active"] = True
             keep[t].update({k: new_pos(p)[k] for k in ("program", "pool_day", "end", "q", "target", "disc")})
         else:
             keep[t] = new_pos(p)
         used += cap
         chosen += 1
+    for t, v in held.items():                           # dropped markets: bank what they earned so totals never go backwards
+        if t not in keep:
+            for k in ("reward", "realized", "fees"):
+                BANK[k] = BANK.get(k, 0.0) + v.get(k, 0.0)
     print(f"{now:%H:%M} ranked {len(cands)} candidates from {len(progs)} programs; quoting {chosen}, collateral ${used:,.0f}", flush=True)
     return keep
 
@@ -274,6 +280,8 @@ def step(pos_all: dict, now: pd.Timestamp, last: float) -> tuple[dict, list[dict
     for pos in pos_all.values():
         row["reward"] += pos["reward"]; row["realized"] += pos["realized"]; row["fees"] += pos["fees"]
         row["mtm"] += pos.get("mtm", 0.0); row["collateral"] += collateral(pos) if not pos.get("settled") else 0.0
+    for k in ("reward", "realized", "fees"):
+        row[k] += BANK.get(k, 0.0)
     row["net"] = row["reward"] + row["realized"] + row["mtm"] - row["fees"]
     return pos_all, fills + [{"_row": row}]
 
@@ -311,8 +319,21 @@ def commit(now):
             return
 
 
+def recover_bank() -> dict:
+    """One-off repair (Nov 9): before banking existed, each hourly re-rank reset the reward of re-chosen markets to 0,
+    so the logged running total dropped. Every drop between consecutive minutes is reward that was lost from the total."""
+    if not os.path.exists(MINUTES):
+        return {}
+    r = pd.read_csv(MINUTES)["reward"].to_numpy()
+    lost = sum(a - b for a, b in zip(r[:-1], r[1:]) if b < a - 1e-9)
+    return {"reward": float(lost)}
+
+
 def run():
     st = json.load(open(STATE)) if os.path.exists(STATE) else {"pos": {}, "last": time.time() - STEP, "ranked": 0}
+    if "bank" not in st:
+        st["bank"] = recover_bank()
+    BANK.clear(); BANK.update(st["bank"])
     t0, last_commit = time.time(), time.time()
     while time.time() - t0 < RUN_SECONDS:
         now = pd.Timestamp.now(tz="UTC")
@@ -325,6 +346,7 @@ def run():
             pd.DataFrame([row]).to_csv(MINUTES, mode="a", header=not os.path.exists(MINUTES), index=False)
             if out:
                 pd.DataFrame(out).to_csv(FILLS, mode="a", header=not os.path.exists(FILLS), index=False)
+            st["bank"] = dict(BANK)
             json.dump(st, open(STATE, "w"))
         except Exception as e:
             print(f"{now:%H:%M:%S} step failed: {e!r}", flush=True)

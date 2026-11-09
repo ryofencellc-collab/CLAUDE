@@ -43,3 +43,19 @@ def test_trade_through_our_price_fills_the_rest_but_never_beyond_q():
 
 def test_pool_day_units():
     assert abs(lip.pool_day({"period_reward": 1_000_000, "start_date": "2026-11-09T00:00:00Z", "end_date": "2026-11-16T00:00:00Z"}) - 100 / 7) < 1e-9
+
+
+def test_rerank_keeps_running_totals(monkeypatch):
+    prog = {"market_ticker": "M-1", "id": "x", "target_size_fp": "1000", "discount_factor_bps": 5000, "period_reward": 1_000_000,
+            "start_date": "2026-11-09T00:00:00Z", "end_date": "2026-11-16T00:00:00Z"}
+    held = {"M-1": lip.new_pos(prog)}
+    held["M-1"]["reward"] = 5.0
+    gone = lip.new_pos({**prog, "market_ticker": "G-1"}); gone["reward"] = 2.0
+    held["G-1"] = gone
+    monkeypatch.setattr(lip, "programs", lambda: [prog])
+    monkeypatch.setattr(lip, "markets_info", lambda ts: {"M-1": {"status": "active", "price_level_structure": "linear_cent",
+                                                                 "close_time": "2030-01-01T00:00:00Z", "yes_bid_dollars": "0.40", "yes_ask_dollars": "0.45"}})
+    monkeypatch.setattr(lip, "book", lambda t: ([(0.40, 500), (0.39, 2000)], [(0.55, 500), (0.54, 2000)]))
+    lip.BANK.clear()
+    keep = lip.rank(__import__("pandas").Timestamp("2026-11-10", tz="UTC"), held)
+    assert keep["M-1"]["reward"] == 5.0 and "G-1" not in keep and lip.BANK["reward"] == 2.0

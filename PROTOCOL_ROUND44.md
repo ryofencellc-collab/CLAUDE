@@ -32,3 +32,9 @@ The smoke run worked: 65 markets quoted, $9.8k collateral, about $0.40 of reward
 Rotten Tomatoes score ladders (KXRT): several strikes of one film, which all move at once when the score is revealed.
 Per the Nov 8 lesson (correlated strikes are one bet), each event is now capped at 3 markets and $1,500 of collateral.
 The smoke ledger is discarded. Everything else is unchanged.
+
+## Amendment 2 (2026-11-09 18:00 UTC): bookkeeping fix, no rule change
+Each hourly re-rank rebuilt the record of every market it kept, so the running reward reset to zero for those markets
+(the logged total fell from $15.77 to $3.58 at 16:14 and from $17.48 to $4.08 at 17:14). Kept markets now keep their
+record, and markets we stop quoting bank their reward, realised P&L and fees. The rewards lost before the fix are
+recovered from the per-minute log (every fall in the running total, $31.97) and carried in the bank.
