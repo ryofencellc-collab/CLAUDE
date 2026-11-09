@@ -324,9 +324,12 @@ def recover_bank() -> dict:
     so the logged running total dropped. Every drop between consecutive minutes is reward that was lost from the total."""
     if not os.path.exists(MINUTES):
         return {}
-    r = pd.read_csv(MINUTES)["reward"].to_numpy()
-    lost = sum(a - b for a, b in zip(r[:-1], r[1:]) if b < a - 1e-9)
-    return {"reward": float(lost)}
+    d = pd.read_csv(MINUTES)
+    out = {}
+    for k in ("reward", "realized", "fees"):     # all three were reset the same way (no market settled before the fix)
+        r = d[k].to_numpy()
+        out[k] = float(sum(a - b for a, b in zip(r[:-1], r[1:]) if b < a - 1e-9))
+    return out
 
 
 def run():

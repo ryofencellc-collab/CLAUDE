@@ -37,4 +37,5 @@ The smoke ledger is discarded. Everything else is unchanged.
 Each hourly re-rank rebuilt the record of every market it kept, so the running reward reset to zero for those markets
 (the logged total fell from $15.77 to $3.58 at 16:14 and from $17.48 to $4.08 at 17:14). Kept markets now keep their
 record, and markets we stop quoting bank their reward, realised P&L and fees. The rewards lost before the fix are
-recovered from the per-minute log (every fall in the running total, $31.97) and carried in the bank.
+recovered from the per-minute log (every fall in each running total; no market had settled yet, so every fall
+was a reset) and carried in the bank. Realised P&L and fees were reset the same way and are recovered too.
