@@ -729,3 +729,4 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-08T23:02:06.645928+00:00,DRY,settled,KXBTCD-26NOV0818-T82099.99,no,0.0,,,,result=no pnl=0.00
 2026-11-09T04:07:07.176286+00:00,DRY,stop,,,0,,,,job ending
 2026-11-09T04:07:47.717394+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTCD,KXETHD,KXSOLD,KXXRPD"
+2026-11-09T09:52:48.303966+00:00,DRY,stop,,,0,,,,job ending
