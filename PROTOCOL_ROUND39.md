@@ -48,6 +48,10 @@ With ~4 entries a day × 20 days, only a strong effect can pass at 20 days; that
 - 2026-11-09: collector smoke test showed `data/` is git-ignored; snapshots are now force-added and also uploaded as a
   90-day artifact. First daily job moved to 12:50 UTC so a late cron cannot miss the 09:30 ET open. No strategy changes.
 
+- 2026-11-09 (day one): GitHub's cron never fired the 12:50 UTC start; started by hand at 14:32 UTC (feed ~15 min
+  behind, so the feed's 09:30 ET open is still captured). The collector now chains itself job to job (waits between
+  windows) instead of relying on cron. No strategy changes.
+
 ## 39a result (2026-11-09) — model screen: **A fail, B fail**
 SPX + VIX1D 2022-05 → 2026-11, 1,126 days (`reports/ROUND39A.md`). Selling the 0DTE straddle at the VIX1D price earned
 on average +3.2 index points a day (≈ +$320 per SPX 1-lot, t = 3.8 over all days, 62% win rate), but the holdout half
