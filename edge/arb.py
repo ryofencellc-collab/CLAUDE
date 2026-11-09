@@ -10,7 +10,7 @@ Checks, each net of taker fees at the size available at the top of the book:
 Every hit is logged with legs, size, cost, net profit, days to close and annualized return.
 """
 from __future__ import annotations
-import json, math, os, subprocess, time
+import json, math, os, re, subprocess, time
 import pandas as pd
 import requests
 
@@ -47,10 +47,33 @@ def quotes(m: dict) -> dict:
             "close": m.get("close_time"), "status": m.get("status")}
 
 
+def ladder_key(ticker: str) -> str:
+    """The underlying a strike belongs to: the full ticker without its trailing number.
+    KXBTCD-26NOV0817-T74249.99 -> KXBTCD-26NOV0817-T; ...BUFMIN-BUF7 -> ...BUFMIN-BUF;
+    player props ...BUFMIN-BUFRDAVIS7-30 -> ...BUFMIN-BUFRDAVIS7- (one ladder per player)."""
+    return re.sub(r"[0-9.]+$", "", ticker or "")
+
+
 def mono(event: str, ms: list[dict]) -> list[dict]:
-    """Strike-ladder violations among 'greater' markets of one event."""
-    q = sorted([quotes(m) for m in ms if m.get("strike_type") in ("greater", "greater_or_equal")
-                and pd.notna(f(m.get("floor_strike")))], key=lambda x: x["K"])
+    """Strike-ladder violations among 'greater' markets on the same underlying within one event.
+    A group where many neighbours disagree is not a real ladder (wrong grouping), so it is skipped."""
+    groups: dict[str, list[dict]] = {}
+    for m in ms:
+        if m.get("strike_type") in ("greater", "greater_or_equal") and pd.notna(f(m.get("floor_strike"))):
+            groups.setdefault(ladder_key(m.get("ticker")), []).append(m)
+    out = []
+    for g in groups.values():
+        q = sorted([quotes(m) for m in g], key=lambda x: x["K"])
+        mids = [(x["yb"] + x["ya"]) / 2 for x in q if 0 < x["yb"] < x["ya"] < 1]
+        bad = sum(1 for a, b in zip(mids, mids[1:]) if b > a + 0.02)
+        if len(mids) >= 3 and bad > 0.2 * (len(mids) - 1):
+            continue
+        out += _mono(event, g)
+    return out
+
+
+def _mono(event: str, ms: list[dict]) -> list[dict]:
+    q = sorted([quotes(m) for m in ms], key=lambda x: x["K"])
     out = []
     for i, lo in enumerate(q):
         if not (0 < lo["ya"] < 1) or lo["yas"] <= 0:

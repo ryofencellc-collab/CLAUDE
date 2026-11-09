@@ -33,3 +33,16 @@ def test_yes_all_is_never_marked_riskless():
 
 def test_taker_fee_rounds_up_per_order():
     assert arb.taker_fee(1, 0.5) == 0.02 and arb.taker_fee(100, 0.5) == 1.75 and arb.taker_fee(0, 0.5) == 0.0
+
+
+def test_two_teams_in_one_event_are_separate_ladders():
+    # "BUF wins by > 7" and "MIN wins by > 3" are different underlyings: no ladder between them
+    ms = [m("KXNFLSPREAD-26NOV09BUFMIN-BUF7", 7, yb=0.30, ya=0.32, ybs=50, yas=50),
+          m("KXNFLSPREAD-26NOV09BUFMIN-MIN3", 3, yb=0.40, ya=0.42, ybs=50, yas=50)]
+    assert arb.mono("E", ms) == []
+    assert arb.ladder_key("KXBTCD-26NOV0817-T74249.99") == "KXBTCD-26NOV0817-T"
+
+
+def test_player_props_are_one_ladder_per_player():
+    assert arb.ladder_key("KXNFLRSHYDS-26NOV09BUFMIN-BUFRDAVIS7-30") != arb.ladder_key("KXNFLRSHYDS-26NOV09BUFMIN-BUFJCOOK4-80")
+    assert arb.ladder_key("KXNFLRSHYDS-26NOV09BUFMIN-BUFRDAVIS7-30") == arb.ladder_key("KXNFLRSHYDS-26NOV09BUFMIN-BUFRDAVIS7-50")
