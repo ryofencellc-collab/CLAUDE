@@ -23,3 +23,12 @@ negative = toward the strike (d1, d5), and z_s one minute earlier (a polling lag
 **Sanity check.** Base-with-lag on Oct 29 → Nov 9 should land near the paper's 3.21%.
 **Pass.** L < 0.5% in dev and holdout, cents per contract > 0 in both, and ≥ 25% of the base rule's flow kept.
 A passing rule then runs as a forward paper variant beside the current one; it is not funded on this test alone.
+
+## Result (2026-11-09): **not valid — the sanity check failed** (`reports/ROUND41.md`, `reports/ROUND41B.md`)
+Ignoring the queue, the loss share of the flow at z ≥ 6 is 0.03% (dev) / 0.27% (holdout), and every rule formally
+"passes". But the pre-registered sanity check fails: on Oct 29 → Nov 9 the method gives 0.77% where the paper bot
+actually lost 3.21%, and the time-budgeted random sample (835 of 3,586 BTC hours) did not include the Nov 8 22:00 crash
+hour. The no-queue method therefore understates what *our* bids meet. 41b adds the queue in front of us: at the
+queue sizes the paper bot really faced (~18–20k contracts), our fills almost vanish, to tens of dollars over two months.
+So the 99c bid is either tiny (behind the queue) or exposed to crash flow (when the queue is thin). Neither can prove
+anything within weeks. **The 99c line of work is closed.**
