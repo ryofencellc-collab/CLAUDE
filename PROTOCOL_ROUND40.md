@@ -21,3 +21,11 @@ strike, so the loss rate *given a fill* is higher than the unconditional one. Th
 breakeven) for every coin; the same at the paper's actual entry mix; and the paper's contract-weighted loss rate below
 1%. Otherwise the rule is not funded. If a stricter threshold z* passes on dev, it is checked once on the holdout and
 then needs a fresh forward test before money.
+
+## Result (2026-11-09): **FAIL** (`reports/ROUND40.md`)
+On six years of 1-minute data, a random z ≥ 6 bet loses only **0.05–0.10%** of the time in the holdout (breakeven
+0.98%). The z-rule itself is sound. But the bids that actually *get filled* lose **3.21%** of the contracts (paper,
+Oct 29 → Nov 9), 30× the base rate and 3× breakeven. A 99c bid sits behind a large queue, and it only reaches the
+front when someone sells hard into a move toward the strike. That is the adverse selection: fills are not a random
+sample of decided minutes, they are concentrated in the crashes. This is structural (it comes from who trades with us),
+so no z threshold fixes it from the data in hand. Per the rule above, the hourly 99c bot is **not funded**.
