@@ -43,3 +43,14 @@ Pass (each config, scored after ≥ 20 and again at 40 trading days): mean P&L p
 bound > 0, profitable in both the first and second half of the days, and worst day ≥ −3× the mean credit or debit.
 Reported for every config: win rate, average win/loss, worst day, $/day on $25k and $1k (SPY/XSP-sized).
 With ~4 entries a day × 20 days, only a strong effect can pass at 20 days; that is the point.
+
+## Amendments (before any market-hours data)
+- 2026-11-09: collector smoke test showed `data/` is git-ignored; snapshots are now force-added and also uploaded as a
+  90-day artifact. First daily job moved to 12:50 UTC so a late cron cannot miss the 09:30 ET open. No strategy changes.
+
+## 39a result (2026-11-09) — model screen: **A fail, B fail**
+SPX + VIX1D 2022-05 → 2026-11, 1,126 days (`reports/ROUND39A.md`). Selling the 0DTE straddle at the VIX1D price earned
+on average +3.2 index points a day (≈ +$320 per SPX 1-lot, t = 3.8 over all days, 62% win rate), but the holdout half
+only reached t = 1.7 (needs 3), and the worst day was −330 points (−$33,000 on one SPX straddle). 0DTE options do look
+slightly overpriced on average, but the margin is about 10% of the premium and one bad day erases roughly 100 good
+ones. It goes to 39b as planned (I1–I3 are the defined-risk version) but is not a go-live signal.

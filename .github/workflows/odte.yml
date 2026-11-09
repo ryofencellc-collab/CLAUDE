@@ -1,10 +1,10 @@
 name: odte
 # Round 39 collector (PROTOCOL_ROUND39.md): free Cboe delayed 0DTE quotes, Mon-Fri.
-# Two jobs per day cover 13:20-21:20 UTC; each writes its own part file.
+# Two jobs per day cover 12:50-21:20 UTC (early start absorbs cron delay); each writes its own part file.
 on:
   schedule:
-    - cron: "20 13 * * 1-5"
-    - cron: "55 18 * * 1-5"
+    - cron: "50 12 * * 1-5"
+    - cron: "20 18 * * 1-5"
   workflow_dispatch:
     inputs:
       max_seconds: {description: "smoke-test length", default: "20400"}
