@@ -1,0 +1,222 @@
+# SPX intraday market-data archive
+
+Per-date OHLC bars for the S&P 500 index (`^GSPC`) at 1-minute, 5-minute and hourly resolution,
+a daily-timeframe indicator/volatility table, and 15-minute snapshots of SPX **0DTE gamma
+exposure** by strike. Collected automatically by GitHub Actions; everything here comes from
+public, unauthenticated endpoints.
+
+**Why archive rather than fetch on demand.** Both of the underlying feeds are perishable, in
+different ways:
+
+- **Yahoo's intraday history expires, and finer bars expire faster** — 1-minute survives about
+  **30 days**, 5-minute **60 days**, hourly **730 days**. Once a date falls outside its window
+  it cannot be recovered at that resolution, at any price.
+- **Gamma exposure has no history at all.** The 0DTE profile is a property of the *moment*, not
+  of the day: near the open it sits spread across strikes, and by expiry it collapses into a
+  spike at the at-the-money strike. No free source sells historical SPX open interest by strike,
+  so this series exists only to the extent it was snapshotted as it happened. **Every 15-minute
+  slot that is not captured is gone permanently.** That is the entire reason this repo runs on a
+  schedule instead of on demand.
+
+XSP is one tenth of SPX; multiply these prices by 0.1 for XSP-quoted comparisons.
+
+## Layout
+
+```
+├── fetch_spx_bars.py     intraday bar refresh (additive; --force to re-pull)
+├── fetch_daily.py        daily bars for ^GSPC / ^VIX / ^VIX9D (overwrites; never expires)
+├── fetch_gex_poll.py     one 0DTE gamma-exposure snapshot
+├── gex_session.py        drives the poller on a quarter-hour cadence for half a session
+├── build_features.py     turns the archive into features/daily.csv + features/intraday.csv
+├── index.csv             manifest: one row per date — resolution, bars, OHLC, range, net
+├── spx-1m/YYYY-MM-DD.csv 1-minute bars   ← finest available, shortest shelf life
+├── spx-5m/YYYY-MM-DD.csv 5-minute bars   ← the workhorse for opening-range / entry-timing work
+├── spx-1h/YYYY-MM-DD.csv hourly bars     ← deep history, and the fallback for dates that have
+│                                           aged out of the finer windows
+├── daily/_raw_*.json     raw Yahoo daily payloads (^GSPC, ^VIX, ^VIX9D)
+├── features/daily.csv    one row per date: EMA20/50, RSI14, ATR14, VIX, VIX9D/VIX, gap,
+│                         opening ranges, realised path length / trend efficiency
+├── features/intraday.csv the same indicators computed on 5-minute bars, so an 11:15 reading
+│                         is scored with 11:15 information
+├── features/intraday_1m.csv  the same at 1-minute resolution — two EMA pairs, see below
+├── features/intraday_15m.csv the same on 15-minute buckets aggregated from the 5-minute tier
+├── gex/summary.csv       one row per snapshot — the derived gamma levels
+└── gex/profile/          near-the-money gamma/OI profile at each snapshot
+```
+
+A date can appear in more than one bar folder. Use the finest one present; `index.csv` records
+which resolution is best available per date.
+
+Each bar file:
+
+```csv
+time,open,high,low,close
+09:30,7763.18,7777.28,7763.18,7776.42
+09:35,7776.47,7787.20,7776.42,7786.87
+```
+
+`time` is **America/New_York**, regular session only (09:30–16:00). No pre/post-market rows.
+No volume — Yahoo's index feed does not carry meaningful volume for `^GSPC`.
+
+Source: Yahoo Finance chart API. These are index prices, not tradeable quotes — good for path
+and range reconstruction, not for modelling fills.
+
+### Data quality
+
+The 1-minute and 5-minute sets were cross-checked against each other: aggregating the 1m bars
+into 5-minute buckets reproduced the archived 5m highs and lows across all **1,561** overlapping
+windows, to within 0.6 index points.
+
+Known quirks in the hourly history:
+
+- Several short sessions are legitimate **half days** (July 3rd, the day after Thanksgiving,
+  Christmas Eve — 4 bars, 13:00 close), not missing data:
+  `2023-11-24, 2024-07-03, 2024-11-29, 2024-12-24, 2025-07-03, 2025-11-28, 2025-12-24`.
+- Two are genuine holes in Yahoo's data: `2026-01-30` (2 bars) and `2026-02-02`
+  (3 bars, session starts 13:30).
+- Prices carry 2 decimals. Treat these files as the precise copy and re-derive figures from
+  them rather than trusting rounded values quoted elsewhere.
+
+## Gamma exposure (`gex/`)
+
+`fetch_gex_poll.py` reads CBOE's public delayed-quote feed
+(`cdn.cboe.com/api/global/delayed_quotes/options/_SPX.json`) — no authentication, ~13 MB per
+pull, roughly 15 minutes delayed. It carries per-contract `gamma`, `open_interest` and `volume`,
+so gamma exposure is computed here from first principles rather than taken on trust.
+
+> **0DTE lives under the `SPXW` root, not `SPX`.** `_SPX.json` contains both (SPX = monthlies,
+> SPXW = dailies/weeklies); filtering to `root == 'SPX'` silently drops every 0DTE contract.
+> There is no separate `_SPXW.json` — that path returns 403.
+
+`gex/summary.csv` is append-only, one row per snapshot: spot, net 0DTE gamma, call/put sums,
+peak-gamma strike, call wall, put wall, and a gamma-flip proxy (the strike at which running net
+gamma changes sign), plus spot's distance to the peak and flip. `gex/profile/<date>_<HHMM>.csv`
+holds the by-strike detail within ±2% of spot: `cg`/`pg` call/put gamma exposure in dollars,
+`total`, `coi`/`poi` open interest, `cvol`/`pvol` volume.
+
+**Snapshot time is part of the data.** A post-close file shows gamma that is exactly zero
+everywhere except a narrow band around spot — that is the expiry gamma spike, not corruption.
+Compare like with like, or days will not be comparable.
+
+## EMAs, and the two ways they can be wrong
+
+Each `features/intraday*.csv` carries EMA20 and EMA50 on its own bar size. The same name means a
+different thing per tier, because the lookback is in bars, not minutes:
+
+| File | Bars | EMA20 spans | EMA50 spans | Bars per session |
+|---|---|---|---|---|
+| `intraday_1m.csv` | 1-minute | 20 min | 50 min | 391 |
+| `intraday.csv` | 5-minute | 100 min | 250 min | 79 |
+| `intraday_15m.csv` | 15-minute | 300 min | 750 min | 26 |
+
+**Two variants, and neither is correct in the abstract.** `ema20`/`ema50` restart every morning:
+no overnight gap leaks in, but they are undefined until enough bars accumulate. `ema20_cont`/
+`ema50_cont` run unbroken across the whole archive, so they hold a value from the first bar of
+the day at the cost of folding the overnight gap in. On 2026-08-18 the index opened at 7704.16
+after a 7746.14 close and `ema20_cont` still read 7744.52 — forty points above spot, describing
+yesterday. By the close the two agree exactly, the seed having washed out. Use the reset pair to
+describe a session on its own terms, the continuous pair when a signal must exist early, and
+never compare one against the other across the point where the reset pair becomes defined.
+
+**At 15 minutes a reset EMA50 cannot exist, so the column is absent rather than empty.** A
+session holds 26 fifteen-minute bars; fifty of them is nearly two days. `intraday_15m.csv`
+therefore carries reset EMA20 only — first value at **14:15 ET**, 26.9% of rows — and the
+continuous pair for everything else (99.2% / 97.9%). An always-empty column would have been worse
+than an absent one: it reads as "no signal here" rather than "this cannot exist", and something
+would eventually filter on it. At 1 minute both reset EMAs are usable, from 09:49 and 10:19.
+
+**The 15-minute bars are derived, not archived.** A 15-minute bar is exactly three 5-minute bars
+and the 5-minute tier is already stored, so a `spx-15m/` folder would duplicate something
+recomputable for free and offline. The 16:00 closing print is folded into the 15:45 bucket rather
+than forming a 27th bar of its own — otherwise every day's 15:45 bar would close at 15:55 and the
+series would quietly lose the settle. Verified against the finer tiers: the aggregated highs,
+lows and closes match 1-minute exactly.
+
+## Automation
+
+Three GitHub Actions workflows keep this current. They need no secrets: `GITHUB_TOKEN` with
+`contents: write` is enough to commit back to the repo.
+
+| Workflow | Cron (UTC) | Role |
+|---|---|---|
+| `gex-1-open.yml` | `15 11` + `15 12` | earliest start; polls to the close |
+| `gex-2-midday.yml` | `30 13` + `30 14` | later start; polls to the close |
+| `gex-3-close.yml` | `45 15` + `45 16` | last start; polls to the close |
+| `bars-eod.yml` | `35 20` + `35 21` | after the close: intraday bars, daily series, features |
+
+**All three gamma waves run to the close and differ only in when they are scheduled to start.**
+Whichever one is handed a runner first covers the rest of the session; the later ones exist in
+case it never is. Overlap is free — `fetch_gex_poll.py` refuses a `(date, time)` it already
+holds, checked before the 13 MB fetch — and each wave owns its concurrency group.
+
+This replaced fixed per-wave windows, which converted the scheduler's lateness into permanent
+holes. On 2026-09-18 wave 1 got a runner at 11:00 ET, 3.8 hours after its cron, took the 11:15
+and 11:30 snapshots and then exited at its 11:35 window edge with a working runner in hand;
+nothing covered 11:45 to 13:00. Eleven of 27 slots survived. Replayed against the same start
+times, running to the close would have taken 20. Across 2026-08-31 to 09-18 the change lifts
+captured slots from 123/378 to an estimated 234/378 — 33% to 62%.
+
+**The remaining 38% is the morning, and it cannot be fixed here.** No runner has arrived before
+11:00 ET on any day in that sample. Only the start depends on GitHub's scheduler and it is not
+dependable: triggers on this repo have arrived 2.6–5.2 hours late routinely, 7–10 hours late on
+2026-08-28, and on 2026-08-27 and 08-31 not at all. Adding margin cannot close this, because a
+job cannot both start hours early and still be alive at the close — the cap is 6 hours. Morning
+gamma needs a scheduler that fires on time; `schedule` is documented best-effort and behaves
+that way. Post-close bars are unaffected and have not missed a day: lateness costs them nothing
+and `fetch_spx_bars.py` backfills anything inside Yahoo's 30-day window.
+
+### The health check is the thing that notices
+
+`health-check.yml` runs `healthcheck.py` twice a day and is the only part of this repo that reads
+the archive rather than trusting the dashboard. It exists because a green run means a job
+executed, not that data landed — and twice that distinction cost a week. On 2026-08-28 the
+schedule fired after the close and six green runs captured nothing; on 2026-09-24 CBOE began
+answering with a 307, curl was not following redirects, and every fetch failed its size guard,
+again behind six green runs.
+
+Three properties matter more than the checking itself:
+
+- **It audits the whole 30-day window, not yesterday.** It runs on the same unreliable scheduler
+  as everything else, so it has to stay useful when it is the thing that gets dropped. One run
+  that does land catches every hole still inside the recovery window.
+- **It repairs before it alerts.** A 1-minute gap inside 30 days is re-fetchable, so the first
+  response is to re-run `fetch_spx_bars.py` — which also makes this a second, independent daily
+  attempt at the tier that must not be lost. Only a gap that survives the repair opens an issue,
+  and that issue is reused and self-closing rather than one per fire.
+- **It never fails on gamma.** Gamma has no historical source, so by the time the check sees a
+  gap it is already permanent. Alerting on it would be noise with no remedy, so it is reported
+  and nothing more.
+
+The trading calendar comes from Yahoo's daily `^GSPC` series, not a holiday table. Asking the
+archive which days *should* exist is circular — if collection stopped entirely then every tier
+is missing the date, and a table-free check would shrug and call it a holiday.
+
+```bash
+python3 healthcheck.py            # audit the 30-day 1-minute window
+python3 healthcheck.py --days 60  # widen it into 5-minute territory
+```
+
+Every script self-guards weekends and US market holidays, so a fire on a non-trading day exits
+in milliseconds without touching the network.
+
+Run any of them by hand from the Actions tab (`workflow_dispatch`), or locally:
+
+```bash
+python3 fetch_gex_poll.py --force   # snapshot right now, ignoring the session guard
+python3 fetch_spx_bars.py           # additive; --force to re-pull, --only 1m to fetch one tier
+python3 fetch_daily.py && python3 build_features.py
+```
+
+### `^VIX9D` is captured one day at a time
+
+Yahoo has degraded `^VIX9D` to a live quote with no history — a request for any range returns a
+single bar. `fetch_daily.py` therefore folds that one bar into the stored series rather than
+either discarding it (which would let `vix9d`, and the `vix9d_vix` term-structure ratio, quietly
+die) or overwriting hundreds of good bars with it. **This makes the daily VIX9D series
+perishable in the same way gamma exposure is:** each day's value is only obtainable on that day.
+The post-close schedule is what makes it work, since by 16:35 ET the quote is the settled close.
+`^GSPC` and `^VIX` still return full history and are refreshed wholesale.
+
+Everything runs on the standard library plus `curl`. DST is computed from the US rules directly
+rather than via `zoneinfo`, so the scripts work on old Python builds (3.7+) as well as modern
+ones.

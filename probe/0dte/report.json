@@ -1,0 +1,153 @@
+[
+ {
+  "name": "cboe SPY",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/SPY.json",
+  "status": 200,
+  "bytes": 5838296,
+  "ctype": "application/json",
+  "head": "{\"timestamp\": \"2026-11-08 23:53:35\", \"data\": {\"options\": [{\"option\": \"B1SPY261113C00710000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.0, \"ask_size\": 0.0, \"iv\": 0.0, \"open_interest\": 0.0, \"volume\": 0.0, \"delta\": 0.009, \"gamma\": -0.0003, \"vega\": -0.0085, \"theta\": 0.0193, \"rho\": 0.0011, \"theo\": 0.8183, \"change\": 0.0, \"open\": 0.0, \"high\": 0.0, \"low\": 0.0, \"tick\": \"no_change\", \"last_trade_price\": 0.0, \"last_trade_time\": null, \"percent_change\": 0.0, \"prev_day_close\": 0.890000015497208}, {\"option\": \"B1SPY261113P00710000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.0, \"ask_size\": 0.0, \"iv\": 0.0, \"open_interes"
+ },
+ {
+  "name": "cboe _SPX",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/_SPX.json",
+  "status": 200,
+  "bytes": 14038256,
+  "ctype": "application/json",
+  "head": "{\"timestamp\": \"2026-11-08 23:56:46\", \"data\": {\"options\": [{\"option\": \"SPX261120C00400000\", \"bid\": 6971.4, \"bid_size\": 0.0, \"ask\": 6986.4, \"ask_size\": 0.0, \"iv\": 5.2683, \"open_interest\": 2508.0, \"volume\": 6.0, \"delta\": 1.0, \"gamma\": 0.0, \"vega\": 0.0022, \"theta\": -0.0275, \"rho\": 0.1543, \"theo\": 6976.0828, \"change\": 57.3901, \"open\": 7010.93, \"high\": 7026.0, \"low\": 7010.93, \"tick\": \"down\", \"last_trade_price\": 7021.79, \"last_trade_time\": \"2026-11-06T11:42:05\", \"percent_change\": 0.824049, \"prev_day_close\": 6989.2998046875}, {\"option\": \"SPX261120P00400000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.05, \""
+ },
+ {
+  "name": "cboe QQQ",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/QQQ.json",
+  "status": 200,
+  "bytes": 5162339,
+  "ctype": "application/json",
+  "head": "{\"timestamp\": \"2026-11-08 23:53:50\", \"data\": {\"options\": [{\"option\": \"QQQ261109C00500000\", \"bid\": 154.75, \"bid_size\": 1.0, \"ask\": 158.59, \"ask_size\": 14.0, \"iv\": 1.1534, \"open_interest\": 2.0, \"volume\": 0.0, \"delta\": 0.999, \"gamma\": 0.0001, \"vega\": 0.002, \"theta\": -0.0146, \"rho\": 0.0137, \"theo\": 156.727, \"change\": 0.0, \"open\": 0.0, \"high\": 0.0, \"low\": 0.0, \"tick\": \"up\", \"last_trade_price\": 157.07, \"last_trade_time\": \"2026-11-05T14:45:54\", \"percent_change\": 0.0, \"prev_day_close\": 158.154998779297}, {\"option\": \"QQQ261109P00500000\", \"bid\": 0.01, \"bid_size\": 48.0, \"ask\": 0.02, \"ask_size\": 3.0, \"iv\""
+ },
+ {
+  "name": "cboe IWM",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/IWM.json",
+  "status": 200,
+  "bytes": 2320624,
+  "ctype": "application/json",
+  "head": "{\"timestamp\": \"2026-11-08 23:54:00\", \"data\": {\"options\": [{\"option\": \"B1IWM261113C00260000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.0, \"ask_size\": 0.0, \"iv\": 0.0, \"open_interest\": 0.0, \"volume\": 0.0, \"delta\": 0.0169, \"gamma\": -0.0016, \"vega\": -0.0076, \"theta\": 0.0186, \"rho\": 0.0007, \"theo\": 0.8723, \"change\": 0.0, \"open\": 0.0, \"high\": 0.0, \"low\": 0.0, \"tick\": \"no_change\", \"last_trade_price\": 0.0, \"last_trade_time\": null, \"percent_change\": 0.0, \"prev_day_close\": 0.944999992847443}, {\"option\": \"B1IWM261113P00260000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.0, \"ask_size\": 0.0, \"iv\": 0.0, \"open_intere"
+ },
+ {
+  "name": "cboe _XSP",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/options/_XSP.json",
+  "status": 200,
+  "bytes": 7244217,
+  "ctype": "application/json",
+  "head": "{\"timestamp\": \"2026-11-07 01:04:54\", \"data\": {\"options\": [{\"option\": \"XSP261106C00450000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.0, \"ask_size\": 0.0, \"iv\": 0.0, \"open_interest\": 0.0, \"volume\": 0.0, \"delta\": 1.0, \"gamma\": 0.0, \"vega\": 0.0, \"theta\": 0.0, \"rho\": 0.0, \"theo\": 287.5735, \"change\": 0.0, \"open\": 0.0, \"high\": 0.0, \"low\": 0.0, \"tick\": \"no_change\", \"last_trade_price\": 0.0, \"last_trade_time\": null, \"percent_change\": 0.0, \"prev_day_close\": 0.0}, {\"option\": \"XSP261106P00450000\", \"bid\": 0.0, \"bid_size\": 0.0, \"ask\": 0.0, \"ask_size\": 0.0, \"iv\": 0.0, \"open_interest\": 0.0, \"volume\": 0.0, \"delta\":"
+ },
+ {
+  "name": "cboe quote SPY",
+  "url": "https://cdn.cboe.com/api/global/delayed_quotes/quotes/SPY.json",
+  "status": 200,
+  "bytes": 508,
+  "ctype": "application/json",
+  "head": "{\"timestamp\": \"2026-11-08 20:40:15\", \"data\": {\"symbol\": \"SPY\", \"security_type\": \"stock\", \"exchange_id\": 3, \"current_price\": 735.29, \"price_change\": 2.29, \"price_change_percent\": 0.3114, \"bid\": 736.4, \"ask\": 736.62, \"bid_size\": 200, \"ask_size\": 40, \"open\": 734.8, \"high\": 742.2104, \"low\": 734.58, \"close\": 735.29, \"prev_day_close\": 735.29, \"volume\": 58853750, \"iv30\": 19.718, \"iv30_change\": 0.0, \"iv30_change_percent\": 0.0, \"seqno\": 0, \"last_trade_time\": \"2026-11-06T16:00:00\", \"tick\": \"up\"}, \"symbol\": \"SPY\"}"
+ },
+ {
+  "name": "nasdaq chain SPY",
+  "url": "https://api.nasdaq.com/api/quote/SPY/option-chain?assetclass=etf&limit=60&fromdate=all&todate=undefined&excode=oprac&callput=callput&money=all&type=all",
+  "status": 200,
+  "bytes": 26267,
+  "ctype": "application/json; charset=utf-8",
+  "head": "{\"data\":{\"totalRecord\":6435,\"lastTrade\":\"LAST TRADE: $735.36 (AS OF NOV 6, 2026)\",\"table\":{\"asOf\":null,\"headers\":{\"expiryDate\":\"Exp. Date\",\"c_Last\":\"Last\",\"c_Change\":\"Change\",\"c_Bid\":\"Bid\",\"c_Ask\":\"Ask\",\"c_Volume\":\"Volume\",\"c_Openinterest\":\"Open Int.\",\"strike\":\"Strike\",\"p_Last\":\"Last\",\"p_Change\":\"Change\",\"p_Bid\":\"Bid\",\"p_Ask\":\"Ask\",\"p_Volume\":\"Volume\",\"p_Openinterest\":\"Open Int.\"},\"rows\":[{\"expirygroup\":\"November 9, 2026\",\"expiryDate\":null,\"c_Last\":null,\"c_Change\":null,\"c_Bid\":null,\"c_Ask\":null,\"c_Volume\":null,\"c_Openinterest\":null,\"c_colour\":false,\"strike\":null,\"p_Last\":null,\"p_Change\":null,\""
+ },
+ {
+  "name": "yahoo chain SPY",
+  "url": "https://query2.finance.yahoo.com/v7/finance/options/SPY",
+  "status": 401,
+  "bytes": 89,
+  "ctype": "application/json;charset=utf-8",
+  "head": "{\"finance\":{\"result\":null,\"error\":{\"code\":\"Unauthorized\",\"description\":\"Invalid Crumb\"}}}"
+ },
+ {
+  "name": "optionsdx",
+  "url": "https://www.optionsdx.com/",
+  "status": 200,
+  "bytes": 216094,
+  "ctype": "text/html; charset=UTF-8",
+  "head": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link rel=\"profile\" href=\"https://gmpg.org/xfn/11\">\n\n<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />\n<script>window._wca = window._wca || [];</script>\r\n\n\t<!-- This site is optimized with the Yoast SEO plugin v28.8 - https://yoast.com/product/yoast-seo-wordpress/ -->\n\t<title>Free Historical Options Trading Data - optionsDX</title>\n\t<link rel=\"canonical\" href=\"https://www.optionsdx.com/\" />\n\t<meta prop"
+ },
+ {
+  "name": "optionsdx spx",
+  "url": "https://www.optionsdx.com/product/spx-option-chain/",
+  "status": 200,
+  "bytes": 222851,
+  "ctype": "text/html; charset=UTF-8",
+  "head": "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link rel=\"profile\" href=\"https://gmpg.org/xfn/11\">\n\n<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />\n<script>window._wca = window._wca || [];</script>\r\n\n\t<!-- This site is optimized with the Yoast SEO plugin v28.8 - https://yoast.com/product/yoast-seo-wordpress/ -->\n\t<title>SPX Option Chains - optionsDX</title>\n\t<link rel=\"canonical\" href=\"https://www.optionsdx.com/product/spx-option-chain/\" />\n\t<met"
+ },
+ {
+  "name": "twm2058 repo",
+  "url": "https://api.github.com/repos/twm2058/spx-0dte-archive/contents/",
+  "status": 200,
+  "bytes": 12076,
+  "ctype": "application/json; charset=utf-8",
+  "head": "[{\"name\":\".github\",\"path\":\".github\",\"sha\":\"02f3c1d75e82dbf921f3b675eb46b57b1e35da56\",\"size\":0,\"url\":\"https://api.github.com/repos/twm2058/spx-0dte-archive/contents/.github?ref=main\",\"html_url\":\"https://github.com/twm2058/spx-0dte-archive/tree/main/.github\",\"git_url\":\"https://api.github.com/repos/twm2058/spx-0dte-archive/git/trees/02f3c1d75e82dbf921f3b675eb46b57b1e35da56\",\"download_url\":null,\"type\":\"dir\",\"_links\":{\"self\":\"https://api.github.com/repos/twm2058/spx-0dte-archive/contents/.github?ref=main\",\"git\":\"https://api.github.com/repos/twm2058/spx-0dte-archive/git/trees/02f3c1d75e82dbf921f3b67"
+ },
+ {
+  "name": "twm2058 readme",
+  "url": "https://raw.githubusercontent.com/twm2058/spx-0dte-archive/main/README.md",
+  "status": 200,
+  "bytes": 13419,
+  "ctype": "text/plain; charset=utf-8",
+  "head": "# SPX intraday market-data archive\n\nPer-date OHLC bars for the S&P 500 index (`^GSPC`) at 1-minute, 5-minute and hourly resolution,\na daily-timeframe indicator/volatility table, and 15-minute snapshots of SPX **0DTE gamma\nexposure** by strike. Collected automatically by GitHub Actions; everything here comes from\npublic, unauthenticated endpoints.\n\n**Why archive rather than fetch on demand.** Both of the underlying feeds are perishable, in\ndifferent ways:\n\n- **Yahoo's intraday history expires, and finer bars expire faster** \u2014 1-minute survives about\n  **30 days**, 5-minute **60 days**, hourly *"
+ },
+ {
+  "name": "philippdubach",
+  "url": "https://api.github.com/repos/philippdubach/options-data/contents/",
+  "status": 404,
+  "bytes": 127,
+  "ctype": "application/json; charset=utf-8",
+  "head": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/repos/contents#get-repository-content\",\"status\":\"404\"}"
+ },
+ {
+  "name": "hf search",
+  "url": "https://huggingface.co/api/datasets?search=0dte&limit=50",
+  "status": 200,
+  "bytes": 1017,
+  "ctype": "application/json; charset=utf-8",
+  "head": "[{\"_id\":\"680acf30afaebde06b06e333\",\"id\":\"mlfoundations-dev/0d_test_ocr\",\"author\":\"mlfoundations-dev\",\"disabled\":false,\"gated\":false,\"lastModified\":\"2025-04-24T23:54:33.000Z\",\"likes\":0,\"trendingScore\":0,\"private\":false,\"sha\":\"da8f898efe077042a8118a4ea055668c723d6019\",\"downloads\":5,\"tags\":[\"size_categories:1K<n<10K\",\"format:parquet\",\"modality:tabular\",\"modality:text\",\"library:datasets\",\"library:pandas\",\"library:mlcroissant\",\"library:polars\",\"region:us\"],\"createdAt\":\"2025-04-24T23:54:24.000Z\",\"key\":\"\"},{\"_id\":\"680ad4e05ecf49d93f0f1150\",\"id\":\"mlfoundations-dev/0d_test_ocr_split_0\",\"author\":\"mlfoun"
+ },
+ {
+  "name": "hf search spx options",
+  "url": "https://huggingface.co/api/datasets?search=spx%20options&limit=50",
+  "status": 200,
+  "bytes": 2,
+  "ctype": "application/json; charset=utf-8",
+  "head": "[]"
+ },
+ {
+  "name": "hf search option chain",
+  "url": "https://huggingface.co/api/datasets?search=option%20chain&limit=50",
+  "status": 200,
+  "bytes": 344,
+  "ctype": "application/json; charset=utf-8",
+  "head": "[{\"_id\":\"691bd7f451cf96f02107f7c1\",\"id\":\"CodyJiang/nvda-option-chains\",\"author\":\"CodyJiang\",\"disabled\":false,\"gated\":false,\"lastModified\":\"2025-11-18T02:22:24.000Z\",\"likes\":0,\"trendingScore\":0,\"private\":false,\"sha\":\"2a3914ada1ad797a213b872eeb5d2b292cde3c8a\",\"downloads\":297,\"tags\":[\"region:us\"],\"createdAt\":\"2025-11-18T02:20:36.000Z\",\"key\":\"\"}]"
+ },
+ {
+  "name": "kaggle spx 0dte",
+  "url": "https://www.kaggle.com/api/v1/datasets/list?search=0dte",
+  "status": 200,
+  "bytes": 2,
+  "ctype": "application/json",
+  "head": "[]"
+ },
+ {
+  "name": "kaggle spy options",
+  "url": "https://www.kaggle.com/api/v1/datasets/list?search=spy%20options%20intraday",
+  "status": 200,
+  "bytes": 2,
+  "ctype": "application/json",
+  "head": "[]"
+ },
+ {
+  "cadence": [
+   "2026-11-08 23:56:46",
+   "2026-11-08 23:56:46"
+  ],
+  "n_opts": 31584
+ }
+]
