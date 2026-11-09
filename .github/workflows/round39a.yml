@@ -1,0 +1,23 @@
+name: round39a
+# Round 39a (PROTOCOL_ROUND39.md): VIX1D implied vs realized move.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: python run_round39a.py
+      - name: Commit report
+        run: |
+          git config user.name "round39a bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND39A.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round39a: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
