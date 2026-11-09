@@ -25,3 +25,10 @@ each sleeve has equal volatility. Rebalance monthly. Score at 1×, 1.5× and 2×
 **Pass (holdout, 1×):** Sharpe ≥ 1.0, CAGR ≥ 15%, worst drop no worse than −25%, dev CAGR > 0, and better holdout
 Sharpe than both buy-and-hold benchmarks. A pass goes to forward paper trading; it is not funded on this test alone.
 Reported for all: CAGR, Sharpe, worst drop, $/day on $1k, $10k and $25k.
+
+## Result (2026-11-09): **FAIL** (`reports/ROUND42.md`)
+Portfolio (E2 10-month average 87% + C1 Donchian 55/20 on BTC/ETH/SOL 13%): holdout **+10.6%/yr, Sharpe 1.24, worst
+drop −9.8%** (dev +14.7%, Sharpe 1.61). Smooth and real, but under the 15% bar and below simply holding SPY (+21.0%/yr,
+Sharpe 1.36) or 60/40 (Sharpe 1.39) in the 2023–26 bull market. Leverage lowers the Sharpe (8% borrow cost) and adds
+only ~1–2%/yr. $1k → about $0.29/day; $25k → about $7/day. Trend following earns its keep in crashes (2022: −2% vs SPY
+−18%), not in bull runs.
