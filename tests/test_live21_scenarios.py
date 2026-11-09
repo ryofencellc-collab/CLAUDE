@@ -348,7 +348,7 @@ def multi_world(monkeypatch, n_markets=5, slots=10):
     ex = Exchange()
     mk = Market(ex)
     mk.install(monkeypatch, None) if False else None
-    ms = [{"ticker": f"KXBTCD-T{i}", "strike_type": "greater", "floor_strike": 1.0, "cap_strike": None, "_close": CLOSE}
+    ms = [{"ticker": f"KXBTCD-H{i}-T{i}", "strike_type": "greater", "floor_strike": 1.0, "cap_strike": None, "_close": CLOSE}
           for i in range(n_markets)]
     state = {"decided": {m["ticker"]: True for m in ms}}
     monkeypatch.setattr(L, "decide_many", lambda now, exclude=frozenset(), look=12: [
@@ -385,13 +385,13 @@ def test_slots_cap_and_each_bid_is_pulled_on_its_own(monkeypatch):
     for k in range(3):
         L.step(ex, st, "LIVE", at(k * 0.1))
     assert len(L.active(st, at(0.3))) == 4                                      # never more than the slots
-    state["decided"]["KXBTCD-T1"] = False
+    state["decided"]["KXBTCD-H1-T1"] = False
     L.step(ex, st, "LIVE", at(0.5))                                            # that one is pulled, the others stay
     pulled = [o for o in L.opens(st) if o.get("cancelled")]
-    assert [o["ticker"] for o in pulled] == ["KXBTCD-T1"]
+    assert [o["ticker"] for o in pulled] == ["KXBTCD-H1-T1"]
     resting = [o for o in ex.orders.values() if o["status"] == "resting"]
     assert len(resting) == 4                                                    # 3 kept + the freed slot refilled
-    assert "KXBTCD-T1" not in {o["ticker"] for o in resting}
+    assert "KXBTCD-H1-T1" not in {o["ticker"] for o in resting}
 
 
 def test_one_wrong_call_costs_one_slot_and_pauses_new_bids(monkeypatch):
@@ -400,9 +400,9 @@ def test_one_wrong_call_costs_one_slot_and_pauses_new_bids(monkeypatch):
     L.step(ex, st, "LIVE", at(0))
     for oid in list(ex.orders):
         ex.fill(oid, ex.orders[oid]["count"])
-    ex.settle("KXBTCD-T0", "no", CLOSE + pd.Timedelta(seconds=30))             # one of the three goes wrong
-    ex.settle("KXBTCD-T1", "yes", CLOSE + pd.Timedelta(seconds=30))
-    ex.settle("KXBTCD-T2", "yes", CLOSE + pd.Timedelta(seconds=30))
+    ex.settle("KXBTCD-H0-T0", "no", CLOSE + pd.Timedelta(seconds=30))             # one of the three goes wrong
+    ex.settle("KXBTCD-H1-T1", "yes", CLOSE + pd.Timedelta(seconds=30))
+    ex.settle("KXBTCD-H2-T2", "yes", CLOSE + pd.Timedelta(seconds=30))
     L.step(ex, st, "LIVE", CLOSE + pd.Timedelta(minutes=3))
     pnls = sorted(r["pnl"] for r in st["results"])
     assert len(pnls) == 3 and pnls[0] < 0 and pnls[0] > -1000 * 0.5 / 10 - 1  # the loss is one slot, not the stake
@@ -441,3 +441,18 @@ def test_real_decide_many_ranks_and_excludes(monkeypatch):
     monkeypatch.setattr(L.sig, "queue_ahead", lambda t, side: queues[t])
     got = [x[0]["ticker"] for x in L._decide_many(T0, exclude={"HELD"})]
     assert got == ["NEAR", "FAR", "CROWDED"]
+
+
+def test_one_position_per_coin_per_hour(monkeypatch):
+    """Nov 8 22:00 UTC: four BTC strikes of one hour lost together. Strikes of one event are one bet."""
+    ex, st, ms, state = multi_world(monkeypatch, n_markets=4, slots=10)
+    same = [{**m, "ticker": f"KXBTCD-26NOV0817-T{7400 + i}"} for i, m in enumerate(ms[:3])]
+    other = {**ms[3], "ticker": "KXETHD-26NOV0817-T2200"}
+    state["decided"].update({m["ticker"]: True for m in same + [other]})
+    monkeypatch.setattr(L, "decide_many", lambda now, exclude=frozenset(), look=12: [
+        (m, m["ticker"].split("-")[0], "yes", 9.0, 1.05, 0.0) for m in same + [other] if m["ticker"] not in exclude])
+    for k in range(3):
+        L.step(ex, st, "LIVE", at(k * 0.1))
+    bought = sorted({c[1] for c in ex.calls if c[0] == "buy"})
+    assert bought == ["KXBTCD-26NOV0817-T7400", "KXETHD-26NOV0817-T2200"]
+    assert L.event_of("KXBTCD-26NOV0817-T74249.99") == "KXBTCD-26NOV0817"

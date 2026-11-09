@@ -147,3 +147,22 @@ Tests: `test_unexplained_cash_change_halts_after_ten_minutes`, `test_a_brief_lag
 
 Owner rule that follows: **no manual trading on this Kalshi account**, and tell Claude before any deposit or
 withdrawal (Claude then sets a new `deposit` and `live_since`).
+
+## 2026-11-09: the Nov 8 22:00 UTC crash (dry run −$157, paper −$3,846)
+BTC fell from 75,330 (21:46) to 73,477 (21:55) and the CF RTI settled the 5 pm ET hour at 73,982.72 (Kalshi
+`expiration_value`, checked in `probe/loss/report.json`). That is a real move, not a price-feed fault: Coinbase 1-minute
+candles show it. Bids placed at z = 6.6–17.1 lost, and the sellers who filled our 99c bids were the ones dumping into
+the crash, so the fills arrived exactly when the bids were wrong. The paper bot (1,000 contracts per strike, five BTC
+strikes of that hour) lost $3,846 in one minute after earning +$2,160 over 11 days; it is now **−$1,685** overall.
+The dry run lost three BTC strikes (−$157, 15% of the $1,000 deposit), and the governor halted it as designed
+(2 losses in 7 days).
+
+**Fix (bug): one position per coin per settlement hour** (`event_of`, `step`). Strikes of one event fail together, so
+several of them are one bet several times larger than the stake schedule allows. Cancelled-but-unsettled orders count,
+because they may have filled. Test: `test_one_position_per_coin_per_hour`. Replayed on the paper fills, keeping the
+first-placed strike of each coin-hour gives +$1,763 instead of −$1,685. That is shown only to size the fault: which
+strike gets kept is arbitrary, and it is not evidence the strategy works.
+
+**What it does not fix:** z ≥ 6 is not "near-certain". The z-score assumes normal moves, and crypto jumps. Whether the
+hourly 99c bid makes money after crashes is unknown until the empirical tail rate is measured on years of 1-minute
+data. Do not fund until that is done.

@@ -542,6 +542,11 @@ def manage(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
             pull(api, mode, o, now, "z below threshold, stale data or stop")
 
 
+def event_of(ticker: str) -> str:
+    """KXBTCD-26NOV0817-T74249.99 -> KXBTCD-26NOV0817 (one coin, one settlement time)."""
+    return ticker.rsplit("-", 1)[0]
+
+
 def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     day = now.date().isoformat()
     balance = api.balance_usd() if api.authed else MAX_CONTRACTS * 1.05
@@ -563,11 +568,17 @@ def step(api: Kalshi, st: dict, mode: str, now: pd.Timestamp) -> None:
     held = sum(o["count"] * PRICE_CENTS / 100 for o in active(st, now)) if mode == "LIVE" else 0.0
     equity = balance + held
     placed = 0
+    # one position per coin per settlement hour: strikes of one event all lose together in a crash (Nov 8 22:00 UTC:
+    # four BTC strikes, -$3,846 paper), so they are one bet. Cancelled-but-unsettled orders count (they may have filled).
+    events = {event_of(o["ticker"]) for o in opens(st)}
     for pick in decide_many(now, exclude=mine | set(st.get("traded", []))):
         if placed >= min(slots, PLACE_PER_STEP):
             break
+        if event_of(pick[0]["ticker"]) in events:
+            continue
         if place(api, st, mode, now, pick, equity, balance):
             placed += 1
+            events.add(event_of(pick[0]["ticker"]))
             if mode == "LIVE":
                 balance -= opens(st)[-1]["count"] * PRICE_CENTS / 100
 
