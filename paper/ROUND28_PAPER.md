@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-10 04:53 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 42538; settled: 34994.
+Updated 2026-11-10 05:53 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 43100; settled: 35402.
 
-Total paper P&L: **$-1,416.65**; filled markets 3592; wrong calls 53, of which filled 35.
+Total paper P&L: **$-1,337.39**; filled markets 3603; wrong calls 53, of which filled 35.
 
 | series             |   markets |   filled |   contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -50,15 +50,15 @@ Total paper P&L: **$-1,416.65**; filled markets 3592; wrong calls 53, of which f
 | KXCS2MAP           |        48 |        3 |     1995.18 |        1515    |  10759.8         |    19.59 |       0 |              0 |
 | KXSERIEATOTAL      |         9 |        4 |     1345.76 |        7285.29 |  25194.5         |    13.2  |       0 |              0 |
 | KXBUNDESLIGATOTAL  |         7 |        3 |     1141.43 |           0    |   2333.88        |    11.2  |       0 |              0 |
-| KXLIGAPROMATCH     |        82 |        5 |      852.35 |        8599.08 |   2524.34        |     8.36 |       0 |              0 |
+| KXLIGAPROMATCH     |        96 |        5 |      852.35 |        8599.08 |   2660.63        |     8.36 |       0 |              0 |
 | KXLIGAEXPTOTAL     |        16 |        2 |      545.74 |        8731.32 |   6796.19        |     5.36 |       0 |              0 |
 | KXLALIGA2TOTAL     |        16 |        1 |      111.29 |         881.5  |   2408.64        |     1.09 |       0 |              0 |
 | KXNCAAFTEAMTOTAL   |      1215 |       92 |    24673.9  |        1905.38 | 129441           |   -91.21 |       4 |              2 |
 | KXTRUMPAPPROVE     |        23 |       19 |     6877.99 |           0    |   8132.42        |  -570.24 |       1 |              1 |
-| KXBTCD             |     10719 |     1049 |   795503    |        7175    |      4.01308e+06 |  -734.64 |       9 |              9 |
+| KXBTCD             |     10899 |     1059 |   803566    |        7175    |      4.04911e+06 |  -655.47 |       9 |              9 |
 | KXUSDJPY15M        |        69 |       53 |    20687.7  |           0    |  26323.8         |  -765.95 |       2 |              2 |
 | KXGBPUSD15M        |        72 |       45 |    16020.9  |           0    |  19768.7         |  -842.78 |       1 |              1 |
 | KXDIMAYORTOTAL     |        21 |        8 |     6208.46 |           0    |  29068.8         |  -939.05 |       1 |              1 |
-| KXETHD             |     15937 |      303 |    69214.9  |       29000    | 132095           | -1344.89 |       3 |              3 |
+| KXETHD             |     16151 |      304 |    69224.9  |       29000    | 132105           | -1344.8  |       3 |              3 |
 | KXNBATOTAL         |       213 |      101 |    46442.9  |           0    | 136349           | -1557.46 |       8 |              6 |
 | KXMLSGAME          |        42 |       26 |    23176.8  |           0    | 434901           | -1772.41 |       2 |              2 |
