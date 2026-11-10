@@ -12,10 +12,12 @@ import pandas as pd
 from edge import weather as wx
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATE = os.path.join(ROOT, "paper", "r44_state.json")
-MINUTES = os.path.join(ROOT, "paper", "r44_minutes.csv")
-FILLS = os.path.join(ROOT, "paper", "r44_fills.csv")
-REPORT = os.path.join(ROOT, "paper", "ROUND44_LIP.md")
+TAG = os.environ.get("R44_TAG", "")             # "" = Round 44 as registered; "b" = Round 44b (quotes BACK ticks behind)
+BACK = int(os.environ.get("R44_BACK", "0"))
+STATE = os.path.join(ROOT, "paper", f"r44{TAG}_state.json")
+MINUTES = os.path.join(ROOT, "paper", f"r44{TAG}_minutes.csv")
+FILLS = os.path.join(ROOT, "paper", f"r44{TAG}_fills.csv")
+REPORT = os.path.join(ROOT, "paper", f"ROUND44{TAG.upper()}_LIP.md")
 BUDGET = 10_000.0
 Q_FRAC = 0.30
 TICK = 0.01
@@ -148,10 +150,11 @@ def peg_and_score(pos: dict, yes_lv, no_lv) -> tuple[float, float, bool]:
             pos[f"{ours}_px"] = None
             sh, ok = side_share(lv, pos["target"], pos["disc"], 0, None)
         else:
-            pos[f"{ours}_px"] = ref
-            pos[f"{ours}_ahead"] = sum(s for p, s in lv if p >= ref - 1e-9)
+            px = round(ref - BACK * TICK, 2)
+            pos[f"{ours}_px"] = px
+            pos[f"{ours}_ahead"] = sum(s for p, s in lv if p >= px - 1e-9)
             pos[f"filled_{ours}_at_peg"] = 0.0
-            sh, ok = side_share(lv, pos["target"], pos["disc"], pos["q"], ref)
+            sh, ok = side_share(lv, pos["target"], pos["disc"], pos["q"], px)
         sides[ours] = (sh, ok)
     return sides["yes"][0], sides["no"][0], sides["yes"][1] and sides["no"][1]
 
@@ -288,7 +291,7 @@ def step(pos_all: dict, now: pd.Timestamp, last: float) -> tuple[dict, list[dict
 
 def summary(now) -> str:
     d = pd.read_csv(MINUTES) if os.path.exists(MINUTES) else pd.DataFrame()
-    lines = ["# Round 44: paper market making for Kalshi liquidity rewards", "",
+    lines = [f"# Round 44{TAG}: paper market making for Kalshi liquidity rewards" + (f" (quotes {BACK} tick behind)" if BACK else ""), "",
              f"Updated {now:%Y-%m-%d %H:%M} UTC. Rules: [PROTOCOL_ROUND44.md](../PROTOCOL_ROUND44.md). $10,000 budget.", ""]
     if d.empty:
         return "\n".join(lines + ["No data yet."]) + "\n"
@@ -310,7 +313,7 @@ def summary(now) -> str:
 
 def commit(now):
     paths = [p for p in (STATE, MINUTES, FILLS, REPORT) if os.path.exists(p)]
-    for c in (["git", "add", *paths], ["git", "commit", "-q", "-m", f"round44: lip ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
+    for c in (["git", "add", *paths], ["git", "commit", "-q", "-m", f"round44{TAG}: lip ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
               ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
         try:
             if subprocess.run(c, cwd=ROOT, timeout=120).returncode != 0 and c[1] == "commit":

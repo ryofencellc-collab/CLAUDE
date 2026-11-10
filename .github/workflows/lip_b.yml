@@ -1,0 +1,39 @@
+name: lip_b
+# Round 44b (PROTOCOL_ROUND44.md, 44b): same, quoting 1 tick behind the reference. Self-chaining.
+on:
+  workflow_dispatch:
+    inputs:
+      seconds: {description: "run length", default: "20400"}
+      chain: {description: "start the next job when done", default: "yes"}
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: lip_b
+  cancel-in-progress: false
+jobs:
+  quote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      R44_COMMIT: "1"
+      R44_TAG: "b"
+      R44_BACK: "1"
+      R44_SECONDS: ${{ inputs.seconds || '20400' }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "claude/eloquent-darwin-2lipsh"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: |
+          git config user.name "lip_b bot"
+          git config user.email "actions@users.noreply.github.com"
+      - run: python -m edge.lip
+      - name: Start the next job
+        if: always() && (inputs.chain || 'yes') == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ job.status }}" != "success" ]; then sleep 120; fi
+          for i in 1 2 3; do gh workflow run lip_b.yml --ref claude/eloquent-darwin-2lipsh && exit 0; sleep 20; done

@@ -59,3 +59,11 @@ def test_rerank_keeps_running_totals(monkeypatch):
     lip.BANK.clear()
     keep = lip.rank(__import__("pandas").Timestamp("2026-11-10", tz="UTC"), held)
     assert keep["M-1"]["reward"] == 5.0 and "G-1" not in keep and lip.BANK["reward"] == 2.0
+
+
+def test_back_ticks_quote_behind_the_reference(monkeypatch):
+    monkeypatch.setattr(lip, "BACK", 1)
+    p = pos(); p["inv_yes"] = p["inv_no"] = 0.0
+    yl, nl = [(0.40, 500), (0.39, 2000)], [(0.55, 500), (0.54, 2000)]
+    lip.peg_and_score(p, yl, nl)
+    assert p["yes_px"] == 0.39 and p["no_px"] == 0.54 and p["yes_ahead"] == 2500

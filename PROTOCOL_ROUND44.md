@@ -39,3 +39,9 @@ Each hourly re-rank rebuilt the record of every market it kept, so the running r
 record, and markets we stop quoting bank their reward, realised P&L and fees. The rewards lost before the fix are
 recovered from the per-minute log (every fall in each running total; no market had settled yet, so every fall
 was a reset) and carried in the bank. Realised P&L and fees were reset the same way and are recovered too.
+
+## Round 44b (registered 2026-11-10 01:40 UTC, before it runs)
+A parallel copy with one change: both bids sit **1 tick behind** the reference price, which earns a smaller reward
+share (discount factor) but sits behind more queue, so it should be picked off less. Same budget, selection, caps and
+pass rule, scored over its own 10 days (`paper/ROUND44B_LIP.md`). Comparing the two shows whether fill losses or reward
+share drive the result.
