@@ -1,0 +1,23 @@
+name: round45b
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/download-artifact@v4
+        with: {name: r45-trades, path: data/r45, run-id: "42698717092", github-token: "${{ github.token }}"}
+      - run: python run_round45b.py
+      - name: Commit report
+        run: |
+          git config user.name "round45b bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND45B.md && git commit -q -m "round45b: results [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
