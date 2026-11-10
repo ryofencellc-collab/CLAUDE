@@ -1,10 +1,10 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-10 21:42 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-10 23:42 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 211,086 (cancelled before close 4,749); open now 1,119 |
+| Markets bid and settled | 211,086 (cancelled before close 4,749); open now 2,809 |
 | Markets that got any fill | 945 (0.4%) |
 | Losing filled markets | 9 |
 | Contracts filled | 313,922 |
@@ -71,9 +71,9 @@ Updated 2026-11-10 21:42 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-09 | crypto15m | $516 | $39,600 |
 | 2026-11-09 | crypto_hourly | $729,424 | $837,540 |
 | 2026-11-09 | index | $32,207 | $517,770 |
-| 2026-11-10 | crypto15m | $308 | $29,700 |
-| 2026-11-10 | crypto_hourly | $770,505 | $846,450 |
-| 2026-11-10 | index | $16,357 | $447,480 |
+| 2026-11-10 | crypto15m | $309 | $29,700 |
+| 2026-11-10 | crypto_hourly | $740,531 | $846,450 |
+| 2026-11-10 | index | $32,403 | $507,870 |
 
 ## Round 24 forward test (S&P 500 / Nasdaq-100 binaries), 2026-11-02 to 2026-11-15
 
