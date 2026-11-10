@@ -29,11 +29,18 @@ jobs:
         with: {ref: "claude/eloquent-darwin-2lipsh"}
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
-      - run: pip install pandas requests
+      - run: pip install pandas requests yfinance tabulate
       - run: |
           git config user.name "odte bot"
           git config user.email "actions@users.noreply.github.com"
       - run: python -m edge.odte
+      - name: Score the 0DTE strategies (Round 39b)
+        if: always()
+        run: |
+          python -m edge.odte_score > /dev/null || echo "scorer failed"
+          git add reports/ROUND39B.md paper/r39b_trades.csv 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round39b: daily score [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
       - uses: actions/upload-artifact@v4
         if: always()
         with: {name: "odte-${{ github.run_id }}", path: data/odte/, retention-days: 90, if-no-files-found: ignore}
