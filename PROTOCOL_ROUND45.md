@@ -25,3 +25,10 @@ passing cell becomes a forward paper test (or a tilt in Round 44), not a funded 
 The first run downloaded 11.4M trades from 44k of the 84k sampled markets, then crashed while saving. A loop variable
 had overwritten the file path. Nothing was analysed and the data was lost. Fixed, checked offline with stubbed
 endpoints, and the download now checkpoints every 5,000 markets. Re-run unchanged otherwise.
+
+## Result (2026-11-10): **11 cells pass** (`reports/ROUND45.md`, `reports/ROUND45B.md`)
+12.4M trades, 37,852 markets, 22,026 events. The calibration matches the literature: contracts at ~2c win 0.6%, at
+~8c win 3.4%, at 80–90c win 90%. Makers as a whole earn +1.6% per dollar (t 5.7). All 11 passing cells are makers holding
+the favourite: Sports .85–.95 (1–24 h: holdout +5.0%, 3,387 events, t 4.5; 1–7 d +6.8%; > 7 d +8.9%), Sports .70–.85
+1–7 d (+10.0%), Entertainment .85–.95 and .70–.85 (+4.0% to +20.1%), Elections and Politics .85–.95 > 7 d, Mentions
+.85–.95 < 1 h. Next: the forward paper test in Round 46, since our own queue position can differ from the average maker's.
