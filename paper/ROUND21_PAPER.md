@@ -1,15 +1,15 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-10 15:56 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-10 17:57 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 205,313 (cancelled before close 4,550); open now 891 |
-| Markets that got any fill | 911 (0.4%) |
+| Markets bid and settled | 207,164 (cancelled before close 4,629); open now 918 |
+| Markets that got any fill | 926 (0.4%) |
 | Losing filled markets | 9 |
-| Contracts filled | 309,252 |
-| **Paper profit** | **$-1,237.15** |
-| Average queue ahead at placement | 19,692 contracts |
+| Contracts filled | 313,250 |
+| **Paper profit** | **$-1,197.93** |
+| Average queue ahead at placement | 19,715 contracts |
 
 | Day | Settled | Filled markets | Contracts | P&L |
 |---|---:|---:|---:|---:|
@@ -25,23 +25,23 @@ Updated 2026-11-10 15:56 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-07 | 20,071 | 88 | 31,191 | $+305.93 |
 | 2026-11-08 | 20,023 | 108 | 42,963 | $-3845.67 |
 | 2026-11-09 | 21,435 | 101 | 32,066 | $+314.42 |
-| 2026-11-10 | 13,639 | 49 | 19,672 | $+193.05 |
+| 2026-11-10 | 15,490 | 64 | 23,671 | $+232.27 |
 
 | Series | Settled | Filled markets | Contracts | P&L | Avg queue |
 |---|---:|---:|---:|---:|---:|
 | KXBTC15M | 164 | 28 | 28,000 | $+274.96 | 580,024 |
-| KXBTCD | 42,595 | 172 | 98,038 | $-3299.80 | 18,521 |
-| KXDOGE15M | 128 | 22 | 22,000 | $+216.04 | 25,869 |
+| KXBTCD | 42,955 | 175 | 99,388 | $-3286.53 | 18,520 |
+| KXDOGE15M | 129 | 22 | 22,000 | $+216.04 | 26,051 |
 | KXETH15M | 145 | 13 | 13,000 | $+127.66 | 84,261 |
-| KXETHD | 68,082 | 93 | 19,942 | $+195.39 | 20,568 |
+| KXETHD | 68,669 | 93 | 19,942 | $+195.39 | 20,658 |
 | KXINX | 145 | 12 | 2,428 | $+23.78 | 1,225 |
-| KXINXU | 2,913 | 188 | 30,586 | $+296.25 | 4,170 |
+| KXINXU | 3,087 | 199 | 33,200 | $+321.87 | 4,028 |
 | KXNASDAQ100 | 146 | 2 | 1,009 | $+9.90 | 1,318 |
 | KXNASDAQ100U | 5,276 | 36 | 2,940 | $+28.62 | 5,376 |
 | KXSOL15M | 161 | 19 | 18,880 | $+185.40 | 39,550 |
-| KXSOLD | 68,065 | 120 | 15,721 | $+153.89 | 19,665 |
+| KXSOLD | 68,647 | 120 | 15,721 | $+153.89 | 19,680 |
 | KXXRP15M | 174 | 40 | 38,907 | $+382.07 | 38,364 |
-| KXXRPD | 17,319 | 166 | 17,800 | $+168.69 | 20,256 |
+| KXXRPD | 17,466 | 167 | 17,833 | $+169.02 | 20,289 |
 
 ## Capital a real account would tie up (resting bids x size x 99c)
 
@@ -71,27 +71,27 @@ Updated 2026-11-10 15:56 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-09 | crypto15m | $516 | $39,600 |
 | 2026-11-09 | crypto_hourly | $729,424 | $837,540 |
 | 2026-11-09 | index | $32,207 | $517,770 |
-| 2026-11-10 | crypto15m | $257 | $29,700 |
-| 2026-11-10 | crypto_hourly | $784,526 | $846,450 |
-| 2026-11-10 | index | $0 | $0 |
+| 2026-11-10 | crypto15m | $315 | $29,700 |
+| 2026-11-10 | crypto_hourly | $774,632 | $846,450 |
+| 2026-11-10 | index | $2,445 | $74,250 |
 
 ## Round 24 forward test (S&P 500 / Nasdaq-100 binaries), 2026-11-02 to 2026-11-15
 
 | | |
 |---|---|
-| Paper profit | **$+358.55** |
-| Markets settled / filled | 8,480 / 238 |
+| Paper profit | **$+384.17** |
+| Markets settled / filled | 8,654 / 249 |
 | Losing filled markets | 3 |
-| Days with fills | 6 (green 100%) |
+| Days with fills | 7 (green 100%) |
 
 ## Round 22 sizing (10k contracts on 15-minute markets), window 2026-10-31 to 2026-11-13
 
 | | |
 |---|---|
-| Paper profit at Round 22 size | **$+6,623.55** |
+| Paper profit at Round 22 size | **$+6,637.15** |
 | Losing filled markets | 6 |
 | Days with fills | 11 (green 91%) |
 | Worst day | $-2,589.10 |
 | Not in this test: index markets (Round 24) losing filled | 3 |
 
-Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (977 rows).
+Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (992 rows).
