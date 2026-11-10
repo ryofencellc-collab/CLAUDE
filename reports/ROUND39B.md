@@ -2,8 +2,8 @@
 
 Rules: [PROTOCOL_ROUND39.md](../PROTOCOL_ROUND39.md). Fills at bid/ask of the same snapshot; per-leg commissions; first score at 20 trading days, again at 40. P&L per 1 lot.
 
-- 2026-11-09 SPXW: 409 snapshots, settle 7549.83 (last snapshot), 21 trades
-- 2026-11-09 SPY: 382 snapshots, settle 752.77 (last snapshot), 21 trades
+- 2026-11-09 SPXW: 409 snapshots, settle 7549.94 (official close), 21 trades
+- 2026-11-09 SPY: 382 snapshots, settle 752.69 (official close), 21 trades
 
 Trading days scored: **1** (verdict at 20).
 
@@ -27,11 +27,11 @@ Trading days scored: **1** (verdict at 20).
 | I2 condor 10d stop 2x | SPY    | 11:30   |        1 | 0%    |  -28.2  |     nan |  -28.2  |  -28.2  |  nan |  nan |
 | I2 condor 10d stop 2x | SPY    | 13:00   |        1 | 0%    |  -18.2  |     nan |  -18.2  |  -18.2  |  nan |  nan |
 | I2 condor 10d stop 2x | SPY    | 14:30   |        1 | 0%    |  -38.2  |     nan |  -38.2  |  -38.2  |  nan |  nan |
-| I3 condor 20d         | SPXW   | 10:00   |        1 | 0%    | -839.01 |     nan | -839.01 | -839.01 |  nan |  nan |
+| I3 condor 20d         | SPXW   | 10:00   |        1 | 0%    | -849.99 |     nan | -849.99 | -849.99 |  nan |  nan |
 | I3 condor 20d         | SPXW   | 11:30   |        1 | 100%  |  484    |     nan |  484    |  484    |  nan |  nan |
 | I3 condor 20d         | SPXW   | 13:00   |        1 | 100%  |  319    |     nan |  319    |  319    |  nan |  nan |
 | I3 condor 20d         | SPXW   | 14:30   |        1 | 100%  |  189    |     nan |  189    |  189    |  nan |  nan |
-| I3 condor 20d         | SPY    | 10:00   |        1 | 0%    |  -15.6  |     nan |  -15.6  |  -15.6  |  nan |  nan |
+| I3 condor 20d         | SPY    | 10:00   |        1 | 0%    |   -7.6  |     nan |   -7.6  |   -7.6  |  nan |  nan |
 | I3 condor 20d         | SPY    | 11:30   |        1 | 100%  |   50.4  |     nan |   50.4  |   50.4  |  nan |  nan |
 | I3 condor 20d         | SPY    | 13:00   |        1 | 100%  |   45.4  |     nan |   45.4  |   45.4  |  nan |  nan |
 | I3 condor 20d         | SPY    | 14:30   |        1 | 100%  |   27.4  |     nan |   27.4  |   27.4  |  nan |  nan |
@@ -58,4 +58,4 @@ Pass (at ≥ 20 days): mean > 0 with 90% bootstrap lower bound > 0, both halves 
 
 | day        |   B1 OR breakout |   I1 condor 10d |   I2 condor 10d stop 2x |   I3 condor 20d |   L1 long straddle |   T1 trend spread 15d |
 |:-----------|-----------------:|----------------:|------------------------:|----------------:|-------------------:|----------------------:|
-| 2026-11-09 |             2602 |             750 |                   -1209 |             261 |               8447 |                   576 |
+| 2026-11-09 |             2602 |             750 |                   -1209 |             258 |               8447 |                   576 |
