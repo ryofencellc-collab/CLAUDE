@@ -1,6 +1,6 @@
 """Round 46 (PROTOCOL_ROUND46.md): paper maker bids on the 85-95c favourite in Sports and Entertainment markets."""
 from __future__ import annotations
-import json, math, os, subprocess, time
+import json, math, os, re, subprocess, time
 import numpy as np
 import pandas as pd
 
@@ -14,6 +14,7 @@ REPORT = os.path.join(ROOT, "paper", "ROUND46_FAV.md")
 CATS = {"Sports", "Entertainment"}
 LO, HI, STAKE, MAX_OPEN, BUDGET = 0.85, 0.95, 200.0, 50, 10_000.0
 SCAN_EVERY, STEP = 900, 120
+PER_EVENT = 3            # strikes/props of one game move together (Nov 8 lesson)
 RUN_SECONDS = int(os.environ.get("R46_SECONDS", str(5 * 3600 + 40 * 60)))
 
 
@@ -68,22 +69,36 @@ def committed(o):
     return rest + o["cost_yes"] + o["cost_no"]
 
 
+def ladder(ticker: str) -> str:
+    return re.sub(r"[0-9.]+$", "", ticker)
+
+
 def scan(st, now, cat_of):
     held = {o["ticker"] for o in st["orders"]}
+    ladders = {ladder(o["ticker"]) for o in st["orders"]}
+    per_event: dict = {}
+    for o in st["orders"]:
+        per_event[o["event"]] = per_event.get(o["event"], 0) + 1
     used = sum(committed(o) for o in st["orders"])
     n_open = sum(1 for o in st["orders"] if o["resting"])
-    for s, cat in cat_of.items():
+    order = list(cat_of.items())
+    np.random.default_rng(int(now.timestamp()) // SCAN_EVERY).shuffle(order)
+    for s, cat in order:
         for m in open_markets(s, now):
             if n_open >= MAX_OPEN or used + STAKE > BUDGET:
                 return
             if m["ticker"] in held or pd.Timestamp(m["close_time"]) <= now + pd.Timedelta(minutes=10):
+                continue
+            ev = m.get("event_ticker") or m["ticker"].rsplit("-", 1)[0]
+            if ladder(m["ticker"]) in ladders or per_event.get(ev, 0) >= PER_EVENT:
                 continue
             fv = favourite(m)
             if not fv:
                 continue
             side, px, ahead = fv
             st["orders"].append(new_order(m, side, px, ahead, cat, now))
-            held.add(m["ticker"]); used += STAKE; n_open += 1
+            held.add(m["ticker"]); ladders.add(ladder(m["ticker"])); per_event[ev] = per_event.get(ev, 0) + 1
+            used += STAKE; n_open += 1
 
 
 def step(st, now):

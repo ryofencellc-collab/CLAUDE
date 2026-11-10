@@ -13,3 +13,8 @@ settlement. P&L = filled × (1[side wins] − price) − maker fee (0.0175·p(1�
 **Pass (after 14 calendar days):** ≥ 100 filled events, return ≥ +2% per dollar with event-clustered t ≥ 2, positive
 in each week, and worst day ≥ −$400. A pass makes it the live candidate (with Round 44 if that passes too).
 **Known gap:** the queue model ignores cancellations ahead of us (conservative) and assumes we see every trade.
+
+## Amendment 1 (2026-11-10, after a 15-minute smoke run, before the forward test)
+The smoke run placed all 48 bids on one NFL game's receiving-yards props, several of them strikes of the same
+player's ladder: one correlated bet. Now at most 1 market per ladder (ticker minus its trailing number) and 3 per
+event, and the series are scanned in a shuffled order so bids spread across games. The smoke ledger is discarded.
