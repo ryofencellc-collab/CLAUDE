@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-11 06:39 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 56938; settled: 51162.
+Updated 2026-11-11 07:40 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 57452; settled: 51180.
 
-Total paper P&L: **$3,699.56**; filled markets 6273; wrong calls 87, of which filled 58.
+Total paper P&L: **$3,705.16**; filled markets 6276; wrong calls 87, of which filled 58.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -31,7 +31,7 @@ Total paper P&L: **$3,699.56**; filled markets 6273; wrong calls 87, of which fi
 | KXNFL3QSPREAD      |       156 |       25 |  19984.5         |        2856.24 | 172844           |   196.23 |       0 |              0 |
 | KXNFL1HTOTAL       |       180 |       33 |  19214.5         |        4240.5  | 213377           |   188.62 |       0 |              0 |
 | KXNBA1QTOTAL       |       182 |       39 |  19139.1         |        3035.1  | 110445           |   187.85 |       0 |              0 |
-| KXCS2GAME          |        96 |       35 |  17904.7         |         159.45 |  98010.4         |   175.76 |       0 |              0 |
+| KXCS2GAME          |        98 |       36 |  18472.3         |         137.5  |  98760.9         |   181.34 |       0 |              0 |
 | KXNHLTOTAL         |       179 |       56 |  17253.6         |         995.31 |  95172.1         |   169.2  |       0 |              0 |
 | KXNFLGAME          |        26 |       16 |  16000           |           0    |      1.20132e+07 |   157.12 |       0 |              0 |
 | KXNBA1H            |        42 |       28 |  16359.8         |           0    |  77485.2         |   156.6  |       1 |              1 |
@@ -54,10 +54,10 @@ Total paper P&L: **$3,699.56**; filled markets 6273; wrong calls 87, of which fi
 | KXPERLIGA1GAME     |        24 |        9 |   8248.52        |      115318    | 229611           |    80.99 |       0 |              0 |
 | KXNBA1QSPREAD      |       182 |       19 |   7769.99        |        3032.5  | 100903           |    76.25 |       0 |              0 |
 | KXEPLTOTAL         |        46 |       21 |  15364.7         |           0    | 208201           |    67.61 |       1 |              1 |
-| KXLIGAPROMATCH     |       399 |       26 |   6541.91        |        8523.01 |  18939.6         |    64.18 |       0 |              0 |
+| KXLIGAPROMATCH     |       411 |       26 |   6541.91        |        8524    |  20312.4         |    64.18 |       0 |              0 |
 | KXAPFDDHGAME       |        12 |        7 |   6330.72        |           0    |  25025.6         |    62.17 |       0 |              0 |
 | KXNHL1PTOTAL       |        95 |       13 |   5285.49        |         435    |  21883           |    51.86 |       0 |              0 |
-| KXCS2MAP           |       158 |       13 |   5144.34        |        3607.43 |  21184           |    50.5  |       0 |              0 |
+| KXCS2MAP           |       162 |       15 |   5147.88        |        3362.6  |  21187.5         |    50.52 |       0 |              0 |
 | KXNCAAF1QSPREAD    |       197 |       13 |   3664.9         |         815    |  25856.2         |    35.94 |       0 |              0 |
 | KXLIGAEXPGAME      |        12 |        4 |   3141.58        |      115067    |  86002.7         |    30.85 |       0 |              0 |
 | KXLIGAEXPTOTAL     |        29 |        5 |   2940.46        |       24262    |  16967.1         |    28.88 |       0 |              0 |
