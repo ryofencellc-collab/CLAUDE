@@ -1,0 +1,29 @@
+name: round48
+# Round 48 (PROTOCOL_ROUND48.md): insider purchases from SEC Form 4 data sets.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/download-artifact@v4
+        with: {name: r38-data, path: data/r38, run-id: "42527455413", github-token: "${{ github.token }}"}
+      - run: ls -la data/r38 | head -20
+      - run: python run_round48.py smoke
+      - run: python run_round48.py
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round48 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND48.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round48: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
