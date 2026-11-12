@@ -38,7 +38,51 @@ def quarter(y, q, s):
     return d[["filed", "sym", "owner", "rel", "title", "value"]].dropna(subset=["filed"])
 
 
+OI = ("http://openinsider.com/screener?s=&o=&pl=&ph=&ll=&lh=&fd=-1&fdr={a}+-+{b}&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1"
+      "&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h="
+      "&sortcol=0&cnt=1000&page={page}")
+
+
+def oi_month(start, s):
+    """All open-market purchases filed in one calendar month, from OpenInsider (a parsed mirror of SEC Form 4)."""
+    end = (start + pd.offsets.MonthEnd(0))
+    rows = []
+    for page in range(1, 40):
+        url = OI.format(a=start.strftime("%m%%2F%d%%2F%Y"), b=end.strftime("%m%%2F%d%%2F%Y"), page=page)
+        for k in range(4):
+            try:
+                r = s.get(url, timeout=60)
+                if r.status_code == 200: break
+            except requests.RequestException:
+                pass
+            time.sleep(5 * (k + 1))
+        tabs = [t for t in pd.read_html(io.StringIO(r.text)) if any("Ticker" in str(c) for c in t.columns)]
+        if not tabs: break
+        t = tabs[0]; t.columns = [str(c).replace("\xa0", " ").strip() for c in t.columns]
+        rows.append(t)
+        time.sleep(1.5)
+        if len(t) < 1000: break
+    if not rows: return pd.DataFrame()
+    d = pd.concat(rows, ignore_index=True)
+    out = pd.DataFrame({"filed": pd.to_datetime(d["Filing Date"], errors="coerce").dt.normalize(),
+                        "sym": d["Ticker"].astype(str).str.upper().str.strip(), "owner": d["Insider Name"].astype(str),
+                        "rel": d["Title"].astype(str), "title": d["Title"].astype(str),
+                        "value": pd.to_numeric(d["Value"].astype(str).str.replace(r"[^0-9.]", "", regex=True), errors="coerce")})
+    return out.dropna(subset=["filed"])
+
+
 def filings():
+    p = f"{OUT}/buys.pkl"
+    if os.path.exists(p): return pd.read_pickle(p)
+    os.makedirs(OUT, exist_ok=True)
+    s = requests.Session(); s.headers.update({"User-Agent": "Mozilla/5.0 (research)"})
+    parts = []
+    for m in pd.date_range("2015-01-01", "2026-10-01", freq="MS"):
+        d = oi_month(m, s); parts.append(d); print(m.date(), len(d), flush=True)
+    d = pd.concat(parts, ignore_index=True).drop_duplicates(); d.to_pickle(p); return d
+
+
+def filings_sec():
     p = f"{OUT}/buys.pkl"
     if os.path.exists(p): return pd.read_pickle(p)
     os.makedirs(OUT, exist_ok=True)
@@ -68,8 +112,8 @@ def prices():
 
 def events(b, rule):
     b = b.sort_values("filed")
-    is_off = b.rel.fillna("").str.contains("Officer|Director", case=False) | b.title.fillna("").str.len().gt(0)
-    ceo = b.title.fillna("").str.contains(r"\bCEO\b|Chief Executive|\bCFO\b|Chief Financial", case=False, regex=True)
+    is_off = ~b.title.fillna("").str.fullmatch(r"\s*(10%|Former.*)?\s*", case=False)   # anyone but a pure 10% holder
+    ceo = b.title.fillna("").str.contains(r"\bCEO\b|Chief Executive|\bCFO\b|Chief Financial|\bPres\b", case=False, regex=True)
     if rule in ("I1", "I2"):
         e = b[is_off & (b.value >= 50_000)]
     elif rule == "I4":
@@ -132,8 +176,9 @@ def portfolio(t, a, b, w=0.05, cap=20):
 
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "smoke":
-        s = requests.Session(); s.headers.update(UA)
-        d = quarter(2024, 1, s); print(d.head(10).to_string()); print(len(d), d.value.describe()); return
+        s = requests.Session(); s.headers.update({"User-Agent": "Mozilla/5.0 (research)"})
+        d = oi_month(pd.Timestamp("2024-03-01"), s); print(d.head(10).to_string()); print(len(d), d.value.describe())
+        assert len(d) > 100 and d.value.notna().mean() > 0.9 and d.sym.str.len().gt(0).all(), "smoke failed"; return
     b = filings(); print("purchases", len(b), b.filed.min(), b.filed.max(), flush=True)
     O, C, R, dv, so, sc = prices()
     spy_y = lambda a, z: (sc[(sc.index >= a) & (sc.index < z)].iloc[-1] / sc[(sc.index >= a) & (sc.index < z)].iloc[0]) ** (365.25 / (z - a).days) - 1

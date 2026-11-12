@@ -23,3 +23,9 @@ position, at most 20 open, taking the largest purchases first.
 **Pass.** Holdout (2022 → 2026-10) mean excess return per trade ≥ +1% with t ≥ 3 (clustered by filing week), dev
 (2015–2021) mean excess > 0, and holdout portfolio Sharpe ≥ 1 with CAGR ≥ SPY's + 5 points. A pass goes to forward
 paper trading from live Form 4 filings.
+
+## Amendment 1 (2026-11-12, before any data)
+sec.gov refuses requests from GitHub's servers (HTTP 403 on every SEC host, `probe/sec2`). The source is now
+OpenInsider, a public parsed mirror of the same SEC Form 4 filings (open-market purchases, filing date, ticker, insider
+title, value), fetched month by month at a polite rate. "Officer/director" means any insider whose title is not only
+"10%" (a large holder); "CEO/CFO" also counts "Pres". Rules, periods and pass criteria are unchanged.

@@ -14,7 +14,7 @@ jobs:
         with: {ref: "${{ github.ref_name }}"}
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
-      - run: pip install -r requirements.txt tabulate
+      - run: pip install -r requirements.txt tabulate lxml
       - uses: actions/download-artifact@v4
         with: {name: r38-data, path: data/r38, run-id: "42527455413", github-token: "${{ github.token }}"}
       - run: ls -la data/r38 | head -20
