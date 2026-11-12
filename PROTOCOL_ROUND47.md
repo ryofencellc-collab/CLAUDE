@@ -24,3 +24,11 @@ through the stop fills at the open). A same-day stop and target count as the sto
 **Pass.** S1–S3: holdout mean net return per trade ≥ +0.3%, t ≥ 3 (clustered by entry date), dev mean > 0, holdout
 portfolio CAGR ≥ 15% and Sharpe ≥ 1. S5: holdout Sharpe above SPY buy-and-hold and worst drawdown shallower. A pass goes
 to forward paper; nothing is funded on a backtest alone.
+
+## Result (2026-11-12): **0 of 6 pass** (`reports/ROUND47.md`)
+Momentum burst (39k holdout trades): −0.10% (3 days) and −0.21% (5 days) per trade after costs. Exhaustion hammer
+−0.02%. Earnings-gap drift −1.41% (20 days) and −0.02% (60 days). Every portfolio lost money in 2022–26. The O'Neil
+timing rule, as written, was in the market only 2–3% of the time: distribution days (down ≥ 0.2% on higher volume)
+pile up so often that it exits almost at once. So it neither made nor lost much, against SPY's +11.5%/yr. None of
+these skill-pack stock rules has an edge after costs. The prediction-market skill's rule (maker longshot fade) is
+the one that matches our own passing result and stays in forward test (Round 46).
