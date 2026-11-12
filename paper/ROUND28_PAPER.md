@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-12 13:33 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 72470; settled: 61983.
+Updated 2026-11-12 14:34 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 73017; settled: 62004.
 
-Total paper P&L: **$11,345.85**; filled markets 7678; wrong calls 90, of which filled 59.
+Total paper P&L: **$11,394.95**; filled markets 7683; wrong calls 90, of which filled 59.
 
 | series             |   markets |   filled |       contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -11,7 +11,7 @@ Total paper P&L: **$11,345.85**; filled markets 7678; wrong calls 90, of which f
 | KXNCAAFSPREAD      |      2180 |      769 | 305210          |           0    |      1.39218e+06 |  2095.98 |      12 |              4 |
 | KXNFLTD            |       678 |      316 | 175056          |           0    |      2.43429e+06 |  1668.44 |       3 |              1 |
 | KXNFLSPREAD        |       382 |      259 | 156639          |           0    |      1.67179e+06 |  1537.66 |       0 |              0 |
-| KXRAIN             |       156 |      130 | 114910          |           0    | 784037           |  1128.36 |       0 |              0 |
+| KXRAIN             |       158 |      132 | 116910          |           0    | 793609           |  1148    |       0 |              0 |
 | KXCOPPER15M        |       184 |      140 |  99016.8        |           0    | 216479           |   972.2  |       0 |              0 |
 | KXTEMPMIAH         |       888 |      326 | 106192          |           0    | 139102           |   705.24 |       2 |              2 |
 | KXNATGAS15M        |       169 |      139 | 102749          |           0    | 253240           |   622.92 |       1 |              1 |
@@ -29,21 +29,21 @@ Total paper P&L: **$11,345.85**; filled markets 7678; wrong calls 90, of which f
 | KXNBA1H            |        66 |       44 |  25906.6        |           0    | 126337           |   250.32 |       1 |              1 |
 | KXNHLTOTAL         |       208 |       73 |  25416.8        |         552    | 292818           |   249.32 |       0 |              0 |
 | KXNFL3QSPREAD      |       166 |       28 |  22984.5        |        2955    | 232943           |   225.69 |       0 |              0 |
+| KXHIGHNY           |        30 |       24 |  22653.3        |           0    | 274468           |   222.46 |       0 |              0 |
 | KXNFL1H            |        42 |       26 |  21924.6        |           0    | 245565           |   215.29 |       0 |              0 |
 | KXNCAAF1H          |       315 |       45 |  21321.1        |         873    | 184134           |   209.24 |       1 |              0 |
 | KXTRUMPSAY         |        32 |       28 |  27058          |           0    | 447816           |   207.7  |       1 |              1 |
 | KXMLSTOTAL         |       112 |       46 |  20888.1        |           0    |  91931.9         |   204.95 |       0 |              0 |
-| KXHIGHNY           |        28 |       22 |  20653.3        |           0    | 259241           |   202.82 |       0 |              0 |
 | KXNCAAF1HTOTAL     |       683 |       55 |  20535.9        |        3537    | 201496           |   201.46 |       2 |              0 |
 | KXNFLGAME          |        28 |       18 |  18000          |           0    |      1.45818e+07 |   176.76 |       0 |              0 |
 | KXNFL1QSPREAD      |       153 |       31 |  17789.8        |        2116    | 210941           |   174.66 |       0 |              0 |
-| KXHIGHLAX          |        24 |       16 |  16000          |           0    | 310193           |   157.12 |       0 |              0 |
+| KXHIGHCHI          |        30 |       18 |  16512.9        |         196.39 | 147342           |   162.15 |       0 |              0 |
 | KXDIMAYORGAME      |        24 |       16 |  16000          |           0    | 542033           |   157.12 |       0 |              0 |
+| KXHIGHLAX          |        24 |       16 |  16000          |           0    | 310193           |   157.12 |       0 |              0 |
 | KXLALIGATOTAL      |        45 |       25 |  15667.5        |           0    |  87814.6         |   153.81 |       0 |              0 |
-| KXHIGHCHI          |        27 |       17 |  15512.9        |         181    | 132148           |   152.33 |       0 |              0 |
 | KXNHLSPREAD        |       158 |       48 |  15054.9        |           0.57 |  46894.8         |   147.64 |       0 |              0 |
 | KXNBA1QSPREAD      |       286 |       30 |  13626.4        |        3466.37 | 167505           |   133.73 |       1 |              0 |
-| KXLIGAPROMATCH     |       753 |       53 |  13321.3        |        8548.01 |  70355.6         |   130.68 |       0 |              0 |
+| KXLIGAPROMATCH     |       767 |       53 |  13321.3        |        8548.99 |  70577.2         |   130.68 |       0 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8        |       20221.5  | 164929           |   128.76 |       0 |              0 |
 | KXRT               |        50 |       15 |  11342          |        8025.5  | 218831           |   111.36 |       0 |              0 |
 | KXBRASILEIROBTOTAL |        51 |       22 |  10151.3        |         376.32 |  51788.5         |    99.65 |       0 |              0 |
