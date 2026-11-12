@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-12 08:48 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 70316; settled: 61832.
+Updated 2026-11-12 09:49 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 70316; settled: 61854.
 
-Total paper P&L: **$10,930.61**; filled markets 7619; wrong calls 90, of which filled 59.
+Total paper P&L: **$10,936.53**; filled markets 7622; wrong calls 90, of which filled 59.
 
 | series             |   markets |   filled |       contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -18,7 +18,7 @@ Total paper P&L: **$10,930.61**; filled markets 7619; wrong calls 90, of which f
 | KXNCAAF1HSPREAD    |       987 |      118 |  45950.3        |          60    | 378555           |   450.79 |       1 |              0 |
 | KXAAAGASD          |        76 |       50 |  43949.4        |           0    | 692536           |   431.56 |       0 |              0 |
 | KXNBAGAME          |        44 |       40 |  40000          |           0    |      8.30712e+06 |   392.8  |       0 |              0 |
-| KXCS2GAME          |       170 |       65 |  38721.5        |         213.5  | 259617           |   380.16 |       0 |              0 |
+| KXCS2GAME          |       172 |       67 |  39290.5        |         202    | 260186           |   385.74 |       0 |              0 |
 | KXNFL1HSPREAD      |       253 |       53 |  37928.7        |        3564.81 | 648425           |   372.41 |       0 |              0 |
 | KXNFLPASSYDS       |       277 |       63 |  34337.2        |         777    | 284550           |   337.02 |       0 |              0 |
 | KXLALIGASCORE      |       202 |       49 |  31911.3        |           0    | 136341           |   313.25 |       0 |              0 |
@@ -44,7 +44,7 @@ Total paper P&L: **$10,930.61**; filled markets 7619; wrong calls 90, of which f
 | KXNBA1QSPREAD      |       286 |       30 |  13626.4        |        3466.37 | 167505           |   133.73 |       1 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8        |       20221.5  | 164929           |   128.76 |       0 |              0 |
 | KXHIGHCHI          |        24 |       14 |  12512.9        |         585.67 | 122577           |   122.87 |       0 |              0 |
-| KXLIGAPROMATCH     |       701 |       50 |  12254.9        |        8547.99 |  61216.9         |   120.22 |       0 |              0 |
+| KXLIGAPROMATCH     |       713 |       51 |  12289.9        |        8548    |  61391.4         |   120.56 |       0 |              0 |
 | KXRT               |        50 |       15 |  11342          |        8025.5  | 218831           |   111.36 |       0 |              0 |
 | KXBRASILEIROBTOTAL |        51 |       22 |  10151.3        |         376.32 |  51788.5         |    99.65 |       0 |              0 |
 | KXLALIGAGAME       |        20 |       10 |  10000          |       28798.1  | 824647           |    98.2  |       0 |              0 |
@@ -55,7 +55,7 @@ Total paper P&L: **$10,930.61**; filled markets 7619; wrong calls 90, of which f
 | KXBUNDESLIGATOTAL  |        28 |       16 |   8440.01       |           0    |  51133.8         |    82.83 |       0 |              0 |
 | KXMLSSPREAD        |        71 |       25 |   8425.56       |           0    |  21048.2         |    82.7  |       0 |              0 |
 | KXPERLIGA1GAME     |        24 |        9 |   8248.52       |      115318    | 229611           |    80.99 |       0 |              0 |
-| KXCS2MAP           |       239 |       25 |   7878.55       |        2743    |  34030.1         |    77.3  |       0 |              0 |
+| KXCS2MAP           |       247 |       25 |   7878.55       |        3000    |  37195.3         |    77.3  |       0 |              0 |
 | KXEPLTOTAL         |        46 |       21 |  15364.7        |           0    | 208201           |    67.61 |       1 |              1 |
 | KXAPFDDHTOTAL      |        42 |       13 |   6713.72       |       35024    |  56127.1         |    65.89 |       0 |              0 |
 | KXNHL1PTOTAL       |       110 |       14 |   6285.49       |         556    |  28967.2         |    61.68 |       0 |              0 |
