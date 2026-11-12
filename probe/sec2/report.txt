@@ -1,0 +1,10 @@
+== https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets
+HTTP 403 921
+== https://www.sec.gov/dera/data/form-345
+HTTP 403 920
+== https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2024q1_form345.zip
+HTTP 403 920
+== https://www.sec.gov/files/dera/data/financial-statement-and-notes-data-sets/2024q1_notes.zip
+HTTP 403 918
+== https://data.sec.gov/submissions/CIK0001067983.json
+HTTP 403 2164
