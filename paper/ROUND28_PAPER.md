@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-12 07:47 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 70312; settled: 61820.
+Updated 2026-11-12 08:48 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 70316; settled: 61832.
 
-Total paper P&L: **$10,930.27**; filled markets 7618; wrong calls 90, of which filled 59.
+Total paper P&L: **$10,930.61**; filled markets 7619; wrong calls 90, of which filled 59.
 
 | series             |   markets |   filled |       contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -44,7 +44,7 @@ Total paper P&L: **$10,930.27**; filled markets 7618; wrong calls 90, of which f
 | KXNBA1QSPREAD      |       286 |       30 |  13626.4        |        3466.37 | 167505           |   133.73 |       1 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8        |       20221.5  | 164929           |   128.76 |       0 |              0 |
 | KXHIGHCHI          |        24 |       14 |  12512.9        |         585.67 | 122577           |   122.87 |       0 |              0 |
-| KXLIGAPROMATCH     |       689 |       49 |  12220.4        |        8547.99 |  61119.1         |   119.88 |       0 |              0 |
+| KXLIGAPROMATCH     |       701 |       50 |  12254.9        |        8547.99 |  61216.9         |   120.22 |       0 |              0 |
 | KXRT               |        50 |       15 |  11342          |        8025.5  | 218831           |   111.36 |       0 |              0 |
 | KXBRASILEIROBTOTAL |        51 |       22 |  10151.3        |         376.32 |  51788.5         |    99.65 |       0 |              0 |
 | KXLALIGAGAME       |        20 |       10 |  10000          |       28798.1  | 824647           |    98.2  |       0 |              0 |
