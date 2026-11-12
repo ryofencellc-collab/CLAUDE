@@ -1,0 +1,32 @@
+name: probe_sec2
+# One-off: find the working URL for SEC insider-transaction data sets from Actions.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - run: |
+          mkdir -p probe/sec2; UA="ryofencellc-collab-research 265339802+ryofencellc-collab@users.noreply.github.com"
+          {
+          for u in https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets \
+                   https://www.sec.gov/dera/data/form-345 \
+                   https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/2024q1_form345.zip \
+                   https://www.sec.gov/files/dera/data/financial-statement-and-notes-data-sets/2024q1_notes.zip \
+                   https://data.sec.gov/submissions/CIK0001067983.json; do
+            echo "== $u"
+            curl -sS -m 60 -A "$UA" -H "Accept-Encoding: gzip, deflate" --compressed -o body -w "HTTP %{http_code} %{size_download}\n" "$u"
+            grep -o 'href="[^"]*form345[^"]*"' body | head -5
+            grep -o 'href="[^"]*\.zip"' body | head -5
+            sleep 2
+          done
+          } > probe/sec2/report.txt 2>&1
+          cat probe/sec2/report.txt
+      - run: |
+          git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe/sec2 && git commit -q -m "probe: sec2 [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
