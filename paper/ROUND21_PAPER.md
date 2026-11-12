@@ -1,15 +1,15 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-12 14:04 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-12 16:04 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 243,212 (cancelled before close 5,440); open now 1,335 |
-| Markets that got any fill | 1,038 (0.4%) |
+| Markets bid and settled | 244,860 (cancelled before close 5,539); open now 1,578 |
+| Markets that got any fill | 1,043 (0.4%) |
 | Losing filled markets | 9 |
-| Contracts filled | 347,489 |
-| **Paper profit** | **$-862.14** |
-| Average queue ahead at placement | 19,657 contracts |
+| Contracts filled | 349,831 |
+| **Paper profit** | **$-839.16** |
+| Average queue ahead at placement | 19,672 contracts |
 
 | Day | Settled | Filled markets | Contracts | P&L |
 |---|---:|---:|---:|---:|
@@ -27,23 +27,23 @@ Updated 2026-11-12 14:04 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-09 | 21,435 | 101 | 32,066 | $+314.42 |
 | 2026-11-10 | 21,397 | 104 | 28,317 | $+277.69 |
 | 2026-11-11 | 21,417 | 63 | 23,359 | $+229.17 |
-| 2026-11-12 | 8,724 | 9 | 6,233 | $+61.20 |
+| 2026-11-12 | 10,372 | 14 | 8,575 | $+84.18 |
 
 | Series | Settled | Filled markets | Contracts | P&L | Avg queue |
 |---|---:|---:|---:|---:|---:|
-| KXBTC15M | 195 | 33 | 33,000 | $+324.06 | 580,481 |
-| KXBTCD | 50,269 | 182 | 100,919 | $-3271.53 | 18,385 |
-| KXDOGE15M | 148 | 25 | 25,000 | $+245.50 | 26,050 |
-| KXETH15M | 171 | 13 | 13,000 | $+127.66 | 83,876 |
-| KXETHD | 80,031 | 100 | 22,524 | $+220.73 | 20,768 |
+| KXBTC15M | 196 | 33 | 33,000 | $+324.06 | 580,321 |
+| KXBTCD | 50,556 | 185 | 101,260 | $-3268.19 | 18,395 |
+| KXDOGE15M | 150 | 26 | 26,000 | $+255.32 | 25,816 |
+| KXETH15M | 173 | 14 | 14,000 | $+137.48 | 83,558 |
+| KXETHD | 80,610 | 100 | 22,524 | $+220.73 | 20,791 |
 | KXINX | 203 | 13 | 2,524 | $+24.72 | 1,181 |
-| KXINXU | 3,898 | 242 | 41,797 | $+406.09 | 3,624 |
+| KXINXU | 3,953 | 242 | 41,797 | $+406.09 | 3,574 |
 | KXNASDAQ100 | 204 | 3 | 1,010 | $+9.90 | 1,189 |
 | KXNASDAQ100U | 7,266 | 56 | 4,628 | $+45.06 | 5,080 |
-| KXSOL15M | 180 | 21 | 20,880 | $+205.04 | 40,183 |
-| KXSOLD | 80,104 | 125 | 17,345 | $+169.82 | 19,710 |
+| KXSOL15M | 182 | 21 | 20,880 | $+205.04 | 40,336 |
+| KXSOLD | 80,676 | 125 | 17,345 | $+169.82 | 19,720 |
 | KXXRP15M | 181 | 41 | 39,907 | $+391.89 | 39,232 |
-| KXXRPD | 20,362 | 184 | 24,955 | $+238.92 | 20,554 |
+| KXXRPD | 20,510 | 184 | 24,955 | $+238.92 | 20,577 |
 
 ## Capital a real account would tie up (resting bids x size x 99c)
 
@@ -79,8 +79,8 @@ Updated 2026-11-12 14:04 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-11 | crypto15m | $384 | $49,500 |
 | 2026-11-11 | crypto_hourly | $743,779 | $843,480 |
 | 2026-11-11 | index | $27,385 | $504,900 |
-| 2026-11-12 | crypto15m | $405 | $39,600 |
-| 2026-11-12 | crypto_hourly | $497,059 | $843,480 |
+| 2026-11-12 | crypto15m | $398 | $39,600 |
+| 2026-11-12 | crypto_hourly | $518,294 | $843,480 |
 | 2026-11-12 | index | $0 | $0 |
 
 ## Round 24 forward test (S&P 500 / Nasdaq-100 binaries), 2026-11-02 to 2026-11-15
@@ -88,7 +88,7 @@ Updated 2026-11-12 14:04 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | | |
 |---|---|
 | Paper profit | **$+485.77** |
-| Markets settled / filled | 11,571 / 314 |
+| Markets settled / filled | 11,626 / 314 |
 | Losing filled markets | 3 |
 | Days with fills | 8 (green 100%) |
 
@@ -96,10 +96,10 @@ Updated 2026-11-12 14:04 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 
 | | |
 |---|---|
-| Paper profit at Round 22 size | **$+7,613.53** |
+| Paper profit at Round 22 size | **$+7,802.36** |
 | Losing filled markets | 6 |
 | Days with fills | 13 (green 92%) |
 | Worst day | $-2,589.10 |
 | Not in this test: index markets (Round 24) losing filled | 3 |
 
-Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (1107 rows).
+Filled or wrong markets are listed in [r21_fills.csv](r21_fills.csv) (1112 rows).
