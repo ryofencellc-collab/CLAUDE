@@ -1,0 +1,261 @@
+== http://openinsider.com/screener?fd=1461&xp=1&cnt=100&page=1&sortcol=0
+HTTP 200 125461
+ 
+ 
+ 
+ 
+ 
+ Insider Trading Screener - - OpenInsider 
+ 
+ 
+ 
+ 
+#logotext { margin:0px;padding:0px 3px;font-size:16px;
+}
+.menu{
+	border:0px;
+	margin:0px;
+	padding:0px;
+	font-family:sans-serif,arial,verdana,geneva,helvetica,sans-serif;
+	font-size:14px;
+	font-weight:normal;
+	}
+.menu ul{
+	height:28px;
+	list-style:none;
+	margin:0px;
+	padding:0px;
+	}
+	.menu li{
+		background:#222244;
+		border-top:1px solid #ddd;
+		border-left:1px solid #ccc;
+		border-right:1px solid #555;
+		border-bottom:1px solid #555;
+		float:left;
+		height:28px;
+		margin:0px 0px 0px 0px;
+		padding:0px;
+		}
+	.menu li a{
+		color:#fff;
+		display:block;
+		font-weight:normal;
+		line-height:28px;
+		margin:0px;
+		padding:0px 7px;
+		text-align:center;
+		text-decoration:none;
+		}
+	.menu li a:hover{
+		background:#ff6600;
+		color:#fff;
+		text-decoration:none;
+		}
+	.menu li ul{
+		background:#333;
+		margin:0px;
+		padding:0px;
+		border-top:1px solid #ccc;
+		border-left:1px solid #ccc;
+		border-right:1px solid #555;
+		border-bottom:1px solid #555;
+		display:none;
+		line-height:auto;
+		height:auto;
+		filter:alpha(opacity=95);
+		opacity:0.95;
+		position:absolute;
+		width:340px;
+		z-index:200;
+		/*top:1em;
+		/*left:0;*/
+		}
+	.menu li:hover ul{
+		display:block;
+		}
+	.menu li li {
+		margin:0px;
+		padding:0px;
+		border:0px;
+		display:block;
+		float:none;
+		width:340px;
+		}
+	.menu li ul a{
+		height:26px;
+		margin:0px;
+		padding:0px;
+		border:0px;
+		display:blotr: write error: Broken pipe
+sed: couldn't write 182 items to stdout: Broken pipe
+
+== http://openinsider.com/latest-cluster-buys
+HTTP 200 106367
+ 
+ 
+ 
+ 
+ 
+ Latest Cluster Buys - - OpenInsider 
+ 
+ 
+ 
+ 
+#logotext { margin:0px;padding:0px 3px;font-size:16px;
+}
+.menu{
+	border:0px;
+	margin:0px;
+	padding:0px;
+	font-family:sans-serif,arial,verdana,geneva,helvetica,sans-serif;
+	font-size:14px;
+	font-weight:normal;
+	}
+.menu ul{
+	height:28px;
+	list-style:none;
+	margin:0px;
+	padding:0px;
+	}
+	.menu li{
+		background:#222244;
+		border-top:1px solid #ddd;
+		border-left:1px solid #ccc;
+		border-right:1px solid #555;
+		border-bottom:1px solid #555;
+		float:left;
+		height:28px;
+		margin:0px 0px 0px 0px;
+		padding:0px;
+		}
+	.menu li a{
+		color:#fff;
+		display:block;
+		font-weight:normal;
+		line-height:28px;
+		margin:0px;
+		padding:0px 7px;
+		text-align:center;
+		text-decoration:none;
+		}
+	.menu li a:hover{
+		background:#ff6600;
+		color:#fff;
+		text-decoration:none;
+		}
+	.menu li ul{
+		background:#333;
+		margin:0px;
+		padding:0px;
+		border-top:1px solid #ccc;
+		border-left:1px solid #ccc;
+		border-right:1px solid #555;
+		border-bottom:1px solid #555;
+		display:none;
+		line-height:auto;
+		height:auto;
+		filter:alpha(opacity=95);
+		opacity:0.95;
+		position:absolute;
+		width:340px;
+		z-index:200;
+		/*top:1em;
+		/*left:0;*/
+		}
+	.menu li:hover ul{
+		display:block;
+		}
+	.menu li li {
+		margin:0px;
+		padding:0px;
+		border:0px;
+		display:block;
+		float:none;
+		width:340px;
+		}
+	.menu li ul a{
+		height:26px;
+		margin:0px;
+		padding:0px;
+		border:0px;
+		display:block;
+tr: write error: Broken pipe
+sed: couldn't write 226 items to stdout: Broken pipe
+
+== https://www.secform4.com/insider-buying.htm
+HTTP 404 10507
+ 
+ 
+ 
+ 
+	 
+	 
+	 Error: 404 
+	 
+ 
+	 
+	 
+	 
+	 
+	 :root {
+		--hue: 214;
+		--template-bg-light: #f0f4fb;
+		--template-text-dark: #495057;
+		--template-text-light: #ffffff;
+		--link-color: var(--link-color);
+		--template-special-color: #001B4C;
+		
+	} 
+ 
+	 
+	 
+	 {"joomla.jtext":{"ERROR":"Error","MESSAGE":"Message","NOTICE":"Notice","WARNING":"Warning","SUCCESS":"Success","JCLOSE":"Close","JOK":"OK","JOPEN":"Open"},"system.paths":{"root":"","rootFull":"https:\/\/www.secform4.com\/","base":"","baseFull":"https:\/\/www.secform4.com\/"}} 
+	 
+	 
+	 
+	 
+	 
+ 
+ 
+ 
+ 
+ 
+ 
+ SecForm4.Com 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Home Insider Trading Insider Buys All Buys Significant Buys Penny Stocks Insider Buying Insider Sales Stock Options 13D filings 13G filings Insider Buy Sell Ratios Insider Trading Graph View Insider Watch Insider Buying Top Gainers Institutional Investors Hedge Funds Quarterly Reports Hedge Fund Lists Top 100 Hedge Funds Top 100 Widely Held Stocks Quarterly Top Bought Stocks Top Bought By Dollar Amount Top Bought By Market Cap Percent Quarterly Top Sold Stocks Top Sold By Dollar Amount Top Sold By Market Cap Percent Hedge Fund Performance Screener Hedge Fund Money Flow Search Hedge Funds Stock Screener Insider Trading Screener Dividend Stock Screener Penny Stock Screener Spacer Sign Up Sign In 
+ 
+ 
+ 
+ 
+ 
+ 
+ The requested page can't be found. 
+ 
+ 
+ 
+ 
+ An error has occurred while processing your request. 
+ You may not be able to visit this page because of: 
+ 
+ an out-of-date bookmark/favour
+== https://huggingface.co/api/datasets?search=insider&limit=50
+HTTP 200 45469
+[{"_id":"6adccc2f1e468c2d2af4262b","id":"samliumay/does_small_to_medium_sized_models_can_act_as_insider","author":"samliumay","disabled":false,"gated":false,"lastModified":"2026-10-31T14:02:51.000Z","likes":3,"trendingScore":3,"private":false,"sha":"902781420ec644ebd821a92ae1ee38eef177cbea","description":"\n\t\n\t\t\n\t\n\t\n\t\tCan Small and Medium-Sized Models Act as Insiders?\n\t\n\nDo small and medium-sized models (roughly 8–36B parameters) take harmful insider actions in agentic scenarios, and how does that compare with large models?\nStatus: study finished, data not released yet. This repository holds the judge prompts (labels/), the condition grid (configs/) and the scripts that build the renamed test (build_original.sh, apply_name_map.py). The episode export follows with the paper.\n\n\t\n\t\t\n\n\n\n\n\t\t\nData… See the full description on the dataset page: https://huggingface.co/datasets/samliumay/does_small_to_medium_sized_models_can_act_as_insider.","downloads":98,"tags":["language:en","region:us","ai-safety","agentic-misalignment","insider-threat","llm-evaluation"],"createdAt":"2026-10-24T15:18:07.000Z","key":""},{"_id":"6ac336be7c7b946b65b59162","id":"nguynn/cert-insider-threat-datasets","author":"nguynn","disabled":false,"gated":"auto","lastModified":"2026-10-24T16:13:34.000Z","likes":6,"trendingScore":1,"private":false,"sha":"a63a5edbbe384a6e8b80ff236d1e2a4ba7b5ebb6","description":"\n\t\n\t\t\n\t\n\t\n\t\tCERT Insider Threat & Security Log Datasets\n\t\n\
+== https://huggingface.co/api/datasets?search=form%204&limit=50
+HTTP 200 10650
+[{"_id":"6a697c0e18ce35de24721a8e","id":"mikhailmakeev/sec-form4-insider-trading","author":"mikhailmakeev","disabled":false,"gated":false,"lastModified":"2026-09-29T18:41:48.000Z","likes":1,"trendingScore":0,"private":false,"sha":"e120fecbe1c7a9c057840831a9dc5ae932e6cd02","description":"\n\t\n\t\t\n\t\n\t\n\t\tSEC Form 4 Insider Trading: Transactions and Scored Events\n\t\n\nInsider trades of US public-company officers, directors, and 10% owners, parsed from SEC EDGAR\nForm 4 filings by AlphAI within minutes of each filing. Two granularities:\n\ninsider_transactions.csv: 36,903 rows, one per non-derivative transaction tranche,\nexactly as filed.\ninsider_events.csv: 16,113 rows. Tranches are grouped into economic events (one\nfiling's transactions grouped by transaction code and ownership form, so… See the full description on the dataset page: https://huggingface.co/datasets/mikhailmakeev/sec-form4-insider-trading.","downloads":447,"tags":["license:cc-by-4.0","size_categories:10K /, with the same files and columns as the main dataset. The main dataset stays open with no sign-in; this… See the full description on the dataset page: https://huggingface.co/datasets/CyberMax-tools/sec-form4-insider-transactions-full-history.","downloads":40,"tags":["license:cc0-1.0","size_categories:10K<n<100K","format:parquet","modality:tabular","modality:text","library:datasets","library:dask","library:polars","library:mlcroissant","region:us","cybermax","history","time-series"],"createdAt":
+== https://www.kaggle.com/api/v1/datasets/list?search=insider%20trading
+HTTP 200 76789
+[{"subtitleNullable":"Tesla insider trading with large wallets such as CEO, Director, Chief etc.","creatorNameNullable":"Right Goose","creatorUrlNullable":"ilyaryabov","totalBytesNullable":3966,"urlNullable":"https://www.kaggle.com/datasets/ilyaryabov/tesla-insider-trading","licenseNameNullable":"CC0: Public Domain","ownerNameNullable":"Right Goose","ownerRefNullable":"ilyaryabov","titleNullable":"Tesla Insider Trading","currentVersionNumberNullable":6,"usabilityRatingNullable":1.0,"thumbnailImageUrlNullable":"https://storage.googleapis.com/kaggle-datasets-images/2302786/3874569/a22caa8444b7a000968b24e084ae6c1c/dataset-thumbnail.jpeg?t=2022-06-28-11-23-02","id":2302786,"ref":"ilyaryabov/tesla-insider-trading","subtitle":"Tesla insider trading with large wallets such as CEO, Director, Chief etc.","hasSubtitle":true,"creatorName":"Right Goose","hasCreatorName":true,"creatorUrl":"ilyaryabov","hasCreatorUrl":true,"totalBytes":3966,"hasTotalBytes":true,"url":"https://www.kaggle.com/datasets/ilyaryabov/tesla-insider-trading","hasUrl":true,"lastUpdated":"2023-03-09T18:49:46.187Z","downloadCount":1533,"isPrivate":false,"isFeatured":false,"licenseName":"CC0: Public Domain","hasLicenseName":true,"description":"","hasDescription":false,"ownerName":"Right Goose","hasOwnerName":true,"ownerRef":"ilyaryabov","hasOwnerRef":true,"kernelCount":2,"title":"Tesla Insider Trading","hasTitle":true,"topicCount":0,"viewCount":7933,"voteCount":37,"currentVersionNumber":6,"hasCurrentVersionNumber":truetr: write error: Broken pipe
+
