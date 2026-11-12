@@ -29,3 +29,10 @@ sec.gov refuses requests from GitHub's servers (HTTP 403 on every SEC host, `pro
 OpenInsider, a public parsed mirror of the same SEC Form 4 filings (open-market purchases, filing date, ticker, insider
 title, value), fetched month by month at a polite rate. "Officer/director" means any insider whose title is not only
 "10%" (a large holder); "CEO/CFO" also counts "Pres". Rules, periods and pass criteria are unchanged.
+
+## Result (2026-11-12): **0 of 8 pass** (`reports/ROUND48.md`)
+167,174 purchase filings. Excess return over SPY per trade, holdout 2022–26: −0.55% to +0.22%, no t-stat above 0.6.
+Cluster buys (≥ 3 insiders) +0.22% (liquid) / −0.23% (small). CEO/CFO buys −0.55% / −0.03%. The best portfolio (any
+insider ≥ $50k, liquid, 21 days) made +14.8%/yr with Sharpe 1.31, but that is just the bull market: its excess over SPY
+per trade is +0.18% (t 0.6). Even with survivorship bias flattering it, the published insider-buying edge is gone net
+of costs in 2015–2026.
