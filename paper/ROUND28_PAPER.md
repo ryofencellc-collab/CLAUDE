@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-13 06:50 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 82155; settled: 70111.
+Updated 2026-11-13 07:51 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 82662; settled: 70127.
 
-Total paper P&L: **$10,269.88**; filled markets 8803; wrong calls 117, of which filled 75.
+Total paper P&L: **$10,292.62**; filled markets 8807; wrong calls 117, of which filled 75.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -16,7 +16,7 @@ Total paper P&L: **$10,269.88**; filled markets 8803; wrong calls 117, of which 
 | KXTEMPMIAH         |      1033 |      373 | 123772           |           0    | 160440           |   877.76 |       2 |              2 |
 | KXAAAGASD          |       103 |       73 |  57750.2         |           0    | 867680           |   567.05 |       0 |              0 |
 | KXNCAAF1HSPREAD    |      1050 |      130 |  55069.1         |          60    | 446042           |   540.34 |       1 |              0 |
-| KXCS2GAME          |       228 |       81 |  50085.3         |         239.54 | 330753           |   491.73 |       0 |              0 |
+| KXCS2GAME          |       230 |       83 |  52085.3         |         239.54 | 342664           |   511.37 |       0 |              0 |
 | KXNBAGAME          |        56 |       50 |  50000           |           0    |      1.53306e+07 |   491    |       0 |              0 |
 | KXNHLTOTAL         |       277 |      108 |  43205           |          54    | 387368           |   423.88 |       0 |              0 |
 | KXNBA3QTOTAL       |       363 |       68 |  39107.7         |        1613    | 219687           |   383.86 |       1 |              0 |
@@ -42,10 +42,10 @@ Total paper P&L: **$10,269.88**; filled markets 8803; wrong calls 117, of which 
 | KXHIGHCHI          |        30 |       18 |  16512.9         |         196.39 | 147342           |   162.15 |       0 |              0 |
 | KXDIMAYORGAME      |        24 |       16 |  16000           |           0    | 542033           |   157.12 |       0 |              0 |
 | KXLALIGATOTAL      |        45 |       25 |  15667.5         |           0    |  87814.6         |   153.81 |       0 |              0 |
-| KXLIGAPROMATCH     |       931 |       55 |  13376.9         |        8700.02 |  97906.6         |   131.21 |       2 |              0 |
+| KXLIGAPROMATCH     |       941 |       57 |  13692.4         |        8700.02 |  98808.4         |   134.31 |       2 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8         |       20221.5  | 164929           |   128.76 |       0 |              0 |
 | KXRT               |        50 |       15 |  11342           |        8025.5  | 218831           |   111.36 |       0 |              0 |
-| KXCS2MAP           |       311 |       32 |  11270           |        3967.95 |  66000.9         |   110.58 |       0 |              0 |
+| KXCS2MAP           |       315 |       32 |  11270           |        4052    |  70093.7         |   110.58 |       0 |              0 |
 | KXBRASILEIROBTOTAL |        51 |       22 |  10151.3         |         376.32 |  51788.5         |    99.65 |       0 |              0 |
 | KXLALIGAGAME       |        20 |       10 |  10000           |       28798.1  | 824647           |    98.2  |       0 |              0 |
 | KXSERIEATOTAL      |        46 |       19 |   9404.2         |         447.94 |  58153.4         |    92.31 |       0 |              0 |
