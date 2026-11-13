@@ -1,0 +1,30 @@
+name: round49
+# Round 35 backtest (PROTOCOL_ROUND49.md) on chains downloaded by round35_data.
+on:
+  workflow_dispatch:
+    inputs:
+      data_run: {description: "round35_data run id", default: "42507125705"}
+permissions:
+  contents: write
+  actions: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/download-artifact@v4
+        with: {pattern: "opt-*", path: data/opt, merge-multiple: true, run-id: "${{ inputs.data_run }}", github-token: "${{ github.token }}"}
+      - run: ls -la data/opt
+      - run: python run_round49.py
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round49 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND49.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round49: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
