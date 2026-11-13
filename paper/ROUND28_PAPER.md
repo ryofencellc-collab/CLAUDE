@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-13 05:49 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 81631; settled: 70097.
+Updated 2026-11-13 06:50 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 82155; settled: 70111.
 
-Total paper P&L: **$10,269.88**; filled markets 8803; wrong calls 115, of which filled 75.
+Total paper P&L: **$10,269.88**; filled markets 8803; wrong calls 117, of which filled 75.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -42,7 +42,7 @@ Total paper P&L: **$10,269.88**; filled markets 8803; wrong calls 115, of which 
 | KXHIGHCHI          |        30 |       18 |  16512.9         |         196.39 | 147342           |   162.15 |       0 |              0 |
 | KXDIMAYORGAME      |        24 |       16 |  16000           |           0    | 542033           |   157.12 |       0 |              0 |
 | KXLALIGATOTAL      |        45 |       25 |  15667.5         |           0    |  87814.6         |   153.81 |       0 |              0 |
-| KXLIGAPROMATCH     |       917 |       55 |  13376.9         |        8698.96 |  87350.7         |   131.21 |       0 |              0 |
+| KXLIGAPROMATCH     |       931 |       55 |  13376.9         |        8700.02 |  97906.6         |   131.21 |       2 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8         |       20221.5  | 164929           |   128.76 |       0 |              0 |
 | KXRT               |        50 |       15 |  11342           |        8025.5  | 218831           |   111.36 |       0 |              0 |
 | KXCS2MAP           |       311 |       32 |  11270           |        3967.95 |  66000.9         |   110.58 |       0 |              0 |
