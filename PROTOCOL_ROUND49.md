@@ -20,3 +20,10 @@ Now the wheel runs on the spot implied by put-call parity from the chain itself 
 detected on the day itself from the raw/adjusted ratio: shares are multiplied, the basis is divided, and any open
 option is closed at its last pre-split mark. Buy-and-hold uses split-adjusted prices. On synthetic data with a planted
 4:1 split, the wheel gives the same result with and without the split. The rules are unchanged.
+
+## Result (2026-11-13): **0 of 3 pass** (`reports/ROUND49.md`)
+Holdout 2024–26, equal-weight across 8 names: the wheel made +12.7% (W1, 30-delta), +11.6% (W2, 16-delta) and +19.3%
+(W3, calls never below cost), with Sharpe 0.74–1.08, against buy-and-hold's +29.7% and Sharpe 1.24. Drawdowns were a
+little smaller (−18% to −24% vs −28%), but the wheel caps the upside on exactly the stocks that ran (NVDA +7–11% vs
++62%). Known glitch: the dev rows for AMZN and GOOGL in W1/W2 are still wrong around their 20:1 splits (2022). It
+does not touch the holdout, and it does not change the verdict.

@@ -88,6 +88,7 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 43 | Riskless arbitrage inside Kalshi and Polymarket (strike ladders, mutually exclusive sums) | Scanning. First fixed scan: Kalshi ladder violations ≈ $0 |
 | 44 | Paper market making for Kalshi liquidity-incentive rewards (~4,000 programs, ≈ $84k/day paid out), $10k; 44b quotes 1 tick behind | Running from 2026-11-09; 10-day pass test |
 | 45 | Where do Kalshi makers earn? 12.4M trades, 16 categories × price × time-to-close, dev/holdout | **11 cells PASS**, all makers holding the 70–95c favourite (Sports 85–95c 1–24 h: holdout +5.0%/$, 3,387 events): [ROUND45.md](reports/ROUND45.md), [45b](reports/ROUND45B.md) |
+| 49 | The options wheel (Reddit staple): cash-secured puts → covered calls, 3 variants, SPY + 7 mega-caps, real EOD chains | **0/3 pass**: holdout +11.6% to +19.3%/yr vs buy-and-hold +29.7% (Sharpe 0.74–1.08 vs 1.24): [ROUND49.md](reports/ROUND49.md) |
 | 48 | News: insider open-market purchases (SEC Form 4 via OpenInsider, 167k filings 2015–26; any / cluster / CEO-CFO buys, liquid and small caps) | **0/8 pass**: excess over SPY −0.55% to +0.22% per trade, t ≤ 0.6: [ROUND48.md](reports/ROUND48.md) |
 | 47 | Rules from community Claude trading skills (Stockbee momentum burst / exhaustion hammer, earnings-gap drift, O'Neil FTD timing), rebuilt | **0/6 pass**: all lose after costs in 2022–26: [ROUND47.md](reports/ROUND47.md) |
 | 46 | Forward paper: maker bids on the 85–95c favourite in Sports/Entertainment, $10k | Running from 2026-11-10; 14-day pass test |
