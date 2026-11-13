@@ -12,3 +12,11 @@ expiry: called away; else keep the shares and sell another call.
 **Benchmark.** Buy and hold 100 shares from the same start.
 **Pass (holdout).** The equal-weight wheel across the 8 symbols has Sharpe ≥ 1 and CAGR ≥ 15%, and a higher Sharpe than
 equal-weight buy-and-hold. It also has to beat buy-and-hold's Sharpe on dev.
+
+## Amendment 1 (2026-11-13): data bug fixed before any valid result
+The first run used Yahoo's Close, which is split-adjusted, while option strikes are not. Every split (AAPL 2020; NVDA
+2021 and 2024; AMZN, GOOGL and TSLA 2022) looked like a 75–95% crash, and the output was nonsense (drawdowns of −26,760%).
+Now the wheel runs on the spot implied by put-call parity from the chain itself (same basis as the strikes). A split is
+detected on the day itself from the raw/adjusted ratio: shares are multiplied, the basis is divided, and any open
+option is closed at its last pre-split mark. Buy-and-hold uses split-adjusted prices. On synthetic data with a planted
+4:1 split, the wheel gives the same result with and without the split. The rules are unchanged.
