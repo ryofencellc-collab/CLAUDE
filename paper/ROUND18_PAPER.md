@@ -1,14 +1,14 @@
 # Round 18 live paper test: resting 99c bids on decided Kalshi weather outcomes
 
-Updated 2026-11-12 23:59 UTC. Rules: [PROTOCOL_ROUND18.md](../PROTOCOL_ROUND18.md), "Forward test". 1000 contracts bid per decided market; fills only after the live queue ahead.
+Updated 2026-11-13 00:04 UTC. Rules: [PROTOCOL_ROUND18.md](../PROTOCOL_ROUND18.md), "Forward test". 1000 contracts bid per decided market; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Decided markets bid | 620 (open 46) |
+| Decided markets bid | 621 (open 47) |
 | Settled | 574 (wrong calls: 0) |
 | Contracts filled (settled) | 1,000 (uncapped: 6,161) |
 | **Paper profit** | **$+9.82** |
-| Median queue ahead at placement | 32,087 contracts |
+| Median queue ahead at placement | 31,963 contracts |
 | Orders that got any fill | 1% |
 | Round 18 paper profit | $+9.82 on 328 settled (0 wrong) |
 | Round 19 paper profit | $+0.00 on 246 settled (0 wrong) |
