@@ -1,0 +1,30 @@
+name: factory
+# Strategy factory (PROTOCOL_FACTORY.md): runs every registered strategy not yet in the ledger.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: factory
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "claude/eloquent-darwin-2lipsh"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/download-artifact@v4
+        with: {name: r38-data, path: data/r38, run-id: "42527455413", github-token: "${{ github.token }}"}
+      - run: python run_factory.py
+      - name: Commit ledger and leaderboard
+        if: always()
+        run: |
+          git config user.name "factory bot"; git config user.email "actions@users.noreply.github.com"
+          git add paper/factory_ledger.csv reports/FACTORY.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "factory: ledger update [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
