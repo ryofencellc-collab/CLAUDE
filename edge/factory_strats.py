@@ -416,3 +416,32 @@ def _(d):
     beta = cov.div(m.rolling(60, min_periods=40).var(ddof=0), axis=0)
     low = beta.le(beta.where(d["ok"]).median(axis=1), axis=0)
     return topk_monthly(d["C"].shift(21) / d["C"].shift(252) - 1, d["ok"] & low, frac=0.2)
+
+
+# ============================================================ batch 8 (registered 2026-11-14 15:20 UTC, before running): calendar & pullbacks
+@strat("Santa Claus rally: SPY Dec 15 -> Jan 5 only", "etfs", 8)
+def _(d):
+    idx = d["E"].index
+    on = pd.Series(((idx.month == 12) & (idx.day >= 15)) | ((idx.month == 1) & (idx.day <= 5)), index=idx).astype(float)
+    return one(d, "SPY", on.shift(-2).fillna(0.0))
+
+@strat("January effect: least-liquid decile in January only, else cash", "stocks", 8)
+def _(d):
+    w = topk_monthly(d["dv"], d["ok"], largest=False)
+    jan = pd.Series(d["C"].index.month == 1, index=d["C"].index).astype(float).shift(-2).fillna(0.0)
+    return w.mul(jan, axis=0)
+
+@strat("Gap-and-go: gap up >= 2%, close > open, hold 10 days", "stocks", 8)
+def _(d):
+    sig = (d["O"] / d["C"].shift(1) - 1 >= 0.02) & (d["C"] > d["O"]) & d["ok"]
+    act = sig.astype(float).rolling(10, min_periods=1).max()
+    return act.div(act.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0)
+
+@strat("Pullback in leaders: top-20% 12-1 momentum with RSI(2) < 10, hold 5 days", "stocks", 8)
+def _(d):
+    c = d["C"]; dl = c.diff(); up = dl.clip(lower=0).ewm(alpha=1 / 2).mean(); dn = (-dl.clip(upper=0)).ewm(alpha=1 / 2).mean()
+    rsi2 = 100 - 100 / (1 + up / dn.replace(0, np.nan))
+    mom = (c.shift(21) / c.shift(252) - 1).where(d["ok"]); lead = mom.ge(mom.quantile(0.8, axis=1), axis=0)
+    sig = lead & (rsi2 < 10) & d["ok"]
+    act = sig.astype(float).rolling(5, min_periods=1).max()
+    return act.div(act.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0)

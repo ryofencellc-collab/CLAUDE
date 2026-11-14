@@ -50,3 +50,6 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 ## Batch 7 — Reddit r/LETFs staples + refined momentum — registered 2026-11-14 (6 strategies)
 - [x] 3x QQQ above 200d (TQQQ-200SMA), HFEA 55/45 3x SPY/TLT (weights held constant between rebalances), 3x SPY above 200d,
       residual momentum, risk-adjusted momentum, momentum within the low-beta half
+
+## Batch 8 — calendar & pullbacks — registered 2026-11-14 (4 strategies)
+- [x] Santa Claus rally, January small-cap effect, gap-and-go continuation, pullbacks in momentum leaders
