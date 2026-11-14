@@ -3,24 +3,24 @@
 Already covered elsewhere (do not repeat): rounds 1–49 in README.md (trend/breakouts/dip-buys, insider buys, Congress/13F
 copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, crypto pump-fade/reversal/funding).
 
-## Batch 2 — stock anomalies (daily panel)
+## Batch 2 — stock anomalies (daily panel) — registered 2026-11-14 (gap-fill skipped: tested in R38 D5; industry momentum deferred)
 - [ ] Industry momentum proxy (rank by 6m return of 20-stock price-correlation clusters)
-- [ ] Idiosyncratic-volatility low decile (residual vs equal-weight market, 60d)
-- [ ] Betting-against-beta long leg (lowest 60d beta decile)
-- [ ] Time-series momentum on each stock (hold if 12m return > 0), equal weight top liquid 200
+- [x] Idiosyncratic-volatility low decile (residual vs equal-weight market, 60d)
+- [x] Betting-against-beta long leg (lowest 60d beta decile)
+- [x] Time-series momentum on each stock (hold if 12m return > 0), equal weight top liquid 200
 - [ ] Gap-fill: buy liquid stocks gapping down ≥ 3% at open, sell same close (needs O; open-to-close)
-- [ ] Overnight-return momentum (rank by cumulative overnight returns 1m)
-- [ ] Volume-shock reversal (abnormal volume + down day, 5-day hold)
-- [ ] Earnings-season seasonality proxy (same-month-last-year return, Heston–Sadka)
-- [ ] Dollar-volume (liquidity) premium: least liquid decile within the tradable set
+- [x] Overnight-return momentum (rank by cumulative overnight returns 1m)
+- [x] Volume-shock reversal (abnormal volume + down day, 5-day hold)
+- [x] Earnings-season seasonality proxy (same-month-last-year return, Heston–Sadka)
+- [x] Dollar-volume (liquidity) premium: least liquid decile within the tradable set
 
-## Batch 3 — ETFs / macro
-- [ ] Risk parity SPY/TLT/GLD/DBC (inverse vol, monthly), 1x and 1.5x
-- [ ] Defensive asset allocation (Keller DAA / VAA canary rules)
-- [ ] Bond/stock momentum switching (SPY vs TLT by 3m)
-- [ ] VIX term structure: hold SPY when VIX < VIX3M, else IEF
+## Batch 3 — ETFs / macro — registered 2026-11-14 (FOMC drift, leveraged-ETF pair, gold/copper deferred)
+- [x] Risk parity SPY/TLT/GLD/DBC (inverse vol, monthly), 1x and 1.5x
+- [x] Defensive asset allocation (Keller DAA / VAA canary rules)
+- [x] Bond/stock momentum switching (SPY vs TLT by 3m)
+- [x] VIX term structure: hold SPY when VIX < VIX3M, else IEF
 - [ ] FOMC pre-announcement drift (SPY day before FOMC; dates from federalreserve.gov calendar)
-- [ ] Pre-holiday SPY
+- [x] Pre-holiday SPY
 - [ ] Leveraged ETF decay short proxy / long-short pair (needs borrow; paper only)
 - [ ] Gold/miners ratio, copper/gold timing for SPY
 

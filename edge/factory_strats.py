@@ -126,3 +126,109 @@ def _(d): return topk_monthly(d["X"] / d["X"].shift(30) - 1, d["X"].notna() & d[
 def _(d):
     X = d["X"][["BTC", "ETH"]]; on = (X.rolling(50).mean() > X.rolling(200).mean()).astype(float) / 2
     return on.reindex(columns=d["X"].columns, fill_value=0.0)
+
+
+# ============================================================ batch 2 (registered 2026-11-14, before running): stock anomalies
+def _mret(d):
+    r = d["C"].pct_change(fill_method=None)
+    m = r.where(d["ok"].shift(1, fill_value=False)).mean(axis=1)
+    return r, m
+
+
+@strat("Low idiosyncratic volatility (residual vs market, 60d, lowest 10%)", "stocks", 2)
+def _(d):
+    r, m = _mret(d)
+    return topk_monthly(r.sub(m, axis=0).rolling(60, min_periods=40).std(), d["ok"], largest=False)
+
+@strat("Betting-against-beta long leg (lowest 60d beta, 10%)", "stocks", 2)
+def _(d):
+    r, m = _mret(d)
+    cov = (r.mul(m, axis=0)).rolling(60, min_periods=40).mean() - r.rolling(60, min_periods=40).mean().mul(m.rolling(60, min_periods=40).mean(), axis=0)
+    beta = cov.div(m.rolling(60, min_periods=40).var(ddof=0), axis=0)
+    return topk_monthly(beta, d["ok"], largest=False)
+
+@strat("Time-series momentum: top-200 liquid with 12m return > 0", "stocks", 2)
+def _(d):
+    r12 = d["C"] / d["C"].shift(252) - 1
+    me = month_end_mask(d["C"].index); w = pd.DataFrame(np.nan, index=d["C"].index, columns=d["C"].columns)
+    for t in d["C"].index[me]:
+        liq = d["dv"].loc[t].where(d["ok"].loc[t]).dropna().nlargest(200).index
+        pick = [c for c in liq if r12.at[t, c] > 0]
+        v = pd.Series(0.0, index=d["C"].columns)
+        if pick: v[pick] = 1.0 / len(pick)
+        w.loc[t] = v
+    return w.ffill().fillna(0.0)
+
+@strat("Overnight-return momentum (21d sum of open/prior-close, top 10%)", "stocks", 2)
+def _(d):
+    on = np.log(d["O"] / d["C"].shift(1)).rolling(21, min_periods=15).sum()
+    return topk_monthly(on, d["ok"])
+
+@strat("Volume-shock reversal (down >= 3% on 3x volume, hold 5 days)", "stocks", 2)
+def _(d):
+    r = d["C"].pct_change(fill_method=None)
+    sig = (r <= -0.03) & (d["V"] >= 3 * d["V"].rolling(50, min_periods=30).mean().shift(1)) & d["ok"]
+    act = sig.astype(float).rolling(5, min_periods=1).max()
+    return act.div(act.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0)
+
+@strat("Same-month seasonality (Heston-Sadka, 5y, top 10%)", "stocks", 2)
+def _(d):
+    mc = d["C"].resample("ME").last(); mr = mc.pct_change(fill_method=None)
+    score_m = sum(mr.shift(k) for k in (11, 23, 35, 47, 59)) / 5      # same month in past years, for next month
+    score = score_m.reindex(d["C"].index, method="ffill")
+    return topk_monthly(score, d["ok"])
+
+@strat("Liquidity premium (least liquid 10% of tradable set)", "stocks", 2)
+def _(d): return topk_monthly(d["dv"], d["ok"], largest=False)
+
+
+# ============================================================ batch 3 (registered 2026-11-14, before running): ETFs / macro
+def _inv_vol_weights(E, names, lev=1.0):
+    r = E[names].pct_change(fill_method=None); iv = 1 / r.rolling(63, min_periods=40).std()
+    me = month_end_mask(E.index); w = pd.DataFrame(np.nan, index=E.index, columns=E.columns)
+    for t in E.index[me]:
+        x = iv.loc[t].dropna()
+        if len(x) < len(names): continue
+        v = pd.Series(0.0, index=E.columns); v[x.index] = lev * x / x.sum(); w.loc[t] = v
+    return w.ffill().fillna(0.0)
+
+@strat("Risk parity SPY/TLT/GLD/DBC (inverse vol, monthly)", "etfs", 3)
+def _(d): return _inv_vol_weights(d["E"], ["SPY", "TLT", "GLD", "DBC"])
+
+@strat("Risk parity SPY/TLT/GLD/DBC at 1.5x", "etfs", 3)
+def _(d): return _inv_vol_weights(d["E"], ["SPY", "TLT", "GLD", "DBC"], 1.5)
+
+@strat("Canary (DAA-style): SPY/EFA/EEM momentum unless VWO or BND canary negative -> IEF", "etfs", 3)
+def _(d):
+    E = d["E"]
+    def m13612(x): return (12 * (x / x.shift(21) - 1) + 4 * (x / x.shift(63) - 1) + 2 * (x / x.shift(126) - 1) + (x / x.shift(252) - 1))
+    mom = m13612(E); me = month_end_mask(E.index); w = pd.DataFrame(np.nan, index=E.index, columns=E.columns)
+    for t in E.index[me]:
+        if mom.loc[t, ["VWO", "BND", "SPY", "EFA", "EEM"]].isna().any(): continue
+        v = pd.Series(0.0, index=E.columns)
+        if (mom.loc[t, ["VWO", "BND"]] < 0).any(): v["IEF"] = 1.0
+        else: v[mom.loc[t, ["SPY", "EFA", "EEM"]].idxmax()] = 1.0
+        w.loc[t] = v
+    return w.ffill().fillna(0.0)
+
+@strat("Stock/bond switch: SPY or TLT by 3m momentum", "etfs", 3)
+def _(d):
+    E = d["E"]; m = E[["SPY", "TLT"]] / E[["SPY", "TLT"]].shift(63) - 1; me = month_end_mask(E.index)
+    w = pd.DataFrame(np.nan, index=E.index, columns=E.columns)
+    for t in E.index[me]:
+        if m.loc[t].isna().any(): continue
+        v = pd.Series(0.0, index=E.columns); v[m.loc[t].idxmax()] = 1.0; w.loc[t] = v
+    return w.ffill().fillna(0.0)
+
+@strat("VIX term structure: SPY when VIX < VIX3M, else IEF", "etfs", 3)
+def _(d):
+    E = d["E"]; on = (E["^VIX"] < E["^VIX3M"]).astype(float).where(E[["^VIX", "^VIX3M"]].notna().all(axis=1))
+    on = on.ffill().fillna(0.0); w = one(d, "SPY", on); w["IEF"] = 1 - on; return w
+
+@strat("Pre-holiday SPY (day before US market holidays)", "etfs", 3)
+def _(d):
+    from pandas.tseries.holiday import USFederalHolidayCalendar
+    idx = d["E"].index; hol = USFederalHolidayCalendar().holidays(idx[0], idx[-1] + pd.Timedelta(days=10))
+    nxt = pd.Series(idx[1:].tolist() + [idx[-1] + pd.Timedelta(days=1)], index=idx)
+    pre = pd.Series([(n - t).days > 1 and any((h > t) and (h < n) for h in hol[(hol > t) & (hol < n)]) for t, n in nxt.items()], index=idx)
+    return one(d, "SPY", pre.astype(float).shift(-2).fillna(0.0))   # weight at t earns t+1 -> t+2: mark 2 days ahead

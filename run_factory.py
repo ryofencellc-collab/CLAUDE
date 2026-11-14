@@ -6,7 +6,7 @@ from edge import factory as F
 from edge.factory_strats import REG
 
 ETFS = ["SPY", "QQQ", "IWM", "EFA", "EEM", "AGG", "IEF", "TLT", "BIL", "GLD", "XLK", "XLF", "XLE", "XLV", "XLY", "XLP", "XLI",
-        "XLB", "XLU", "XLRE", "XLC"]
+        "XLB", "XLU", "XLRE", "XLC", "DBC", "VWO", "BND", "^VIX", "^VIX3M"]
 COINS = ["BTC", "ETH", "SOL", "XRP", "BNB", "DOGE", "ADA", "AVAX", "LINK", "DOT", "LTC", "TRX", "ATOM", "NEAR", "UNI", "ETC",
          "FIL", "APT", "ARB", "OP", "INJ", "SUI", "AAVE", "BCH", "XLM", "HBAR", "ICP", "TON", "MATIC", "SHIB"]
 
@@ -17,7 +17,10 @@ def load(markets):
         C = pd.read_pickle("data/r38/stocks_C.pkl").astype(float)
         V = pd.read_pickle("data/r38/stocks_V.pkl").astype(float).reindex_like(C)
         R = pd.read_pickle("data/r38/stocks_R.pkl").astype(float).reindex_like(C)
-        d["C"] = C; d["ok"] = (R >= 10) & ((R * V).rolling(20, min_periods=15).mean() >= 20e6)
+        dv = (R * V).rolling(20, min_periods=15).mean()
+        d["C"], d["V"], d["dv"] = C, V, dv
+        d["O"] = pd.read_pickle("data/r38/stocks_O.pkl").astype(float).reindex_like(C)
+        d["ok"] = (R >= 10) & (dv >= 20e6)
     if "etfs" in markets:
         import yfinance as yf
         x = yf.download(ETFS, start="2013-01-01", auto_adjust=True, progress=False)["Close"]
