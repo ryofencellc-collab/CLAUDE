@@ -1,6 +1,6 @@
 # Strategy factory leaderboard
 
-Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **54**. Passing: **0**. Holdout = 2022 → today. ROI as CAGR; bench = SPY (ETFs), equal-weight universe (stocks) or BTC (crypto).
+Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **58**. Passing: **0**. Holdout = 2022 → today. ROI as CAGR; bench = SPY (ETFs), equal-weight universe (stocks) or BTC (crypto).
 
 | name                                                                               | market   |   batch | dev_cagr   |   dev_sharpe | hold_cagr   |   hold_sharpe | hold_dd   | bench_cagr   |   bench_sharpe |   dsr | PASS   |
 |:-----------------------------------------------------------------------------------|:---------|--------:|:-----------|-------------:|:------------|--------------:|:----------|:-------------|---------------:|------:|:-------|
@@ -37,14 +37,17 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **54**. Pas
 | Anti-lottery (lowest monthly max daily return, 10%)                                | stocks   |       1 | 10.4%      |         0.69 | 3.3%        |          0.31 | -16.0%    | 7.0%         |           0.44 |  0.87 |        |
 | Same-month seasonality (Heston-Sadka, 5y, top 10%)                                 | stocks   |       2 | 8.6%       |         0.53 | 4.0%        |          0.28 | -31.6%    | 7.0%         |           0.44 |  0.38 |        |
 | XS momentum 12-1 with crash filter (cash when market < 200d avg)                   | stocks   |       5 | 13.8%      |         0.71 | 3.9%        |          0.28 | -32.3%    | 7.0%         |           0.44 |  0.54 |        |
+| Pullback in leaders: top-20% 12-1 momentum with RSI(2) < 10, hold 5 days           | stocks   |       8 | 4.3%       |         0.29 | 3.9%        |          0.28 | -30.9%    | 7.0%         |           0.44 |  0.18 |        |
 | Crypto low volatility: 5 lowest 30d-vol coins, weekly                              | crypto   |       4 | 22.6%      |         0.66 | 0.2%        |          0.27 | -62.6%    | 11.3%        |           0.46 |  0.33 |        |
 | QQQ/TLT 60/40, 15% vol target, max 1.5x                                            | etfs     |       5 | 16.1%      |         1.14 | 2.7%        |          0.25 | -27.4%    | 11.4%        |           0.71 |  0.81 |        |
 | Canary (DAA-style): SPY/EFA/EEM momentum unless VWO or BND canary negative -> IEF  | etfs     |       3 | 2.0%       |         0.24 | 2.6%        |          0.24 | -20.2%    | 11.4%        |           0.71 |  0.19 |        |
 | Sell in May: SPY Nov-Apr, IEF May-Oct                                              | etfs     |       1 | 7.6%       |         0.56 | 2.2%        |          0.22 | -19.9%    | 11.4%        |           0.71 |  0.76 |        |
+| Gap-and-go: gap up >= 2%, close > open, hold 10 days                               | stocks   |       8 | 8.7%       |         0.46 | 2.2%        |          0.22 | -31.3%    | 7.0%         |           0.44 |  0.25 |        |
 | VIX term structure: SPY when VIX < VIX3M, else IEF                                 | etfs     |       3 | 9.7%       |         0.79 | 1.9%        |          0.2  | -35.7%    | 11.4%        |           0.71 |  0.53 |        |
 | Momentum acceleration (6m minus prior 6m, top 10%)                                 | stocks   |       5 | 15.9%      |         0.73 | 1.4%        |          0.19 | -34.8%    | 7.0%         |           0.44 |  0.5  |        |
 | Fresh 52-week high on 1.5x volume (last 5 days), monthly                           | stocks   |       5 | 9.7%       |         0.57 | 0.9%        |          0.17 | -36.1%    | 7.0%         |           0.44 |  0.34 |        |
 | Crypto: BTC+ETH 50/200 golden cross, else cash                                     | crypto   |       1 | 64.6%      |         0.94 | 0.5%        |          0.16 | -44.5%    | 11.3%        |           0.39 |  0.91 |        |
+| January effect: least-liquid decile in January only, else cash                     | stocks   |       8 | 1.2%       |         0.25 | 0.5%        |          0.12 | -14.0%    | 7.0%         |           0.44 |  0.11 |        |
 | Overnight-return momentum (21d sum of open/prior-close, top 10%)                   | stocks   |       2 | 10.4%      |         0.53 | -0.6%       |          0.12 | -33.5%    | 7.0%         |           0.44 |  0.31 |        |
 | ETF short-term reversal (3 worst of 20 ETFs by 5d, weekly)                         | etfs     |       5 | 4.2%       |         0.31 | 0.4%        |          0.11 | -30.5%    | 11.4%        |           0.71 |  0.19 |        |
 | Stock/bond switch: SPY or TLT by 3m momentum                                       | etfs     |       3 | 7.2%       |         0.53 | 0.1%        |          0.08 | -31.3%    | 11.4%        |           0.71 |  0.3  |        |
@@ -58,3 +61,4 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **54**. Pas
 | Reddit LETF: 3x SPY when SPY > 200d avg, else cash                                 | etfs     |       7 | 14.4%      |         0.55 | -7.9%       |         -0.26 | -60.8%    | 11.9%        |           0.74 |  0.23 |        |
 | Pre-FOMC drift: SPY only the day before and day of FOMC decisions                  | etfs     |       6 | 0.4%       |         0.13 | -1.5%       |         -0.32 | -14.8%    | 11.9%        |           0.74 |  0.02 |        |
 | Volume-shock reversal (down >= 3% on 3x volume, hold 5 days)                       | stocks   |       2 | -3.1%      |         0.01 | -15.8%      |         -0.43 | -58.7%    | 7.0%         |           0.44 |  0.01 |        |
+| Santa Claus rally: SPY Dec 15 -> Jan 5 only                                        | etfs     |       8 | 0.8%       |         0.21 | -1.6%       |         -0.5  | -10.6%    | 11.9%        |           0.74 |  0.02 |        |
