@@ -25,17 +25,18 @@ def returns(weights: pd.DataFrame, close: pd.DataFrame, market: str) -> pd.Serie
     return gross - turn * COST[market] - lev * BORROW / 252
 
 
-def metrics(r: pd.Series, a, b) -> dict:
+def metrics(r: pd.Series, a, b, ppy: int = 252) -> dict:
     x = r[(r.index >= a) & (r.index < b)]
     if len(x) < 60 or x.std() == 0:
         return dict(cagr=np.nan, sharpe=np.nan, dd=np.nan)
     eq = (1 + x).cumprod(); yrs = (x.index[-1] - x.index[0]).days / 365.25
-    return dict(cagr=eq.iloc[-1] ** (1 / yrs) - 1, sharpe=x.mean() / x.std() * math.sqrt(252), dd=(eq / eq.cummax() - 1).min())
+    return dict(cagr=eq.iloc[-1] ** (1 / yrs) - 1, sharpe=x.mean() / x.std() * math.sqrt(ppy), dd=(eq / eq.cummax() - 1).min())
 
 
 def evaluate(name: str, market: str, r: pd.Series, bench: pd.Series, end: pd.Timestamp) -> dict:
-    d, h = metrics(r, DEV0[market], SPLIT), metrics(r, SPLIT, end)
-    bh = metrics(bench, SPLIT, end)
+    ppy = 365 if market == "crypto" else 252                 # crypto trades every calendar day
+    d, h = metrics(r, DEV0[market], SPLIT, ppy), metrics(r, SPLIT, end, ppy)
+    bh = metrics(bench, SPLIT, end, ppy)
     return dict(name=name, market=market, dev_cagr=d["cagr"], dev_sharpe=d["sharpe"], hold_cagr=h["cagr"], hold_sharpe=h["sharpe"],
                 hold_dd=h["dd"], bench_cagr=bh["cagr"], bench_sharpe=bh["sharpe"],
                 full_sr_daily=(r[r.index >= DEV0[market]].mean() / r[r.index >= DEV0[market]].std()) if r.std() > 0 else np.nan)

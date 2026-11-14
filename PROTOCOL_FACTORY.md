@@ -16,3 +16,6 @@ universe, or BTC) over the same days.
 no deeper than −25%; dev Sharpe ≥ 0.5; deflated Sharpe ≥ 0.95 on the full sample across *every* trial the factory has
 run so far (the bar rises as more is tested). A pass goes to the forward paper tracker; nothing is funded on a
 backtest alone.
+
+**Amendment (2026-11-14 03:25 UTC):** crypto Sharpe ratios are now annualized with 365 days (calendar-day data), not
+252. Batch 1's two crypto rows were overstated by about 20%. Neither passed, so no verdict changes.

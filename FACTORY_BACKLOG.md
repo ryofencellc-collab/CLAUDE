@@ -24,9 +24,9 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 - [ ] Leveraged ETF decay short proxy / long-short pair (needs borrow; paper only)
 - [ ] Gold/miners ratio, copper/gold timing for SPY
 
-## Batch 4 — crypto
+## Batch 4 — crypto — registered 2026-11-14 (5 strategies; funding/stablecoin data deferred)
 - [ ] Weekend effect long/short BTC, time-of-day (hourly) seasonality
-- [ ] BTC dominance rotation (alts vs BTC by 30d)
+- [x] BTC dominance rotation (alts vs BTC by 30d)
 - [ ] Funding-rate extremes as contrarian timing (spot only)
 - [ ] Stablecoin supply growth as BTC timing
 

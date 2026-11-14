@@ -232,3 +232,38 @@ def _(d):
     nxt = pd.Series(idx[1:].tolist() + [idx[-1] + pd.Timedelta(days=1)], index=idx)
     pre = pd.Series([(n - t).days > 1 and any((h > t) and (h < n) for h in hol[(hol > t) & (hol < n)]) for t, n in nxt.items()], index=idx)
     return one(d, "SPY", pre.astype(float).shift(-2).fillna(0.0))   # weight at t earns t+1 -> t+2: mark 2 days ahead
+
+
+# ============================================================ batch 4 (registered 2026-11-14 03:20 UTC, before running): crypto
+def _xone(d, col, pos):
+    w = pd.DataFrame(0.0, index=d["X"].index, columns=d["X"].columns); w[col] = pos.reindex(w.index).fillna(0.0); return w
+
+@strat("Crypto alt/BTC rotation: top-5 alts when alts beat BTC over 30d, else BTC (weekly)", "crypto", 4)
+def _(d):
+    X = d["X"]; r30 = X / X.shift(30) - 1; fri = X.index.weekday == 4
+    w = pd.DataFrame(np.nan, index=X.index, columns=X.columns)
+    for t in X.index[fri]:
+        alts = r30.loc[t].drop("BTC").dropna()
+        if len(alts) < 10 or pd.isna(r30.at[t, "BTC"]): continue
+        v = pd.Series(0.0, index=X.columns)
+        if alts.median() > r30.at[t, "BTC"]: v[alts.nlargest(5).index] = 0.2
+        else: v["BTC"] = 1.0
+        w.loc[t] = v
+    return w.ffill().fillna(0.0)
+
+@strat("Crypto low volatility: 5 lowest 30d-vol coins, weekly", "crypto", 4)
+def _(d):
+    X = d["X"]; return topk_monthly(X.pct_change(fill_method=None).rolling(30, min_periods=25).std(), X.notna() & X.shift(60).notna(), k=5, largest=False, every="W")
+
+@strat("Crypto 7-day losers (5 worst), weekly", "crypto", 4)
+def _(d):
+    X = d["X"]; return topk_monthly(X / X.shift(7) - 1, X.notna() & X.shift(60).notna(), k=5, largest=False, every="W")
+
+@strat("BTC volatility target 40% (max 1x)", "crypto", 4)
+def _(d):
+    r = d["X"]["BTC"].pct_change(fill_method=None); vol = r.rolling(30).std() * np.sqrt(365)
+    return _xone(d, "BTC", (0.40 / vol).clip(upper=1.0))
+
+@strat("BTC 90-day time-series momentum, else cash", "crypto", 4)
+def _(d):
+    b = d["X"]["BTC"]; return _xone(d, "BTC", (b / b.shift(90) - 1 > 0).astype(float))
