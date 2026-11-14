@@ -377,3 +377,42 @@ def _(d):
         if m.loc[t].isna().any(): continue
         v = pd.Series(0.0, index=E.columns); v[m.loc[t].idxmax()] = 1.0; w.loc[t] = v
     return w.ffill().fillna(0.0)
+
+
+# ============================================================ batch 7 (registered 2026-11-14 12:20 UTC, before running):
+# Reddit r/LETFs staples (synthetic daily-rebalanced leverage, 6%/yr on the borrowed part) and refined momentum.
+@strat("Reddit LETF: 3x QQQ when QQQ > 200d avg, else cash (TQQQ-200SMA)", "etfs", 7)
+def _(d):
+    q = d["E"]["QQQ"]; return one(d, "QQQ", 3.0 * (q > q.rolling(200).mean()).astype(float))
+
+@strat("Reddit LETF: HFEA 55% 3x SPY + 45% 3x TLT, quarterly rebalance", "etfs", 7)
+def _(d):
+    E = d["E"]; qe = pd.Series(E.index, index=E.index).groupby([E.index.year, E.index.quarter]).transform("max") == pd.Series(E.index, index=E.index)
+    w = pd.DataFrame(np.nan, index=E.index, columns=E.columns)
+    for t in E.index[qe]:
+        v = pd.Series(0.0, index=E.columns); v["SPY"], v["TLT"] = 1.65, 1.35; w.loc[t] = v
+    return w.ffill().fillna(0.0)
+
+@strat("Reddit LETF: 3x SPY when SPY > 200d avg, else cash", "etfs", 7)
+def _(d):
+    s = d["E"]["SPY"]; return one(d, "SPY", 3.0 * (s > s.rolling(200).mean()).astype(float))
+
+@strat("Residual momentum (12-1 return minus market, top 10%)", "stocks", 7)
+def _(d):
+    r, m = _mret(d)
+    res = r.sub(m, axis=0).fillna(0)
+    score = res.rolling(231, min_periods=200).sum().shift(21)
+    return topk_monthly(score, d["ok"])
+
+@strat("Risk-adjusted momentum (12m Sharpe, top 10%)", "stocks", 7)
+def _(d):
+    r = d["C"].pct_change(fill_method=None)
+    return topk_monthly(r.rolling(252, min_periods=200).mean() / r.rolling(252, min_periods=200).std(), d["ok"])
+
+@strat("Momentum within the lower-beta half (12-1, top 10% of that half)", "stocks", 7)
+def _(d):
+    r, m = _mret(d)
+    cov = (r.mul(m, axis=0)).rolling(60, min_periods=40).mean() - r.rolling(60, min_periods=40).mean().mul(m.rolling(60, min_periods=40).mean(), axis=0)
+    beta = cov.div(m.rolling(60, min_periods=40).var(ddof=0), axis=0)
+    low = beta.le(beta.where(d["ok"]).median(axis=1), axis=0)
+    return topk_monthly(d["C"].shift(21) / d["C"].shift(252) - 1, d["ok"] & low, frac=0.2)

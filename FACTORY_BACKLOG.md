@@ -46,3 +46,7 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 ## Batch 5 — filters & combos — registered 2026-11-14 (8 strategies; the options batch moves to 5b because it needs the chain engine)
 - [x] momentum with market crash filter, momentum acceleration, low 1-year drawdown, fresh 52w high on volume,
       top-200 equal weight with trend filter, sector top-3 with SPY trend filter, QQQ/TLT 60/40 vol target, ETF weekly reversal
+
+## Batch 7 — Reddit r/LETFs staples + refined momentum — registered 2026-11-14 (6 strategies)
+- [x] 3x QQQ above 200d (TQQQ-200SMA), HFEA 55/45 3x SPY/TLT (weights held constant between rebalances), 3x SPY above 200d,
+      residual momentum, risk-adjusted momentum, momentum within the low-beta half
