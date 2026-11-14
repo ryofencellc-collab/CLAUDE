@@ -1,0 +1,44 @@
+name: probe_wsb
+# One-off: Reddit-sentiment data sources reachable without touching reddit.com (ApeWisdom, HF, Kaggle).
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - run: |
+          mkdir -p probe/wsb
+          {
+          for u in "https://apewisdom.io/api/v1.0/filter/wallstreetbets/page/1" \
+                   "https://apewisdom.io/api/v1.0/filter/all-stocks/page/1" \
+                   "https://huggingface.co/api/datasets?search=wallstreetbets&limit=40" \
+                   "https://huggingface.co/api/datasets?search=reddit%20stock&limit=40" \
+                   "https://huggingface.co/api/datasets?search=wsb&limit=40" \
+                   "https://www.kaggle.com/api/v1/datasets/list?search=wallstreetbets" \
+                   "https://www.kaggle.com/api/v1/datasets/list?search=reddit%20stock%20mentions"; do
+            echo "== $u"
+            curl -sS -m 60 -A "Mozilla/5.0 (research)" -o body -w "HTTP %{http_code} %{size_download}\n" "$u"
+            python3 - <<'PY'
+import json
+try:
+    d = json.load(open("body"))
+except Exception:
+    print(open("body").read()[:800]); raise SystemExit
+if isinstance(d, dict) and "results" in d:
+    print("count", d.get("count"), "pages", d.get("pages")); print(json.dumps(d["results"][:5])[:1200])
+elif isinstance(d, list):
+    for x in d[:40]:
+        print(x.get("id") or x.get("ref"), "|", (x.get("lastModified") or x.get("lastUpdated") or "")[:10], "|", x.get("downloads") or x.get("downloadCount"), "|", (x.get("description") or x.get("subtitleNullable") or x.get("titleNullable") or "")[:160].replace("\n", " "))
+PY
+            sleep 2
+          done
+          } > probe/wsb/report.txt 2>&1
+          cat probe/wsb/report.txt
+      - run: |
+          git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe/wsb && git commit -q -m "probe: wsb sources [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
