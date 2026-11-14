@@ -11,7 +11,7 @@ Rules: [PROTOCOL_ROUND39.md](../PROTOCOL_ROUND39.md). Fills at bid/ask of the sa
 - 2026-11-12 SPXW: 439 snapshots, settle 7592.40 (official close), 21 trades
 - 2026-11-12 SPY: 439 snapshots, settle 757.12 (official close), 21 trades
 - 2026-11-13 SPXW: 438 snapshots, settle 7561.67 (official close), 21 trades
-- 2026-11-13 SPY: 438 snapshots, settle 754.21 (official close), 21 trades
+- 2026-11-13 SPY: 438 snapshots, settle 754.37 (official close), 21 trades
 
 Trading days scored: **5** (verdict at 20).
 
@@ -40,7 +40,7 @@ Trading days scored: **5** (verdict at 20).
 | I3 condor 20d         | SPXW   | 13:00   |        5 | 60%   | -457.61 | -1273.21 | -1881.01 | -2288.03 | -1235.02 | -1053.01 |
 | I3 condor 20d         | SPXW   | 14:30   |        5 | 100%  |  257.39 |   178.99 |   108.99 |  1286.97 |   399.98 |   886.99 |
 | I3 condor 20d         | SPY    | 10:00   |        5 | 60%   |   34.8  |     0.4  |   -24.6  |   174    |    58.8  |   115.2  |
-| I3 condor 20d         | SPY    | 11:30   |        5 | 80%   |   29.4  |     2.76 |   -31.6  |   147    |   104.8  |    42.2  |
+| I3 condor 20d         | SPY    | 11:30   |        5 | 80%   |   26.2  |     2    |   -31.6  |   131    |   104.8  |    26.2  |
 | I3 condor 20d         | SPY    | 13:00   |        5 | 60%   |  -29    |  -102.4  |  -148.6  |  -145    |   -86.2  |   -58.8  |
 | I3 condor 20d         | SPY    | 14:30   |        5 | 100%  |   38.4  |    32.8  |    27.4  |   192    |    68.8  |   123.2  |
 | L1 long straddle      | SPXW   | 10:00   |        5 | 40%   | -582    | -2477    | -3676    | -2910    |  -232    | -2678    |
@@ -70,4 +70,4 @@ Pass (at ≥ 20 days): mean > 0 with 90% bootstrap lower bound > 0, both halves 
 | 2026-11-10 |            -1130 |             345 |                     462 |            -199 |              -5231 |                  -497 |
 | 2026-11-11 |              858 |             648 |                    -245 |             807 |                257 |                   588 |
 | 2026-11-12 |             1649 |              25 |                    -302 |           -2454 |               1332 |                 -1946 |
-| 2026-11-13 |             2341 |             944 |                     383 |            1628 |              -3783 |                   811 |
+| 2026-11-13 |             2341 |             944 |                     383 |            1612 |              -3783 |                   811 |
