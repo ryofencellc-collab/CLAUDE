@@ -28,6 +28,13 @@ jobs:
           git config user.name "wsb bot"
           git config user.email "actions@users.noreply.github.com"
       - run: python -m edge.wsb
+      - name: Score the crowd-emotion strategies (Round 50)
+        if: always()
+        run: |
+          python -m edge.wsb_score > /dev/null || echo "scorer failed"
+          git add reports/ROUND50.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round50: score [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
       - name: Start the next job
         if: always() && (inputs.chain || 'yes') == 'yes'
         env:
