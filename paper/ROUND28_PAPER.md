@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-14 09:37 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 97277; settled: 89220.
+Updated 2026-11-14 10:38 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 97833; settled: 89244.
 
-Total paper P&L: **$8,958.25**; filled markets 11042; wrong calls 161, of which filled 104.
+Total paper P&L: **$8,962.84**; filled markets 11043; wrong calls 161, of which filled 104.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -13,7 +13,7 @@ Total paper P&L: **$8,958.25**; filled markets 11042; wrong calls 161, of which 
 | KXRAIN             |       203 |      173 | 153976           |           0    |      1.03164e+06 |  1511.98 |       0 |              0 |
 | KXTEMPMIAH         |      1360 |      500 | 183145           |           0    | 260364           |  1318.13 |       4 |              4 |
 | KXCOPPER15M        |       291 |      217 | 159467           |           0    | 428544           |   885.87 |       3 |              2 |
-| KXCS2GAME          |       298 |      108 |  69254.3         |         307.5  | 558731           |   679.92 |       2 |              0 |
+| KXCS2GAME          |       300 |      108 |  69254.3         |         307.5  | 558830           |   679.92 |       2 |              0 |
 | KXAAAGASD          |       124 |       90 |  69075.7         |           0    | 967909           |   678.25 |       0 |              0 |
 | KXNBASPREAD        |      1292 |      793 | 420356           |           0    |      1.36851e+06 |   625.35 |      13 |              4 |
 | KXNBAGAME          |        76 |       62 |  62000           |           0    |      2.06195e+07 |   608.84 |       0 |              0 |
@@ -37,12 +37,12 @@ Total paper P&L: **$8,958.25**; filled markets 11042; wrong calls 161, of which 
 | KXNFL1H            |        42 |       26 |  21924.6         |           0    | 245565           |   215.29 |       0 |              0 |
 | KXTRUMPSAY         |        32 |       28 |  27058           |           0    | 447816           |   207.7  |       1 |              1 |
 | KXMLSTOTAL         |       112 |       46 |  20888.1         |           0    |  91931.9         |   204.95 |       0 |              0 |
-| KXCS2MAP           |       424 |       49 |  19685.7         |        4009.98 | 112784           |   193.17 |       0 |              0 |
+| KXCS2MAP           |       428 |       49 |  19685.7         |        3822.5  | 112784           |   193.17 |       0 |              0 |
 | KXHIGHNY           |        36 |       28 |  25721.8         |           0    | 358117           |   184.14 |       1 |              1 |
-| KXLIGAPROMATCH     |      1214 |       74 |  18165.5         |        9951.5  | 119544           |   178.17 |       2 |              0 |
+| KXLIGAPROMATCH     |      1230 |       75 |  18633.1         |        9999.16 | 120822           |   182.76 |       2 |              0 |
 | KXNFLGAME          |        28 |       18 |  18000           |           0    |      1.45818e+07 |   176.76 |       0 |              0 |
 | KXNFL1QSPREAD      |       153 |       31 |  17789.8         |        2116    | 210941           |   174.66 |       0 |              0 |
-| KXWT20MATCH        |        28 |       18 |  16224.6         |           0    | 191474           |   159.32 |       0 |              0 |
+| KXWT20MATCH        |        30 |       18 |  16224.6         |           0    | 191625           |   159.32 |       0 |              0 |
 | KXDIMAYORGAME      |        24 |       16 |  16000           |           0    | 542033           |   157.12 |       0 |              0 |
 | KXLALIGATOTAL      |        45 |       25 |  15667.5         |           0    |  87814.6         |   153.81 |       0 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8         |       20221.5  | 164929           |   128.76 |       0 |              0 |
