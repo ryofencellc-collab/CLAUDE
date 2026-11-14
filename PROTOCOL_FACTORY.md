@@ -19,3 +19,7 @@ backtest alone.
 
 **Amendment (2026-11-14 03:25 UTC):** crypto Sharpe ratios are now annualized with 365 days (calendar-day data), not
 252. Batch 1's two crypto rows were *understated* by about 17% (√252 vs √365), and so was their BTC benchmark; corrected they are still below 0.2. No verdict changes.
+
+**Amendment (2026-11-14 06:25 UTC):** when a ranking has fewer candidates than its minimum, the strategy now holds cash
+for that period instead of keeping its previous picks (stale holdings were an accident of the code, not a rule). This
+applies from batch 5 on. Earlier rows are not re-run.

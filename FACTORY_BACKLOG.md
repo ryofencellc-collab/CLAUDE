@@ -42,3 +42,7 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 - [ ] Economic data markets vs Cleveland Fed nowcast (CPI)
 
 ## Ideas from outside sources (Reddit via the official API once REDDIT_CLIENT_ID/SECRET exist; otherwise user-pasted)
+
+## Batch 5 — filters & combos — registered 2026-11-14 (8 strategies; the options batch moves to 5b because it needs the chain engine)
+- [x] momentum with market crash filter, momentum acceleration, low 1-year drawdown, fresh 52w high on volume,
+      top-200 equal weight with trend filter, sector top-3 with SPY trend filter, QQQ/TLT 60/40 vol target, ETF weekly reversal

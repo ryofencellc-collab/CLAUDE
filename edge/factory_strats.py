@@ -18,13 +18,14 @@ def month_end_mask(idx):
     return s.groupby([idx.year, idx.month]).transform("max") == s
 
 
-def topk_monthly(score: pd.DataFrame, ok: pd.DataFrame, frac=0.1, k=None, largest=True, every="M"):
+def topk_monthly(score: pd.DataFrame, ok: pd.DataFrame, frac=0.1, k=None, largest=True, every="M", min_n=20):
     mask = month_end_mask(score.index) if every == "M" else (score.index.weekday == 4)
     sc = score.where(ok)
     w = pd.DataFrame(np.nan, index=score.index, columns=score.columns)
     for t in score.index[mask]:
         row = sc.loc[t].dropna()
-        if len(row) < 20:
+        if len(row) < min_n:
+            v = pd.Series(0.0, index=score.columns); w.loc[t] = v      # too few candidates: hold cash this period
             continue
         n = k or max(1, int(len(row) * frac))
         pick = row.nlargest(n).index if largest else row.nsmallest(n).index
@@ -267,3 +268,57 @@ def _(d):
 @strat("BTC 90-day time-series momentum, else cash", "crypto", 4)
 def _(d):
     b = d["X"]["BTC"]; return _xone(d, "BTC", (b / b.shift(90) - 1 > 0).astype(float))
+
+
+# ============================================================ batch 5 (registered 2026-11-14 06:20 UTC, before running): filters & combos
+def _mkt_trend(d):
+    r = d["C"].pct_change(fill_method=None).where(d["ok"].shift(1, fill_value=False)).mean(axis=1).fillna(0)
+    eq = (1 + r).cumprod()
+    return eq > eq.rolling(200, min_periods=150).mean()
+
+@strat("XS momentum 12-1 with crash filter (cash when market < 200d avg)", "stocks", 5)
+def _(d):
+    w = topk_monthly(d["C"].shift(21) / d["C"].shift(252) - 1, d["ok"])
+    return w.mul(_mkt_trend(d).astype(float), axis=0)
+
+@strat("Momentum acceleration (6m minus prior 6m, top 10%)", "stocks", 5)
+def _(d):
+    a = (d["C"] / d["C"].shift(126) - 1) - (d["C"].shift(126) / d["C"].shift(252) - 1)
+    return topk_monthly(a, d["ok"])
+
+@strat("Lowest 1-year max drawdown (top 10%)", "stocks", 5)
+def _(d):
+    c = d["C"]; dd = (c / c.rolling(252, min_periods=200).max() - 1).rolling(252, min_periods=200).min()
+    return topk_monthly(dd, d["ok"])
+
+@strat("Fresh 52-week high on 1.5x volume (last 5 days), monthly", "stocks", 5)
+def _(d):
+    hit = (d["C"] >= d["C"].rolling(252, min_periods=200).max()) & (d["V"] >= 1.5 * d["V"].rolling(50, min_periods=30).mean())
+    score = hit.astype(float).rolling(5, min_periods=1).max() * (d["C"] / d["C"].shift(63))
+    return topk_monthly(score.where(score > 0), d["ok"], k=30, min_n=5)
+
+@strat("Top-200 liquid equal weight, only when market > 200d avg", "stocks", 5)
+def _(d):
+    me = month_end_mask(d["C"].index); w = pd.DataFrame(np.nan, index=d["C"].index, columns=d["C"].columns)
+    for t in d["C"].index[me]:
+        liq = d["dv"].loc[t].where(d["ok"].loc[t]).dropna().nlargest(200).index
+        v = pd.Series(0.0, index=d["C"].columns); v[liq] = 1 / max(len(liq), 1); w.loc[t] = v
+    return w.ffill().fillna(0.0).mul(_mkt_trend(d).astype(float), axis=0)
+
+@strat("Sector top-3 momentum only when SPY > 200d avg, else IEF", "etfs", 5)
+def _(d):
+    E = d["E"]; base = REG["Sector rotation (top 3 SPDR sectors by 3m return)"][2](d)
+    up = (E["SPY"] > E["SPY"].rolling(200).mean()).astype(float)
+    w = base.mul(up, axis=0); w["IEF"] = w["IEF"] + (1 - up); return w
+
+@strat("QQQ/TLT 60/40, 15% vol target, max 1.5x", "etfs", 5)
+def _(d):
+    E = d["E"]; r = 0.6 * E["QQQ"].pct_change(fill_method=None) + 0.4 * E["TLT"].pct_change(fill_method=None)
+    lev = (0.15 / (r.rolling(21).std() * np.sqrt(252))).clip(upper=1.5)
+    w = pd.DataFrame(0.0, index=E.index, columns=E.columns); w["QQQ"], w["TLT"] = 0.6 * lev, 0.4 * lev; return w.fillna(0.0)
+
+@strat("ETF short-term reversal (3 worst of 20 ETFs by 5d, weekly)", "etfs", 5)
+def _(d):
+    E = d["E"][[c for c in d["E"].columns if not c.startswith("^")]]
+    w = topk_monthly(E / E.shift(5) - 1, E.notna() & E.shift(60).notna(), k=3, largest=False, every="W")
+    return w.reindex(columns=d["E"].columns, fill_value=0.0)
