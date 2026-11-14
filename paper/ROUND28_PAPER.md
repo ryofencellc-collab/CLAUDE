@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-14 08:55 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 96769; settled: 89168.
+Updated 2026-11-14 09:37 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 97277; settled: 89220.
 
-Total paper P&L: **$8,887.27**; filled markets 11034; wrong calls 161, of which filled 104.
+Total paper P&L: **$8,958.25**; filled markets 11042; wrong calls 161, of which filled 104.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -13,8 +13,8 @@ Total paper P&L: **$8,887.27**; filled markets 11034; wrong calls 161, of which 
 | KXRAIN             |       203 |      173 | 153976           |           0    |      1.03164e+06 |  1511.98 |       0 |              0 |
 | KXTEMPMIAH         |      1360 |      500 | 183145           |           0    | 260364           |  1318.13 |       4 |              4 |
 | KXCOPPER15M        |       291 |      217 | 159467           |           0    | 428544           |   885.87 |       3 |              2 |
+| KXCS2GAME          |       298 |      108 |  69254.3         |         307.5  | 558731           |   679.92 |       2 |              0 |
 | KXAAAGASD          |       124 |       90 |  69075.7         |           0    | 967909           |   678.25 |       0 |              0 |
-| KXCS2GAME          |       286 |      105 |  66275.8         |         283.5  | 528513           |   650.67 |       2 |              0 |
 | KXNBASPREAD        |      1292 |      793 | 420356           |           0    |      1.36851e+06 |   625.35 |      13 |              4 |
 | KXNBAGAME          |        76 |       62 |  62000           |           0    |      2.06195e+07 |   608.84 |       0 |              0 |
 | KXNCAAF1HSPREAD    |      1116 |      142 |  59068.8         |          60    | 461450           |   579.57 |       1 |              0 |
@@ -37,15 +37,15 @@ Total paper P&L: **$8,887.27**; filled markets 11034; wrong calls 161, of which 
 | KXNFL1H            |        42 |       26 |  21924.6         |           0    | 245565           |   215.29 |       0 |              0 |
 | KXTRUMPSAY         |        32 |       28 |  27058           |           0    | 447816           |   207.7  |       1 |              1 |
 | KXMLSTOTAL         |       112 |       46 |  20888.1         |           0    |  91931.9         |   204.95 |       0 |              0 |
+| KXCS2MAP           |       424 |       49 |  19685.7         |        4009.98 | 112784           |   193.17 |       0 |              0 |
 | KXHIGHNY           |        36 |       28 |  25721.8         |           0    | 358117           |   184.14 |       1 |              1 |
-| KXCS2MAP           |       400 |       48 |  18685.7         |        3812.5  | 106306           |   183.35 |       0 |              0 |
-| KXLIGAPROMATCH     |      1202 |       74 |  18165.5         |        9980.77 | 119539           |   178.17 |       2 |              0 |
+| KXLIGAPROMATCH     |      1214 |       74 |  18165.5         |        9951.5  | 119544           |   178.17 |       2 |              0 |
 | KXNFLGAME          |        28 |       18 |  18000           |           0    |      1.45818e+07 |   176.76 |       0 |              0 |
 | KXNFL1QSPREAD      |       153 |       31 |  17789.8         |        2116    | 210941           |   174.66 |       0 |              0 |
+| KXWT20MATCH        |        28 |       18 |  16224.6         |           0    | 191474           |   159.32 |       0 |              0 |
 | KXDIMAYORGAME      |        24 |       16 |  16000           |           0    | 542033           |   157.12 |       0 |              0 |
 | KXLALIGATOTAL      |        45 |       25 |  15667.5         |           0    |  87814.6         |   153.81 |       0 |              0 |
 | KXLIGAMXTOTAL      |        45 |       19 |  13114.8         |       20221.5  | 164929           |   128.76 |       0 |              0 |
-| KXWT20MATCH        |        24 |       14 |  12975.1         |           0    | 180178           |   127.41 |       0 |              0 |
 | KXNHL1PTOTAL       |       174 |       24 |  12208.3         |         797.04 |  74337.8         |   119.82 |       0 |              0 |
 | KXRT               |        50 |       15 |  11342           |        8025.5  | 218831           |   111.36 |       0 |              0 |
 | KXLALIGAGAME       |        20 |       10 |  10000           |       28798.1  | 824647           |    98.2  |       0 |              0 |
