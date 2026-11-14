@@ -1,12 +1,14 @@
 # Strategy factory leaderboard
 
-Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **48**. Passing: **0**. Holdout = 2022 → today. ROI as CAGR; bench = SPY (ETFs), equal-weight universe (stocks) or BTC (crypto).
+Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **54**. Passing: **0**. Holdout = 2022 → today. ROI as CAGR; bench = SPY (ETFs), equal-weight universe (stocks) or BTC (crypto).
 
 | name                                                                               | market   |   batch | dev_cagr   |   dev_sharpe | hold_cagr   |   hold_sharpe | hold_dd   | bench_cagr   |   bench_sharpe |   dsr | PASS   |
 |:-----------------------------------------------------------------------------------|:---------|--------:|:-----------|-------------:|:------------|--------------:|:----------|:-------------|---------------:|------:|:-------|
 | Risk parity SPY/TLT/GLD/DBC (inverse vol, monthly)                                 | etfs     |       3 | 7.4%       |         0.91 | 7.1%        |          0.73 | -20.1%    | 11.4%        |           0.71 |  0.87 |        |
+| Risk-adjusted momentum (12m Sharpe, top 10%)                                       | stocks   |       7 | 14.8%      |         0.7  | 14.7%       |          0.7  | -23.0%    | 7.0%         |           0.44 |  0.72 |        |
 | Momentum + low vol (rank sum, top 10%)                                             | stocks   |       1 | 11.2%      |         0.7  | 8.2%        |          0.64 | -15.7%    | 7.0%         |           0.44 |  0.94 |        |
 | Sector rotation (top 3 SPDR sectors by 3m return)                                  | etfs     |       1 | 10.3%      |         0.62 | 9.4%        |          0.63 | -18.7%    | 11.4%        |           0.71 |  0.92 |        |
+| Momentum within the lower-beta half (12-1, top 10% of that half)                   | stocks   |       7 | 14.2%      |         0.77 | 9.9%        |          0.63 | -18.7%    | 7.0%         |           0.44 |  0.74 |        |
 | Time-series momentum: top-200 liquid with 12m return > 0                           | stocks   |       2 | 18.1%      |         0.97 | 10.9%       |          0.61 | -22.3%    | 7.0%         |           0.44 |  0.86 |        |
 | Volatility-managed SPY (15% vol target, max 1.5x)                                  | etfs     |       1 | 11.5%      |         0.78 | 8.5%        |          0.59 | -19.4%    | 11.4%        |           0.71 |  0.95 |        |
 | Lowest 1-year max drawdown (top 10%)                                               | stocks   |       5 | 12.7%      |         0.82 | 7.0%        |          0.58 | -18.1%    | 7.0%         |           0.44 |  0.79 |        |
@@ -15,6 +17,7 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **48**. Pas
 | XS momentum 12-1 (top 10%)                                                         | stocks   |       1 | 17.5%      |         0.72 | 13.0%       |          0.55 | -32.3%    | 7.0%         |           0.44 |  0.93 |        |
 | Risk parity SPY/TLT/GLD/DBC at 1.5x                                                | etfs     |       3 | 7.7%       |         0.66 | 7.1%        |          0.53 | -30.2%    | 11.4%        |           0.71 |  0.64 |        |
 | Top-200 liquid equal weight, only when market > 200d avg                           | stocks   |       5 | 12.4%      |         0.98 | 6.2%        |          0.5  | -16.1%    | 7.0%         |           0.44 |  0.83 |        |
+| Residual momentum (12-1 return minus market, top 10%)                              | stocks   |       7 | 19.3%      |         0.77 | 11.2%       |          0.48 | -34.4%    | 7.0%         |           0.44 |  0.64 |        |
 | Dual momentum GEM (SPY/EFA by 12m, else AGG)                                       | etfs     |       1 | 6.6%       |         0.47 | 6.4%        |          0.48 | -23.0%    | 11.4%        |           0.71 |  0.81 |        |
 | BTC volatility target 40% (max 1x)                                                 | crypto   |       4 | 34.8%      |         0.9  | 11.8%       |          0.48 | -55.8%    | 11.3%        |           0.46 |  0.6  |        |
 | 52-week-high proximity (top 10%)                                                   | stocks   |       1 | 10.5%      |         0.65 | 6.2%        |          0.45 | -21.2%    | 7.0%         |           0.44 |  0.88 |        |
@@ -28,6 +31,7 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **48**. Pas
 | XS momentum 6-1 (top 10%)                                                          | stocks   |       1 | 19.7%      |         0.8  | 6.6%        |          0.36 | -33.9%    | 7.0%         |           0.44 |  0.91 |        |
 | 2x SPY above 200-day average, else cash                                            | etfs     |       1 | 13.0%      |         0.63 | 5.6%        |          0.35 | -45.4%    | 11.4%        |           0.71 |  0.84 |        |
 | Liquidity premium (least liquid 10% of tradable set)                               | stocks   |       2 | 12.0%      |         0.62 | 4.6%        |          0.32 | -29.4%    | 7.0%         |           0.44 |  0.5  |        |
+| Reddit LETF: 3x QQQ when QQQ > 200d avg, else cash (TQQQ-200SMA)                   | etfs     |       7 | 23.6%      |         0.67 | 4.9%        |          0.31 | -60.5%    | 11.9%        |           0.74 |  0.54 |        |
 | Commodity trend: DBC above 200d avg, else BIL                                      | etfs     |       6 | 4.3%       |         0.43 | 3.0%        |          0.31 | -28.7%    | 11.9%        |           0.74 |  0.3  |        |
 | Crypto alt/BTC rotation: top-5 alts when alts beat BTC over 30d, else BTC (weekly) | crypto   |       4 | 149.3%     |         1.56 | -1.2%       |          0.31 | -73.3%    | 11.3%        |           0.46 |  0.85 |        |
 | Anti-lottery (lowest monthly max daily return, 10%)                                | stocks   |       1 | 10.4%      |         0.69 | 3.3%        |          0.31 | -16.0%    | 7.0%         |           0.44 |  0.87 |        |
@@ -49,6 +53,8 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **48**. Pas
 | Short-term reversal (weekly losers, 10%)                                           | stocks   |       1 | 8.1%       |         0.41 | -4.0%       |          0.02 | -42.3%    | 7.0%         |           0.44 |  0.54 |        |
 | Crypto 7-day losers (5 worst), weekly                                              | crypto   |       4 | 91.6%      |         1.2  | -25.4%      |          0.01 | -84.1%    | 11.3%        |           0.46 |  0.44 |        |
 | Gold trend: GLD above 200d avg, else BIL                                           | etfs     |       6 | 0.6%       |         0.11 | -0.6%       |         -0.03 | -18.4%    | 11.9%        |           0.74 |  0.05 |        |
+| Reddit LETF: HFEA 55% 3x SPY + 45% 3x TLT, quarterly rebalance                     | etfs     |       7 | 18.4%      |         0.74 | -7.6%       |         -0.03 | -68.4%    | 11.9%        |           0.74 |  0.29 |        |
 | Copper/gold momentum: SPY when copper beats gold over 3m, else IEF                 | etfs     |       6 | 10.6%      |         1.12 | -3.0%       |         -0.18 | -25.8%    | 11.9%        |           0.74 |  0.45 |        |
+| Reddit LETF: 3x SPY when SPY > 200d avg, else cash                                 | etfs     |       7 | 14.4%      |         0.55 | -7.9%       |         -0.26 | -60.8%    | 11.9%        |           0.74 |  0.23 |        |
 | Pre-FOMC drift: SPY only the day before and day of FOMC decisions                  | etfs     |       6 | 0.4%       |         0.13 | -1.5%       |         -0.32 | -14.8%    | 11.9%        |           0.74 |  0.02 |        |
 | Volume-shock reversal (down >= 3% on 3x volume, hold 5 days)                       | stocks   |       2 | -3.1%      |         0.01 | -15.8%      |         -0.43 | -58.7%    | 7.0%         |           0.44 |  0.01 |        |
