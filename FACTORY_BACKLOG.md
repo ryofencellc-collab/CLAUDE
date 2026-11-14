@@ -53,3 +53,10 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 
 ## Batch 8 — calendar & pullbacks — registered 2026-11-14 (4 strategies)
 - [x] Santa Claus rally, January small-cap effect, gap-and-go continuation, pullbacks in momentum leaders
+
+## Status 2026-11-14 21:20 UTC
+58 strategies, 0 passes. Free daily-price ideas are close to exhausted. Every extra near-duplicate only raises the
+deflated-Sharpe bar for the rest. Next batches wait for new data: Reddit API keys (strategy mining), HF/Kaggle
+WallStreetBets history (crowd-emotion backtest), optionsDX SPX intraday (0DTE backtest), Binance funding archive.
+Until then each check-in monitors the forward tests (0DTE, sports favourite, LIP, Reddit emotion, Round 13) and adds a
+batch only when it is genuinely new.
