@@ -11,10 +11,10 @@ jobs:
       - uses: actions/checkout@v4
         with: {ref: "${{ github.ref_name }}"}
       - run: |
-          mkdir -p probe/wsb3
-          U=https://huggingface.co/datasets/DataDump1/wallstreetbets_reddit/resolve/main/wallstreetbets_submissions.csv
-          curl -sSL -m 60 -r 0-6000 "$U" > probe/wsb3/head.txt; echo; head -c 3000 probe/wsb3/head.txt
-          curl -sSL -m 60 -r 1777700000-1777755626 "$U" > probe/wsb3/tail.txt; tail -c 2500 probe/wsb3/tail.txt
+          mkdir -p probe/wsb4
+          U=https://huggingface.co/datasets/zchengc/wsb_full/resolve/main/wsb_title.csv
+          curl -sSL -m 60 -r 0-6000 "$U" > probe/wsb4/head.txt; echo; head -c 3000 probe/wsb4/head.txt
+          curl -sSL -m 60 -r 37088000-37091325 "$U" > probe/wsb4/tail.txt; tail -c 2500 probe/wsb4/tail.txt
       - run: |
           git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
-          git add probe/wsb3 && git commit -q -m "probe: wsb3 [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          git add probe/wsb4 && git commit -q -m "probe: wsb4 [skip ci]" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
