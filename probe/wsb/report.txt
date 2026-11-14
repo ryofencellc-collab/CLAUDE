@@ -1,0 +1,88 @@
+== https://apewisdom.io/api/v1.0/filter/wallstreetbets/page/1
+HTTP 200 12082
+count 782 pages 8
+[{"rank": 1, "ticker": "NVDA", "name": "NVIDIA", "mentions": 1154, "upvotes": 8795, "rank_24h_ago": 1, "mentions_24h_ago": 2630}, {"rank": 2, "ticker": "MSFT", "name": "Microsoft", "mentions": 281, "upvotes": 937, "rank_24h_ago": 7, "mentions_24h_ago": 139}, {"rank": 3, "ticker": "AMD", "name": "AMD", "mentions": 275, "upvotes": 3906, "rank_24h_ago": 2, "mentions_24h_ago": 535}, {"rank": 4, "ticker": "SPY", "name": "SPDR S&amp;P 500 ETF Trust", "mentions": 223, "upvotes": 533, "rank_24h_ago": 4, "mentions_24h_ago": 304}, {"rank": 5, "ticker": "NBIS", "name": "Nebius Group", "mentions": 182, "upvotes": 335, "rank_24h_ago": 3, "mentions_24h_ago": 424}]
+== https://apewisdom.io/api/v1.0/filter/all-stocks/page/1
+HTTP 200 12221
+count 938 pages 10
+[{"rank": 1, "ticker": "NVDA", "name": "NVIDIA", "mentions": 1254, "upvotes": 10023, "rank_24h_ago": 1, "mentions_24h_ago": 2951}, {"rank": 2, "ticker": "AMD", "name": "AMD", "mentions": 325, "upvotes": 4287, "rank_24h_ago": 2, "mentions_24h_ago": 675}, {"rank": 3, "ticker": "MSFT", "name": "Microsoft", "mentions": 303, "upvotes": 1440, "rank_24h_ago": 8, "mentions_24h_ago": 148}, {"rank": 4, "ticker": "SPY", "name": "SPDR S&amp;P 500 ETF Trust", "mentions": 256, "upvotes": 633, "rank_24h_ago": 4, "mentions_24h_ago": 339}, {"rank": 5, "ticker": "NBIS", "name": "Nebius Group", "mentions": 195, "upvotes": 362, "rank_24h_ago": 3, "mentions_24h_ago": 447}]
+== https://huggingface.co/api/datasets?search=wallstreetbets&limit=40
+HTTP 200 5435
+SocialGrep/reddit-wallstreetbets-aug-2021 | 2022-07-01 | 136 | This corpus contains the complete data for the activity on /r/WallStreetBets for the entire month of August 2021.
+DataDump1/wallstreetbets_reddit | 2025-04-05 | 27 | 
+sbussiso/wallstreetbets-reddit-9-30-2025 | 2025-09-30 | 49 |  	 		 	 	 		Dataset Card: sbussiso/wallstreetbets-reddit-9-30-2025 	   	 		 	 	 		Dataset Summary 	  A dataset of 40 posts scraped and formatted from r/wallstre
+StephanAkkerman/wallstreetbets-ner | 2026-07-04 | 35 |  	 		 	 	 		WallStreetBets NER Dataset 	  A high-quality, human-annotated Named Entity Recognition (NER) dataset composed of 671 gold-standard samples extracted
+HYUKI5/SocialGrep__reddit-wallstreetbets-aug-2021 | 2026-11-12 | 88 |  	 		 	 	 		SocialGrep/reddit-wallstreetbets-aug-2021（複製） 	   	 		 	 	 		データの内容 	  Reddit の r/WallStreetBets の 8 月 1 か月分の投稿とコメントを集めたデータ。投稿とコメントは別々のファイルに分かれ、1 行が
+== https://huggingface.co/api/datasets?search=reddit%20stock&limit=40
+HTTP 200 5286
+sm-esgstudier/redditStocks_last1000 | 2023-07-30 | 43 |  	 		 	 	 		Dataset Card for Dataset Name 	   	 		 	 	 		Dataset Summary 	  This dataset card aims to be a base template for new datasets. It has been generated
+khaihernlow/reddit-stock-related-posts | 2024-11-16 | 24 | 
+johntoro/Reddit-Stock-Sentiment | 2025-04-15 | 70 | 
+johntoro/Reddit-Stock-V2 | 2025-04-19 | 6 | 
+johntoro/Reddit-Stock-V3 | 2025-04-19 | 6 | 
+johntoro/Reddit-Stock-V4 | 2025-04-20 | 6 | 
+johntoro/Reddit-Stock-V5 | 2025-04-20 | 6 | 
+johntoro/Reddit-Stock-V6 | 2025-04-20 | 5 | 
+jason1966/aliafzal9323_reddit-content-for-ai-hardware-stocks-2025-2026 | 2026-03-31 | 46 |  	 		 	 	 		Reddit content for AI hardware stocks 2025-2026 	  Stocks (SNDK/SanDisk, MU/Micron, WDC/Western Digital, ASML)  	 		 	 	 		Dataset Info 	   Source: 
+== https://huggingface.co/api/datasets?search=wsb&limit=40
+HTTP 200 8509
+zchengc/wsb | 2022-05-16 | 14 | 
+zchengc/wsb_full | 2022-05-17 | 19 | 
+Sentdex/wsb_reddit_v001 | 2023-08-25 | 33 | This is Approximately 2017ish to 2018ish /r/wallstreetbets subreddit comment/reply data that had at least a few upvotes. Other than filtering for parent/reply p
+Sentdex/wsb_reddit_v002 | 2023-08-26 | 63 | 
+Sentdex/WSB-003.001 | 2024-02-28 | 20 | Min overall score: 3 Min conversational turns: 2 Max Characters: 7500 
+Sentdex/WSB-003.002 | 2024-02-28 | 10 | 
+Sentdex/WSB-003.003 | 2024-02-28 | 11 | 
+Sentdex/WSB-003.004 | 2024-02-28 | 14 | 
+Sentdex/WSB-003.005 | 2024-03-01 | 34 | 
+wsbarry/alpaca-zh-store | 2024-05-22 | 8 | 
+CreitinGameplays/WSB-003.005-llama3 | 2025-04-15 | 7 | 
+ysramen/wsbreddit | 2025-08-23 | 13 | 
+wsbrooker/College_football_picks_w1 | 2025-09-17 | 5 | 
+wsbrooker/College_football_w1 | 2025-09-17 | 3 | 
+Yourgotoguy/WSB_Conversations | 2025-12-22 | 11 | 
+nabeelkhalid92/wsbench-labels | 2026-10-29 | 229 |  	 		 	 	 		wsbench: labels and splits 	  The labels behind What Labels Are Worth Buying? Budget-Matched Weak Supervision for Cell Segmentation (Khalid, Naseem,
+== https://www.kaggle.com/api/v1/datasets/list?search=wallstreetbets
+HTTP 200 75747
+1124381 | 2021-08-16 | 19280 | Reddit WallStreetBets Posts
+2058672 | 2025-03-27 | 1216 | Collected posts and comments from WallStreetBets subreddit (2022)
+1132203 | 2021-02-16 | 1343 | Reddit WallStreetBets Posts since 2012
+1137504 | 2022-01-01 | 4951 | r/wallstreetbets, r/gme, r/stocks, r/pennystocks, r/robinhoodpennystocks, r/i...
+1006998 | 2021-01-29 | 219 | Comments from reddit's subreddit 'wallstreetbets'
+1177730 | 2021-02-24 | 977 | All available Reddit WallStreetBets Comments from Pushshift
+3413841 | 2025-04-02 | 638 | Unleashing the Power of r/WallStreetBets: A Deep Dive into Posts & Comments
+833649 | 2020-08-16 | 1544 | Submissions from r/wallstreetbets, r/investing, r/options, r/SecurityAnalysis
+1141016 | 2021-02-08 | 1243 | All available posts and comments for Dec 06/20 to Feb 06/21 
+1589738 | 2021-10-04 | 322 | The complete collection of posts/comments of /r/wallstreetbets for August 2021.
+1278732 | 2021-04-18 | 249 | Dataset containing post's title, selftext and utc from April 2020 to April 2021
+3853875 | 2023-10-13 | 79 | Dataset containing Reddit posts from the wallstreetbets subreddit for analysis
+1682372 | 2021-10-29 | 55 | WallStreetBets Posts | 2021
+1126322 | 2021-01-29 | 965 | Top posts from r/WallStreetBets, r/investing, r/stocks
+1993905 | 2022-03-13 | 301 | "UkrainianConflict" Top Posts in the past month
+9193182 | 2026-01-04 | 67 | Crowd-Selected Stocks from WallStreetBets with Technical ML Indicators
+1617987 | 2021-09-28 | 92 | The (im)Perfect WSB NER Dataset
+1993786 | 2022-03-13 | 241 | Ukraine Subreddit Top Posts in the past month
+2001632 | 2022-03-16 | 127 | most_happening_tickers_2018_2022
+1474062 | 2021-07-17 | 123 | WallStreetBets Subreddit data
+== https://www.kaggle.com/api/v1/datasets/list?search=reddit%20stock%20mentions
+HTTP 200 70691
+2325521 | 2022-07-07 | 337 | A year's worth of mentions of Tesla Inc. (TSLA) in Reddit posts and comments.
+1729191 | 2021-11-18 | 276 | Mentions of GME on Reddit, spanning from May to October of 2021.
+8631390 | 2025-11-02 | 475 | Collection of NIFTY 50 stocks–specific historical data and headlines.
+12456435 | 2026-11-13 | 40 | Climate social media posts collected from youtube, reddit, bluesky with rule-bas
+12181005 | 2026-09-25 | 12 | Climate social media posts collected from theguardian, reddit, mastodon with rul
+12180955 | 2026-09-25 | 31 | Finance social media posts collected from coingecko, coinmarketcap, coindesk wit
+12180915 | 2026-09-25 | 9 | Finance social media posts collected from coingecko, coinmarketcap, coindesk wit
+12180822 | 2026-09-25 | 16 | Politics social media posts collected from theguardian, reddit, mastodon with ru
+12180843 | 2026-09-25 | 6 | Politics social media posts collected from theguardian, reddit, mastodon with ru
+12180814 | 2026-09-25 | 11 | Politics social media posts collected from theguardian, reddit, mastodon with ru
+12180802 | 2026-09-25 | 9 | Politics social media posts collected from theguardian, reddit, mastodon with ru
+12180758 | 2026-09-25 | 9 | Climate social media posts collected from theguardian, reddit, mastodon with rul
+12180738 | 2026-09-25 | 17 | Health social media posts collected from reddit, youtube, mastodon with rule-bas
+12180703 | 2026-09-25 | 8 | Climate social media posts collected from theguardian, reddit, mastodon with rul
+12180693 | 2026-09-25 | 9 | Politics social media posts collected from theguardian, reddit, mastodon with ru
+12180938 | 2026-09-25 | 8 | Politics social media posts collected from theguardian, reddit, mastodon with ru
+12180931 | 2026-09-25 | 8 | Health social media posts collected from reddit, youtube, mastodon with rule-bas
+12180900 | 2026-09-25 | 11 | Health social media posts collected from reddit, youtube, mastodon with rule-bas
+12180862 | 2026-09-25 | 14 | Society social media posts collected from reddit, youtube, mastodon with rule-ba
+12180782 | 2026-09-25 | 7 | Society social media posts collected from reddit, youtube, mastodon with rule-ba
