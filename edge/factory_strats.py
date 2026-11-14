@@ -322,3 +322,58 @@ def _(d):
     E = d["E"][[c for c in d["E"].columns if not c.startswith("^")]]
     w = topk_monthly(E / E.shift(5) - 1, E.notna() & E.shift(60).notna(), k=3, largest=False, every="W")
     return w.reindex(columns=d["E"].columns, fill_value=0.0)
+
+
+# ============================================================ batch 6 (registered 2026-11-14 09:25 UTC, before running): macro timing
+MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December"
+
+
+def fomc_dates() -> list:
+    """Final day of each scheduled FOMC meeting, 2014 -> now, from federalreserve.gov (raises if too few found)."""
+    import re, requests
+    s = requests.Session(); s.headers["User-Agent"] = "Mozilla/5.0 (research)"
+    out = set()
+    html = s.get("https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm", timeout=60).text
+    for year, block in re.findall(r"(\d{4}) FOMC Meetings(.*?)(?=\d{4} FOMC Meetings|$)", html, flags=re.S):
+        for mon, days in re.findall(r'fomc-meeting__month[^>]*>\s*<strong>(%s)(?:/\w+)?</strong>.*?fomc-meeting__date[^>]*>\s*([\d\-]+)' % MONTHS, block, flags=re.S):
+            out.add(pd.Timestamp(f"{mon} {days.split('-')[-1]} {year}"))
+    for y in range(2014, 2021):
+        h = s.get(f"https://www.federalreserve.gov/monetarypolicy/fomchistorical{y}.htm", timeout=60).text
+        for mon, a, b in re.findall(r"(%s)\s+(\d{1,2})(?:-(\d{1,2}))?\s+Meeting" % MONTHS, h):
+            out.add(pd.Timestamp(f"{mon} {b or a} {y}"))
+    out = sorted(d for d in out if d.year >= 2014)
+    if len(out) < 70:
+        raise RuntimeError(f"only {len(out)} FOMC dates parsed")
+    return out
+
+@strat("Pre-FOMC drift: SPY only the day before and day of FOMC decisions", "etfs", 6)
+def _(d):
+    idx = d["E"].index; pos = pd.Series(0.0, index=idx)
+    for a in fomc_dates():
+        i = idx.searchsorted(a)
+        if i < len(idx) and idx[i] == a:
+            for j in (i - 3, i - 2):             # weight at t earns t+1 -> t+2: covers days A-1 and A
+                if j >= 0: pos.iloc[j] = 1.0
+    return one(d, "SPY", pos)
+
+@strat("Copper/gold momentum: SPY when copper beats gold over 3m, else IEF", "etfs", 6)
+def _(d):
+    E = d["E"]; ratio = E["HG=F"] / E["GC=F"]; up = (ratio / ratio.shift(63) - 1 > 0).astype(float)
+    w = one(d, "SPY", up); w["IEF"] = 1 - up; return w
+
+@strat("Gold trend: GLD above 200d avg, else BIL", "etfs", 6)
+def _(d):
+    g = d["E"]["GLD"]; up = (g > g.rolling(200).mean()).astype(float); w = one(d, "GLD", up); w["BIL"] = 1 - up; return w
+
+@strat("Commodity trend: DBC above 200d avg, else BIL", "etfs", 6)
+def _(d):
+    g = d["E"]["DBC"]; up = (g > g.rolling(200).mean()).astype(float); w = one(d, "DBC", up); w["BIL"] = 1 - up; return w
+
+@strat("Global relative strength: best of SPY/EFA/EEM by 6m, monthly", "etfs", 6)
+def _(d):
+    E = d["E"]; m = E[["SPY", "EFA", "EEM"]] / E[["SPY", "EFA", "EEM"]].shift(126) - 1; me = month_end_mask(E.index)
+    w = pd.DataFrame(np.nan, index=E.index, columns=E.columns)
+    for t in E.index[me]:
+        if m.loc[t].isna().any(): continue
+        v = pd.Series(0.0, index=E.columns); v[m.loc[t].idxmax()] = 1.0; w.loc[t] = v
+    return w.ffill().fillna(0.0)

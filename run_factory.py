@@ -6,7 +6,7 @@ from edge import factory as F
 from edge.factory_strats import REG
 
 ETFS = ["SPY", "QQQ", "IWM", "EFA", "EEM", "AGG", "IEF", "TLT", "BIL", "GLD", "XLK", "XLF", "XLE", "XLV", "XLY", "XLP", "XLI",
-        "XLB", "XLU", "XLRE", "XLC", "DBC", "VWO", "BND", "^VIX", "^VIX3M"]
+        "XLB", "XLU", "XLRE", "XLC", "DBC", "VWO", "BND", "^VIX", "^VIX3M", "HG=F", "GC=F"]
 COINS = ["BTC", "ETH", "SOL", "XRP", "BNB", "DOGE", "ADA", "AVAX", "LINK", "DOT", "LTC", "TRX", "ATOM", "NEAR", "UNI", "ETC",
          "FIL", "APT", "ARB", "OP", "INJ", "SUI", "AAVE", "BCH", "XLM", "HBAR", "ICP", "TON", "MATIC", "SHIB"]
 

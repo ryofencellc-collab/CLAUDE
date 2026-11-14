@@ -19,10 +19,10 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 - [x] Defensive asset allocation (Keller DAA / VAA canary rules)
 - [x] Bond/stock momentum switching (SPY vs TLT by 3m)
 - [x] VIX term structure: hold SPY when VIX < VIX3M, else IEF
-- [ ] FOMC pre-announcement drift (SPY day before FOMC; dates from federalreserve.gov calendar)
+- [x] FOMC pre-announcement drift (SPY day before FOMC; dates from federalreserve.gov calendar)
 - [x] Pre-holiday SPY
 - [ ] Leveraged ETF decay short proxy / long-short pair (needs borrow; paper only)
-- [ ] Gold/miners ratio, copper/gold timing for SPY
+- [x] Gold/miners ratio, copper/gold timing for SPY (batch 6: copper/gold, plus gold and commodity trend, global relative strength)
 
 ## Batch 4 — crypto — registered 2026-11-14 (5 strategies; funding/stablecoin data deferred)
 - [ ] Weekend effect long/short BTC, time-of-day (hourly) seasonality
