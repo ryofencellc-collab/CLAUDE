@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-15 06:57 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 114871; settled: 101639.
+Updated 2026-11-15 07:58 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 115454; settled: 101649.
 
-Total paper P&L: **$1,120.20**; filled markets 12577; wrong calls 205, of which filled 129.
+Total paper P&L: **$1,134.96**; filled markets 12580; wrong calls 205, of which filled 129.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -28,8 +28,8 @@ Total paper P&L: **$1,120.20**; filled markets 12577; wrong calls 205, of which 
 | KXHIGHLAX          |        42 |       33 |  32014.1         |           0    | 478537           |   314.37 |       0 |              0 |
 | KXLALIGASCORE      |       202 |       49 |  31911.3         |           0    | 136341           |   313.25 |       0 |              0 |
 | KXNCAAF1HTOTAL     |       793 |       81 |  30771.7         |        3537    | 281903           |   301.92 |       2 |              0 |
+| KXLIGAPROMATCH     |      1472 |      100 |  28593           |       10310    | 148815           |   280.5  |       2 |              0 |
 | KXNCAAF1H          |       339 |       55 |  27122.8         |         703    | 199002           |   266.18 |       1 |              0 |
-| KXLIGAPROMATCH     |      1462 |       97 |  27088.9         |       10318.4  | 144702           |   265.74 |       2 |              0 |
 | KXNFL3QSPREAD      |       178 |       32 |  25427.2         |        2856.24 | 240676           |   249.67 |       0 |              0 |
 | KXHIGHCHI          |        42 |       26 |  24512.9         |         196.39 | 274322           |   240.71 |       0 |              0 |
 | KXNFL1H            |        45 |       27 |  22924.6         |           0    | 297484           |   225.11 |       0 |              0 |
