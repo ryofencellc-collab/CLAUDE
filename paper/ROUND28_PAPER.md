@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-15 04:56 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 113556; settled: 101607.
+Updated 2026-11-15 05:56 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 114265; settled: 101623.
 
-Total paper P&L: **$1,101.52**; filled markets 12572; wrong calls 205, of which filled 129.
+Total paper P&L: **$1,105.82**; filled markets 12575; wrong calls 205, of which filled 129.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -29,8 +29,8 @@ Total paper P&L: **$1,101.52**; filled markets 12572; wrong calls 205, of which 
 | KXLALIGASCORE      |       202 |       49 |  31911.3         |           0    | 136341           |   313.25 |       0 |              0 |
 | KXNCAAF1HTOTAL     |       793 |       81 |  30771.7         |        3537    | 281903           |   301.92 |       2 |              0 |
 | KXNCAAF1H          |       339 |       55 |  27122.8         |         703    | 199002           |   266.18 |       1 |              0 |
+| KXLIGAPROMATCH     |      1446 |       95 |  25624.5         |       10250.3  | 143097           |   251.36 |       2 |              0 |
 | KXNFL3QSPREAD      |       178 |       32 |  25427.2         |        2856.24 | 240676           |   249.67 |       0 |              0 |
-| KXLIGAPROMATCH     |      1430 |       92 |  25185.2         |       10220.2  | 142275           |   247.06 |       2 |              0 |
 | KXHIGHCHI          |        42 |       26 |  24512.9         |         196.39 | 274322           |   240.71 |       0 |              0 |
 | KXNFL1H            |        45 |       27 |  22924.6         |           0    | 297484           |   225.11 |       0 |              0 |
 | KXTRUMPSAY         |        32 |       28 |  27058           |           0    | 447816           |   207.7  |       1 |              1 |
