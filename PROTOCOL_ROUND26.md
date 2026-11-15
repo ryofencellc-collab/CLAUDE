@@ -67,3 +67,12 @@ tracking still blocks new bids. Tests: 164 pass (6 new for the multi-market logi
 **The 7-day dry-run window restarts at this deploy** (2026-11-08 ~16:30 UTC → 2026-11-15 ~16:30 UTC); same pass
 rules. Expectation revised honestly: the one-slot replay's ~$21/day is overstated (that replay only saw markets
 that filled); the dry run will measure the real figure.
+
+## Dry-run verdict (scored 2026-11-15, window 2026-11-08 → 2026-11-15 UTC): **FAIL**
+- (2) Losing filled markets: **4** (limit ≤ 1). In the Nov 8 22:00 UTC BTC crash, three BTC strikes and one XRP strike
+  lost together.
+- (3) Dry P&L: **−$159.02** on 13 filled markets. That cannot meet "≥ 50% of the paper replay", since the paper ledger
+  itself lost $3,846 that day.
+- (1) Errors: none open. The bot halted on its 2-losses-in-7-days rule as designed and placed nothing after Nov 8 23:02.
+Already superseded: Round 40 showed the filled 99c bids lose 3.2% of contracts against a 0.98% breakeven (adverse
+selection), and Round 41/41b closed the 99c line. The bot stays in dry mode and is **not** funded.
