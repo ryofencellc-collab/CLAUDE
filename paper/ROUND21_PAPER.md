@@ -1,15 +1,15 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-15 03:29 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-15 05:30 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 297,113 (cancelled before close 6,969); open now 736 |
+| Markets bid and settled | 298,811 (cancelled before close 7,003); open now 779 |
 | Markets that got any fill | 1,163 (0.4%) |
 | Losing filled markets | 9 |
 | Contracts filled | 397,367 |
 | **Paper profit** | **$-372.78** |
-| Average queue ahead at placement | 19,991 contracts |
+| Average queue ahead at placement | 19,999 contracts |
 
 | Day | Settled | Filled markets | Contracts | P&L |
 |---|---:|---:|---:|---:|
@@ -30,23 +30,23 @@ Updated 2026-11-15 03:29 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.m
 | 2026-11-12 | 18,040 | 45 | 12,267 | $+120.27 |
 | 2026-11-13 | 21,340 | 58 | 22,316 | $+218.94 |
 | 2026-11-14 | 19,858 | 27 | 17,529 | $+172.07 |
-| 2026-11-15 | 3,387 | 4 | 4,000 | $+39.28 |
+| 2026-11-15 | 5,085 | 4 | 4,000 | $+39.28 |
 
 | Series | Settled | Filled markets | Contracts | P&L | Avg queue |
 |---|---:|---:|---:|---:|---:|
 | KXBTC15M | 245 | 35 | 35,000 | $+343.70 | 599,677 |
-| KXBTCD | 61,111 | 211 | 113,104 | $-3151.96 | 18,880 |
-| KXDOGE15M | 189 | 35 | 34,272 | $+336.55 | 26,015 |
+| KXBTCD | 61,474 | 211 | 113,104 | $-3151.96 | 18,890 |
+| KXDOGE15M | 190 | 35 | 34,272 | $+336.55 | 26,049 |
 | KXETH15M | 218 | 17 | 17,000 | $+166.94 | 83,049 |
-| KXETHD | 97,636 | 106 | 23,742 | $+232.66 | 21,042 |
+| KXETHD | 98,229 | 106 | 23,742 | $+232.66 | 21,048 |
 | KXINX | 261 | 13 | 2,524 | $+24.72 | 1,226 |
 | KXINXU | 4,836 | 273 | 44,015 | $+427.73 | 3,226 |
 | KXNASDAQ100 | 262 | 3 | 1,010 | $+9.90 | 1,221 |
 | KXNASDAQ100U | 9,257 | 69 | 5,647 | $+54.97 | 5,038 |
-| KXSOL15M | 220 | 30 | 29,332 | $+288.04 | 40,298 |
-| KXSOLD | 97,769 | 127 | 17,552 | $+171.84 | 20,016 |
+| KXSOL15M | 221 | 30 | 29,332 | $+288.04 | 40,308 |
+| KXSOLD | 98,361 | 127 | 17,552 | $+171.84 | 20,028 |
 | KXXRP15M | 223 | 50 | 48,132 | $+472.66 | 40,707 |
-| KXXRPD | 24,886 | 194 | 26,035 | $+249.47 | 21,042 |
+| KXXRPD | 25,034 | 194 | 26,035 | $+249.47 | 21,028 |
 
 ## Capital a real account would tie up (resting bids x size x 99c)
 
