@@ -232,9 +232,12 @@ def lower90(x, n=4000, seed=0):
 def main():
     days = sorted(os.path.basename(p) for p in glob.glob(os.path.join(DATA, "2*")))
     rows, notes = [], []
+    now = pd.Timestamp.now(tz="UTC")
     for day in days:
         if pd.Timestamp(day).weekday() >= 5:
             continue
+        if day == now.strftime("%Y-%m-%d") and now.hour * 60 + now.minute < 21 * 60 + 15:
+            continue                      # today's session is not over: no settlement price yet
         for root in SPEC:
             d = load_day(day, root)
             if d.empty:
