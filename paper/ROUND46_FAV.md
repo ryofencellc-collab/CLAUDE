@@ -1,8 +1,8 @@
 # Round 46: paper maker bids on the 85–95c favourite (Sports, Entertainment)
 
-Updated 2026-11-16 00:25 UTC. Rules: [PROTOCOL_ROUND46.md](../PROTOCOL_ROUND46.md). $10,000 budget, ~$200 a market.
+Updated 2026-11-16 00:57 UTC. Rules: [PROTOCOL_ROUND46.md](../PROTOCOL_ROUND46.md). $10,000 budget, ~$200 a market.
 
-Now: 38 resting bids, 15 filled positions awaiting settlement ($2,154 at cost).
+Now: 37 resting bids, 15 filled positions awaiting settlement ($2,310 at cost).
 
 Settled: **58 markets, 55 events, P&L $121.54**, return 1.13% per dollar (event-clustered t 0.3), win rate 93%.
 
