@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-16 06:00 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 130232; settled: 114616.
+Updated 2026-11-16 07:01 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 130749; settled: 114632.
 
-Total paper P&L: **$1,192.47**; filled markets 14254; wrong calls 227, of which filled 144.
+Total paper P&L: **$1,202.28**; filled markets 14256; wrong calls 227, of which filled 144.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -27,9 +27,9 @@ Total paper P&L: **$1,192.47**; filled markets 14254; wrong calls 227, of which 
 | KXNFL1HTOTAL       |       207 |       50 |  35297.1         |        2825    | 433513           |   346.55 |       0 |              0 |
 | KXLALIGASCORE      |       202 |       49 |  31911.3         |           0    | 136341           |   313.25 |       0 |              0 |
 | KXHIGHCHI          |        48 |       31 |  28588.4         |         163.48 | 285973           |   280.73 |       0 |              0 |
+| KXLIGAPROMATCH     |      1750 |      115 |  31612.4         |       10420.9  | 175600           |   257.64 |       4 |              2 |
 | KXWT20MATCH        |        46 |       28 |  25607.9         |           0    | 316827           |   251.46 |       0 |              0 |
 | KXNFL3QSPREAD      |       178 |       32 |  25427.2         |        2856.24 | 240676           |   249.67 |       0 |              0 |
-| KXLIGAPROMATCH     |      1734 |      113 |  30612.4         |       10414    | 171789           |   247.83 |       4 |              2 |
 | KXHIGHNY           |        42 |       34 |  31721.8         |           0    | 409102           |   243.06 |       1 |              1 |
 | KXCS2MAP           |       665 |       60 |  23224.8         |        5874.99 | 164904           |   227.89 |       0 |              0 |
 | KXNFL1H            |        45 |       27 |  22924.6         |           0    | 297484           |   225.11 |       0 |              0 |
