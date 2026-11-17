@@ -1,0 +1,142 @@
+== SPX Option Chains range {'min_amount': '0', 'max_amount': '5000'}
+   2010 | 30 Minutes | $3.00
+   2010 | End of Day | $0.00
+   2011 | 30 Minutes | $3.00
+   2011 | End of Day | $0.00
+   2012 | 30 Minutes | $3.00
+   2012 | End of Day | $0.00
+   2013 | 30 Minutes | $3.00
+   2013 | End of Day | $0.00
+   2014 | 30 Minutes | $3.00
+   2014 | End of Day | $0.00
+   2015 | 30 Minutes | $3.00
+   2015 | End of Day | $0.00
+   2016 | 15 Minutes | $5.00
+   2016 | 30 Minutes | $3.00
+   2016 | 5 Minutes | $20.00
+   2016 | End of Day | $0.00
+   2017 | 15 Minutes | $5.00
+   2017 | 30 Minutes | $3.00
+   2017 | 5 Minutes | $20.00
+   2017 | End of Day | $0.00
+   2018 | 15 Minutes | $5.00
+   2018 | 30 Minutes | $3.00
+   2018 | 5 Minutes | $20.00
+   2018 | End of Day | $0.00
+   2019 | 15 Minutes | $5.00
+   2019 | 30 Minutes | $3.00
+   2019 | 5 Minutes | $20.00
+   2019 | End of Day | $0.00
+   2019 | Minutely | $50.00
+   2020 | 15 Minutes | $5.00
+   2020 | 30 Minutes | $3.00
+   2020 | 5 Minutes | $20.00
+   2020 | End of Day | $0.00
+   2020 | Minutely | $50.00
+   2021 | 15 Minutes | $5.00
+   2021 | 30 Minutes | $3.00
+   2021 | 5 Minutes | $20.00
+   2021 | End of Day | $0.00
+   2021 | Minutely | $50.00
+   2022 | 15 Minutes | $5.00
+   2022 | 30 Minutes | $3.00
+   2022 | 5 Minutes | $20.00
+   2022 | End of Day | $0.00
+   2022 | Minutely | $50.00
+   2023 | 15 Minutes | $5.00
+   2023 | 30 Minutes | $3.00
+   2023 | 5 Minutes | $20.00
+   2023 | End of Day | $0.00
+   2023 | Minutely | $50.00
+== SPY Option Chains range {'min_amount': '0', 'max_amount': '5000'}
+   2010 | 30 Minutes | $3.00
+   2010 | End of Day | $0.00
+   2011 | 30 Minutes | $3.00
+   2011 | End of Day | $0.00
+   2012 | 30 Minutes | $3.00
+   2012 | End of Day | $0.00
+   2013 | 30 Minutes | $3.00
+   2013 | End of Day | $0.00
+   2014 | 30 Minutes | $3.00
+   2014 | End of Day | $0.00
+   2015 | 30 Minutes | $3.00
+   2015 | End of Day | $0.00
+   2016 | 15 Minutes | $5.00
+   2016 | 30 Minutes | $3.00
+   2016 | 5 Minutes | $20.00
+   2016 | End of Day | $0.00
+   2017 | 15 Minutes | $5.00
+   2017 | 30 Minutes | $3.00
+   2017 | 5 Minutes | $20.00
+   2017 | End of Day | $0.00
+   2018 | 15 Minutes | $5.00
+   2018 | 30 Minutes | $3.00
+   2018 | 5 Minutes | $20.00
+   2018 | End of Day | $0.00
+   2018 | Minutely | $50.00
+   2019 | 15 Minutes | $5.00
+   2019 | 30 Minutes | $3.00
+   2019 | 5 Minutes | $20.00
+   2019 | End of Day | $0.00
+   2019 | Minutely | $50.00
+   2020 | 15 Minutes | $5.00
+   2020 | 30 Minutes | $3.00
+   2020 | 5 Minutes | $20.00
+   2020 | End of Day | $0.00
+   2020 | Minutely | $50.00
+   2021 | 15 Minutes | $5.00
+   2021 | 30 Minutes | $3.00
+   2021 | 5 Minutes | $20.00
+   2021 | End of Day | $0.00
+   2021 | Minutely | $50.00
+   2022 | 15 Minutes | $5.00
+   2022 | 30 Minutes | $3.00
+   2022 | 5 Minutes | $20.00
+   2022 | End of Day | $0.00
+   2022 | Minutely | $50.00
+   2023 | 15 Minutes | $5.00
+   2023 | 30 Minutes | $3.00
+   2023 | 5 Minutes | $20.00
+   2023 | End of Day | $0.00
+   2023 | Minutely | $50.00
+== QQQ Option Chains range {'min_amount': '0', 'max_amount': '2000'}
+   2012 | 30 Minutes | $3.00
+   2012 | End of Day | $0.00
+   2013 | 30 Minutes | $3.00
+   2013 | End of Day | $0.00
+   2014 | 30 Minutes | $3.00
+   2014 | End of Day | $0.00
+   2015 | 30 Minutes | $3.00
+   2015 | End of Day | $0.00
+   2016 | 15 Minutes | $5.00
+   2016 | 30 Minutes | $3.00
+   2016 | 5 Minutes | $20.00
+   2016 | End of Day | $0.00
+   2017 | 15 Minutes | $5.00
+   2017 | 30 Minutes | $3.00
+   2017 | 5 Minutes | $20.00
+   2017 | End of Day | $0.00
+   2018 | 15 Minutes | $5.00
+   2018 | 30 Minutes | $3.00
+   2018 | 5 Minutes | $20.00
+   2018 | End of Day | $0.00
+   2019 | 15 Minutes | $5.00
+   2019 | 30 Minutes | $3.00
+   2019 | 5 Minutes | $20.00
+   2019 | End of Day | $0.00
+   2020 | 15 Minutes | $5.00
+   2020 | 30 Minutes | $3.00
+   2020 | 5 Minutes | $20.00
+   2020 | End of Day | $0.00
+   2021 | 15 Minutes | $5.00
+   2021 | 30 Minutes | $3.00
+   2021 | 5 Minutes | $20.00
+   2021 | End of Day | $0.00
+   2022 | 15 Minutes | $5.00
+   2022 | 30 Minutes | $3.00
+   2022 | 5 Minutes | $15.00
+   2022 | End of Day | $0.00
+   2023 | 15 Minutes | $5.00
+   2023 | 30 Minutes | $3.00
+   2023 | 5 Minutes | $20.00
+   2023 | End of Day | $0.00
