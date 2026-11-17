@@ -24,3 +24,9 @@ at 10:00" baseline made +7.0% (t 0.58), so the breakout's edge over doing nothin
 which is not significant. The calibration failed (direction 71%, exit type 57% on the 7 overlap days). The forward test
 reads Cboe's delayed feed, so its range and breakouts are ~15 minutes behind the real 5-minute bars, and on fast days the
 two pick different sides. The model is therefore only a rough guide. The forward test on real quotes stays the judge.
+
+## Amendment (2026-11-17 23:40 UTC): filter variants on the same 60-day model data
+B2–B5 as in the Round 39 amendment, plus two that need volume (model only): B6 breakout confirmed by the session VWAP
+(call above, put below), B7 breakout bar volume ≥ 1.5× the opening-range average. The same screen rule applies to each
+(mean ROI > +10%, t ≥ 2, ≥ 30 trades). Seven variants on one sample means one can pass by luck. A pass only promotes a
+variant to the forward test (B6/B7 would need a volume source there).

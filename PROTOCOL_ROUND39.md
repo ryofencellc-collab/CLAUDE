@@ -58,3 +58,10 @@ on average +3.2 index points a day (≈ +$320 per SPX 1-lot, t = 3.8 over all da
 only reached t = 1.7 (needs 3), and the worst day was −330 points (−$33,000 on one SPX straddle). 0DTE options do look
 slightly overpriced on average, but the margin is about 10% of the premium and one bad day erases roughly 100 good
 ones. It goes to 39b as planned (I1–I3 are the defined-risk version) but is not a go-live signal.
+
+## Amendment (2026-11-17 23:40 UTC): breakout filter variants B2–B5 (registered after 7 days of B1 data)
+B2: breakout by 11:00 ET only. B3: only breakouts in the day's direction (call above the prior close, put below; a
+misaligned breakout is skipped and the next aligned one taken). B4: only on days when VIX1D opens at or above its prior
+20-day median. B5: −50% stop, no profit target, exit 15:45. The scorer also fills them in for Nov 9–17, but those days
+were already seen. **Their verdict counts only trading days from 2026-11-18 onward** (20 days → about Dec 16). Same
+pass rule as B1.

@@ -158,7 +158,8 @@ def debit_exit(ss, t0, legs, root, S, target=None, floor=None, paid=None):
     return spread_value(S, legs), "expiry"
 
 
-def day_trades(day: str, root: str, S: float) -> list[dict]:
+def day_trades(day: str, root: str, S: float, ctx: dict | None = None) -> list[dict]:
+    ctx = ctx or {}
     d = load_day(day, root)
     if d.empty or d["t"].nunique() < MIN_SNAPS:
         return []
@@ -187,24 +188,65 @@ def day_trades(day: str, root: str, S: float) -> list[dict]:
                 v, how = debit_exit(ss, te, legs, root, S)
                 out.append(dict(day=day, strategy="L1 long straddle", root=root, entry=e.strftime("%H:%M"), legs=str(legs),
                                 credit=round(-paid, 3), exit=how, pnl=round((v - paid) * sp["mult"] - 2 * sp["fee"] * 2, 2)))
-    # B1 opening-range breakout, one per day
+    # B1 opening-range breakout and its pre-registered filter variants (B2-B5 added 2026-11-17), one trade a day each
     orng = spot[(spot.index.time >= dtime(9, 30)) & (spot.index.time < dtime(10, 0))]
     if len(orng) >= 10:
         hi, lo = orng.max(), orng.min()
-        for t, g in ss:
-            if t.time() < dtime(10, 0) or t.time() >= EXIT_LATE:
+        for name, kw in BREAKOUTS.items():
+            if kw.get("vix_high") and not ctx.get("vix_high"):
                 continue
-            s = spot[t]
-            if s > hi or s < lo:
-                cp = "C" if s > hi else "P"
-                k = float(min(g.xs(cp, level="cp").index, key=lambda x: abs(x - s)))
-                paid = q(g, cp, k, "ask")
-                if np.isnan(paid):
-                    break
-                v, how = debit_exit(ss, t, [(cp, k, 1)], root, S, target=2.0, floor=0.5, paid=paid)
-                out.append(dict(day=day, strategy="B1 OR breakout", root=root, entry=t.strftime("%H:%M"), legs=str([(cp, k, 1)]),
-                                credit=round(-paid, 3), exit=how, pnl=round((v - paid) * sp["mult"] - 2 * sp["fee"], 2)))
-                break
+            r = breakout(ss, spot, hi, lo, root, S, day, name, ctx, **{k: v for k, v in kw.items() if k != "vix_high"})
+            if r: out.append(r)
+    return out
+
+
+BREAKOUTS = {"B1 OR breakout": {}, "B2 breakout by 11:00 only": {"cutoff": dtime(11, 0)},
+             "B3 breakout with the day (vs prior close)": {"with_day": True},
+             "B4 breakout on high-VIX1D days": {"vix_high": True}, "B5 breakout, -50% stop, no target": {"target": None}}
+
+
+def breakout(ss, spot, hi, lo, root, S, day, name, ctx, cutoff=None, with_day=False, target=2.0):
+    sp = SPEC[root]
+    for t, g in ss:
+        if t.time() < dtime(10, 0) or t.time() >= EXIT_LATE or (cutoff and t.time() > cutoff):
+            continue
+        s = spot[t]
+        if not (s > hi or s < lo):
+            continue
+        cp = "C" if s > hi else "P"
+        if with_day and ctx.get("prev_close") and ((cp == "C") != (s > ctx["prev_close"])):
+            continue                                   # breakout against the day's direction: wait for an aligned one
+        k = float(min(g.xs(cp, level="cp").index, key=lambda x: abs(x - s)))
+        paid = q(g, cp, k, "ask")
+        if np.isnan(paid):
+            return None
+        if target:
+            v, how = debit_exit(ss, t, [(cp, k, 1)], root, S, target=target, floor=0.5, paid=paid)
+        else:
+            v, how = debit_exit(ss, t, [(cp, k, 1)], root, S, target=1e9, floor=0.5, paid=paid)
+        return dict(day=day, strategy=name, root=root, entry=t.strftime("%H:%M"), legs=str([(cp, k, 1)]),
+                    credit=round(-paid, 3), exit=how, pnl=round((v - paid) * sp["mult"] - 2 * sp["fee"], 2))
+    return None
+
+
+def contexts(days: list) -> dict:
+    """Per (day, root): prior close and whether VIX1D opened at/above its prior 20-day median."""
+    out = {}
+    try:
+        import yfinance as yf
+        start = str((pd.Timestamp(min(days)) - pd.Timedelta(days=45)).date()); end = str((pd.Timestamp(max(days)) + pd.Timedelta(days=1)).date())
+        px = yf.download(["^GSPC", "SPY", "^VIX1D"], start=start, end=end, auto_adjust=False, progress=False)
+        c, o = px["Close"], px["Open"]
+        c.index = o.index = pd.to_datetime(c.index).tz_localize(None)
+        vmed = o["^VIX1D"].rolling(20, min_periods=10).median().shift(1)
+        for d in days:
+            t = pd.Timestamp(d)
+            prev = c[c.index < t]
+            for root, sym in (("SPXW", "^GSPC"), ("SPY", "SPY")):
+                out[(d, root)] = {"prev_close": float(prev[sym].dropna().iloc[-1]) if len(prev) else None,
+                                  "vix_high": bool(t in o.index and o.at[t, "^VIX1D"] >= vmed.get(t, np.inf))}
+    except Exception as e:
+        print("contexts failed:", e)
     return out
 
 
@@ -233,6 +275,7 @@ def main():
     days = sorted(os.path.basename(p) for p in glob.glob(os.path.join(DATA, "2*")))
     rows, notes = [], []
     now = pd.Timestamp.now(tz="UTC")
+    ctxs = contexts([d for d in days if pd.Timestamp(d).weekday() < 5]) if days else {}
     for day in days:
         if pd.Timestamp(day).weekday() >= 5:
             continue
@@ -244,7 +287,7 @@ def main():
                 continue
             n = d["t"].nunique()
             S, src = settle_price(day, root, float(d.sort_values("t")["spot"].iloc[-1]))
-            tr = day_trades(day, root, S)
+            tr = day_trades(day, root, S, ctxs.get((day, root)))
             notes.append(f"{day} {root}: {n} snapshots{' (excluded, < 60%)' if n < MIN_SNAPS else ''}, settle {S:.2f} ({src}), {len(tr)} trades")
             rows += tr
     T = pd.DataFrame(rows)
@@ -257,7 +300,7 @@ def main():
         open(REPORT, "w").write("\n".join(out + ["No trades yet."]) + "\n"); print("\n".join(out)); return
     ndays = T["day"].nunique()
     g = []
-    for (s, r), x in T.assign(entry=np.where(T.strategy.str.startswith("B1"), "-", T.entry)).groupby(["strategy", "root"]):
+    for (s, r), x in T.assign(entry=np.where(T.strategy.str.match(r"B\d"), "-", T.entry)).groupby(["strategy", "root"]):
         for e, y in x.groupby("entry"):
             days_ = sorted(y["day"].unique()); half = days_[len(days_) // 2] if len(days_) > 1 else None
             g.append(dict(strategy=s, root=r, entry=e, trades=len(y), win=f"{(y.pnl > 0).mean():.0%}", mean=round(y.pnl.mean(), 2),

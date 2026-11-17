@@ -15,7 +15,7 @@ def bs(S, K, T, sig, cp):
     return S * N(d1) - K * math.exp(-R * T) * N(d2) if cp == "C" else K * math.exp(-R * T) * N(-d2) - S * N(-d1)
 
 
-def day_trade(bars: pd.DataFrame, sig: float, breakout=True):
+def day_trade(bars: pd.DataFrame, sig: float, breakout=True, cutoff=None, prev_close=None, vwap=False, volume=False, target=2.0):
     close16 = bars.index[0].normalize() + pd.Timedelta(hours=16)
     orng = bars[bars.index.time < pd.Timestamp("10:00").time()]
     after = bars[(bars.index.time >= pd.Timestamp("10:00").time())]
@@ -23,13 +23,23 @@ def day_trade(bars: pd.DataFrame, sig: float, breakout=True):
         return None
     hi, lo = orng.High.max(), orng.Low.min()
     entry = None
+    pv = (bars.Close * bars.get("Volume", 1)).cumsum() / pd.Series(bars.get("Volume", 1), index=bars.index).cumsum()
+    vol_avg = orng["Volume"].mean() if "Volume" in orng else np.nan
     for t, b in after.iterrows():
-        if t.time() >= pd.Timestamp("15:45").time():
+        if t.time() >= pd.Timestamp("15:45").time() or (cutoff and t.time() > cutoff):
             break
         if not breakout:
             entry = (t, b.Close, "C"); break
-        if b.Close > hi: entry = (t, b.Close, "C"); break
-        if b.Close < lo: entry = (t, b.Close, "P"); break
+        cp = "C" if b.Close > hi else "P" if b.Close < lo else None
+        if cp is None:
+            continue
+        if prev_close is not None and (cp == "C") != (b.Close > prev_close):
+            continue
+        if vwap and (cp == "C") != (b.Close > pv[t]):
+            continue
+        if volume and not (b.get("Volume", 0) >= 1.5 * vol_avg):
+            continue
+        entry = (t, b.Close, cp); break
     if entry is None:
         return None
     t0, s0, cp = entry; K = round(s0)
@@ -38,7 +48,7 @@ def day_trade(bars: pd.DataFrame, sig: float, breakout=True):
     exit_v, how = None, "15:45"
     for t, b in bars[bars.index > t0].iterrows():
         v = bs(b.Close, K, T(t), sig, cp)
-        if v >= 2 * paid: exit_v, how = v, "target"; break
+        if target and v >= target * paid: exit_v, how = v, "target"; break
         if v <= 0.5 * paid: exit_v, how = v, "floor"; break
         if t.time() >= pd.Timestamp("15:45").time(): exit_v, how = v, "15:45"; break
     if exit_v is None:
@@ -57,6 +67,13 @@ def main():
     v.columns = [c[0] if isinstance(c, tuple) else c for c in v.columns]
     vopen = v["Open"]; vopen.index = pd.to_datetime(vopen.index).date
     rows, base = [], []
+    VARIANTS = {"B2 breakout by 11:00 only": dict(cutoff=pd.Timestamp("11:00").time()), "B3 breakout with the day": dict(with_day=True),
+                "B4 breakout on high-VIX1D days": dict(vix_high=True), "B5 -50% stop, no target": dict(target=None),
+                "B6 breakout + VWAP confirmation": dict(vwap=True), "B7 breakout + 1.5x volume": dict(volume=True)}
+    var_rows = {k: [] for k in VARIANTS}
+    vmed = v["Open"].rolling(20, min_periods=10).median().shift(1); vmed.index = pd.to_datetime(vmed.index).date
+    daily_close = b.Close.groupby(b.index.date).last()
+    prev_close = daily_close.shift(1)
     for day, g in b.groupby(b.index.date):
         g = g.between_time("09:30", "15:55")
         if day not in vopen.index or len(g) < 60:
@@ -65,6 +82,15 @@ def main():
         r = day_trade(g, sig); r0 = day_trade(g, sig, breakout=False)
         if r: rows.append(r)
         if r0: base.append(r0)
+        for k, kw in VARIANTS.items():
+            kw = dict(kw)
+            if kw.pop("vix_high", False) and not (float(vopen[day]) >= vmed.get(day, np.inf)):
+                continue
+            if kw.pop("with_day", False):
+                kw["prev_close"] = prev_close.get(day, np.nan)
+                if not np.isfinite(kw["prev_close"]): continue
+            x = day_trade(g, sig, **kw)
+            if x: var_rows[k].append(x)
     T, B0 = pd.DataFrame(rows), pd.DataFrame(base)
     def summ(x):
         if x.empty: return {}
@@ -74,7 +100,11 @@ def main():
            "Rules: [PROTOCOL_ROUND51.md](../PROTOCOL_ROUND51.md). Black-Scholes with VIX1D; 3% slippage each way + $0.65/side. Per 1 SPY contract.", "",
            "| version | " + " | ".join(summ(T).keys()) + " |", "|---|" + "---:|" * len(summ(T)),
            "| B1 breakout | " + " | ".join(str(v) for v in summ(T).values()) + " |",
-           "| baseline: ATM call at 10:00 every day | " + " | ".join(str(v) for v in summ(B0).values()) + " |", ""]
+           "| baseline: ATM call at 10:00 every day | " + " | ".join(str(v) for v in summ(B0).values()) + " |"]
+    for k, xs in var_rows.items():
+        sm = summ(pd.DataFrame(xs))
+        out.append(f"| {k} | " + " | ".join(str(v) for v in sm.values()) + " |")
+    out.append("")
     # calibration vs the real-quote forward test
     try:
         real = pd.read_csv("paper/r39b_trades.csv")
