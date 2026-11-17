@@ -1,0 +1,36 @@
+name: round53
+# Round 53 (PROTOCOL_ROUND53.md): exhaustive NY-session grid on S&P & Nasdaq micros.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - uses: actions/cache@v4
+        with:
+          path: data/histdata
+          key: histdata-nsx-spx-v1-${{ github.run_id }}
+          restore-keys: |
+            histdata-nsx-spx-v1-
+            histdata-nsxusd-v1-
+      - run: python fetch_nq.py
+      - run: PAIR=spxusd python fetch_nq.py
+      - name: Smoke (20 configurations)
+        run: python run_round53.py 20
+      - name: Full grid
+        run: python run_round53.py
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round53 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND53.md reports/round53_all.csv 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round53: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
