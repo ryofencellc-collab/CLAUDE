@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-17 06:05 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 143697; settled: 133658.
+Updated 2026-11-17 06:46 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 143793; settled: 133664.
 
-Total paper P&L: **$4,523.14**; filled markets 16869; wrong calls 265, of which filled 157.
+Total paper P&L: **$4,526.23**; filled markets 16870; wrong calls 265, of which filled 157.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -26,8 +26,8 @@ Total paper P&L: **$4,523.14**; filled markets 16869; wrong calls 265, of which 
 | KXWT20MATCH        |        64 |       42 |  38547.8         |           0    | 427328           |   378.54 |       0 |              0 |
 | KXNFL1HTOTAL       |       207 |       50 |  35297.1         |        2825    | 433513           |   346.55 |       0 |              0 |
 | KXHIGHCHI          |        54 |       36 |  33588.4         |          20.5  | 305034           |   329.83 |       0 |              0 |
+| KXLIGAPROMATCH     |      2048 |      130 |  37465.5         |       10460    | 206898           |   315.06 |       4 |              2 |
 | KXLALIGASCORE      |       202 |       49 |  31911.3         |           0    | 136341           |   313.25 |       0 |              0 |
-| KXLIGAPROMATCH     |      2042 |      129 |  37150.1         |       10460    | 205907           |   311.97 |       4 |              2 |
 | KXDIMAYORGAME      |        51 |       33 |  30846.8         |           0    | 705076           |   302.9  |       0 |              0 |
 | KXHIGHNY           |        48 |       39 |  36721.8         |           0    | 471306           |   292.16 |       1 |              1 |
 | KXCOPPER15M        |       353 |      269 | 196571           |           0    | 544011           |   250.18 |       4 |              3 |
