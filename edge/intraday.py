@@ -17,12 +17,12 @@ CACHE = Path(__file__).resolve().parent.parent / "data"
 COST_PTS = 1.25  # round trip, index points
 
 
-def load_nq(directory: Path = CACHE / "histdata") -> pd.DataFrame:
+def load_nq(directory: Path = CACHE / "histdata", pair: str = "NSXUSD") -> pd.DataFrame:
     """Read HistData ASCII M1 files into New York-time 1-minute bars.
 
     HistData timestamps are fixed EST (UTC-5) with no daylight saving.
     """
-    files = sorted(directory.glob("DAT_ASCII_NSXUSD_M1_*.csv"))
+    files = sorted(directory.glob(f"DAT_ASCII_{pair}_M1_*.csv"))
     if not files:
         raise FileNotFoundError(f"no HistData CSVs in {directory}")
     df = pd.concat(pd.read_csv(f, sep=";", header=None,
