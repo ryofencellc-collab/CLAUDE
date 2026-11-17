@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-17 08:48 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 144848; settled: 133694.
+Updated 2026-11-17 09:49 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 145377; settled: 133760.
 
-Total paper P&L: **$4,550.46**; filled markets 16873; wrong calls 265, of which filled 157.
+Total paper P&L: **$4,626.16**; filled markets 16881; wrong calls 265, of which filled 157.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -13,7 +13,7 @@ Total paper P&L: **$4,550.46**; filled markets 16873; wrong calls 265, of which 
 | KXNFLSPREAD        |       406 |      276 | 171929           |           0    |      1.77304e+06 |  1687.79 |       0 |              0 |
 | KXAAAGASD          |       174 |      135 | 101556           |           0    |      1.56695e+06 |   997.15 |       0 |              0 |
 | KXNFLTD            |       726 |      354 | 206797           |           0    |      2.89099e+06 |   980.12 |       4 |              2 |
-| KXCS2GAME          |       548 |      160 |  97100.3         |        1631.5  | 944773           |   953.3  |       2 |              0 |
+| KXCS2GAME          |       562 |      163 |  99809.1         |        1611.14 | 962561           |   979.9  |       2 |              0 |
 | KXNBAGAME          |       112 |       90 |  90000           |           0    |      2.76505e+07 |   883.8  |       0 |              0 |
 | KXNBA3QTOTAL       |       727 |      156 |  81479.7         |        1070.1  | 404412           |   799.71 |       2 |              0 |
 | KXNBA1QTOTAL       |       728 |      166 |  79305.8         |        3350    | 489200           |   750.34 |       2 |              1 |
@@ -21,19 +21,19 @@ Total paper P&L: **$4,550.46**; filled markets 16873; wrong calls 265, of which 
 | KXNHLSPREAD        |       477 |      191 |  64897.8         |           0    | 191905           |   636.62 |       1 |              0 |
 | KXNFL1HSPREAD      |       267 |       61 |  44213.9         |        3659    | 730146           |   434.12 |       0 |              0 |
 | KXHIGHLAX          |        54 |       45 |  43326.6         |           0    | 574574           |   425.46 |       0 |              0 |
+| KXWT20MATCH        |        68 |       46 |  42547.8         |           0    | 469988           |   417.82 |       0 |              0 |
 | KXRT               |        85 |       50 |  41593.8         |           0    | 710436           |   408.43 |       0 |              0 |
 | KXNFLPASSYDS       |       296 |       70 |  40442.9         |         822.44 | 340175           |   396.98 |       0 |              0 |
-| KXWT20MATCH        |        64 |       42 |  38547.8         |           0    | 427328           |   378.54 |       0 |              0 |
 | KXNFL1HTOTAL       |       207 |       50 |  35297.1         |        2825    | 433513           |   346.55 |       0 |              0 |
 | KXHIGHCHI          |        54 |       36 |  33588.4         |          20.5  | 305034           |   329.83 |       0 |              0 |
-| KXLIGAPROMATCH     |      2070 |      131 |  37933.1         |       10460    | 207861           |   319.65 |       4 |              2 |
+| KXLIGAPROMATCH     |      2090 |      131 |  37933.1         |       10460    | 210244           |   319.65 |       4 |              2 |
 | KXLALIGASCORE      |       202 |       49 |  31911.3         |           0    | 136341           |   313.25 |       0 |              0 |
 | KXDIMAYORGAME      |        51 |       33 |  30846.8         |           0    | 705076           |   302.9  |       0 |              0 |
 | KXHIGHNY           |        48 |       39 |  36721.8         |           0    | 471306           |   292.16 |       1 |              1 |
+| KXCS2MAP           |       830 |       66 |  25690.4         |        6141.61 | 213703           |   252.08 |       1 |              0 |
 | KXCOPPER15M        |       353 |      269 | 196571           |           0    | 544011           |   250.18 |       4 |              3 |
 | KXNFL3QSPREAD      |       178 |       32 |  25427.2         |        2856.24 | 240676           |   249.67 |       0 |              0 |
 | KXTRUMPSAY         |        46 |       33 |  30759.3         |           0    | 495603           |   244.04 |       1 |              1 |
-| KXCS2MAP           |       802 |       65 |  24690.4         |        6141.61 | 210668           |   242.26 |       1 |              0 |
 | KXNFL1H            |        45 |       27 |  22924.6         |           0    | 297484           |   225.11 |       0 |              0 |
 | KXNHL1PTOTAL       |       312 |       38 |  20899.6         |        1000    | 124776           |   205.15 |       0 |              0 |
 | KXMLSTOTAL         |       112 |       46 |  20888.1         |           0    |  91931.9         |   204.95 |       0 |              0 |
