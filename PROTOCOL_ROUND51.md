@@ -17,3 +17,10 @@ days and exit type on ≥ 75%.
 (buy the ATM call at 10:00 every day).
 **Pass (screen only, since it is model-priced):** mean ROI per trade > +10% with t ≥ 2 over ≥ 30 trades, and the
 calibration check passes. A pass does not fund anything. It raises priority on getting real historical quotes.
+
+## Result (2026-11-17): **not passed; calibration failed** (`reports/ROUND51.md`)
+59 model trades (late Aug → Nov 17): 44% won, mean ROI +20.6% per trade, t = 1.57 (needs 2). The "always buy the ATM call
+at 10:00" baseline made +7.0% (t 0.58), so the breakout's edge over doing nothing special is about +14 points per trade,
+which is not significant. The calibration failed (direction 71%, exit type 57% on the 7 overlap days). The forward test
+reads Cboe's delayed feed, so its range and breakouts are ~15 minutes behind the real 5-minute bars, and on fast days the
+two pick different sides. The model is therefore only a rough guide. The forward test on real quotes stays the judge.
