@@ -30,3 +30,9 @@ B2–B5 as in the Round 39 amendment, plus two that need volume (model only): B6
 (call above, put below), B7 breakout bar volume ≥ 1.5× the opening-range average. The same screen rule applies to each
 (mean ROI > +10%, t ≥ 2, ≥ 30 trades). Seven variants on one sample means one can pass by luck. A pass only promotes a
 variant to the forward test (B6/B7 would need a volume source there).
+
+## Variant result (2026-11-17): **0 of 7 pass the screen** (t ≥ 2 needed)
+B2 by-11:00 +23.6% (t 1.76), B3 with-the-day +25.4% (t 1.84), B4 high-VIX1D +28.5% (t 1.63, 37 trades), B5 no-target
++69.4% (t 1.33; 22% win rate, a few huge winners), B6 VWAP identical to B1 (breakouts were already on the VWAP's
+side), B7 volume +11.4% (t 0.54). Every filter except volume nudges the average up, but none clears the bar on 60 days.
+All of them stay in the forward test (B2–B5) on real quotes.
