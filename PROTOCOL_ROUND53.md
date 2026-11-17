@@ -31,3 +31,10 @@ Every combination runs on both markets: about 4,600 configurations.
 daily P&L, with the number of trials = every configuration run; the same configuration has mean R > 0 on the *other*
 market's holdout; prop-firm pass rate ≥ 50% and expected value per attempt > 0 (Round 52 rules). Everything is reported,
 top 40 by holdout t. A pass goes to forward paper trading. Nothing is funded on this alone.
+
+## Result (2026-11-17): **0 of 3,456 pass; 0 even reach the statistical screen** (`reports/ROUND53.md`, `reports/round53_all.csv`)
+41.6% of configurations made money in 2021+, fewer than half. 40 reached holdout t ≥ 2, *fewer* than the ~80 that pure
+chance would give among 3,456. None reached t ≥ 3, and none of those near the top was positive in 2012–2020 as well.
+Best holdout: Nasdaq power-hour with the 20-day trend (t 2.9, but negative on dev). Median by family: the gap-and-go
+0.5% and power-hour families were slightly positive; every ORB family was negative. Data note: the S&P 1-minute file covers
+fewer dev years than the Nasdaq one (about 830 vs 2,100 dev days); the holdout is complete for both.

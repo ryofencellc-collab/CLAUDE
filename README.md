@@ -88,6 +88,8 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 43 | Riskless arbitrage inside Kalshi and Polymarket (strike ladders, mutually exclusive sums) | Scanning. First fixed scan: Kalshi ladder violations ≈ $0 |
 | 44 | Paper market making for Kalshi liquidity-incentive rewards (~4,000 programs, ≈ $84k/day paid out), $10k; 44b quotes 1 tick behind | Running from 2026-11-09; 10-day pass test |
 | 45 | Where do Kalshi makers earn? 12.4M trades, 16 categories × price × time-to-close, dev/holdout | **11 cells PASS**, all makers holding the 70–95c favourite (Sports 85–95c 1–24 h: holdout +5.0%/$, 3,387 events): [ROUND45.md](reports/ROUND45.md), [45b](reports/ROUND45B.md) |
+| 53 | Exhaustive NY-session grid: 16 entry setups × stops × targets × exits × 6 filters, S&P + Nasdaq micros, prop scoring | **0/3,456 pass**; none reaches the screen; fewer t ≥ 2 than chance: [ROUND53.md](reports/ROUND53.md) |
+| 52 | NY & Asia session setups (TikTok prop trader), prop-firm scoring | **0/10 pass**; prop pass rates 0–7%: [ROUND52.md](reports/ROUND52.md) |
 | 51 | Model-priced 0DTE opening-range breakout (Black-Scholes + VIX1D on 60 days of 5-min SPY) | **Not passed**: 59 trades, 44% win, +20.6%/trade (t 1.57) vs +7% for buying a call daily; calibration vs real quotes failed: [ROUND51.md](reports/ROUND51.md) |
 | 50 | Reddit crowd emotion (ApeWisdom mentions; hype momentum/fade, most-mentioned, approval), forward | collecting since 2026-11-14 |
 | 49 | The options wheel (Reddit staple): cash-secured puts → covered calls, 3 variants, SPY + 7 mega-caps, real EOD chains | **0/3 pass**: holdout +11.6% to +19.3%/yr vs buy-and-hold +29.7% (Sharpe 0.74–1.08 vs 1.24): [ROUND49.md](reports/ROUND49.md) |

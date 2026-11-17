@@ -22,3 +22,7 @@ end-of-day balance (the trailing stop stops trailing once it reaches the startin
 at most 60 trading days. An account is started every Monday in the period. Reported: pass rate, days to pass, and expected
 value per attempt = pass rate × the first funded month's average profit (90% split, conditional on surviving) − $150 of fees.
 **Pass.** Holdout expectancy per trade > 0 with t ≥ 2, holdout prop pass rate ≥ 50%, and expected value per attempt > 0.
+
+## Result (2026-11-17): **0 of 10 pass** (`reports/ROUND52.md`)
+Every NY and Asia setup lost money or was flat in 2021+ after costs (best: Nasdaq first-hour trend +0.04R, t 0.66). Prop
+pass rates 0–7%, and the expected value per attempt is about −$150 (the fees).
