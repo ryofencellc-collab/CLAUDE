@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-18 07:52 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 157951; settled: 150436.
+Updated 2026-11-18 08:53 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 158472; settled: 150448.
 
-Total paper P&L: **$6,958.86**; filled markets 19654; wrong calls 299, of which filled 182.
+Total paper P&L: **$6,959.04**; filled markets 19655; wrong calls 299, of which filled 182.
 
 | series             |   markets |   filled |       contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -26,7 +26,7 @@ Total paper P&L: **$6,958.86**; filled markets 19654; wrong calls 299, of which 
 | KXRT               |        85 |       50 |  41593.8        |           0    | 710436           |   408.43 |       0 |              0 |
 | KXNFL3QSPREAD      |       327 |       51 |  37852.7        |        3371    | 386339           |   371.67 |       0 |              0 |
 | KXNFL1H            |        81 |       48 |  37782.3        |           0    | 469962           |   370.98 |       0 |              0 |
-| KXLIGAPROMATCH     |      2362 |      152 |  41844          |       10462.8  | 226191           |   357.96 |       4 |              2 |
+| KXLIGAPROMATCH     |      2374 |      153 |  41863.4        |       10462    | 226846           |   358.14 |       4 |              2 |
 | KXHIGHCHI          |        60 |       39 |  36438.6        |          20.5  | 317204           |   357.82 |       0 |              0 |
 | KXHIGHNY           |        54 |       45 |  42191.9        |           0    | 515596           |   345.87 |       1 |              1 |
 | KXNFLGAME          |        52 |       34 |  34000          |           0    |      4.32686e+07 |   333.88 |       0 |              0 |
