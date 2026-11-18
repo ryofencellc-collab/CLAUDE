@@ -1,0 +1,25 @@
+{
+ "fed_presconf_pdf": {
+  "status": 200,
+  "bytes": 217921,
+  "type": "application/pdf"
+ },
+ "fed_calendar": {
+  "status": 200,
+  "bytes": 166065,
+  "type": "text/html"
+ },
+ "whitehouse_remarks": {
+  "status": 200,
+  "bytes": 262554,
+  "type": "text/html; charset=UTF-8"
+ },
+ "rev_transcripts": {
+  "status": 200,
+  "bytes": 152582,
+  "type": "text/html; charset=utf-8"
+ },
+ "presidency_ucsb": {
+  "error": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='www.presidency.ucsb.edu', port=443): Read timed out. (read timeout=30)\"))"
+ }
+}

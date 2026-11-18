@@ -1,0 +1,488 @@
+ticker,title,category,freq,settled,events,volume
+KXTRUMPMENTION,What will Trump say?,Mentions,one_off,1520,43,43261396.55
+KXTRUMPSAY,What will trump say,Mentions,one_off,374,10,8988401.3
+KXTRUMPMENTIONB,Trump Mention B,Mentions,one_off,502,17,7523550.25
+KXWORLDNEWSMENTION,World News Mention,Mentions,one_off,754,46,5603069.01
+KXVANCEMENTION,Vance Says,Mentions,one_off,627,25,2614537.9
+KXTRUMPSAYMONTH,Trump Monthly,Mentions,one_off,60,3,2225379.97
+KXBERNIEMENTION,Bernie says,Mentions,one_off,375,16,2001959.24
+KXFEDMENTION,Fed mention,Mentions,custom,96,2,1041644.89
+KXTRUMPSAYCOMPANY,Will Trump mention company,Mentions,one_off,105,3,883937.08
+KXLASTWORDMENTION,Last Word,Mentions,one_off,254,17,852565.36
+KXTRUMPSAYNICKNAME,Trump Nickname,Mentions,one_off,27,2,600343.01
+KXCARNEYMENTION,Carney Mention,Mentions,one_off,49,3,573468.64
+KXSECPRESSMENTION,Sec Press mentions,Mentions,custom,57,2,568476.23
+KXPSAKIMENTION,Jen Psaki Mention,Mentions,one_off,176,12,430851.15
+KXTRUMPSAYCOUNTRY,Will Trump mention country,Mentions,one_off,82,3,321931.04000000004
+KXTHEWEEKNIGHTMENTION,Weeknight,Mentions,one_off,131,9,300716.12
+KXMELANIAMENTION,Melania Mention,Mentions,one_off,68,5,271087.28
+KXEARNINGSMENTIONAMZN,Amazon earnings mention,Mentions,one_off,22,1,267839.38
+KXEARNINGSMENTIONCOST,What will Costco say on their next earnings call?,Mentions,one_off,21,1,263853.16
+KXHEGSETHMENTION,Hegseth,Mentions,one_off,48,3,261175.34
+KXALLINMENTION,All in with Chris Hayes,Mentions,one_off,124,8,253909.56
+KXDEBATEMENTION,Debate Mentions,Mentions,one_off,147,7,220439.58
+KXOBAMAMENTION,Obama Mention,Mentions,one_off,51,2,204082.23
+KXBESSENTMTPMENTION,What will Scott Bessent say,Mentions,one_off,95,5,202052.33000000002
+KXEARNINGSMENTIONDPZ,Dominos,Mentions,one_off,16,1,190704.08
+KXPOLITICSMENTION,General Politics,Mentions,one_off,109,7,184403.71
+KXEARNINGSMENTIONCCL,Carnival Cruise Earnings Call,Mentions,one_off,15,1,180828.03999999998
+KXSPECIALREPORTMENTION,Special Report,Mentions,one_off,62,4,175776.26
+KXBURNHAMMENTION,Andy Burnham mention,Mentions,one_off,84,5,164928.62
+KXFTNMENTION,Face The Nation,Mentions,one_off,79,5,161051.36
+KXNETANYAHUMENTION,Netanyahu Mention,Mentions,one_off,36,2,146456.0
+KXTSLAMENTION,Tesla Mention,Mentions,one_off,20,1,145532.13999999998
+KXEARNINGSMENTIONTSLA,Tesla earnings mention,Mentions,one_off,25,1,143618.57
+KXJOHNSONMENTION,Mike Johnson Mention,Mentions,one_off,64,4,140146.01
+KXFOXSATMENTION,Saturday in America Mention,Mentions,one_off,62,4,135042.03
+KXZELENSKYYMENTION,Zelenskyy Mention,Mentions,one_off,33,2,129170.21
+KXEARNINGSMENTIONSTZ,Constellation Brands,Mentions,one_off,14,1,126195.78
+KXEARNINGSMENTIONAZO,Auto Zone,Mentions,one_off,14,1,125024.36
+KXBOWMANMENTION,Michelle Bowman Mention,Mentions,one_off,43,3,123212.41
+KXEARNINGSMENTIONARITZIA,Aritzia,Mentions,one_off,14,1,114350.51
+KXEARNINGSMENTIONAAPL,Apple earnings mention,Mentions,one_off,17,1,111458.45
+KXRUBIOMENTION,Marco Rubio,Mentions,one_off,42,2,104901.81
+KXFOXNEWSMENTION,Fox News,Mentions,one_off,62,4,100714.41
+KXVLADTENEVMENTION,What will vlad tenev say,Mentions,one_off,18,1,95564.11
+KXEARNINGSMENTIONNKE,What Will Nike Say During Their Earnings Call?,Mentions,one_off,14,1,94336.34
+KXFNSMENTION,Fox News Sunday Mention,Mentions,one_off,51,3,90792.94
+KXMENTIONEARNAIR,AAR Corp Earnings Call,Mentions,custom,11,1,89582.35
+KXEARNINGSMENTIONKR,Kroger,Mentions,one_off,13,1,89426.46
+KXPERSONMENTION,General,Mentions,one_off,42,3,89312.52
+KXEARNINGSMENTIONMU,Micron,Mentions,one_off,16,1,82952.12
+KXEARNINGSMENTIONJNJ,JNJ,Mentions,one_off,16,1,81710.91
+KXEARNINGSMENTIONADBE,Adobe Earnings,Mentions,one_off,13,1,81617.94
+KXHEARINGMENTION,Hearing Mention,Mentions,one_off,36,2,74891.04
+KXEARNINGSMENTIONGS,Goldman Earnings,Mentions,one_off,14,1,74791.53
+KXEARNINGSMENTIONGOOGL,earnings mention,Mentions,one_off,19,1,73963.55
+KXWALLERMENTION,Waller Mention,Mentions,one_off,30,2,73668.01
+KXMTPMENTION,Meet The Press,Mentions,one_off,43,3,68098.01
+KXBARRMENTION,Barr Mention,Mentions,one_off,49,3,67569.77
+KXEARNINGSMENTIONBLK,What will BlackRock say at their earnings call?,Mentions,one_off,14,1,67253.75
+KXMAMDANIMENTION,What will Zohran Mamdani say? ,Mentions,one_off,43,3,66326.3
+KXZUCKMENTION,What will Zuck say?,Mentions,one_off,16,1,66223.77
+KXEARNINGSMENTIONUAL,United Airlines Earnings Mention,Mentions,one_off,16,1,66133.18
+KXTBLAMENTION,Todd Blanche mentions,Mentions,one_off,36,2,66094.29
+KXEARNINGSMENTIONBAC,Bank of America Earnings Mention,Mentions,one_off,15,1,66075.16
+KXEARNINGSMENTIONINTC,Intel Earnings Call,Mentions,one_off,14,1,64173.090000000004
+KXEARNINGSMENTIONCAVA,Cava Earnings,Mentions,one_off,16,1,63361.5
+KXMSFTMENTION,Microsoft Mention,Mentions,one_off,30,2,61788.42
+KXJENSENMENTION,Jensen Mention,Mentions,one_off,20,1,61337.18
+KXEARNINGSMENTIONCALM,Cal-Maine Foods,Mentions,one_off,14,1,60811.11
+KXSPEECHAI,Top text to speech AI,Science and Technology,one_off,170,10,60167.26
+KXHILLARYMENTION,Hillary Clinton Mention,Mentions,one_off,16,1,59168.31
+KXEARNINGSMENTIONDAL,Delta Earnings,Mentions,one_off,15,1,58743.21
+KXEARNINGSMENTIONSPCX,SpaceX Earnings Call,Mentions,one_off,22,1,58411.13
+KXEARNINGSMENTIONMETA,earnings mention,Mentions,one_off,15,1,57988.54
+KXEARNINGSMENTIONYETI,Yeti earnings call,Mentions,one_off,10,1,57494.28
+KXEARNINGSMENTIONNFLX,What will netflix say on their next earnings call?,Mentions,one_off,20,1,56063.45
+KXAOCMENTION,AOC Mention,Mentions,one_off,18,1,54687.95
+KXEARNINGSMENTIONC,Citi Earnings Call,Mentions,one_off,14,1,54672.86
+KXEARNINGSMENTIONBB,BlackBerry Earnings Call,Mentions,one_off,13,1,54166.67
+KXEARNINGSMENTIONMCD,McDonalds Earnings,Mentions,one_off,21,1,54035.72
+KXEARNINGSMENTIONPEP,Pepsi Earnings,Mentions,one_off,16,1,53686.04
+KXEARNINGSMENTIONPLTR,Palantir earnings mention,Mentions,one_off,19,1,53103.78
+KXKHANNAMENTION,Ro Khanna Mention,Mentions,one_off,46,3,51851.63
+KXEARNINGSMENTIONPSKY,Paramount,Mentions,one_off,12,1,49993.7
+KXHANNITYMENTION,Hannity ,Mentions,one_off,36,2,49668.18
+KXEARNINGSMENTIONACI,Albertsons,Mentions,one_off,14,1,46883.46
+KXWMTMENTION,Walmart Mention,Mentions,one_off,15,1,46293.85
+KXEARNINGSMENTIONWFC,Wells Fargo,Mentions,one_off,15,1,44892.72
+KXEARNINGSMENTIONJPM,JPM Earnings,Mentions,one_off,17,1,43764.340000000004
+KXEARNINGSMENTIONAAOI,Applied Optoelectronics Inc,Mentions,one_off,12,1,43506.200000000004
+KXDROZMENTION,Dr Oz Mention,Mentions,one_off,27,2,42689.8
+KXEARNINGSMENTIONAMD,AMD earnings menti,Mentions,one_off,16,1,42680.75
+KXWARSHMENTION,Kevin Warsh Mention,Mentions,one_off,20,1,41943.16
+KXWDAYMENTION,Workday Mention,Mentions,one_off,14,1,40917.520000000004
+KXEARNINGSMENTIONMS,Morgan Stanley Earnings Call,Mentions,one_off,15,1,39794.19
+KXEARNINGSMENTIONWING,Wingstop,Mentions,one_off,16,1,39238.49
+KXEARNINGSMENTIONVZ,Verizon,Mentions,one_off,15,1,37277.81
+KXEARNINGSMENTIONLEVI,Levi's Earnings Call,Mentions,one_off,13,1,36875.63
+KXEARNINGSMENTIONALLY,Ally Earnings Call,Mentions,one_off,13,1,36364.64
+KXEARNINGSMENTIONORCL,What will Oracle say in their earnings call,Mentions,one_off,14,1,35714.34
+KXBAMENTION,Boeing Mention,Mentions,one_off,15,1,35599.81
+KXEARNINGSMENTIONGIS,General Mills Earnings Call,Mentions,one_off,18,1,35498.36
+KXEARNINGSMENTIONMTN,Vail Resorts,Mentions,one_off,14,1,35079.84
+KXEARNINGSMENTIONAXP,AMEX Earnings,Mentions,one_off,14,1,34407.799999999996
+KXEARNINGSMENTIONCBRL,Cracker Barrel Earnings,Mentions,one_off,10,1,34288.33
+KXNVDAMENTION,NVIDIA Mention,Mentions,one_off,23,1,33797.31
+KXGOVERNORMENTION,Generic Governor,Mentions,one_off,27,2,33649.62
+KXEARNINGSMENTIONACN,Accenture,Mentions,one_off,14,1,33186.37
+KXEARNINGSMENTIONTFC,Truist Financial Earnings Call,Mentions,one_off,10,1,32777.67
+KXEARNINGSMENTIONLLY,Eli Lily,Mentions,one_off,17,1,32225.82
+KXEARNINGSMENTIONHIMS,Hims Earnings,Mentions,one_off,19,1,31629.86
+KXZMMENTION,Zoom Mention,Mentions,one_off,15,1,30710.92
+KXALUNMENTION,Anna Paulina Luna mentions,Mentions,one_off,14,1,30447.54
+KXEARNINGSMENTIONLYFT,Lyft Earnings,Mentions,one_off,18,1,29959.19
+KXORCLMENTION,Oracle Mention,Mentions,one_off,33,2,29732.57
+KXEARNINGSMENTIONSFM,Sprouts,Mentions,one_off,15,1,29151.87
+KXEARNINGSMENTIONETOR,Etoro,Mentions,one_off,14,1,28971.66
+KXEARNINGSMENTIONKLAR,Klarna Earnings Call,Mentions,one_off,16,1,28604.73
+KXEARNINGSMENTIONCRWV,CoreWeave Earnings,Mentions,one_off,13,1,28400.97
+KXEARNINGSMENTIONALK,Alaska Airlines Earnings,Mentions,one_off,15,1,27910.05
+KXEARNINGSMENTIONDKNG,DraftKings Earnings,Mentions,one_off,15,1,27381.09
+KXEARNINGSMENTIONGM,GM ,Mentions,one_off,13,1,27374.94
+KXEARNINGSMENTIONHD,Home Depot,Mentions,one_off,14,1,26956.07
+KXEARNINGSMENTIONYUM,Yum! Brands,Mentions,one_off,17,1,26301.02
+KXEARNINGSMENTIONSBUX,Starbucks Earnings Call,Mentions,one_off,17,1,26046.01
+KXEARNINGSMENTIONISRG,Intuitive Surgical,Mentions,one_off,14,1,25712.91
+KXEARNINGSMENTIONRDDT,Reddit Earnings,Mentions,one_off,16,1,25631.07
+KXEARNINGSMENTIONPG,Procter & Gamble Earnings,Mentions,one_off,16,1,25200.02
+KXMCDMENTION,McDonald's Mention,Mentions,one_off,17,1,24715.18
+KXEARNINGSMENTIONUBER,uber earnings mention,Mentions,one_off,19,1,24636.55
+KXEARNINGSMENTIONV,WHAT WILL VISA SAY IN THEIR NEXT EARNINGS CALL,Mentions,one_off,14,1,24617.26
+KXEARNINGSMENTIONAAL,AAL Mention,Mentions,one_off,16,1,24541.97
+KXALTMANMENTION,Sam Altman Mention,Mentions,one_off,17,1,24261.61
+KXEARNINGSMENTIONGEV,GE VERNOVA,Mentions,one_off,15,1,24233.989999999998
+KXEARNINGSMENTIONCOHR,Coherent Corp.,Mentions,one_off,13,1,24147.45
+KXEARNINGSMENTIONBA,Boeing Earnings Call,Mentions,one_off,14,1,24076.91
+KXEARNINGSMENTIONMSFT,Microsoft earnings mention,Mentions,one_off,14,1,23971.11
+KXEARNINGSMENTIONSPOT,Spotify,Mentions,one_off,16,1,23636.53
+KXEARNINGSMENTIONPGR,Progressive Earnings Call,Mentions,one_off,12,1,23525.68
+KXEARNINGSMENTIONHOOD,Robinhood Earnings Call,Mentions,one_off,16,1,23457.6
+KXTALARICOMENTION,James Talarico,Mentions,one_off,15,1,23442.8
+KXEARNINGSMENTIONCMG,Chipotle Earnings Call,Mentions,one_off,17,1,23375.89
+KXEARNINGSMENTIONTLN,Talen Energy Earnings Call,Mentions,one_off,11,1,23166.55
+KXEARNINGSMENTIONPYPL,PayPal Earnings,Mentions,one_off,15,1,22992.36
+KXEARNINGSMENTIONZETA,Zeta,Mentions,one_off,13,1,22515.72
+KXEARNINGSMENTIONGRAB,Grab Earnings Call,Mentions,one_off,12,1,22495.31
+KXEARNINGSMENTIONSNAP,SNAP earnings mention,Mentions,one_off,14,1,22301.07
+KXEARNINGSMENTIONWEN,Wendys,Mentions,one_off,16,1,22129.07
+KXEARNINGSMENTIONMCO,Moodys,Mentions,one_off,13,1,21500.13
+KXEARNINGSMENTIONCVNA,Carvana,Mentions,one_off,13,1,21304.4
+KXCATMENTION,Caterpillar Mention,Mentions,one_off,15,1,20571.53
+KXADBEMENTION,Adobe Mention,Mentions,one_off,17,1,20356.85
+KXCRMMENTION,Salesforce Mention,Mentions,one_off,15,1,20118.56
+KXEARNINGSMENTIONDASH,DoorDash,Mentions,one_off,16,1,19842.69
+KXEARNINGSMENTIONDUOL,Duolingo Earnings Call,Mentions,one_off,13,1,19746.45
+KXEARNINGSMENTIONKO,Coca Cola Earnings Mention,Mentions,one_off,11,1,19293.29
+KXEARNINGSMENTIONF,Ford earnings mention,Mentions,one_off,16,1,19110.22
+KXEARNINGSMENTIONKMX,CarMax,Mentions,one_off,15,1,18942.29
+KXRFKMENTION,RFK Mentions,Mentions,one_off,15,1,18864.43
+KXEARNINGSMENTIONMA,Mastercard,Mentions,one_off,13,1,18671.63
+KXEARNINGSMENTIONAS,Amer Sports Earnings Call,Mentions,one_off,13,1,18061.25
+KXINGRAHAMMENTION,The Ingraham Angle,Mentions,one_off,18,1,17900.53
+KXEARNINGSMENTIONRACE,Ferrari Earnings Call,Mentions,one_off,15,1,17765.74
+KXMENTIONEARNSFD,Smithfield Foods Earnings,Mentions,custom,13,1,17538.72
+KXEARNINGSMENTIONASTS,AST SpaceMobile,Mentions,one_off,12,1,17171.61
+KXEARNINGSMENTIONVST,Vistra,Mentions,one_off,11,1,17030.44
+KXEARNINGSMENTIONAMAT,"Applied Materials, Inc.",Mentions,one_off,12,1,16471.37
+KXEARNINGSMENTIONFDX,What will FedEx say during their earnings call?,Mentions,one_off,13,1,16349.75
+KXEARNINGSMENTIONMKC,McCormick,Mentions,one_off,16,1,16340.94
+KXEARNINGSMENTIONLMT,Lockheed Martin Earnings Call,Mentions,one_off,15,1,15642.36
+KXKPAXMENTION,Ken Paxton mentions,Mentions,one_off,12,1,15544.8
+KXEARNINGSMENTIONCBRS,Cerebras,Mentions,one_off,14,1,15256.19
+KXNBISMENTION,Nebius Mention,Mentions,one_off,18,1,15225.86
+KXEARNINGSMENTIONAC,Air Canada Earnings Call,Mentions,one_off,10,1,15034.86
+KXEARNINGSMENTIONQCOM,Qualcomm,Mentions,one_off,12,1,14992.6
+KXEARNINGSMENTIONCELH,Celsius Earnings,Mentions,one_off,14,1,14970.6
+KXEARNINGSMENTIONCRCL,Circle Earnings,Mentions,one_off,10,1,14877.19
+KXEARNINGSMENTIONSHOP,Shopify,Mentions,one_off,13,1,14807.09
+KXEARNINGSMENTIONNBIS,Nebius Earnings,Mentions,one_off,17,1,14674.65
+KXEARNINGSMENTIONEBAY,Ebay Earnings Call,Mentions,one_off,14,1,13920.99
+KXEARNINGSMENTIONON,ON Semi,Mentions,one_off,11,1,13670.130000000001
+KXHILTONMENTION,Steve Hilton Mention,Mentions,one_off,16,1,13326.47
+KXEARNINGSMENTIONABNB,ABNB Earnings,Mentions,one_off,13,1,13309.58
+KXSTUBBMENTION,Alexander Stubb mention,Mentions,one_off,14,1,13140.62
+KXSNOWMENTION,Snowflake Mention,Mentions,one_off,17,1,13093.41
+KXEARNINGSMENTIONTTWO,Take Two Earnings Call,Mentions,one_off,11,1,13034.11
+KXLEAVITTMENTION,Leavitt mention general,Mentions,one_off,18,1,13023.8
+KXEARNINGSMENTIONYOU,What will Clear say on their earnings call?,Mentions,one_off,11,1,12952.04
+KXEARNINGSMENTIONFIG,Figma,Mentions,one_off,12,1,12436.44
+KXEARNINGSMENTIONRIVN,Rivian Earnings Call,Mentions,one_off,12,1,12244.99
+KXTCRUMENTION,Ted Cruz mentions,Mentions,one_off,13,1,11799.7
+KXEARNINGSMENTIONHLT,HILTON,Mentions,one_off,11,1,10793.55
+KXEARNINGSMENTIONLUCID,lucid earnings mention,Mentions,one_off,14,1,10679.77
+KXEARNINGSMENTIONMELI,Mercado Libre Earnings Call,Mentions,one_off,14,1,10400.37
+KXEARNINGSMENTIONKTOS,Kratos,Mentions,one_off,11,1,10006.88
+KXEARNINGSMENTIONKKR,KKR,Mentions,one_off,10,1,9867.94
+KXEARNINGSMENTIONOKLO,Oklo Earnings Call,Mentions,one_off,11,1,9581.46
+KXEARNINGSMENTIONTOST,"Toast, Inc.",Mentions,one_off,11,1,9433.63
+KXEARNINGSMENTIONNYT,New York Times,Mentions,one_off,11,1,8517.7
+KXGABBMENTION,Greg Abbott mentions,Mentions,one_off,13,1,7902.900000000001
+KXEARNINGSMENTIONRKLB,Rocket Lab Earnings,Mentions,one_off,13,1,7885.43
+KXEARNINGSMENTIONLUNR,Intuitive Machines earnings call,Mentions,one_off,11,1,7141.38
+KXEARNINGSMENTIONAAP,Advance Auto Parts Earnings Call,Mentions,one_off,12,1,6639.63
+KXEARNINGSMENTIONCAR,Avis ,Mentions,one_off,11,1,5885.8
+KXEARNINGSMENTIONAMGN,Amgen earnings call,Mentions,one_off,14,1,4401.08
+KXSTEVENSRESCIND,Haley Stevens rescinds El-Sayed endorsement,Elections,one_off,1,1,1491.16
+KXPOTUSTWEETS,POTUS tweets,Politics,weekly,6,2,711.45
+KXIMFTWEETS,IMF tweets,Economics,weekly,6,1,302.06
+KXFEDTWEETS,Fed tweets,Economics,weekly,6,1,182.5
+KXWCMENTION,World Cup Mentions,Mentions,one_off,32,1,165.93
+KXNBAMENTION,NBA Mention,Mentions,one_off,19,1,100.0
+KXWEFTWEETS,WEF tweets,Economics,weekly,6,1,44.03
+KXMRBEASTMENTION,What Will Mr Beast say in his next video,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONROKU,Roku Earnings,Mentions,one_off,0,0,0.0
+KXTRUMPTOPIC,Trump Topic Mention,Mentions,one_off,0,0,0.0
+KXDWTSMENTION,DWTS Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONDEER,John Deere,Mentions,one_off,0,0,0.0
+KXGRIFFINMENTION,Ken Griffin Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONWMT,What will Walmart say during their earnings call?,Mentions,one_off,0,0,0.0
+KXMRVLMENTION,Marvell Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONLOW,Lowe's Earnings Call,Mentions,one_off,0,0,0.0
+KXPEARLMANMENTION,Oz Pearlman Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONACA,Air Canada Earnings Call,Mentions,one_off,0,0,0.0
+KXACOOPERMENTION,Anderson Cooper,Mentions,one_off,0,0,0.0
+KXHARTMENTION,Kevin Hart ,Mentions,one_off,0,0,0.0
+KXMINAJMENTION,Nicki Minaj,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONVSCO,Victoria Secret,Mentions,one_off,0,0,0.0
+KXMENTIONEARNCCL,Carnival Earnings Call,Mentions,custom,0,0,0.0
+KXBENIOFFMENTION,Marc Benioff Mention,Mentions,one_off,0,0,0.0
+KXFURYMENTION,Tyson Fury Mention,Mentions,one_off,0,0,0.0
+KXDOGSHOWMENTION,Dog Show,Mentions,one_off,0,0,0.0
+KXROGANMENTION,Joe Rogan Mention,Mentions,one_off,0,0,0.0
+KXMVEMENTIONSSINGLE,MVE Mention,Mentions,custom,0,0,0.0
+KXGLASERMENTION,Nikki Glaser,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONWGO,Winnebago Earnings Call,Mentions,one_off,0,0,0.0
+KXAMODEIMENTION,Amodei ,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONURBN,Urban Outfitters Earnings Call,Mentions,one_off,0,0,0.0
+KXWOMENTION,Winter Olympics,Mentions,one_off,0,0,0.0
+KXMTGMENTION,MTG,Mentions,one_off,0,0,0.0
+KXAWARDMENTION,Award Mention,Mentions,one_off,0,0,0.0
+KXMENTIONEARNFDX,FedEx,Mentions,custom,0,0,0.0
+KXPRESSCONF,Press conferences,Politics,custom,0,0,0.0
+KXBIANCOMENTION,Chad Bianco Mention,Mentions,one_off,0,0,0.0
+KXSHAQMENTION,Shaq Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONPANW,Palo Alto Networks Earnings Call,Mentions,one_off,0,0,0.0
+KXLATENIGHTMENTION,Late Night Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONCIEN,Ciena Earnings Call,Mentions,one_off,0,0,0.0
+KXCANDACEMENTION,Candace Owens Mention,Mentions,one_off,0,0,0.0
+KXEPLMENTION,Premier League Mentions,Mentions,one_off,0,0,0.0
+KXZAKARIAMENTION,Fareed Zakaria,Mentions,one_off,0,0,0.0
+KXTRUMPZELENSKYY,What will Trump say with Zelenskyy?,Mentions,custom,0,0,0.0
+KXMLBMENTION,MLB Announcers,Mentions,one_off,0,0,0.0
+KXCONGRESSMENTION,Congress Mention,Mentions,one_off,0,0,0.0
+KXELONMENTION,Elon Mention,Mentions,one_off,0,0,0.0
+KXDJTLANDRY,Trump / Landry mention,Mentions,custom,0,0,0.0
+KXWALZMENTION,Tim Walz,Mentions,one_off,0,0,0.0
+KXBONDIMENTION,Pam Bondi ,Mentions,one_off,0,0,0.0
+KXTRUMPSAYEP,TRUMPSAY,Mentions,one_off,0,0,0.0
+KXGREENDAYMENTION,WILL GREENDAY SAY MAGA,Mentions,custom,0,0,0.0
+KXSTARMERMENTIONB,Kier Starmer,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONNIO,What will Nio say during their earnings call?,Mentions,one_off,0,0,0.0
+KXREEVESMENTION,Keanu Reeves Mention,Mentions,one_off,0,0,0.0
+KXFIRERANKHARVARD,Harvard last free speech ranking,Politics,custom,0,0,0.0
+KXEARNINGSMENTIONANF,Abercrombie,Mentions,one_off,0,0,0.0
+KXLUTNICKFTNMENTION,What will Howard Lutnick say on Face the Nation?,Mentions,one_off,0,0,0.0
+KXFEDMENTIONDURATION,mention duration,Mentions,one_off,0,0,0.0
+KXLAMMYMENTION,David Lammy,Mentions,one_off,0,0,0.0
+KXKIRKMENTION,What will Erika Kirk say?,Mentions,one_off,0,0,0.0
+KXMENTIONEARNCHWY,Chewy Earnings Call,Mentions,custom,0,0,0.0
+KXCENAMENTION,John Cena Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONATZ,Aritzia Earnings Call,Mentions,one_off,0,0,0.0
+FIRERANKHARVARD,Harvard last free speech ranking,Politics,custom,0,0,0.0
+KXEARNINGSMENTIONFUTU,Futu Earnings Call,Mentions,one_off,0,0,0.0
+KXNHLLINDSAY,NHL Ted Lindsay Winner,Sports,custom,0,0,0.0
+KXEARNINGSMENTIONALIBABA,alibaba earnings mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONCOINBASE,coinbase earnings mention,Mentions,one_off,0,0,0.0
+KXZACHARIAMENTION,What will Katie Zacharia say?,Mentions,one_off,0,0,0.0
+KXSPOTMENTION,Spotify Mention,Mentions,one_off,0,0,0.0
+KXCARLSONMENTION,Tucker Carlson,Mentions,one_off,0,0,0.0
+KXATPMENTION,ATP Mentions,Mentions,one_off,0,0,0.0
+KXMENTIONEARNMU,Micron,Mentions,custom,0,0,0.0
+KXEARNINGSMENTIONDIS,disney earnings m,Mentions,one_off,0,0,0.0
+KXGRAMBSWPA,Best Spoken Word Poetry Album,Entertainment,one_off,0,0,0.0
+KXEARNINGSMENTIONZM,What Will Zoom Say During Their Earnings Call?,Mentions,one_off,0,0,0.0
+KXFREYMENTION,Jacob Frey,Mentions,one_off,0,0,0.0
+KXFRANKLINMENTION,Franklin Mention,Mentions,one_off,0,0,0.0
+KXMAHERMENTION,Bill Maher Mention,Mentions,one_off,0,0,0.0
+KXELLISONMENTION,What will David Ellison say?,Mentions,one_off,0,0,0.0
+KXNBAFINALSMENTION,NBA Finals,Mentions,one_off,0,0,0.0
+KXDIMONMENTION,Jamie Dimon Mention,Mentions,one_off,0,0,0.0
+KXARMSTRONGMENTION,Brian Armstrong ,Mentions,one_off,0,0,0.0
+KXLASTWORDCOUNT,Last Word Trump Count,Mentions,custom,0,0,0.0
+KXAPPLEMENTION,What will John Ternus say at the Apple Event,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONZS,Zscaler Earnings Call,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONAVGO,Broadcom Earnings,Mentions,one_off,0,0,0.0
+KXBRKMENTION,What will Berkshire Hathaway say on their next earnings call?,Mentions,one_off,0,0,0.0
+KXKARPMENTION,Alex Karp Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONM,Macy's Earnings Call,Mentions,one_off,0,0,0.0
+KXMENTIONEARNLULU,Lululemon,Mentions,custom,0,0,0.0
+KXBUSHMENTION,George Bush ,Mentions,one_off,0,0,0.0
+KXBACHELORETTEMENTION,BACHELORETTE,Mentions,one_off,0,0,0.0
+KXVANCEINGRAHAM,What will J.D. Vance say on Ingraham Angle tonight?,Politics,one_off,0,0,0.0
+KXDESANTISMENTION,Ron Desantis,Mentions,one_off,0,0,0.0
+KXBDONMENTION,Byron Donalds mentions,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONGME,GME earnings mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONDE,Deere,Mentions,one_off,0,0,0.0
+KXINFANTINOMENTION,Gianni Infantino,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONMDT,Medtronic Earnings Call,Mentions,one_off,0,0,0.0
+KXSPCXMENTION,SpaceX Mention,Mentions,one_off,0,0,0.0
+KXDILLONMENTION,Tim Dillon Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONINTU,What Will Intuit Say During Their Earnings Call?,Mentions,one_off,0,0,0.0
+KXMINAJCOUNTSZA,How many times will nicki minaj tweet about sza,World,one_off,0,0,0.0
+KXEARNINGSMENTIONLULU,Lululemon Earnings Call,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONBJ,BJ's Wholesale Club Earnings Call,Mentions,one_off,0,0,0.0
+KXSPOTIFYSONGSMOMMASONG,How many streams will Momma said get ,Entertainment,custom,0,0,0.0
+KXEARNINGSMENTIONBULL,Webull Earnings Call,Mentions,one_off,0,0,0.0
+KXTRUMPSAYMAM,Mamdani mention,Mentions,one_off,0,0,0.0
+KXPELOSIMENTION,Nancy Pelosi Mention,Mentions,one_off,0,0,0.0
+KXSNFMENTION,Sunday Night Football Mention,Mentions,one_off,0,0,0.0
+KXGUTFELDMENTION,Gutfeld,Mentions,one_off,0,0,0.0
+KXUBERMENTION,Uber Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONCRWD,CrowdStrike Earnings,Mentions,one_off,0,0,0.0
+KXELSAYEDHARRIS,El-Sayed vs Harris 2024 in Michigan,Elections,one_off,0,0,0.0
+KXNEWSNATIONMENTION,News Nation,Mentions,one_off,0,0,0.0
+KXCOOPERMENTION,Alex Cooper Mention,Mentions,one_off,0,0,0.0
+KXMVEMENTIONSINGLE,MVE Mention,Mentions,custom,0,0,0.0
+KXLUCKEYMENTION,What will Palmer Luckey say?,Mentions,one_off,0,0,0.0
+KXJEFFRIESMENTION,Hakeem Jeffries Mention,Mentions,one_off,0,0,0.0
+KXACKMANMENTION,Bill Ackman,Mentions,one_off,0,0,0.0
+KXZIWEMENTION,Ziwe,Mentions,one_off,0,0,0.0
+KXTNFMENTION,TNF Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONTOL,Toll Brothers Earnings Call,Mentions,one_off,0,0,0.0
+KXNCAABMENTION,College Basketball,Mentions,one_off,0,0,0.0
+KXMENTIONEARNNKE,Nike Earnings Call,Mentions,custom,0,0,0.0
+KXJPOWMENTION,What will Jerome Powell say?,Mentions,custom,0,0,0.0
+KXWWDCMENTION,WWDC,Mentions,one_off,0,0,0.0
+KXDJTINVESTMENT,"What will Trump say at the ""investment announcement""?",Mentions,custom,0,0,0.0
+KXNYCMDEBMENTION,NYC Mayor debate,Mentions,one_off,0,0,0.0
+KXNEWSOMMENTION,Gavin Newsom Mention,Mentions,one_off,0,0,0.0
+KXLEAVITTMENTIONDURATION,Leavitt Duration,Mentions,one_off,0,0,0.0
+KXWNBAMENTION,WNBA Mentions,Mentions,one_off,0,0,0.0
+KXVIEWMENTION,The View Mention,Mentions,one_off,0,0,0.0
+KXDJTNATOMENTION,What will Trump say in his meeting with the Secretary General of NATO?,Mentions,custom,0,0,0.0
+KXEARNINGSMENTIONDOLLARGENERAL,What will Dollar General say during its earnings call?,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONDKS,What Will DICK’S Sporting Goods Say During Their Earnings Call?,Mentions,one_off,0,0,0.0
+KXSHIRLEYMENTION,Nick Shirley,Mentions,one_off,0,0,0.0
+KXSCOTUSMENTION,SCOTUS Mention,Mentions,one_off,0,0,0.0
+KXCOLBERTMENTION,Colbert Mention,Mentions,one_off,0,0,0.0
+KXELSAYEDCOMMITTEE,Abdul El-Sayed's Senate committee assignments,Politics,one_off,0,0,0.0
+KXNCAAMENTION,NCAA Mention,Mentions,one_off,0,0,0.0
+KXNADELLAMENTION,What will Satya Nadella say?,Mentions,one_off,0,0,0.0
+KXKIMMELMENTION,Jimmy Kimmel Mention,Mentions,one_off,0,0,0.0
+KXBTCMENTIONULBRICHT,Ross,Mentions,custom,0,0,0.0
+KXEARNINGSMENTIONCHWY,Chewy Earnings,Mentions,one_off,0,0,0.0
+KXTRUMPSAYSCAM,Trump scam altman,Mentions,one_off,0,0,0.0
+KXNWSAYLOR,Michael Saylor net worth on [date],Economics,annual,0,0,0.0
+KXNADALMENTION,Nadal Mention,Mentions,one_off,0,0,0.0
+KXMENTIONEARNWGO,Winnebago Industries Earnings Call,Mentions,custom,0,0,0.0
+KXBIEBERMENTION,What will Hailey Bieber say?,Mentions,one_off,0,0,0.0
+KXGAMEDAYMENTION,CFB Gameday,Mentions,one_off,0,0,0.0
+KXCFBMENTION,CFB,Mentions,one_off,0,0,0.0
+KXPRESMENTION,President Mention,Mentions,custom,0,0,0.0
+KXEARNINGSMENTIONMRVL,Marvell Technology,Mentions,one_off,0,0,0.0
+KXEARNIGNSMENTIONJPM,JPM Earnings,Mentions,one_off,0,0,0.0
+KXFEDGOVMENTION,Fed Gov Mention,Mentions,one_off,0,0,0.0
+KXKARDASHIANMENTION,Kardashian Mention,Mentions,one_off,0,0,0.0
+KXDJTRALLY,Trump Rally mention,Mentions,custom,0,0,0.0
+KXPAULMENTION,Jake Paul,Mentions,one_off,0,0,0.0
+KXALTHOFFMENTION,Judson Althoff ,Mentions,one_off,0,0,0.0
+KXENTMENTION,Entertainment Mention,Mentions,custom,0,0,0.0
+KXELONCOUNTGROK,Will Elon tweet about Grok this week?,World,one_off,0,0,0.0
+KXEARNINGSMENTIONAVAV,AeroVironment,Mentions,one_off,0,0,0.0
+KXHOCHULMENTION,Kathy Hochul,Mentions,one_off,0,0,0.0
+KXRDDTMENTION,Reddit Mention,Mentions,one_off,0,0,0.0
+KXWHBRIEFING,WH Briefing room people mentioned,Politics,custom,0,0,0.0
+KXEARNINGSMENTIONROST,Ross Stores Earnings Call,Mentions,one_off,0,0,0.0
+KXBARKLEYMENTION,Charles Barkley Mention,Mentions,one_off,0,0,0.0
+KXPORTERMENTION,Katie Porter Mention,Mentions,one_off,0,0,0.0
+KXTRUMPSAYTRUMP,Trump saying Trump,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONMSTR,Microstrategy Earnings,Mentions,one_off,0,0,0.0
+KXDRAKEMENTION,Drake Mentions,Mentions,one_off,0,0,0.0
+KXHUNTERTWEETS,Hunter Biden tweets,Politics,one_off,0,0,0.0
+KXDJTCONF,Trump press conference,Mentions,custom,0,0,0.0
+KXELSAYEDOUTPERFORMRCP,Will Abdul El-Sayed outperform the polls?,Elections,one_off,0,0,0.0
+KXELSAYEDMENTION,What will Abdul El-Sayed say?,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONSNOW,Snowflake Earnings,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONTSMC,TSMC Earnings Mention,Mentions,one_off,0,0,0.0
+KXSNOOPMENTION,Snoop Dogg,Mentions,one_off,0,0,0.0
+KXGOLDENMENTION,Golden Bachelor Mention,Mentions,one_off,0,0,0.0
+KXCUOMOMENTION,Cuomo Mention,Mentions,one_off,0,0,0.0
+KXWORDOFTHEYEAR,What will be Merriam-Webster’s Word of the Year?,Entertainment,one_off,0,0,0.0
+KXSTATEMENTCOUNTSWIFTTRUMP,Will Taylor Swift mention Donald Trump before September 15?,Entertainment,one_off,0,0,0.0
+KXWEFMENTION,WEF,Mentions,one_off,0,0,0.0
+KXFIGHTMENTION,Fight,Mentions,one_off,0,0,0.0
+KXNYCMAYORDEBATEMENTION,NYC Mayoral Debate,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONULTA,What will ULTA Beauty say during its earnings call?,Mentions,one_off,0,0,0.0
+KXFIGMENTION,Figma Mention,Mentions,one_off,0,0,0.0
+KXSASMITH,Stephen A Smith Mention,Mentions,one_off,0,0,0.0
+KXELONDJTSAY,ElonDJT,Politics,one_off,0,0,0.0
+KXBTCMENTIONVANCE,Vance,Mentions,custom,0,0,0.0
+KXSCHUMERMENTION,Schumer Mention,Mentions,one_off,0,0,0.0
+KXMARMADUNCSDS,What will the commentators say during the UNC vs. San Diego St. game?,Mentions,one_off,0,0,0.0
+KXWORDNYTTARIFF,NYT tariff,Politics,custom,0,0,0.0
+KXMMMENTION,What will the announcers say during the March Madness game?,Entertainment,one_off,0,0,0.0
+KXCULTUREMENTION,Culture,Mentions,one_off,0,0,0.0
+KXCOMMENTSWIFTRUMP,Will Taylor Swift mention Donald Trump before October?,Social,one_off,0,0,0.0
+KXSTEYERMENTION,Tom Steyer Mention,Mentions,one_off,0,0,0.0
+KXMADDOWMENTION,Rachel Maddow,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONCRM,What Will Salesforce Say During Their Earnings Call?,Mentions,one_off,0,0,0.0
+KXSBMENTION,SB mention,Sports,annual,0,0,0.0
+KXVZMENTION,Verizon Mention,Mentions,one_off,0,0,0.0
+KXABNBMENTION,Airbnb Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONADOBE,What will Adobe say during its earnings call?,Mentions,one_off,0,0,0.0
+KXTRUMPMENTIONDURATION,How Long Will Trump Speak,Mentions,one_off,0,0,0.0
+KXUNMENTION,UN ,Mentions,one_off,0,0,0.0
+KXDJTFRENCHREP,Trump press conference WITH FRENCH REPUBLIC,Mentions,custom,0,0,0.0
+KXHASANELSAYED,Hasan Piker campaigns with Abdul El-Sayed,Politics,one_off,1,1,0.0
+KXDJTJUSTICEMENTION,What will trump say at the Justice Department speech?,Mentions,custom,0,0,0.0
+KXWHBRIEFINGEY,Eliezer Yudkowsky mentioned,Politics,custom,0,0,0.0
+KXNFLMENTION,NFL Mention,Mentions,one_off,0,0,0.0
+KX60MINMENTION,60 Minutes,Mentions,one_off,0,0,0.0
+KXCROCKETTMENTION,Jasmine Crockett,Mentions,one_off,0,0,0.0
+KXCOSTAMENTION,António Costa Mention,Mentions,one_off,0,0,0.0
+KXOXFORDWORD,Oxford Word of. theYear,Entertainment,custom,0,0,0.0
+KXDJTDAS,What will Trump say in his address to the Digital Asset Summit?,Mentions,custom,0,0,0.0
+KXSNLMENTION,SNL Mention,Mentions,one_off,0,0,0.0
+KXHOMANMENTION,Tom Homan,Mentions,one_off,0,0,0.0
+KXSOUTHPARKMENTION,South Park Mention,Mentions,one_off,0,0,0.0
+KXMIRANMENTION,Stephen Miran Mention,Mentions,one_off,0,0,0.0
+KXPOPETWEETS,Pope tweets,Politics,custom,0,0,0.0
+KXSTARMERMENTION,Starmer mentions,Mentions,custom,0,0,0.0
+KXSPANBERGERMENTION,Spanberger,Mentions,one_off,0,0,0.0
+KXNASCARMENTION,Nascar announcers,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONPATH,UiPath Earnings Call,Mentions,one_off,0,0,0.0
+KXFINKMENTION,Larry Fink Mention,Mentions,one_off,0,0,0.0
+KXSWIFTMENTION,What will Taylor Swfit say ,Mentions,one_off,0,0,0.0
+KXBANNONMENTION,Steve Bannon,Mentions,one_off,0,0,0.0
+KXPOWELLMENTION,Powell Mention General ,Mentions,one_off,0,0,0.0
+KXATHLETEMENTION,Athlete Mentions,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONDOCUSIGN,What will Docusign say during its earnings call?,Mentions,one_off,0,0,0.0
+KXBILATERALMENTION,Bilateral Mention,Mentions,one_off,0,0,0.0
+KXCANDEBMENTION,Canada Leaders Debate Mention,Mentions,custom,0,0,0.0
+KXLEAVITTSMFMENTION,What will Karoline Leavitt say on Sunday Morning Futures?,Mentions,one_off,0,0,0.0
+KXBBMENTION,Big Brother Mentions,Mentions,one_off,0,0,0.0
+KXTBPNMENTION,TBPN Mention,Mentions,one_off,0,0,0.0
+KXHBIDENMENTION,Hunter Biden Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONDELL,Dell Earnings,Mentions,one_off,0,0,0.0
+KXSURVIVORMENTION,Survivor Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONAMC,AMC earnings mention,Mentions,one_off,0,0,0.0
+KXCMAMENTION,CMA Awards,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONEA,EA Earnings Call,Mentions,one_off,0,0,0.0
+KXBUSINESSROUNDTABLE,What will Trump say at the Business Roundtable?,Mentions,custom,0,0,0.0
+KXUEFAMENTION,UEFA Champions League Mentions,Mentions,one_off,0,0,0.0
+KXKINGMENTION,King Mention,Mentions,one_off,0,0,0.0
+KXPLATNERTWEET,Will Graham Platner tweet today?,Politics,one_off,0,0,0.0
+KXOSCARMENTION,Oscar mentions,Entertainment,custom,0,0,0.0
+KXTHREADGUYMENTION,Threadguy Mention,Mentions,one_off,0,0,0.0
+KXTRUMPMENTIONS,Trump Mentions,Mentions,custom,0,0,0.0
+KXBIDENMENTION,Biden Speech Mention,Mentions,custom,0,0,0.0
+KXMENTIONEARNOKLO,Oklo,Mentions,custom,0,0,0.0
+KXMENTIONEARNDAL,Delta Earnings,Mentions,custom,0,0,0.0
+KXMENTIONEARNGIS,General Mills,Mentions,custom,0,0,0.0
+KXMENTIONEARNM,Macy's,Mentions,custom,0,0,0.0
+KXWATTERSMENTION,Jesse Watters Primetime,Mentions,one_off,0,0,0.0
+KXCRYPTOSUMMIT,What will Trump say at the White House Crypto Summit?,Mentions,custom,0,0,0.0
+KXEARNINGSMENTIONSJM,JM Smucker Earnings Call,Mentions,one_off,0,0,0.0
+KXMIBENSONELSAYED,Michigan: Benson vs. El-Sayed margin,Elections,one_off,0,0,0.0
+KXLEBRONMENTION,Lebron James Mention,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONTGT,Target,Mentions,one_off,0,0,0.0
+KXWBCMENTION,WBC,Mentions,one_off,0,0,0.0
+KXELONTWEETS,Elon Musk tweets,Entertainment,weekly,0,0,0.0
+KXBONGINOMENTION,Bongino,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONRY,Royal Bank of Canada,Mentions,one_off,0,0,0.0
+KXROARINGKITTYTWEETS,Will Roaring Kitty tweet? ,Entertainment,one_off,0,0,0.0
+KXBRKEM,What will Berkshire Hathaway say on their next earnings call?,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONHPE,Hewlett Packard Enterprise,Mentions,one_off,0,0,0.0
+KXWALESMENTION,Jimmy Wales,Mentions,one_off,0,0,0.0
+KXECBMENTION,ECB MENTION,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONNVDA,NVDA Earnings Mention,Mentions,one_off,0,0,0.0
+KXNHLMENTION,NHL Announcer Mentions,Mentions,one_off,0,0,0.0
+KXDJTWOMENS,What will Trump say at the women's history event?,Mentions,custom,0,0,0.0
+KXKAMALAMENTION,What will Kalmala Harris say on the late show with stephen colbert,Mentions,one_off,0,0,0.0
+KXGOOGLMENTION,Google Mention,Mentions,one_off,0,0,0.0
+KXMENTION,What Will Someone Say?,Mentions,custom,0,0,0.0
+KXLOVEISLMENTION,Love Island Mentions,Mentions,one_off,0,0,0.0
+KXEARNINGSMENTIONSYUM,Yum! Brands,Mentions,one_off,0,0,0.0
+KXPORTNOYMENTION,What will Dave Portnoy say on DDTG?,Mentions,one_off,0,0,0.0
