@@ -26,3 +26,19 @@ This round widens both: more markets, and both detectors on each.
 of k ≥ 0.25–0.35 within 2 years; the scanner also finds midday and weekday edges. Over 14 years the detection floor is roughly half that.
 
 Anything that passes is a hypothesis for live paper trading, not money.
+
+## Result (2026-11-18): **0 pass on either detector** (`reports/ROUND54.md`)
+- **Grid:** 12,096 configurations, 0 screen candidates. The share of configurations that made money in 2021+ after costs:
+
+  | Market | Share profitable |
+  |---|---|
+  | S&P | 33% |
+  | Nasdaq | 37% |
+  | Oil | 19% |
+  | USDJPY | 14% |
+  | Gold | 10% |
+  | GBPUSD | 9% |
+  | EURUSD | 8% |
+
+  The best was the USDJPY prior-day breakout on low-volatility days, with t about 2.5 in both periods. That is well short of the 4.3 that 12,096 trials need.
+- **Scanner:** 1,869 tests, 0 significant.
