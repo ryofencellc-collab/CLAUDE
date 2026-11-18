@@ -1,0 +1,67 @@
+name: round56
+# Round 56 (PROTOCOL_ROUND56.md): mega-search, ~12M intraday configurations on 14 markets, three-way split.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  market:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {m: SP, pair: spxusd}
+          - {m: NQ, pair: nsxusd}
+          - {m: GOLD, pair: xauusd}
+          - {m: SILVER, pair: xagusd}
+          - {m: OIL, pair: wtiusd}
+          - {m: BRENT, pair: bcousd}
+          - {m: EURUSD, pair: eurusd}
+          - {m: USDJPY, pair: usdjpy}
+          - {m: GBPUSD, pair: gbpusd}
+          - {m: AUDUSD, pair: audusd}
+          - {m: USDCAD, pair: usdcad}
+          - {m: DAX, pair: grxeur}
+          - {m: FTSE, pair: ukxgbp}
+          - {m: NIKKEI, pair: jpxjpy}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate pyarrow scipy
+      - name: Smoke (planted edge must be recovered; no network)
+        run: python run_round56.py smoke
+      - uses: actions/cache@v4
+        with:
+          path: data/histdata
+          key: histdata-${{ matrix.pair }}-v1-${{ github.run_id }}
+          restore-keys: |
+            histdata-${{ matrix.pair }}-v1-
+            histdata-nsx-spx-v1-
+      - run: PAIR=${{ matrix.pair }} python fetch_nq.py
+      - run: python run_round56.py ${{ matrix.m }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r56-${{ matrix.m }}", path: reports/round56_parts/}
+  report:
+    needs: [market]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate pyarrow scipy
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r56-*", path: reports/round56_parts, merge-multiple: true}
+      - run: python run_round56.py report
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round56 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND56.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round56: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
