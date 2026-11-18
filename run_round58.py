@@ -2,6 +2,7 @@
 import math, os, pickle, re, sys, time
 import numpy as np, pandas as pd
 from edge import round27 as r27
+from edge import round20 as r20
 from run_round57 import fee
 
 OUT = "data/r58"; os.makedirs(OUT, exist_ok=True)
@@ -20,7 +21,7 @@ def collect(budget_min=300):
     ser = [t for t in pd.read_csv("probe/mention/series.csv").ticker]
     cut = r27.cutoff(); t0 = time.time(); mk, tr = [], {}
     for s in ser:
-        for m in r27.settled_markets(s, A, B, max_pages=20):
+        for m in r20.markets(s, A, B):
             mk.append(dict(series=s, ticker=m["ticker"], event=m["event_ticker"], word=wkey(m.get("yes_sub_title")), open=m.get("open_time"),
                            close=m["close_time"], result=m["result"], vol=float(m.get("volume_fp") or 0)))
     M = pd.DataFrame(mk); print("markets", len(M), "series", M.series.nunique(), round(time.time() - t0), flush=True)
@@ -71,7 +72,9 @@ def ct(T):
 
 
 def analyze(M, label="real"):
-    dev, ho = M[M.close < SPLIT], M[M.close >= SPLIT]
+    elig = M[(M.n >= 3) & (M.yes_ask.notna() | M.no_ask.notna())]
+    split = elig.ev_close.median() if len(elig) else SPLIT          # amendment 1: data-shape split, no P&L
+    dev, ho = M[M.ev_close < split], M[M.ev_close >= split]
     G = pd.DataFrame([dict(edge=e, nmin=n, dev_trades=len(T), dev_mean=T.pnl.mean() if len(T) else np.nan, dev_t=ct(T))
                       for e in EDGES for n in NMINS for T in [trades_for(dev, e, n)]])
     ok = G[G.dev_trades >= 50]
@@ -81,7 +84,7 @@ def analyze(M, label="real"):
     bm = ((H.p - H.y) ** 2).mean() if len(H) else np.nan; bk = ((H.px - H.y) ** 2).mean() if len(H) else np.nan
     mean, t = (H.pnl.mean() if len(H) else np.nan), ct(H)
     ok_ = len(H) >= 100 and mean > 0 and t >= 2.5 and bm < bk
-    return dict(label=label, verdict="PASS" if ok_ else "FAIL", choice=f"edge {b.edge}, n_min {int(b.nmin)}", grid=G, H=H, n=len(H), mean=mean, t=t, bm=bm, bk=bk)
+    return dict(label=label, verdict="PASS" if ok_ else "FAIL", choice=f"edge {b.edge}, n_min {int(b.nmin)}, split {split.date()}", grid=G, H=H, n=len(H), mean=mean, t=t, bm=bm, bk=bk)
 
 
 def synthetic(planted, seed=1):

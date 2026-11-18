@@ -29,3 +29,12 @@ feeling rather than that record, a base-rate model beats them. No transcripts ne
 
 **Side note (not part of the pass):** Round 45b found Mentions 85–95¢ maker bids in the last hour passing on holdout (+7.3%/$).
 That cell is not in the Round 46 forward test. It is noted for the promotion queue.
+
+## Amendment 1 (2026-11-18, before any P&L was seen)
+The first run produced **no dev trades at all**. The live `/markets` endpoint returned only markets from 2026-04-11 onward, so almost no
+word had 3 earlier settlements before the fixed 2026-07-01 split. No P&L was computed. Two changes:
+1. **More history:** markets now come from both the live and the `/historical/markets` endpoints (`edge.round20.markets`).
+2. **Data-driven split:** SPLIT = the median event close among markets that have n ≥ 3 earlier settlements and at least one ask-side trade.
+   That keeps dev and holdout equal in eligible size. It is chosen from the data's shape only, never from returns.
+
+Every other rule is unchanged.
