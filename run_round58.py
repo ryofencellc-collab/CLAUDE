@@ -60,7 +60,7 @@ def history(M):
     M = M.sort_values("ev_close")
     pri, nn, hist = [], [], {}
     for r in M.itertuples():
-        h = [y for c, y in hist.get((r.series, r.word), []) if c < r.ev_close]
+        h = [y for c, y in hist.get((r.series, r.word), []) if c < r.open + pd.Timedelta(hours=1)]   # amendment 4: known at decision time
         pri.append((sum(h) + 1) / (len(h) + 2)); nn.append(len(h))
         hist.setdefault((r.series, r.word), []).append((r.ev_close, r.y))
     M["prior"], M["n"] = pri, nn

@@ -54,3 +54,8 @@ Run 4 died after 4.5 hours of collecting, probably out of memory from holding ra
 4. Keep only the two first-ask prices per market, with checkpoints.
 
 The rules are unchanged.
+
+## Amendment 4 (2026-11-18, before any P&L was seen)
+Look-ahead fix. A word's record now counts only earlier events that had **settled before the decision time** (market open + 1 h).
+Before this, it counted events settled before the current event's close, which can be after the decision. This was found while auditing
+Round 46m's hindsight close times. It applies to run 5, which is in flight. If run 5 finishes on the old code, it is discarded and rerun.
