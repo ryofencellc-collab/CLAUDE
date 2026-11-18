@@ -88,6 +88,7 @@ Real-data runs happen in GitHub Actions (`.github/workflows/research.yml`).
 | 43 | Riskless arbitrage inside Kalshi and Polymarket (strike ladders, mutually exclusive sums) | Scanning. First fixed scan: Kalshi ladder violations ≈ $0 |
 | 44 | Paper market making for Kalshi liquidity-incentive rewards (~4,000 programs, ≈ $84k/day paid out), $10k; 44b quotes 1 tick behind | Running from 2026-11-09; 10-day pass test |
 | 45 | Where do Kalshi makers earn? 12.4M trades, 16 categories × price × time-to-close, dev/holdout | **11 cells PASS**, all makers holding the 70–95c favourite (Sports 85–95c 1–24 h: holdout +5.0%/$, 3,387 events): [ROUND45.md](reports/ROUND45.md), [45b](reports/ROUND45B.md) |
+| 55 | Reddit 0DTE SPX iron fly (14:50, ±$15, 15% TP), 2-year model backtest calibrated on real quotes | **FAIL**: 79% win rate reproduced, but −$15/lot/trade after costs; ~breakeven at mid fills — [ROUND55.md](reports/ROUND55.md) |
 | 54 | NY grid + segment scanner on 7 markets (S&P, Nasdaq, gold, oil, EUR, JPY, GBP) | **0/12,096 grid, 0/1,869 scan** — [ROUND54.md](reports/ROUND54.md) |
 | Blind | Hidden-strategy test on 3 fake markets + 84-run calibration | **Found it** (source X, ORB15); blind spots: weekday, midday, short gap fill — [BLIND.md](reports/BLIND.md) |
 | 53 | Exhaustive NY-session grid: 16 entry setups × stops × targets × exits × 6 filters, S&P + Nasdaq micros, prop scoring | **0/3,456 pass**; none reaches the screen; fewer t ≥ 2 than chance: [ROUND53.md](reports/ROUND53.md) |

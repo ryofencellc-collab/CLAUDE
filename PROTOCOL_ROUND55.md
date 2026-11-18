@@ -26,3 +26,11 @@ Sensitivity rows (no take-profit; 14:00 or 15:15 entry; mid fills) are reported 
 - The SPXUSD CFD stands in for the SPX cash index.
 
 Both are tested only via the calibration days. A pass means "worth live paper trading" (F1 is already live in Round 39b), not "proven".
+
+## Result (2026-11-18): **FAIL** (`reports/ROUND55.md`)
+- **Calibration** passed: c = 0.523 from 7 real days, median credit error 9.3%.
+- **As posted**, 2024-08 → 2026-10, 539 trades: a 79% win rate, matching the post's 78%, but **−$15 per lot per trade** (t −1.3). The second half lost.
+- **With mid fills** the strategy roughly breaks even (+$2 per lot). The posted +$200 per trade on 4 lots (+$50 per lot) is not reproduced.
+- **Model sensitivity:** a ±10% change in the vol scale swings the mean between −$31 and −$1, so even the sign is within model error. That is no edge.
+- **Take-profit:** with no take-profit the strategy makes +$31 per lot at t 1.5, which is not significant. The 15% take-profit cuts winners short while losers run to −$900.
+- F1 continues live in Round 39b with real quotes; that is the deciding test.
