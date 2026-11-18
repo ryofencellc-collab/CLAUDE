@@ -1,0 +1,60 @@
+name: round54
+# Round 54 (PROTOCOL_ROUND54.md): NY-session grid + segment scanner on 7 markets.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  market:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {m: SP, pair: spxusd}
+          - {m: NQ, pair: nsxusd}
+          - {m: GOLD, pair: xauusd}
+          - {m: OIL, pair: wtiusd}
+          - {m: EURUSD, pair: eurusd}
+          - {m: USDJPY, pair: usdjpy}
+          - {m: GBPUSD, pair: gbpusd}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate pyarrow scipy
+      - uses: actions/cache@v4
+        with:
+          path: data/histdata
+          key: histdata-${{ matrix.pair }}-v1-${{ github.run_id }}
+          restore-keys: |
+            histdata-${{ matrix.pair }}-v1-
+            histdata-nsx-spx-v1-
+      - run: PAIR=${{ matrix.pair }} python fetch_nq.py
+      - name: Smoke (synthetic blind data, no network)
+        run: python gen_blind.py && BLIND_TEST=1 python run_round54.py ${{ matrix.m }} && rm -rf reports/round54_parts data/blind
+      - run: python run_round54.py ${{ matrix.m }}
+      - uses: actions/upload-artifact@v4
+        with: {name: "r54-${{ matrix.m }}", path: reports/round54_parts/}
+  report:
+    needs: [market]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate scipy
+      - uses: actions/download-artifact@v4
+        with: {pattern: "r54-*", path: reports/round54_parts, merge-multiple: true}
+      - run: python run_round54.py report
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round54 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND54.md reports/round54_parts 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round54: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
