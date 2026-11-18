@@ -1,6 +1,6 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-18 22:27 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 165831; settled: 159651.
+Updated 2026-11-18 23:08 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 166286; settled: 159752.
 
 Total paper P&L: **$7,279.01**; filled markets 20483; wrong calls 305, of which filled 187.
 
@@ -23,7 +23,7 @@ Total paper P&L: **$7,279.01**; filled markets 20483; wrong calls 305, of which 
 | KXNFL1HTOTAL       |       372 |       79 |  49381.3        |        3602.52 | 660390           |   484.79 |       0 |              0 |
 | KXRT               |        85 |       50 |  41593.8        |           0    | 710436           |   408.43 |       0 |              0 |
 | KXHIGHCHI          |        66 |       44 |  41438.6        |           0    | 339888           |   406.92 |       0 |              0 |
-| KXLIGAPROMATCH     |      2562 |      168 |  46811.7        |       10470.2  | 282763           |   406.68 |       4 |              2 |
+| KXLIGAPROMATCH     |      2570 |      168 |  46811.7        |       10470.4  | 284942           |   406.68 |       4 |              2 |
 | KXHIGHNY           |        60 |       50 |  47191.9        |           0    | 569740           |   394.97 |       1 |              1 |
 | KXNFL3QSPREAD      |       327 |       51 |  37852.7        |        3371    | 386339           |   371.67 |       0 |              0 |
 | KXNFL1H            |        81 |       48 |  37782.3        |           0    | 469962           |   370.98 |       0 |              0 |
@@ -76,4 +76,4 @@ Total paper P&L: **$7,279.01**; filled markets 20483; wrong calls 305, of which 
 | KXMLSGAME          |        42 |       26 |  23176.8        |           0    | 434901           | -1772.41 |       2 |              2 |
 | KXEPLGAME          |        18 |       15 |  14842.1        |           0    |      1.99985e+06 | -1854.25 |       2 |              2 |
 | KXNFLFIRSTTD       |       681 |      239 | 166490          |         858    |      3.76349e+06 | -3365.4  |       5 |              5 |
-| KXBTCD             |     48350 |     5935 |      4.4253e+06 |        9410    |      1.9067e+07  | -4062.37 |      75 |             61 |
+| KXBTCD             |     48443 |     5935 |      4.4253e+06 |        9420    |      1.9067e+07  | -4062.37 |      75 |             61 |
