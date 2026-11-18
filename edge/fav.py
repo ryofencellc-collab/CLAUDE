@@ -8,12 +8,14 @@ from edge import weather as wx
 from edge import lip
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATE = os.path.join(ROOT, "paper", "r46_state.json")
-DONE = os.path.join(ROOT, "paper", "r46_settled.csv")
-REPORT = os.path.join(ROOT, "paper", "ROUND46_FAV.md")
-CATS = {"Sports", "Entertainment"}
+TAG = os.environ.get("R46_TAG", "")                       # "" = Round 46 (Sports/Entertainment); "m" = Round 46m (Mentions <1h)
+STATE = os.path.join(ROOT, "paper", f"r46{TAG}_state.json")
+DONE = os.path.join(ROOT, "paper", f"r46{TAG}_settled.csv")
+REPORT = os.path.join(ROOT, "paper", f"ROUND46{TAG.upper()}_FAV.md")
+CATS = set(os.environ.get("R46_CATS", "Sports,Entertainment").split(","))
+MAX_HOURS = float(os.environ.get("R46_MAX_HOURS", "168"))   # only bid on markets closing within this many hours
 LO, HI, STAKE, MAX_OPEN, BUDGET = 0.85, 0.95, 200.0, 50, 10_000.0
-SCAN_EVERY, STEP = 900, 120
+SCAN_EVERY, STEP = (300 if os.environ.get("R46_TAG") else 900), 120
 PER_EVENT = 3            # strikes/props of one game move together (Nov 8 lesson)
 RUN_SECONDS = int(os.environ.get("R46_SECONDS", str(5 * 3600 + 40 * 60)))
 
@@ -31,7 +33,7 @@ def series_in_cats() -> list[str]:
 def open_markets(series: str, now: pd.Timestamp) -> list[dict]:
     out, cursor = [], None
     for _ in range(10):
-        p = {"series_ticker": series, "status": "open", "limit": 1000, "max_close_ts": int((now + pd.Timedelta(days=7)).timestamp())}
+        p = {"series_ticker": series, "status": "open", "limit": 1000, "max_close_ts": int((now + pd.Timedelta(hours=MAX_HOURS)).timestamp())}
         if cursor:
             p["cursor"] = cursor
         j = get("markets", p)
@@ -134,7 +136,7 @@ def step(st, now):
 
 
 def summary(st, now) -> str:
-    lines = ["# Round 46: paper maker bids on the 85–95c favourite (Sports, Entertainment)", "",
+    lines = [f"# Round 46{TAG}: paper maker bids on the 85–95c favourite ({', '.join(sorted(CATS))}, closing within {MAX_HOURS:g} h)", "",
              f"Updated {now:%Y-%m-%d %H:%M} UTC. Rules: [PROTOCOL_ROUND46.md](../PROTOCOL_ROUND46.md). $10,000 budget, ~$200 a market.", ""]
     resting = sum(1 for o in st["orders"] if o["resting"])
     held = [o for o in st["orders"] if o[f"inv_{o['side']}"] > 0]
@@ -155,7 +157,7 @@ def summary(st, now) -> str:
 
 def commit(now):
     paths = [p for p in (STATE, DONE, REPORT) if os.path.exists(p)]
-    for c in (["git", "add", *paths], ["git", "commit", "-q", "-m", f"round46: fav ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
+    for c in (["git", "add", *paths], ["git", "commit", "-q", "-m", f"round46{TAG}: fav ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
               ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
         try:
             if subprocess.run(c, cwd=ROOT, timeout=120).returncode != 0 and c[1] == "commit":
