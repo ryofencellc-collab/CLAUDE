@@ -65,3 +65,12 @@ misaligned breakout is skipped and the next aligned one taken). B4: only on days
 20-day median. B5: −50% stop, no profit target, exit 15:45. The scorer also fills them in for Nov 9–17, but those days
 were already seen. **Their verdict counts only trading days from 2026-11-18 onward** (20 days → about Dec 16). Same
 pass rule as B1.
+
+## Amendment 2026-11-18: feed-time bug fix + F1 added
+- **Bug:** the Cboe feed timestamp is its publish time, and the quotes in it are exactly 15.0 minutes older. `last_trade_time` lags `ts_feed` by
+  15.0 min all session on every day checked. Every strategy's clock was therefore 15 minutes late. Entries labelled 10:00 really used
+  09:45 prices, and B1's "09:30–10:00 opening range" really covered 09:15–09:45, a quarter of it pre-open.
+  `odte_score.load_day` now subtracts 15 minutes, and all days are re-scored under the corrected clock. The rules themselves are unchanged.
+- **F1, from Reddit r/options:** a 0DTE SPX iron butterfly entered at 14:50 ET with ATM shorts and ±$15 wings (±$1.5 on SPY), taking profit at 15% of the
+  credit, else held to expiry, skipping FOMC days. It is scored with bid/ask fills (F1) and with mid fills (F1m, as no-code platforms do).
+  The same pass rule applies at 20 and 40 trading days.

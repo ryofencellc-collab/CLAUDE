@@ -20,6 +20,7 @@ EXIT_LATE = dtime(15, 45)
 SPEC = {"SPXW": dict(file="SPX", mult=100, fee=1.50, wing=25.0, yahoo="^GSPC"),
         "SPY": dict(file="SPY", mult=100, fee=0.65, wing=2.5, yahoo="SPY")}
 MIN_SNAPS = int(0.6 * 390)
+FEED_LAG_MIN = 15
 
 
 def load_day(day: str, root: str) -> pd.DataFrame:
@@ -28,7 +29,9 @@ def load_day(day: str, root: str) -> pd.DataFrame:
         return pd.DataFrame()
     d = pd.concat((pd.read_csv(f) for f in fs), ignore_index=True)
     d = d[(d["root"] == root) & (d["exp"] == day)].copy()
-    d["t"] = pd.to_datetime(d["ts_feed"]).dt.tz_localize("UTC").dt.tz_convert(ET)
+    # The Cboe feed timestamp is the publish time; its quotes are exactly 15 minutes older (verified 2026-11-18 from
+    # last_trade_time: lag 15.0 min all session). Shift so t = the market time the quotes describe.
+    d["t"] = (pd.to_datetime(d["ts_feed"]) - pd.Timedelta(minutes=FEED_LAG_MIN)).dt.tz_localize("UTC").dt.tz_convert(ET)
     d = d[(d["t"].dt.date.astype(str) == day) & (d["t"].dt.time >= dtime(9, 0)) & (d["t"].dt.time <= dtime(16, 30))]
     return d.drop_duplicates(["ts_feed", "cp", "K"]).sort_values(["t", "cp", "K"])
 
@@ -188,6 +191,10 @@ def day_trades(day: str, root: str, S: float, ctx: dict | None = None) -> list[d
                 v, how = debit_exit(ss, te, legs, root, S)
                 out.append(dict(day=day, strategy="L1 long straddle", root=root, entry=e.strftime("%H:%M"), legs=str(legs),
                                 credit=round(-paid, 3), exit=how, pnl=round((v - paid) * sp["mult"] - 2 * sp["fee"] * 2, 2)))
+    fw = 15.0 if root == "SPXW" else 1.5
+    for name, mid in (("F1 Reddit iron fly 14:50 (bid/ask fills)", False), ("F1m same, mid fills", True)):
+        r = fly_trade(name, root, day, ss, spot, S, fw, mid=mid)
+        if r: out.append(r)
     # B1 opening-range breakout and its pre-registered filter variants (B2-B5 added 2026-11-17), one trade a day each
     orng = spot[(spot.index.time >= dtime(9, 30)) & (spot.index.time < dtime(10, 0))]
     if len(orng) >= 10:
@@ -198,6 +205,46 @@ def day_trades(day: str, root: str, S: float, ctx: dict | None = None) -> list[d
             r = breakout(ss, spot, hi, lo, root, S, day, name, ctx, **{k: v for k, v in kw.items() if k != "vix_high"})
             if r: out.append(r)
     return out
+
+
+FOMC_DAYS = {"2026-12-09", "2027-01-27", "2027-03-17", "2027-04-28", "2027-06-09", "2027-07-28", "2027-09-15", "2027-10-27", "2027-12-08"}
+
+
+def iron_fly(g, spot_now, w):
+    k = float(min(g.xs("C", level="cp").index, key=lambda x: abs(x - spot_now)))
+    lp, lc = wing(g, "P", k, w), wing(g, "C", k, w)
+    if lp is None or lc is None:
+        return None
+    return [("C", k, -1), ("P", k, -1), ("P", lp, 1), ("C", lc, 1)]
+
+
+def fly_trade(name, root, day, ss, spot, S, w, tp=0.15, mid=False):
+    """F1 (Reddit r/options, added 2026-11-18): 0DTE iron butterfly at 14:50 ET, ATM shorts, wings +-w,
+    take profit at 15% of credit, else hold to expiry; skip FOMC days. Fills at bid/ask unless mid=True."""
+    if day in FOMC_DAYS:
+        return None
+    t0, g0 = first_at(ss, dtime(14, 50))
+    if g0 is None:
+        return None
+    legs = iron_fly(g0, float(spot[t0]), w)
+    if not legs:
+        return None
+    def mid_of(g, cp, K):
+        b, a = q(g, cp, K, "bid"), q(g, cp, K, "ask"); return (b + a) / 2
+    cr = sum(-sgn * mid_of(g0, cp, K) for cp, K, sgn in legs) if mid else credit_of(g0, legs)
+    if np.isnan(cr) or cr <= 0:
+        return None
+    sp = SPEC[root]; exit_val, how = None, "expiry"
+    for t, g in ss:
+        if t <= t0:
+            continue
+        c = sum(sgn * mid_of(g, cp, K) for cp, K, sgn in legs) * -1 if mid else close_cost(g, legs)
+        if not np.isnan(c) and c <= (1 - tp) * cr:
+            exit_val, how = c, f"target {t:%H:%M}"; break
+    if exit_val is None:
+        exit_val = -spread_value(S, legs)
+    pnl = (cr - exit_val) * sp["mult"] - len(legs) * sp["fee"] * (1 if how == "expiry" else 2)
+    return dict(day=day, strategy=name, root=root, entry="14:50", legs=str(legs), credit=round(cr, 3), exit=how, pnl=round(pnl, 2))
 
 
 BREAKOUTS = {"B1 OR breakout": {}, "B2 breakout by 11:00 only": {"cutoff": dtime(11, 0)},
