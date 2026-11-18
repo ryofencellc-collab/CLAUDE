@@ -18,9 +18,12 @@ def wkey(s):
 def collect(budget_min=300):
     path = f"{OUT}/raw.pkl"
     if os.path.exists(path): return pickle.load(open(path, "rb"))
-    ser = [t for t in pd.read_csv("probe/mention/series.csv").ticker]
+    S = pd.read_csv("probe/mention/series.csv")
+    ser = list(S[S.volume > 0].sort_values("volume", ascending=False).ticker)      # amendment 2: traded series only, biggest first
     cut = r27.cutoff(); t0 = time.time(); mk, tr = [], {}
     for s in ser:
+        if time.time() - t0 > 0.4 * budget_min * 60:                                 # amendment 2: cap the listing phase
+            print("listing budget hit; series done:", ser.index(s), flush=True); break
         for m in r20.markets(s, A, B):
             mk.append(dict(series=s, ticker=m["ticker"], event=m["event_ticker"], word=wkey(m.get("yes_sub_title")), open=m.get("open_time"),
                            close=m["close_time"], result=m["result"], vol=float(m.get("volume_fp") or 0)))

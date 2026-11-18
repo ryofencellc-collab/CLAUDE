@@ -38,3 +38,10 @@ word had 3 earlier settlements before the fixed 2026-07-01 split. No P&L was com
    That keeps dev and holdout equal in eligible size. It is chosen from the data's shape only, never from returns.
 
 Every other rule is unchanged.
+
+## Amendment 2 (2026-11-18, before any P&L was seen)
+Run 3 spent more than 4 hours only *listing* markets (the historical endpoint pages slowly) and was cancelled. Two changes:
+- **Traded series only:** list only series with traded volume in the probe, largest first.
+- **Capped listing:** cap the listing phase at 40% of the time budget.
+
+No result was computed. The rules are unchanged.
