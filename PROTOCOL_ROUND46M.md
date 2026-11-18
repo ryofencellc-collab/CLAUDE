@@ -14,3 +14,13 @@
 2. return of at least +2% per dollar, with event-clustered t ≥ 2;
 3. positive in each week;
 4. worst day no worse than −$400.
+
+## Result (2026-11-18): **STOPPED, not implementable** (0 bids in 9 hours)
+Kalshi Mentions markets **close early, when the event ends**. Settled markets carry actual close times such as 17:24:31, while open
+markets show only their later scheduled close. Round 45/45b binned "hours to close" against the *actual* close, which is unknowable
+in real time, so the "< 1 h" Mentions cell used hindsight timing. A live bot can't see which markets are about to resolve. The
+tracker never found a market inside the window, as expected given that.
+
+**Knock-on:** Round 45b cells that use time-to-close in early-closing categories (Mentions, and partly Sports, where games end early)
+share this flaw. Round 46 (Sports/Entertainment, scheduled close within 7 days) is unaffected as a forward test. Its own live
+results are the honest measure, but its motivation from Round 45's "1–24 h" bins is weaker than it looked.
