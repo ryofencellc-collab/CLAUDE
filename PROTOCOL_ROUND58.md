@@ -45,3 +45,12 @@ Run 3 spent more than 4 hours only *listing* markets (the historical endpoint pa
 - **Capped listing:** cap the listing phase at 40% of the time budget.
 
 No result was computed. The rules are unchanged.
+
+## Amendment 3 (2026-11-18, before any P&L was seen)
+Run 4 died after 4.5 hours of collecting, probably out of memory from holding raw trades for every market. Collection is restructured:
+1. List the markets.
+2. Compute each word's history.
+3. Fetch trades only for markets with n ≥ 3 earlier settlements.
+4. Keep only the two first-ask prices per market, with checkpoints.
+
+The rules are unchanged.

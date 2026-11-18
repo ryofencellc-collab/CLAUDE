@@ -15,46 +15,69 @@ def wkey(s):
     return re.sub(r"\s+", "", str(s or "").lower())
 
 
+def first_asks(ts, open_t):
+    ts = sorted(ts or [], key=lambda x: x["created_time"])
+    start = pd.Timestamp(open_t) + pd.Timedelta(hours=1)
+    y = next((x for x in ts if pd.Timestamp(x["created_time"]) >= start and x.get("taker_side") == "yes"), None)
+    n = next((x for x in ts if pd.Timestamp(x["created_time"]) >= start and x.get("taker_side") == "no"), None)
+    return (float(y["yes_price_dollars"]) if y else np.nan, float(n["no_price_dollars"]) if n else np.nan)
+
+
 def collect(budget_min=300):
+    """Amendment 3: list markets (capped), compute word history first, then fetch trades ONLY for markets with n >= 3 earlier
+    settlements, keeping just the two first-ask prices per market (no raw trades in memory). Checkpoints every 300 markets."""
     path = f"{OUT}/raw.pkl"
     if os.path.exists(path): return pickle.load(open(path, "rb"))
     S = pd.read_csv("probe/mention/series.csv")
-    ser = list(S[S.volume > 0].sort_values("volume", ascending=False).ticker)      # amendment 2: traded series only, biggest first
-    cut = r27.cutoff(); t0 = time.time(); mk, tr = [], {}
+    ser = list(S[S.volume > 0].sort_values("volume", ascending=False).ticker)
+    cut = r27.cutoff(); t0 = time.time(); mk = []
     for s in ser:
-        if time.time() - t0 > 0.4 * budget_min * 60:                                 # amendment 2: cap the listing phase
+        if time.time() - t0 > 0.35 * budget_min * 60:
             print("listing budget hit; series done:", ser.index(s), flush=True); break
         for m in r20.markets(s, A, B):
             mk.append(dict(series=s, ticker=m["ticker"], event=m["event_ticker"], word=wkey(m.get("yes_sub_title")), open=m.get("open_time"),
                            close=m["close_time"], result=m["result"], vol=float(m.get("volume_fp") or 0)))
-    M = pd.DataFrame(mk); print("markets", len(M), "series", M.series.nunique(), round(time.time() - t0), flush=True)
-    for i, r in enumerate(M[M.vol > 0].itertuples()):
-        if time.time() - t0 > budget_min * 60: print("budget hit", i, flush=True); break
-        tr[r.ticker] = r27.trades(r.ticker, pd.Timestamp(r.close), cut, max_pages=5)
-        if i % 500 == 0: print("trades", i, round(time.time() - t0), flush=True)
-    pickle.dump((M, tr), open(path, "wb")); return M, tr
+    M = pd.DataFrame(mk).drop_duplicates("ticker"); print("markets", len(M), "series", M.series.nunique(), round(time.time() - t0), flush=True)
+    M = history(M)
+    todo = M[(M.n >= 3) & (M.vol > 0)]
+    print("eligible markets (n>=3, traded):", len(todo), flush=True)
+    asks = {}
+    ck = f"{OUT}/asks_ckpt.pkl"
+    if os.path.exists(ck): asks = pickle.load(open(ck, "rb"))
+    for i, r in enumerate(todo.itertuples()):
+        if r.ticker in asks: continue
+        if time.time() - t0 > budget_min * 60: print("trade budget hit", i, flush=True); break
+        asks[r.ticker] = first_asks(r27.trades(r.ticker, pd.Timestamp(r.close), cut, max_pages=5), r.open)
+        if i % 300 == 0:
+            pickle.dump(asks, open(ck, "wb")); print("trades", i, round(time.time() - t0), flush=True)
+    pickle.dump((M, asks), open(path, "wb")); return M, asks
 
 
-def build(M, tr):
+def history(M):
     M = M.copy(); M["close"] = pd.to_datetime(M.close, utc=True, format="ISO8601"); M["open"] = pd.to_datetime(M.open, utc=True, format="ISO8601")
     M["y"] = (M.result == "yes").astype(float)
-    ev_close = M.groupby("event").close.max()
-    M["ev_close"] = M.event.map(ev_close)
+    M["ev_close"] = M.event.map(M.groupby("event").close.max())
     M = M.sort_values("ev_close")
-    pri, nn = [], []
-    hist = {}                                  # (series, word) -> list of (ev_close, y)
+    pri, nn, hist = [], [], {}
     for r in M.itertuples():
         h = [y for c, y in hist.get((r.series, r.word), []) if c < r.ev_close]
         pri.append((sum(h) + 1) / (len(h) + 2)); nn.append(len(h))
         hist.setdefault((r.series, r.word), []).append((r.ev_close, r.y))
     M["prior"], M["n"] = pri, nn
+    return M
+
+
+def build(M, tr):
+    """tr: {ticker: (yes_ask, no_ask)} from collect, or {ticker: [trades]} from the synthetic smoke world."""
+    if "prior" not in M.columns:
+        M = history(M)
     ya, na = [], []
     for r in M.itertuples():
-        ts = sorted(tr.get(r.ticker) or [], key=lambda x: x["created_time"])
-        start = r.open + pd.Timedelta(hours=1)
-        y = next((x for x in ts if pd.Timestamp(x["created_time"]) >= start and x.get("taker_side") == "yes"), None)
-        n = next((x for x in ts if pd.Timestamp(x["created_time"]) >= start and x.get("taker_side") == "no"), None)
-        ya.append(float(y["yes_price_dollars"]) if y else np.nan); na.append(float(n["no_price_dollars"]) if n else np.nan)
+        v = tr.get(r.ticker)
+        if isinstance(v, tuple): a = v
+        elif v: a = first_asks(v, r.open)
+        else: a = (np.nan, np.nan)
+        ya.append(a[0]); na.append(a[1])
     M["yes_ask"], M["no_ask"] = ya, na
     return M
 
