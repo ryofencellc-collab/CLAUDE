@@ -1,7 +1,5 @@
 name: round7
 on:
-  push:
-    paths: ["run_round7.py", "edge/round7.py", ".github/workflows/round7.yml"]
   workflow_dispatch:
 permissions:
   actions: read

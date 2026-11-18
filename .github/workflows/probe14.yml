@@ -1,8 +1,6 @@
 name: probe14
 # Data check for Round 14 (SPY options) and Round 15 (Kalshi weather speed).
 on:
-  push:
-    paths: [".github/workflows/probe14.yml"]
   workflow_dispatch:
 jobs:
   probe:

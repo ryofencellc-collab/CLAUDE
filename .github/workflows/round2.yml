@@ -1,8 +1,6 @@
 name: round2
 
 on:
-  push:
-    paths: ["edge/**", "run_round2.py", "fetch_nq.py", ".github/workflows/round2.yml"]
   workflow_dispatch:
 
 jobs:

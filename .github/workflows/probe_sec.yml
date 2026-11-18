@@ -1,8 +1,6 @@
 name: probe-sec
 # One request per SEC host, to read why EDGAR answers 403 from GitHub runners.
 on:
-  push:
-    paths: [".github/workflows/probe_sec.yml"]
   workflow_dispatch:
 jobs:
   probe:

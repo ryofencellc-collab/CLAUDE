@@ -1,8 +1,6 @@
 name: round5-parallel
 # Same Round 5 test, fetched one city per runner so no single job can time out.
 on:
-  push:
-    paths: [".github/workflows/round5p.yml"]
   workflow_dispatch:
 jobs:
   list:

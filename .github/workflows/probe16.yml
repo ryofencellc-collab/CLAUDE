@@ -1,8 +1,6 @@
 name: probe16
 # Data check for Round 16: same game on Kalshi and Polymarket, live order books.
 on:
-  push:
-    paths: [".github/workflows/probe16.yml", "probe16b.py"]
   workflow_dispatch:
 jobs:
   probe:

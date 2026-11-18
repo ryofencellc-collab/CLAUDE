@@ -9,8 +9,6 @@ on:
   schedule:
     - cron: "41 * * * *"   # hourly: a blocked attempt costs the SEC one request
   workflow_dispatch:
-  push:
-    paths: [".github/workflows/sec13f.yml"]
 permissions:
   contents: write
   actions: write

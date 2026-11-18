@@ -1,7 +1,5 @@
 name: round5
 on:
-  push:
-    paths: [".github/workflows/round5.yml"]
   workflow_dispatch:
 jobs:
   weather:

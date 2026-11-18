@@ -2,9 +2,6 @@ name: research
 
 # The dev sandbox has no market-data access, so real-data runs happen here.
 on:
-  push:
-    branches: ["**"]
-    paths: ["edge/backtest.py", "edge/stats.py", "edge/data.py", "edge/null.py", "edge/strategies/**", "run_research.py", "diagnose_carry.py", "tests/**", ".github/workflows/research.yml", "requirements.txt"]
   workflow_dispatch:
 
 jobs:

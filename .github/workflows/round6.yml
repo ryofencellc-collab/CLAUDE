@@ -1,7 +1,5 @@
 name: round6
 on:
-  push:
-    paths: ["run_round6.py", "edge/options.py", ".github/workflows/round6.yml"]
   workflow_dispatch:
 jobs:
   puts:

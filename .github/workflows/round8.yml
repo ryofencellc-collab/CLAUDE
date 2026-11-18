@@ -3,8 +3,6 @@ name: round8
 # Fresh data: fetch PTRs in parallel, add the 13Fs cached by sec13f.yml, map and price, run dev.
 # Re-run dev on old data: dispatch with data_run = the run id that built it.
 on:
-  push:
-    paths: [".github/workflows/round8.yml"]
   workflow_dispatch:
     inputs:
       data_run: {description: "run id holding the r8-data artifact (blank = fetch fresh)", default: ""}
