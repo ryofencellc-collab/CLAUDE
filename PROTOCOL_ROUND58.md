@@ -1,0 +1,31 @@
+# Round 58: mention markets vs each word's own track record (written 2026-11-18, before any results)
+
+**Idea (autonomous backlog #62, data-only version):** Kalshi "Mentions" markets ("will <speaker> say <word>?") recur. The same series asks
+about the same words event after event. The record of past settlements gives a base rate per (series, word). If prices follow gut
+feeling rather than that record, a base-rate model beats them. No transcripts needed.
+
+**Data.** All 487 Mentions-like series found by `probe_mention.py`.
+- **Markets:** every settled market 2025-01 → now.
+- **Words:** the word key is `yes_sub_title`, lower-cased with spaces stripped.
+- **Prices:** the market's trades. YES is bought at taker-YES trade prices, NO at taker-NO trade prices.
+
+**Model.** For a market in event e of series s with word w:
+- **Base rate:** prior = (yes + 1) / (n + 2) over all **earlier** events of the same series where the same word settled. Require n ≥ 3.
+- **Price:** the first ask-side trade per side at least 1 hour after the market opened.
+
+**Trade.** Buy YES if prior − ask ≥ e, or buy NO if (1 − prior) − no_ask ≥ e. 1 contract each, with the Kalshi taker fee.
+
+**Dev/holdout.** The split is by close time: dev before 2026-07-01, holdout from 2026-07-01 → now.
+- On dev, pick e ∈ {0.05, 0.10, 0.15, 0.20, 0.30} and n_min ∈ {3, 5} by mean P&L, requiring ≥ 50 dev trades.
+- **Pass (holdout):** all of
+  1. ≥ 100 trades;
+  2. mean P&L > 0;
+  3. t ≥ 2.5, clustered by event;
+  4. prior Brier < market Brier on the traded markets.
+
+**Calibration.**
+- **Planted:** a synthetic world where each word has a stable rate and prices are shrunk halfway to 50¢. It must pass.
+- **Null:** prices equal the true rate plus noise. It must not pass.
+
+**Side note (not part of the pass):** Round 45b found Mentions 85–95¢ maker bids in the last hour passing on holdout (+7.3%/$).
+That cell is not in the Round 46 forward test. It is noted for the promotion queue.

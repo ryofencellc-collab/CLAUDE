@@ -1,0 +1,32 @@
+name: round58
+# Round 58 (PROTOCOL_ROUND58.md): mention markets vs word track record.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - name: Smoke (planted edge passes, null fails; no network)
+        run: python run_round58.py smoke
+      - name: Collect mention markets + trades
+        run: R58_BUDGET_MIN=290 python run_round58.py collect
+      - name: Analyze
+        run: python run_round58.py analyze
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: r58-data, path: data/r58/}
+      - name: Commit report
+        if: always()
+        run: |
+          git config user.name "round58 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND58.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round58: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
