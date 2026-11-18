@@ -1,0 +1,48 @@
+{
+ "tsa": {
+  "status": 200,
+  "bytes": 199603,
+  "head": "<!DOCTYPE html> <html lang=\"en\" dir=\"ltr\" prefix=\"content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/"
+ },
+ "fred_icsa": {
+  "error": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+ },
+ "fred_gas": {
+  "error": "ReadTimeout(ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+ },
+ "eia_gas": {
+  "status": 200,
+  "bytes": 128000,
+  "head": "application/vnd.ms-excel"
+ },
+ "gdpnow": {
+  "status": 404,
+  "bytes": 48905,
+  "head": "\r \r <!DOCTYPE html>\r <html lang=\"en\">\r <head>\r     \r <meta charset=\"UTF-8\" />\r <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\r     <title"
+ },
+ "cleveland_nowcast": {
+  "status": 200,
+  "bytes": 197502,
+  "head": "\r \r <!DOCTYPE html>\r <html lang=\"en\">\r <head>\r \r     <base href=\"https://www.clevelandfed.org/\" />\r <link href=\"/-/media/project/clevelandfedtenant/clevelandfed"
+ },
+ "kworb_spotify": {
+  "status": 200,
+  "bytes": 86991,
+  "head": "<!DOCTYPE html> <html lang=\"en\"><head><title>Spotify Daily Chart - United States</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/standard0002.css\" /> "
+ },
+ "aaa_gas": {
+  "status": 200,
+  "bytes": 96430,
+  "head": "<!DOCTYPE html> <html lang=\"en\"> <head>     <meta charset=\"utf-8\">     <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">     <title>AAA Fuel Prices</title> "
+ },
+ "freddie_pmms": {
+  "status": 200,
+  "bytes": 97646,
+  "head": "date,pmms30,pmms30p,pmms15,pmms15p,pmms51,pmms51p,pmms51m,pmms51spread\r 4/2/1971,7.33, ,,,,,,\r 4/9/1971,7.31, ,,,,,,\r 4/16/1971,7.31, ,,,,,,\r 4/23/1971,7.31, ,,"
+ },
+ "boxofficemojo": {
+  "status": 200,
+  "bytes": 205738,
+  "head": "<!doctype html><html class=\"a-no-js\" data-19ax5a9jf=\"dingo\"><head><script>var aPageStart = (new Date()).getTime();</script><meta charset=\"utf-8\"/> <script type="
+ }
+}
