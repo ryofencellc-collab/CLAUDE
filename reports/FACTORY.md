@@ -1,9 +1,10 @@
 # Strategy factory leaderboard
 
-Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **58**. Passing: **0**. Holdout = 2022 → today. ROI as CAGR; bench = SPY (ETFs), equal-weight universe (stocks) or BTC (crypto).
+Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **63**. Passing: **0**. Holdout = 2022 → today. ROI as CAGR; bench = SPY (ETFs), equal-weight universe (stocks) or BTC (crypto).
 
 | name                                                                               | market   |   batch | dev_cagr   |   dev_sharpe | hold_cagr   |   hold_sharpe | hold_dd   | bench_cagr   |   bench_sharpe |   dsr | PASS   |
 |:-----------------------------------------------------------------------------------|:---------|--------:|:-----------|-------------:|:------------|--------------:|:----------|:-------------|---------------:|------:|:-------|
+| Put-write: Cboe PUT index (monthly SPX cash-secured puts), always on               | etfs     |       9 | 7.8%       |         0.63 | 8.2%        |          0.76 | -16.0%    | 11.2%        |           0.7  |  0.58 |        |
 | Risk parity SPY/TLT/GLD/DBC (inverse vol, monthly)                                 | etfs     |       3 | 7.4%       |         0.91 | 7.1%        |          0.73 | -20.1%    | 11.4%        |           0.71 |  0.87 |        |
 | Risk-adjusted momentum (12m Sharpe, top 10%)                                       | stocks   |       7 | 14.8%      |         0.7  | 14.7%       |          0.7  | -23.0%    | 7.0%         |           0.44 |  0.72 |        |
 | Momentum + low vol (rank sum, top 10%)                                             | stocks   |       1 | 11.2%      |         0.7  | 8.2%        |          0.64 | -15.7%    | 7.0%         |           0.44 |  0.94 |        |
@@ -22,6 +23,7 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **58**. Pas
 | BTC volatility target 40% (max 1x)                                                 | crypto   |       4 | 34.8%      |         0.9  | 11.8%       |          0.48 | -55.8%    | 11.3%        |           0.46 |  0.6  |        |
 | 52-week-high proximity (top 10%)                                                   | stocks   |       1 | 10.5%      |         0.65 | 6.2%        |          0.45 | -21.2%    | 7.0%         |           0.44 |  0.88 |        |
 | Global relative strength: best of SPY/EFA/EEM by 6m, monthly                       | etfs     |       6 | 9.5%       |         0.57 | 7.1%        |          0.45 | -31.5%    | 11.9%        |           0.74 |  0.48 |        |
+| Weekly put-write: Cboe WPUT index, always on                                       | etfs     |       9 | 3.5%       |         0.33 | 4.1%        |          0.44 | -19.8%    | 11.2%        |           0.7  |  0.2  |        |
 | Betting-against-beta long leg (lowest 60d beta, 10%)                               | stocks   |       2 | 14.6%      |         1    | 4.8%        |          0.43 | -17.7%    | 7.0%         |           0.44 |  0.83 |        |
 | Momentum 12-1, top 20 names only                                                   | stocks   |       1 | 15.9%      |         0.58 | 8.9%        |          0.42 | -43.8%    | 7.0%         |           0.44 |  0.83 |        |
 | SPY above 200-day average, else IEF                                                | etfs     |       1 | 10.5%      |         0.86 | 4.5%        |          0.41 | -31.9%    | 11.4%        |           0.71 |  0.94 |        |
@@ -41,6 +43,7 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **58**. Pas
 | Crypto low volatility: 5 lowest 30d-vol coins, weekly                              | crypto   |       4 | 22.6%      |         0.66 | 0.2%        |          0.27 | -62.6%    | 11.3%        |           0.46 |  0.33 |        |
 | QQQ/TLT 60/40, 15% vol target, max 1.5x                                            | etfs     |       5 | 16.1%      |         1.14 | 2.7%        |          0.25 | -27.4%    | 11.4%        |           0.71 |  0.81 |        |
 | Canary (DAA-style): SPY/EFA/EEM momentum unless VWO or BND canary negative -> IEF  | etfs     |       3 | 2.0%       |         0.24 | 2.6%        |          0.24 | -20.2%    | 11.4%        |           0.71 |  0.19 |        |
+| Put-write only when VIX > its 1-year median (rich premium), else BIL               | etfs     |       9 | -0.7%      |         0.01 | 1.9%        |          0.24 | -14.8%    | 11.2%        |           0.7  |  0.04 |        |
 | Sell in May: SPY Nov-Apr, IEF May-Oct                                              | etfs     |       1 | 7.6%       |         0.56 | 2.2%        |          0.22 | -19.9%    | 11.4%        |           0.71 |  0.76 |        |
 | Gap-and-go: gap up >= 2%, close > open, hold 10 days                               | stocks   |       8 | 8.7%       |         0.46 | 2.2%        |          0.22 | -31.3%    | 7.0%         |           0.44 |  0.25 |        |
 | VIX term structure: SPY when VIX < VIX3M, else IEF                                 | etfs     |       3 | 9.7%       |         0.79 | 1.9%        |          0.2  | -35.7%    | 11.4%        |           0.71 |  0.53 |        |
@@ -55,8 +58,10 @@ Rules: [PROTOCOL_FACTORY.md](../PROTOCOL_FACTORY.md). Trials so far: **58**. Pas
 | Crypto XS momentum: top 5 of 30 by 30d return, weekly                              | crypto   |       1 | 85.6%      |         1.07 | -23.5%      |          0.03 | -89.6%    | 11.3%        |           0.39 |  0.8  |        |
 | Short-term reversal (weekly losers, 10%)                                           | stocks   |       1 | 8.1%       |         0.41 | -4.0%       |          0.02 | -42.3%    | 7.0%         |           0.44 |  0.54 |        |
 | Crypto 7-day losers (5 worst), weekly                                              | crypto   |       4 | 91.6%      |         1.2  | -25.4%      |          0.01 | -84.1%    | 11.3%        |           0.46 |  0.44 |        |
+| Covered call: Cboe BXM only in VIX contango (VIX < VIX3M), else BIL                | etfs     |       9 | 4.0%       |         0.52 | -0.6%       |         -0.02 | -28.4%    | 11.2%        |           0.7  |  0.13 |        |
 | Gold trend: GLD above 200d avg, else BIL                                           | etfs     |       6 | 0.6%       |         0.11 | -0.6%       |         -0.03 | -18.4%    | 11.9%        |           0.74 |  0.05 |        |
 | Reddit LETF: HFEA 55% 3x SPY + 45% 3x TLT, quarterly rebalance                     | etfs     |       7 | 18.4%      |         0.74 | -7.6%       |         -0.03 | -68.4%    | 11.9%        |           0.74 |  0.29 |        |
+| Iron condor: Cboe CNDR only in VIX contango (VIX < VIX3M), else BIL                | etfs     |       9 | -3.8%      |        -0.73 | -1.1%       |         -0.13 | -14.1%    | 11.2%        |           0.7  |  0    |        |
 | Copper/gold momentum: SPY when copper beats gold over 3m, else IEF                 | etfs     |       6 | 10.6%      |         1.12 | -3.0%       |         -0.18 | -25.8%    | 11.9%        |           0.74 |  0.45 |        |
 | Reddit LETF: 3x SPY when SPY > 200d avg, else cash                                 | etfs     |       7 | 14.4%      |         0.55 | -7.9%       |         -0.26 | -60.8%    | 11.9%        |           0.74 |  0.23 |        |
 | Pre-FOMC drift: SPY only the day before and day of FOMC decisions                  | etfs     |       6 | 0.4%       |         0.13 | -1.5%       |         -0.32 | -14.8%    | 11.9%        |           0.74 |  0.02 |        |
