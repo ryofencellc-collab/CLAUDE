@@ -445,3 +445,31 @@ def _(d):
     sig = lead & (rsi2 < 10) & d["ok"]
     act = sig.astype(float).rolling(5, min_periods=1).max()
     return act.div(act.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0)
+
+
+# ============================================================ batch 9 (registered 2026-11-18 00:30 UTC, before running): Cboe option-strategy indexes
+# Real option P&L (Cboe benchmark indexes, free daily history). Timing uses VIX / VIX3M known at the prior close.
+def _bil_else(d, col, on):
+    on = on.reindex(d["E"].index).fillna(0.0)
+    w = pd.DataFrame(0.0, index=d["E"].index, columns=d["E"].columns); w[col] = on; w["BIL"] = 1.0 - on
+    return w
+
+@strat("Put-write: Cboe PUT index (monthly SPX cash-secured puts), always on", "etfs", 9)
+def _(d):
+    return one(d, "CBOE_PUT", pd.Series(1.0, index=d["E"].index))
+
+@strat("Weekly put-write: Cboe WPUT index, always on", "etfs", 9)
+def _(d):
+    return one(d, "CBOE_WPUT", pd.Series(1.0, index=d["E"].index))
+
+@strat("Put-write only when VIX > its 1-year median (rich premium), else BIL", "etfs", 9)
+def _(d):
+    v = d["E"]["^VIX"]; return _bil_else(d, "CBOE_PUT", (v > v.rolling(252, min_periods=200).median()).astype(float))
+
+@strat("Covered call: Cboe BXM only in VIX contango (VIX < VIX3M), else BIL", "etfs", 9)
+def _(d):
+    return _bil_else(d, "CBOE_BXM", (d["E"]["^VIX"] < d["E"]["^VIX3M"]).astype(float))
+
+@strat("Iron condor: Cboe CNDR only in VIX contango (VIX < VIX3M), else BIL", "etfs", 9)
+def _(d):
+    return _bil_else(d, "CBOE_CNDR", (d["E"]["^VIX"] < d["E"]["^VIX3M"]).astype(float))

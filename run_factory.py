@@ -11,6 +11,25 @@ COINS = ["BTC", "ETH", "SOL", "XRP", "BNB", "DOGE", "ADA", "AVAX", "LINK", "DOT"
          "FIL", "APT", "ARB", "OP", "INJ", "SUI", "AAVE", "BCH", "XLM", "HBAR", "ICP", "TON", "MATIC", "SHIB"]
 
 
+CBOE = ["PUT", "BXM", "CNDR", "WPUT"]   # batch 9: Cboe option-strategy benchmark indexes (free daily history)
+
+
+def cboe_indexes():
+    """Daily closes of Cboe strategy indexes from cdn.cboe.com; columns CBOE_<sym>. Missing ones are skipped."""
+    out = {}
+    for sym in CBOE:
+        try:
+            txt = requests.get(f"https://cdn.cboe.com/api/global/us_indices/daily_prices/{sym}_History.csv", timeout=30).text
+            rows = [l.split(",") for l in txt.splitlines()]
+            rows = [r for r in rows if len(r) >= 2 and r[0][:1].isdigit()]
+            ser = pd.Series({pd.to_datetime(r[0]): float(r[-1]) for r in rows if r[-1].strip() not in ("", "-")}).sort_index()
+            if len(ser) > 500:
+                out[f"CBOE_{sym}"] = ser; print("cboe", sym, len(ser), ser.index[0].date(), flush=True)
+        except Exception as e:
+            print("cboe", sym, "failed", repr(e), flush=True)
+    return pd.DataFrame(out)
+
+
 def load(markets):
     d = {}
     if "stocks" in markets:
@@ -24,7 +43,8 @@ def load(markets):
     if "etfs" in markets:
         import yfinance as yf
         x = yf.download(ETFS, start="2013-01-01", auto_adjust=True, progress=False)["Close"]
-        x.index = pd.to_datetime(x.index).tz_localize(None); d["E"] = x
+        x.index = pd.to_datetime(x.index).tz_localize(None)
+        d["E"] = x.join(cboe_indexes(), how="left")
     if "crypto" in markets:
         from run_round38 import binance
         got = {c: binance(f"{c}USDT") for c in COINS}

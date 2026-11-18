@@ -33,7 +33,7 @@ copying, wheel, put spreads/condors, 0DTE forward, Kalshi maker/LIP, arbitrage, 
 ## Batch 5 — options (EOD chains, SPY + 7 mega-caps)
 - [ ] Covered calls on SPY only when IV rank high
 - [ ] Long straddles before earnings (IV ramp) closed before the event
-- [ ] Put-write index replication (PUT index style) vs SPY
+- [x] Put-write index replication (PUT index style) vs SPY — batch 9 (Cboe PUT/WPUT/BXM/CNDR indexes, VIX timing)
 - [ ] Calendar spreads around earnings
 
 ## Batch 6 — prediction markets (Kalshi history)
@@ -60,3 +60,6 @@ deflated-Sharpe bar for the rest. Next batches wait for new data: Reddit API key
 WallStreetBets history (crowd-emotion backtest), optionsDX SPX intraday (0DTE backtest), Binance funding archive.
 Until then each check-in monitors the forward tests (0DTE, sports favourite, LIP, Reddit emotion, Round 13) and adds a
 batch only when it is genuinely new.
+
+## Batch 9 — Cboe option-strategy indexes — registered 2026-11-18 (5 strategies)
+- [x] PUT always on, WPUT always on, PUT when VIX > 1y median, BXM in VIX contango, CNDR in VIX contango (else BIL). Real option P&L from free Cboe daily index history.
