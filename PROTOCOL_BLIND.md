@@ -34,3 +34,7 @@ The calibration showed detector 2 catches midday reversals and weekday drift, wh
 - A signal counts only if it passes Bonferroni, has the same sign in both periods, and its mean beats 3 bp per day (costs).
 - Survivors are hypotheses for a dedicated pre-registered round, not trades.
 - Caveat: this data was used before (Rounds 29, 52, 53), so it is not fresh.
+
+### Real-data scan result (2026-11-18): **0 of 534 tests significant** (`reports/SCAN_REAL.md`)
+Best: Nasdaq long on Mondays (+7 bp/day in 2012–2020, +14 bp in 2021+; combined t 2.7) and Nasdaq Tuesdays 14:00→15:00 (t 2.8).
+Both are below the 3.9 bar that 534 tests require. The weekday, midday and gap blind spots hold nothing big in S&P/Nasdaq.
