@@ -32,7 +32,7 @@ def collect(budget_min=300):
 
 
 def build(M, tr):
-    M = M.copy(); M["close"] = pd.to_datetime(M.close, utc=True); M["open"] = pd.to_datetime(M.open, utc=True)
+    M = M.copy(); M["close"] = pd.to_datetime(M.close, utc=True, format="ISO8601"); M["open"] = pd.to_datetime(M.open, utc=True, format="ISO8601")
     M["y"] = (M.result == "yes").astype(float)
     ev_close = M.groupby("event").close.max()
     M["ev_close"] = M.event.map(ev_close)
@@ -94,7 +94,7 @@ def synthetic(planted, seed=1):
                 p = float(p); y = rng.random() < p
                 q = 0.5 + 0.5 * (p - 0.5) if planted else p
                 q = float(np.clip(q + rng.normal(0, 0.04), 0.03, 0.97)); tk = f"{ev}-{w}"
-                rows.append(dict(series=s, ticker=tk, event=ev, word=w, open=(close - pd.Timedelta(days=2)).isoformat(), close=close.isoformat(),
+                rows.append(dict(series=s, ticker=tk, event=ev, word=w, open=(close - pd.Timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%S.%fZ") if k % 2 else (close - pd.Timedelta(days=2)).isoformat(), close=close.isoformat(),
                                  result="yes" if y else "no", vol=1.0))
                 t = (close - pd.Timedelta(days=1)).isoformat()
                 tr[tk] = [dict(created_time=t, taker_side="yes", yes_price_dollars=str(round(min(q + 0.01, 0.99), 2))),
