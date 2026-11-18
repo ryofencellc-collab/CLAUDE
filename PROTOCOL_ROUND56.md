@@ -58,3 +58,10 @@ The selection and final-exam rules are unchanged.
 - 6 random-walk null runs: 1 false pass, in line with the ~5% family-wise rate that Bonferroni over 20 gives.
 
 Every market job's smoke step asserts that the planted edge is recovered.
+
+## Result (2026-11-18): **0 of 11,916,800 pass** (`reports/ROUND56.md`)
+- **Survivors:** 114 configurations survived search + selection, against a rough luck-only expectation of ~3,000.
+  After costs there are *fewer* survivors than chance alone would give.
+- **Final exam (2023 → now):** all 20 shortlisted configurations failed. The best final t was 1.77 (oil, 13:05 momentum on gap-up days), and 13 of 20 lost money.
+- **Data notes:** Nikkei has only 134 search-period days and S&P 598 (its HistData history starts later). WTI has only 208 final-period days.
+  Nikkei's five shortlist slots came from that tiny sample and collapsed in the final exam, which is the expected fate of small-sample flukes.
