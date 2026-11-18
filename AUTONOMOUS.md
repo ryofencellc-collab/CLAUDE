@@ -36,7 +36,9 @@ The backlog therefore favours **"nowcast" markets**: contracts whose outcome is 
 released *before* the market closes, and that most traders don't track.
 
 ## Backlog (ranked)
-- [~] **57 Nowcast markets (in progress: Round 57 = AAA gas daily, PROTOCOL_ROUND57.md; probes in probe/nowcast/).** For Kalshi markets on weekly or monthly public statistics, measure how well a simple nowcast from earlier
+- [ ] **62 Mention markets.** Kalshi "will <speaker> say <word>" markets (Fed press conferences, etc.) vs base rates from public transcripts.
+  Hypothesis: market makers misprice rare and common words relative to how often the speaker actually says them. Free data: federalreserve.gov transcripts.
+- [x] **57 Nowcast markets — gas: FAIL** (Round 57: market 3× more accurate than the nowcast; TGA/jobless markets have ~0 trades; mortgage only 9 events). Original idea:.** For Kalshi markets on weekly or monthly public statistics, measure how well a simple nowcast from earlier
   public data predicts the outcome, compared with the market price at the same moment.
   - **Statistics:** TSA checkpoint throughput (tsa.gov daily), AAA/EIA gas prices (daily/weekly), jobless claims (FRED), CPI (Cleveland Fed nowcast),
     GDP (Atlanta Fed GDPNow), mortgage rates (Freddie Mac), unemployment and payrolls.

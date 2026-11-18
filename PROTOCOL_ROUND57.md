@@ -34,3 +34,11 @@ Capacity (contracts available at those prices) is reported but is not part of th
 **Calibration:**
 - **Planted:** a synthetic world where gas trends and prices ignore the trend → must pass.
 - **Null:** a synthetic world where prices equal the true probability plus noise → must not pass.
+
+## Result (2026-11-18): **FAIL** (`reports/ROUND57.md`)
+- **Sample:** 46,883 settled markets in 51 series (US + states), 2026-09-11 → 11-17.
+- **Dev choice:** mom7 with edge 0.20. No dev configuration reached t ≥ 1.
+- **Holdout:** 2,014 trades, −$0.016 per contract, t −0.94.
+- **Brier:** the market price scores **0.047** against the model's 0.143. The market is about 3× more accurate than the nowcast.
+- **Reading:** gas traders evidently use better live data (station-level feeds such as GasBuddy) than yesterday's AAA print plus a trend.
+  Public-statistic markets that are this liquid look efficient. The nowcast category stays open only for thin markets with no live alternative data.
