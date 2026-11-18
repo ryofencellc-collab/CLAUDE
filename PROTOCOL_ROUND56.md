@@ -55,6 +55,6 @@ The selection and final-exam rules are unchanged.
 
 **Calibration, 2-year synthetic data, enlarged grammar:**
 - Planted lunch reversal: recovered and passed.
-- 6 random-walk null runs: 1 false pass, in line with the ~5% family-wise rate that Bonferroni over 20 gives.
+- 5 random-walk null runs: 1 false pass, in line with the ~5% family-wise rate that Bonferroni over 20 gives.
 
 Every market job's smoke step asserts that the planted edge is recovered.
