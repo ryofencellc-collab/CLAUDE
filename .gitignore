@@ -2,3 +2,4 @@ data/
 __pycache__/
 .pytest_cache/
 *.pyc
+reports/blind_grid_all.csv
