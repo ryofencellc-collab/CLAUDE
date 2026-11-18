@@ -27,3 +27,10 @@ A test is significant at Bonferroni p < 0.05 over all tests on all 3 sources and
 1. **Right source?** The false-positive check is that the two clean sources produce nothing.
 2. **Right strategy type?**
 3. **Bugs:** any flaw found in the system.
+
+## Real-data scan (added 2026-11-18, after the reveal and calibration)
+The calibration showed detector 2 catches midday reversals and weekday drift, which the Round 53 grid can't express.
+`run_scan_real.py` runs detector 2 unchanged on real S&P/Nasdaq bars, with dev = 2012–2020 and holdout = 2021+.
+- A signal counts only if it passes Bonferroni, has the same sign in both periods, and its mean beats 3 bp per day (costs).
+- Survivors are hypotheses for a dedicated pre-registered round, not trades.
+- Caveat: this data was used before (Rounds 29, 52, 53), so it is not fresh.

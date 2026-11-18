@@ -94,3 +94,17 @@ sha256 = `a7ddf61213c9b76403cc865b43d1f4582c9a8ac75163704c1f3209a4b42421df`
 {"or_minutes": 15, "source": "X", "strategy": "orb_continuation", "strength_k": 0.446}
 ```
 
+
+## Verdict
+- **Blind test: found it.** Right source (X), right strategy (ORB continuation), right parameter (15-minute range).
+  The two clean sources gave zero hits on both detectors.
+- **Calibration, 84 runs:** see [blind_calibration.md](blind_calibration.md). False alarms on clean sources were rare: 1 grid hit
+  and 5 scanner hits in 84 runs × 2 clean sources.
+- **Blind spots found in the grid (Round 53 system):**
+  1. **Day-of-week patterns**: never detected; the grid has no weekday entry.
+  2. **Midday reversals**: never detected; the grid has no midday entry. The scanner caught them at k ≥ 0.25.
+  3. **Short-lived gap fills**: never detected. Not a code bug: the edge (raw t 7.5) is there and the GapFill entry trades
+     the right side, but its fixed 0.25%/0.5% stops and 11:30/close exits leave only t ≈ 2.7 / 1.4 a year.
+  4. **Weak edges (k = 0.15)**: almost never detected in 2 years by either detector. An edge that small needs more years of data.
+- **Consequence for the real rounds:** the 0/3,456 NY result rules out the setups the grid expresses. It does not rule out weekday,
+  midday or short gap-fill effects. The segment scanner now runs on the real data (`run_scan_real.py`, workflow blindreal).

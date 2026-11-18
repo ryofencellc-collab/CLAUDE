@@ -70,7 +70,7 @@ def scan():
     W["t_all"] = (W.t_2024 * np.sqrt(W.n_2024) + W.t_2025 * np.sqrt(W.n_2025)) / np.sqrt(W.n_2024 + W.n_2025)  # Stouffer
     ntests = len(W); crit = float(-__import__("scipy").stats.norm.ppf(0.025 / ntests))
     sig = W[(W.t_all.abs() >= crit) & (np.sign(W.t_2024) == np.sign(W.t_2025))].sort_values("t_all", key=abs, ascending=False)
-    out = ["## Detector 2: generic segment scanner", "", f"Tests: {ntests} across 3 sources; Bonferroni |t| ≥ {crit:.2f}, same sign both years.", "",
+    out = ["## Detector 2: generic segment scanner", "", f"Tests: {ntests} across {len(SRC)} sources; Bonferroni |t| ≥ {crit:.2f}, same sign both years.", "",
            "Significant per source: " + ", ".join(f"{s} **{(sig.source == s).sum()}**" for s in SRC), ""]
     show = sig if len(sig) else W.sort_values("t_all", key=abs, ascending=False)
     out += [("Significant tests:" if len(sig) else "Nothing significant. Top 15 by |t|:"), "",
