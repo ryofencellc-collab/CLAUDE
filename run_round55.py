@@ -57,7 +57,7 @@ def calibrate(v):
 
 
 def simulate(M, v, c, entry=dtime(14, 50), tp=TP, slip=SLIP, days_only=None):
-    out = []
+    out = [dict(day=pd.NaT, credit=np.nan, pnl=np.nan, how="")][:0]
     e_bar = (entry.hour * 60 + entry.minute) - 570
     for i, day in enumerate(M["days"]):
         ds = str(day.date())
@@ -79,7 +79,21 @@ def simulate(M, v, c, entry=dtime(14, 50), tp=TP, slip=SLIP, days_only=None):
             ST = C[389]; val = max(K - ST, 0) + max(ST - K, 0) - max(K - W - ST, 0) - max(ST - K - W, 0)
             pnl = (cr - val) * 100 - 4 * FEE
         out.append(dict(day=day, credit=cr, pnl=pnl, how=how))
-    return pd.DataFrame(out).set_index("day")
+    return pd.DataFrame(out, columns=["day", "credit", "pnl", "how"]).set_index("day")
+
+
+def recorded_matrix(days):
+    """(days x 390) SPX closes from our own recorded Cboe spot (corrected clock): the 1-minute files end before these days."""
+    out, keep = [], []
+    for day in days:
+        d = O.load_day(day, "SPXW")
+        sp = d.groupby("t")["spot"].first()
+        sp.index = sp.index.tz_localize(None)
+        grid = pd.date_range(f"{day} 09:30", periods=390, freq="min")
+        x = sp.reindex(sp.index.union(grid)).ffill().reindex(grid)
+        if x.isna().sum() < 30:
+            out.append(x.bfill().to_numpy()); keep.append(pd.Timestamp(day))
+    return dict(days=pd.DatetimeIndex(keep), c=np.array(out))
 
 
 def summ(R, label):
@@ -97,7 +111,7 @@ def main():
     M = __import__("edge.nygrid", fromlist=["day_matrix"]).day_matrix(load_nq(pair="SPXUSD"))
     print("SPX days", len(M["days"]), M["days"][0].date(), "->", M["days"][-1].date(), flush=True)
     # calibration check: model vs real on the collected days (model credit uses that day's prior VIX1D x c)
-    cal = simulate(M, v, c, days_only=set(C.day)).reset_index()
+    cal = simulate(recorded_matrix(C.day), v, c).reset_index()
     cal["day"] = cal.day.dt.strftime("%Y-%m-%d"); cal = C.merge(cal, on="day", how="left")
     cal["credit_err"] = (cal.credit - cal.credit_real) / cal.credit_real
     start = pd.Timestamp("2024-08-01")
