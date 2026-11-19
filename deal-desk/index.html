@@ -101,6 +101,7 @@ table.cf tr.total td{font-weight:600;border-bottom:0}
     <span class="chip">Seller balloon ≥ 7 yrs</span>
     <span class="chip">Inspection + sewer scope</span>
     <span class="chip">Reserves ≥ 6 mo</span>
+    <span class="chip">Rent at rent-reasonable level, not the cap</span>
   </div>
 
   <div class="grid">
@@ -155,19 +156,27 @@ function analyze(d){
   const cfUnit=cf/12/units;
   const reservesNeeded=RULES.reserveMonths*(opex/12+pmt);
   const checks=[
-    ["Cash flow per unit",cfUnit>=RULES.cfUnit,money(cfUnit)+"/mo"],
-    ["Debt coverage (DSCR)",dscr>=RULES.dscr,isFinite(dscr)?dscr.toFixed(2):"no debt"],
-    ["Cash-on-cash return",coc>=RULES.coc,pct(coc)],
-    ["Rent at or under payment standard",n(d.paymentStandard)>0&&n(d.rentPerUnit)<=n(d.paymentStandard),money(n(d.rentPerUnit))+" vs "+(n(d.paymentStandard)?money(n(d.paymentStandard)):"not set")],
-    ["Built 1978+ or lead-safe",n(d.yearBuilt)>=1978||!!d.leadSafe,d.leadSafe?"lead-safe":String(n(d.yearBuilt)||"?")],
-    ["Balloon at least 7 years",d.financing!=="seller"||n(d.balloonYears)===0||n(d.balloonYears)>=RULES.balloon,d.financing==="seller"?(n(d.balloonYears)?n(d.balloonYears)+" yrs":"none"):"n/a"],
-    ["Inspection passed",!!d.inspectionDone,d.inspectionDone?"yes":"not yet"],
-    ["Sewer scope passed",!!d.sewerScope,d.sewerScope?"yes":"not yet"],
-    ["Reserves ≥ 6 months",n(d.reservesOnHand)>=reservesNeeded,money(n(d.reservesOnHand))+" / "+money(reservesNeeded)],
+    ["Cash flow per unit",cfUnit>=RULES.cfUnit,money(cfUnit)+"/mo","n"],
+    ["Debt coverage (DSCR)",dscr>=RULES.dscr,isFinite(dscr)?dscr.toFixed(2):"no debt","n"],
+    ["Cash-on-cash return",coc>=RULES.coc,pct(coc),"n"],
+    ["Rent at or under payment standard",n(d.paymentStandard)>0&&n(d.rentPerUnit)<=n(d.paymentStandard),money(n(d.rentPerUnit))+" vs "+(n(d.paymentStandard)?money(n(d.paymentStandard)):"not set"),"n"],
+    ["Built 1978+ or lead-safe",n(d.yearBuilt)>=1978||!!d.leadSafe,d.leadSafe?"lead-safe":String(n(d.yearBuilt)||"?"),"n"],
+    ["Balloon at least 7 years",d.financing!=="seller"||n(d.balloonYears)===0||n(d.balloonYears)>=RULES.balloon,d.financing==="seller"?(n(d.balloonYears)?n(d.balloonYears)+" yrs":"none"):"n/a","n"],
+    ["Inspection passed",!!d.inspectionDone,d.inspectionDone?"yes":"not yet","dd"],
+    ["Sewer scope passed",!!d.sewerScope,d.sewerScope?"yes":"not yet","dd"],
+    ["Reserves ≥ 6 months",n(d.reservesOnHand)>=reservesNeeded,money(n(d.reservesOnHand))+" / "+money(reservesNeeded),"dd"],
   ];
-  return {gross,pctCosts,opex,noi,down,loan,pmt,ds,cf,invested,coc,dscr,cfUnit,reservesNeeded,checks,pass:checks.every(c=>c[1]),fails:checks.filter(c=>!c[1]).length,rentRatio:(n(d.price)+n(d.rehab))>0?(n(d.rentPerUnit)*units)/(n(d.price)+n(d.rehab)):0};
+  const nums=checks.filter(c=>c[3]==="n");
+  return {gross,pctCosts,opex,noi,down,loan,pmt,ds,cf,invested,coc,dscr,cfUnit,reservesNeeded,checks,pass:nums.every(c=>c[1]),fails:nums.filter(c=>!c[1]).length,ddOpen:checks.filter(c=>c[3]==="dd"&&!c[1]).length,rentRatio:(n(d.price)+n(d.rehab))>0?(n(d.rentPerUnit)*units)/(n(d.price)+n(d.rehab)):0};
 }
 
+function maxOffer(d){
+  const ok=p=>analyze({...d,price:p}).checks.slice(0,3).every(c=>c[1]);
+  let lo=1000,hi=Math.max(100000,(Number(d.price)||0)*2);
+  if(!ok(lo))return 0;
+  for(let i=0;i<32;i++){const m=(lo+hi)/2;if(ok(m))lo=m;else hi=m}
+  return Math.floor(lo/500)*500;
+}
 let db=null,user=null,isOwner=false,canWrite=false,deals=[],selected=null,draft=null;
 
 function renderList(){
@@ -185,7 +194,7 @@ function renderList(){
     b.querySelector(".addr").textContent=data.address||"Untitled deal";
     const m=b.querySelectorAll(".meta span");
     m[0].textContent=(data.market||"")+" · "+money(Number(data.price)||0);
-    m[1].textContent=a.pass?"passes all rules":a.fails+" rule"+(a.fails>1?"s":"")+" failing";
+    m[1].textContent=a.pass?"numbers pass":a.fails+" rule"+(a.fails>1?"s":"")+" failing";
     b.onclick=()=>{selected=id;draft=null;renderList();renderSheet()};
     list.appendChild(b);
   });
@@ -204,11 +213,12 @@ function renderSheet(){
   if(!rec&&!draft){sheet.innerHTML='<div class="empty">Pick a deal on the left to see its numbers.</div>';return}
   const d=draft||{...BLANK,...rec.data};
   const a=analyze(d);
+  const mo=maxOffer(d);
   const ro=!canWrite;
   sheet.innerHTML=`<div class="sheet">
     <div class="sheet-head"><div><div class="label" id="sMarket"></div><h2 id="sAddr" style="font-size:22px"></h2><a id="sLink" target="_blank" rel="noopener" class="note"></a></div>
       <span class="pill s-${d.status}" id="sStatus"></span></div>
-    <div class="verdict ${a.pass?"ok":"no"}"><strong>${a.pass?"Passes every rule":a.fails+" rule"+(a.fails>1?"s":"")+" failing"}</strong><span>${a.pass?"Ready for your decision.":"Not buyable as written. Fix the terms or walk away."}</span></div>
+    <div class="verdict ${a.pass?"ok":"no"}"><strong>${a.pass?(a.ddOpen?"Numbers pass. OK to make an offer":"Passes every rule. OK to close"):a.fails+" rule"+(a.fails>1?"s":"")+" failing"}</strong><span>${a.pass?(a.ddOpen?a.ddOpen+" due-diligence item"+(a.ddOpen>1?"s":"")+" must clear before closing.":"Ready for your decision."):(mo?"Cash flow rules pass at "+money(mo)+" or less. Offer there, fix the other failing items, or walk away.":"No price makes the cash flow work. Walk away.")}</span></div>
     <div class="kpis">
       <div class="kpi"><div class="label">Cash flow /mo</div><div class="v ${a.cf<0?"neg":""}">${money(a.cf/12)}</div></div>
       <div class="kpi"><div class="label">Per unit /mo</div><div class="v ${a.cfUnit<0?"neg":""}">${money(a.cfUnit)}</div></div>
@@ -216,9 +226,10 @@ function renderSheet(){
       <div class="kpi"><div class="label">DSCR</div><div class="v">${isFinite(a.dscr)?a.dscr.toFixed(2):"—"}</div></div>
       <div class="kpi"><div class="label">Cash to close</div><div class="v">${money(a.invested)}</div></div>
       <div class="kpi"><div class="label">Rent / price</div><div class="v">${pct(a.rentRatio)}</div></div>
+      <div class="kpi"><div class="label">Max offer that passes</div><div class="v">${mo?money(mo):"none"}</div></div>
     </div>
     <div class="cols">
-      <div><h2 style="margin-bottom:8px">Rule check</h2><ul class="checks">${a.checks.map(c=>`<li class="${c[1]?"ok":"no"}"><span class="mark">${c[1]?"✓":"✕"}</span><span>${c[0]}</span><span class="val">${c[2]}</span></li>`).join("")}</ul></div>
+      <div><h2 style="margin-bottom:8px">Rule check</h2>${[["n","To make an offer"],["dd","Before closing"]].map(([g,t])=>`<div class="label" style="margin-top:10px">${t}</div><ul class="checks">${a.checks.filter(c=>c[3]===g).map(c=>`<li class="${c[1]?"ok":"no"}"><span class="mark">${c[1]?"✓":"✕"}</span><span>${c[0]}</span><span class="val">${c[2]}</span></li>`).join("")}</ul>`).join("")}</div>
       <div><h2 style="margin-bottom:8px">Annual cash flow</h2><table class="cf"><tbody>
         <tr><td>Gross rent</td><td>${money(a.gross)}</td></tr>
         <tr><td>Vacancy, repairs, capex, management (34%)</td><td>${money(-a.pctCosts)}</td></tr>
@@ -230,7 +241,7 @@ function renderSheet(){
       <p class="note">Loan ${money(a.loan)} · down payment ${money(a.down)}</p></div>
     </div>
     <div class="actions" id="decide" hidden>
-      <button class="approve" id="approve">Approve — make the offer</button>
+      <button class="approve" id="approve">Approve offer</button>
       <button class="reject" id="reject">Reject</button>
     </div>
     <p class="note" id="decideNote" hidden></p>
@@ -251,7 +262,7 @@ function renderSheet(){
   if(rec&&isOwner&&(d.status==="pending"||d.status==="screening")){
     $("#decide").hidden=false;
     $("#approve").disabled=!a.pass;
-    if(!a.pass){const n=$("#decideNote");n.hidden=false;n.textContent="Approve unlocks only when every rule passes."}
+    if(!a.pass){const n=$("#decideNote");n.hidden=false;n.textContent="Approve unlocks once the offer rules pass. Lower the price to the max offer, or reject."}
     $("#approve").onclick=()=>decide("approved");
     $("#reject").onclick=()=>decide("rejected");
   }
