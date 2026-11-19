@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-19 08:58 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 171058; settled: 163819.
+Updated 2026-11-19 09:59 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 171058; settled: 163837.
 
-Total paper P&L: **$7,644.51**; filled markets 21322; wrong calls 313, of which filled 195.
+Total paper P&L: **$7,648.40**; filled markets 21324; wrong calls 313, of which filled 195.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -22,7 +22,7 @@ Total paper P&L: **$7,644.51**; filled markets 21322; wrong calls 313, of which 
 | KXNBATOTAL         |      2199 |     1329 | 677870           |           0    |      2.12442e+06 |   717.14 |      24 |             16 |
 | KXHIGHLAX          |        66 |       56 |  54326.6         |           0    | 700857           |   533.48 |       0 |              0 |
 | KXNFL1HTOTAL       |       386 |       85 |  51972.4         |        3602.52 | 750698           |   510.21 |       0 |              0 |
-| KXLIGAPROMATCH     |      2658 |      175 |  49631.2         |       10477.5  | 296508           |   434.34 |       4 |              2 |
+| KXLIGAPROMATCH     |      2670 |      177 |  50027.3         |       10470.4  | 297171           |   438.23 |       4 |              2 |
 | KXRT               |        85 |       50 |  41593.8         |           0    | 710436           |   408.43 |       0 |              0 |
 | KXHIGHCHI          |        66 |       44 |  41438.6         |           0    | 339888           |   406.92 |       0 |              0 |
 | KXHIGHNY           |        60 |       50 |  47191.9         |           0    | 569740           |   394.97 |       1 |              1 |
@@ -31,7 +31,7 @@ Total paper P&L: **$7,644.51**; filled markets 21322; wrong calls 313, of which 
 | KXNFLGAME          |        54 |       36 |  36000           |           0    |      4.46602e+07 |   353.52 |       0 |              0 |
 | KXNFLPASSYDS       |       560 |      164 | 101268           |         551    | 903891           |   336.19 |       2 |              2 |
 | KXNFL1QSPREAD      |       303 |       56 |  34065.9         |        2478    | 362221           |   334.44 |       0 |              0 |
-| KXCS2MAP           |      1060 |       80 |  33389.9         |        5400.5  | 242961           |   327.68 |       2 |              0 |
+| KXCS2MAP           |      1066 |       80 |  33389.9         |        5400.5  | 243959           |   327.68 |       2 |              0 |
 | KXLALIGASCORE      |       202 |       49 |  31911.3         |           0    | 136341           |   313.25 |       0 |              0 |
 | KXDIMAYORGAME      |        51 |       33 |  30846.8         |           0    | 705076           |   302.9  |       0 |              0 |
 | KXNFLTD            |      1365 |      719 | 429102           |           0    |      5.24208e+06 |   277.69 |      11 |              7 |
