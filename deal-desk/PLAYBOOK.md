@@ -27,7 +27,9 @@ Assumptions on every deal: rent set at an estimate of what the housing agency wi
 ## 2. Rent ceilings (verify before any offer)
 
 - HUD FY2027 Fair Market Rent, Indianapolis-Carmel (effective Oct 1, 2026): 1BR $1,336, 2BR $1,536, 3BR $1,991, 4BR $2,425.
-- Indianapolis Housing Agency (IHA) payment standards on its own site: 2BR $1,619, 3BR $2,110 (undated). The agency sets standards by zip code at 90–110% of HUD's zip-level Fair Market Rents.
+- Indianapolis Housing Agency (IHA) payment standards, confirmed on indyhousing.org on Nov 19, 2026: 1BR $1,374, 2BR $1,619, 3BR $2,110, 4BR $2,551.
+- These cap **gross** rent (rent plus tenant-paid utilities). If tenants pay their own utilities, the rent ceiling is the standard minus IHA's utility allowance.
+- IHA also rates every unit against its own average rents for each part of Marion County ("rent reasonableness"). That, not the standard, usually sets the actual rent.
 - IHA paused processing new rent-increase requests on voucher units into mid-2026. Underwrite with no rent increases for year one.
 - Indiana law lets landlords decline vouchers (IC 36-1-3-8.5). Section 8 is a choice we make per unit.
 
