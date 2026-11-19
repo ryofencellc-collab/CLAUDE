@@ -59,3 +59,20 @@ The rules are unchanged.
 Look-ahead fix. A word's record now counts only earlier events that had **settled before the decision time** (market open + 1 h).
 Before this, it counted events settled before the current event's close, which can be after the decision. This was found while auditing
 Round 46m's hindsight close times. It applies to run 5, which is in flight. If run 5 finishes on the old code, it is discarded and rerun.
+
+## Result (2026-11-19, run 6 with amendments 1–4): **FAIL on the pre-registered rule, with a strong profit signal**
+- **Sample:** 44,043 settled mention markets in 212 series; 24,796 had ≥ 3 earlier settlements of the same word.
+- **Dev choice:** edge ≥ 0.30, n_min 3. The split fell at 2026-06-16.
+- **Holdout:** **1,759 trades, +$0.062 per contract after fees, event-clustered t 5.15.** Both sides were positive (YES +9.3¢, NO +3.6¢).
+- **Why it fails:** on the traded markets the price's Brier score (0.188) beat the prior's (0.302). That condition was pre-registered, so the verdict is FAIL.
+- **Reading:** the trade makes money without the base rate being the better forecaster. The edge comes from the market overreacting away from the
+  word's record. When the record and the price disagree by ≥ 30¢, betting on the record's side wins on average, even though the record alone
+  forecasts worse. That is a hypothesis, not a proof. Profit was concentrated in KXWCMENTION, Mamdani, Bernie and Last Word, while Trump-B, World
+  News and Hearing were flat or negative.
+
+## Round 58f (registered 2026-11-19 02:40 UTC, before any of its data exists): live paper forward test
+Same rule on **new** markets only, from now on.
+- **Entry:** for each open mention market at least 1 h after it opened, compute the word's prior from settlements before now. Paper-buy 1 contract at the live ask
+  if prior − ask ≥ 0.30 (YES) or (1 − prior) − no_ask ≥ 0.30 (NO). One trade per market, Kalshi taker fee.
+- **Pass:** after 30 calendar days, ≥ 150 settled trades, mean P&L > 0 and event-clustered t ≥ 2.
+- A pass makes it a real-money candidate, subject to a budget set by the user.
