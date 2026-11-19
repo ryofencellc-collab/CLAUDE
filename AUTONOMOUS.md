@@ -36,7 +36,7 @@ The backlog therefore favours **"nowcast" markets**: contracts whose outcome is 
 released *before* the market closes, and that most traders don't track.
 
 ## Backlog (ranked)
-- [~] **63 Copy the winners (user's direction, 2026-11-19).** Hyperliquid public leaderboard + account histories: do top traders persist out of sample (Round 59)? If yes: delayed-copy simulation with fees (59b), then a live paper copy tracker.
+- [x] **63 Copy the winners: Hyperliquid FAIL (Round 59; winners don't persist).** Original: (user's direction, 2026-11-19).** Hyperliquid public leaderboard + account histories: do top traders persist out of sample (Round 59)? If yes: delayed-copy simulation with fees (59b), then a live paper copy tracker.
 - [x] **62 Mention markets: Round 58 FAIL by rule, holdout profit t 5.15 → forward test 58f running.** Kalshi "will <speaker> say <word>" markets (Fed press conferences, etc.) vs base rates from public transcripts.
   Hypothesis: market makers misprice rare and common words relative to how often the speaker actually says them. Free data: federalreserve.gov transcripts.
 - [x] **57 Nowcast markets — gas: FAIL** (Round 57: market 3× more accurate than the nowcast; TGA/jobless markets have ~0 trades; mortgage only 9 events). Original idea:.** For Kalshi markets on weekly or monthly public statistics, measure how well a simple nowcast from earlier

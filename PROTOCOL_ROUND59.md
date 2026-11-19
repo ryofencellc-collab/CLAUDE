@@ -40,3 +40,15 @@ A pass sends that group to Round 59b, a copy simulation using real fills, a 1–
 **Calibration.** A synthetic population of 6,000 accounts:
 - Null: pure luck, with no skill. Must not pass.
 - Planted: 5% of accounts carry persistent skill. Must pass.
+
+## Result (2026-11-19): **FAIL**: top traders do not persist (`reports/ROUND59.md`)
+- **Sample:** 5,999 accounts sampled; 1,399 were eligible (still holding ≥ $10k on Sep 1).
+- **Universe in the test window:** mean ROI −12%, and only 30% of accounts profitable.
+- **All three groups lost money in the test window:**
+  - biggest PnL: −15%, 24% profitable;
+  - best ROI: −28%;
+  - steadiest: −15%.
+- **Decile table:** the selection window's best-ROI decile did the *worst* in the test window (−26%) and its worst decile did about average.
+  That is mild reversal with no persistence. The reversal is not significant against the universe (Welch t −0.5 to −1.6), so "fade the winners" is
+  not supported either.
+- **Takeaway:** on a perp exchange, a quarter of leaderboard success is mostly leverage plus luck. Copying past winners would have lost money.
