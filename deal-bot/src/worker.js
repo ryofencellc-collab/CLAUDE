@@ -129,9 +129,66 @@ export async function handleUpdate(update, env) {
   return { chat_id: msg.chat.id, reply_to_message_id: msg.message_id, parse_mode: "HTML", disable_web_page_preview: true, ...reply };
 }
 
+// ---------- Discord (slash commands over HTTP interactions; no always-on connection needed) ----------
+
+const hex = h => new Uint8Array((h.match(/../g) || []).map(b => parseInt(b, 16)));
+
+export async function verifyDiscord(request, body, publicKeyHex) {
+  const sig = request.headers.get("X-Signature-Ed25519");
+  const ts = request.headers.get("X-Signature-Timestamp");
+  if (!sig || !ts || !publicKeyHex) return false;
+  try {
+    const key = await crypto.subtle.importKey("raw", hex(publicKeyHex), { name: "Ed25519" }, false, ["verify"]);
+    return await crypto.subtle.verify("Ed25519", key, hex(sig), new TextEncoder().encode(ts + body));
+  } catch { return false; }
+}
+
+const mdEsc = s => String(s).replace(/([\\*_~`|>\[\]()])/g, "\\$1");
+
+export function handleDiscord(interaction, env) {
+  if (interaction.type === 1) return { type: 1 }; // PING
+  if (interaction.type !== 2) return null;
+  const allowed = (env.ALLOWED_GUILDS || "").split(",").map(s => s.trim()).filter(Boolean);
+  if (allowed.length && interaction.guild_id && !allowed.includes(interaction.guild_id)) {
+    return { type: 4, data: { content: "This bot isn't enabled in this server.", flags: 64 } };
+  }
+  const name = interaction.data?.name;
+  if (name === "help") {
+    return { type: 4, data: { flags: 64, content:
+      "Use `/deal item:ipad air under 450` and I'll find top-rated matches on Amazon.\n\n*" + DISCLOSURE + "*" } };
+  }
+  if (name !== "deal") return null;
+  const item = (interaction.data.options || []).find(o => o.name === "item")?.value || "";
+  const req = extractQuery(item, { command: true });
+  if (!req) return { type: 4, data: { flags: 64, content: "Tell me what to look for, like `/deal item:ipad air under 450`." } };
+  const budget = req.max != null ? (req.min != null ? ` ($${req.min}–$${req.max})` : ` (under $${req.max})`) : "";
+  return {
+    type: 4,
+    data: {
+      content: `🔎 **${mdEsc(req.query)}**${budget}\nTop-rated matches on Amazon, sorted by reviews. Check the price and seller before buying.\n\n*${DISCLOSURE}*`,
+      allowed_mentions: { parse: [] },
+      components: [{ type: 1, components: [{ type: 2, style: 5, label: "See deals on Amazon", url: amazonUrl(req, env.AMAZON_TAG) }] }],
+    },
+  };
+}
+
+export const DISCORD_COMMANDS = [
+  { name: "deal", description: "Find top-rated Amazon deals", options: [
+    { type: 3, name: "item", description: "What you want, e.g. ipad air under 450", required: true } ] },
+  { name: "help", description: "How to use the deal bot" },
+];
+
 export default {
   async fetch(request, env) {
     if (request.method !== "POST") return new Response("Deal Bot is running.");
+    if (new URL(request.url).pathname === "/discord") {
+      const body = await request.text();
+      if (!(await verifyDiscord(request, body, env.DISCORD_PUBLIC_KEY))) return new Response("invalid signature", { status: 401 });
+      let interaction;
+      try { interaction = JSON.parse(body); } catch { return new Response("bad request", { status: 400 }); }
+      const out = handleDiscord(interaction, env);
+      return out ? Response.json(out) : new Response("unknown command", { status: 400 });
+    }
     if (request.headers.get("X-Telegram-Bot-Api-Secret-Token") !== env.WEBHOOK_SECRET) {
       return new Response("forbidden", { status: 403 });
     }
