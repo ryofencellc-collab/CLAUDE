@@ -1,0 +1,27 @@
+name: mention_f
+# Round 58f (PROTOCOL_ROUND58.md): live paper forward test, mention markets vs word record. Every 30 minutes.
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: mention_f
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    env:
+      R58F_COMMIT: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "claude/eloquent-darwin-2lipsh"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: |
+          git config user.name "mention bot"
+          git config user.email "actions@users.noreply.github.com"
+      - run: python -m edge.mention_live
