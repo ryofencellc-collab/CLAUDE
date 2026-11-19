@@ -815,3 +815,4 @@ time_utc,mode,event,ticker,side,count,z,spot,balance,detail
 2026-11-19T06:12:09.007046+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTCD,KXETHD,KXSOLD,KXXRPD"
 2026-11-19T11:57:13.022352+00:00,DRY,stop,,,0,,,,job ending
 2026-11-19T11:58:04.633595+00:00,DRY,start,,,0,,,,"authed=False max=1000 series=KXBTCD,KXETHD,KXSOLD,KXXRPD"
+2026-11-19T17:43:06.419504+00:00,DRY,stop,,,0,,,,job ending
