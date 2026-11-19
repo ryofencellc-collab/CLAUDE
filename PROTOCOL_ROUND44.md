@@ -65,7 +65,7 @@ Every other condition passes:
 ## Round 44c (registered 2026-11-19 00:30 UTC, before any of its data exists): longer forward test of the 44b quoting rule
 44b's daily P&L is lumpy, with big up days and modest down days. The 7-of-10 consistency rule is a poor test of lumpy P&L, so this is a
 **new, separate test** on new data only: the same engine and settings (`R44_TAG=b, R44_BACK=1`), scored from 2026-11-20 to 2026-12-19
-(30 days). It runs on a fresh $10k ledger and does not reuse 44b's P&L.
+(30 days). It is scored on the 44b tracker's daily net P&L rows dated Nov 20 onward; the tracker keeps running unchanged, so open positions carry over. Nothing before Nov 20 counts.
 
 **Pass:** all four conditions on those 30 days:
 1. net > 0;
