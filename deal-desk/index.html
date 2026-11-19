@@ -1,0 +1,303 @@
+<title>Deal Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: ledger desk. Pipeline list on the left, the open deal's underwriting sheet on the right; stacks on phones. */
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#17211D; --muted:#5E6B65; --line:#D9DFDA;
+  --accent:#1F5C4A; --accent-ink:#FFFFFF; --pass:#1E7A46; --pass-bg:#E2F2E8; --fail:#B4362B; --fail-bg:#FBE6E3;
+  --warn:#9A6A00; --warn-bg:#FBF0D6;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#19211E; --ink:#E6ECE8; --muted:#97A39D; --line:#2C3833;
+  --accent:#6FC3A6; --accent-ink:#0D1412; --pass:#6FD39A; --pass-bg:#18321F; --fail:#F08A7F; --fail-bg:#3A1C19;
+  --warn:#E8BE5A; --warn-bg:#352A10; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#19211E; --ink:#E6ECE8; --muted:#97A39D; --line:#2C3833;
+  --accent:#6FC3A6; --accent-ink:#0D1412; --pass:#6FD39A; --pass-bg:#18321F; --fail:#F08A7F; --fail-bg:#3A1C19;
+  --warn:#E8BE5A; --warn-bg:#352A10; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:-.01em;margin:0}
+.sub{color:var(--muted);margin:2px 0 0;max-width:62ch}
+h2{font-family:var(--f-display);font-size:17px;margin:0}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;font-weight:500}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.approve{background:var(--pass);color:var(--surface);border-color:var(--pass)}
+button.reject{background:transparent;color:var(--fail);border-color:var(--fail)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.rules{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-mono);font-size:12px;padding:3px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:var(--surface)}
+.grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.list{display:grid}
+.row{display:grid;gap:4px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;text-align:left;background:none;border-radius:0;border-left:3px solid transparent;border-top:0;border-right:0;width:100%}
+.row:last-child{border-bottom:0}
+.row[aria-current="true"]{border-left-color:var(--accent);background:var(--bg)}
+.row .addr{font-weight:600}
+.row .meta{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:4px}
+.s-screening{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.s-pending{background:var(--warn-bg);color:var(--warn)}
+.s-approved{background:var(--pass-bg);color:var(--pass)}
+.s-rejected{background:var(--fail-bg);color:var(--fail)}
+.s-closed{background:var(--accent);color:var(--accent-ink)}
+.ex{font-size:11px;font-weight:600;color:var(--warn)}
+.sheet{padding:20px;display:grid;gap:20px}
+.sheet-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-start}
+.verdict{padding:14px 16px;border-radius:8px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.verdict.ok{background:var(--pass-bg);color:var(--pass)}
+.verdict.no{background:var(--fail-bg);color:var(--fail)}
+.verdict strong{font-family:var(--f-display);font-size:18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kpi{background:var(--surface);padding:12px 14px}
+.kpi .v{font-family:var(--f-mono);font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.kpi .v.neg{color:var(--fail)}
+.checks{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.checks li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--line)}
+.checks .mark{font-weight:700}
+.checks .ok .mark{color:var(--pass)} .checks .no .mark{color:var(--fail)}
+.checks .val{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px}
+legend{padding:0;margin-bottom:8px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 14px}
+.f{display:grid;gap:3px;min-width:0}
+.f label{font-size:12px;color:var(--muted)}
+input,select,textarea{font:inherit;font-family:var(--f-mono);font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;box-sizing:border-box}
+textarea{font-family:var(--f-body);min-height:70px;resize:vertical}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:700px){.cols{grid-template-columns:minmax(0,1fr)}}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.note{font-size:13px;color:var(--muted)}
+.empty{padding:24px 16px;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;font-size:14px}
+table.cf{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+table.cf td{padding:4px 0;border-bottom:1px solid var(--line)}
+table.cf td:last-child{text-align:right;font-family:var(--f-mono)}
+table.cf tr.total td{font-weight:600;border-bottom:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Deal Desk</h1>
+      <p class="sub">Section 8 rentals, underwritten against fixed rules. Claude finds and screens deals; you approve or reject.</p>
+    </div>
+    <div class="actions"><button id="newDeal" class="primary" hidden>Add deal</button></div>
+  </header>
+
+  <div class="rules" aria-label="Buy rules">
+    <span class="chip">≥ $200 /unit /mo cash flow</span>
+    <span class="chip">DSCR ≥ 1.25</span>
+    <span class="chip">Cash-on-cash ≥ 10%</span>
+    <span class="chip">Rent ≤ payment standard</span>
+    <span class="chip">Built 1978+ or lead-safe</span>
+    <span class="chip">Seller balloon ≥ 7 yrs</span>
+    <span class="chip">Inspection + sewer scope</span>
+    <span class="chip">Reserves ≥ 6 mo</span>
+  </div>
+
+  <div class="grid">
+    <section class="panel" aria-label="Pipeline">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+        <h2>Pipeline</h2><span id="count" class="label"></span>
+      </div>
+      <div id="list" class="list"><p class="empty" id="loading">Loading deals…</p></div>
+    </section>
+    <section class="panel" id="sheet" aria-label="Deal sheet">
+      <div class="empty">Deals appear here once Claude adds the first one to the pipeline. Pick a deal on the left to see its numbers.</div>
+    </section>
+  </div>
+  <p class="note">Expense assumptions on every deal: vacancy 8%, repairs 8%, capital reserves 8%, management 10% of gross rent, closing costs 3% of price. Education, not financial advice. Confirm every number with your lender, attorney and inspector.</p>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const RULES={cfUnit:200,dscr:1.25,coc:0.10,balloon:7,reserveMonths:6};
+const PCT={vacancy:.08,repairs:.08,capex:.08,mgmt:.10,closing:.03};
+const STATUS={screening:"Screening",pending:"Needs your decision",approved:"Approved",rejected:"Rejected",closed:"Closed"};
+const FIELDS=[
+ ["Property",[["address","Address","text"],["market","Market","text"],["units","Units","number",1],["yearBuilt","Year built","number",1],["leadSafe","Lead-safe certified","bool"],["listingUrl","Listing link","text"]]],
+ ["Income",[["rentPerUnit","Rent per unit /mo","number",10],["paymentStandard","PHA payment standard /unit","number",10]]],
+ ["Costs",[["price","Purchase price","number",1000],["rehab","Rehab budget","number",500],["taxes","Property tax /yr","number",50],["insurance","Insurance /yr","number",50],["otherOpex","Other costs /yr (utilities, HOA)","number",50]]],
+ ["Financing",[["financing","Type","select",["seller","conventional","cash"]],["downPct","Down payment %","number",1],["rate","Interest rate %","number",0.125],["amortYears","Amortization (yrs)","number",1],["balloonYears","Balloon (yrs, 0 = none)","number",1]]],
+ ["Due diligence",[["inspectionDone","Inspection passed","bool"],["sewerScope","Sewer scope passed","bool"],["reservesOnHand","Reserves set aside","number",500]]],
+];
+const BLANK={address:"",market:"",units:1,yearBuilt:1985,leadSafe:false,listingUrl:"",rentPerUnit:0,paymentStandard:0,price:0,rehab:0,taxes:0,insurance:0,otherOpex:0,financing:"seller",downPct:15,rate:6,amortYears:30,balloonYears:10,inspectionDone:false,sewerScope:false,reservesOnHand:0,notes:"",status:"screening",example:false};
+
+const $=s=>document.querySelector(s);
+const money=n=>(n<0?"−":"")+"$"+Math.round(Math.abs(n)).toLocaleString("en-US");
+const pct=n=>(n*100).toFixed(1)+"%";
+function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
+
+function analyze(d){
+  const n=x=>Number(x)||0;
+  const units=Math.max(1,n(d.units)), gross=n(d.rentPerUnit)*units*12;
+  const pctCosts=gross*(PCT.vacancy+PCT.repairs+PCT.capex+PCT.mgmt);
+  const opex=n(d.taxes)+n(d.insurance)+n(d.otherOpex)+pctCosts;
+  const noi=gross-opex;
+  const cash=d.financing==="cash";
+  const down=cash?n(d.price):n(d.price)*n(d.downPct)/100;
+  const loan=n(d.price)-down;
+  const r=n(d.rate)/100/12, m=n(d.amortYears)*12;
+  const pmt=loan<=0||m<=0?0:(r===0?loan/m:loan*r/(1-Math.pow(1+r,-m)));
+  const ds=pmt*12;
+  const cf=noi-ds;
+  const invested=down+n(d.price)*PCT.closing+n(d.rehab);
+  const coc=invested>0?cf/invested:0;
+  const dscr=ds>0?noi/ds:Infinity;
+  const cfUnit=cf/12/units;
+  const reservesNeeded=RULES.reserveMonths*(opex/12+pmt);
+  const checks=[
+    ["Cash flow per unit",cfUnit>=RULES.cfUnit,money(cfUnit)+"/mo"],
+    ["Debt coverage (DSCR)",dscr>=RULES.dscr,isFinite(dscr)?dscr.toFixed(2):"no debt"],
+    ["Cash-on-cash return",coc>=RULES.coc,pct(coc)],
+    ["Rent at or under payment standard",n(d.paymentStandard)>0&&n(d.rentPerUnit)<=n(d.paymentStandard),money(n(d.rentPerUnit))+" vs "+(n(d.paymentStandard)?money(n(d.paymentStandard)):"not set")],
+    ["Built 1978+ or lead-safe",n(d.yearBuilt)>=1978||!!d.leadSafe,d.leadSafe?"lead-safe":String(n(d.yearBuilt)||"?")],
+    ["Balloon at least 7 years",d.financing!=="seller"||n(d.balloonYears)===0||n(d.balloonYears)>=RULES.balloon,d.financing==="seller"?(n(d.balloonYears)?n(d.balloonYears)+" yrs":"none"):"n/a"],
+    ["Inspection passed",!!d.inspectionDone,d.inspectionDone?"yes":"not yet"],
+    ["Sewer scope passed",!!d.sewerScope,d.sewerScope?"yes":"not yet"],
+    ["Reserves ≥ 6 months",n(d.reservesOnHand)>=reservesNeeded,money(n(d.reservesOnHand))+" / "+money(reservesNeeded)],
+  ];
+  return {gross,pctCosts,opex,noi,down,loan,pmt,ds,cf,invested,coc,dscr,cfUnit,reservesNeeded,checks,pass:checks.every(c=>c[1]),fails:checks.filter(c=>!c[1]).length,rentRatio:(n(d.price)+n(d.rehab))>0?(n(d.rentPerUnit)*units)/(n(d.price)+n(d.rehab)):0};
+}
+
+let db=null,user=null,isOwner=false,canWrite=false,deals=[],selected=null,draft=null;
+
+function renderList(){
+  const list=$("#list");
+  $("#count").textContent=deals.length?deals.length+" deal"+(deals.length>1?"s":""):"";
+  if(!deals.length){list.innerHTML='<p class="empty">No deals yet. Claude adds each candidate here after screening it.</p>';return}
+  list.innerHTML="";
+  const order={pending:0,screening:1,approved:2,closed:3,rejected:4};
+  [...deals].sort((a,b)=>(order[a.data.status]??9)-(order[b.data.status]??9)).forEach(({id,data})=>{
+    const a=analyze(data);
+    const b=document.createElement("button");b.className="row";b.setAttribute("aria-current",id===selected?"true":"false");
+    b.innerHTML=`<span style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="pill s-${data.status||"screening"}"></span><span class="ex"></span></span><span class="addr"></span><span class="meta"><span></span><span></span></span>`;
+    b.querySelector(".pill").textContent=STATUS[data.status]||"Screening";
+    b.querySelector(".ex").textContent=data.example?"EXAMPLE":"";
+    b.querySelector(".addr").textContent=data.address||"Untitled deal";
+    const m=b.querySelectorAll(".meta span");
+    m[0].textContent=(data.market||"")+" · "+money(Number(data.price)||0);
+    m[1].textContent=a.pass?"passes all rules":a.fails+" rule"+(a.fails>1?"s":"")+" failing";
+    b.onclick=()=>{selected=id;draft=null;renderList();renderSheet()};
+    list.appendChild(b);
+  });
+}
+
+function fieldHTML([k,label,type,opt]){
+  const id="f_"+k;
+  if(type==="bool")return `<div class="f"><label for="${id}">${label}</label><select id="${id}" data-k="${k}" data-t="bool"><option value="false">No</option><option value="true">Yes</option></select></div>`;
+  if(type==="select")return `<div class="f"><label for="${id}">${label}</label><select id="${id}" data-k="${k}">${opt.map(o=>`<option value="${o}">${o==="seller"?"Seller financing":o==="conventional"?"Bank loan":"All cash"}</option>`).join("")}</select></div>`;
+  return `<div class="f"><label for="${id}">${label}</label><input id="${id}" data-k="${k}" data-t="${type}" type="${type==="number"?"number":"text"}" ${opt?`step="${opt}"`:""} inputmode="${type==="number"?"decimal":"text"}"></div>`;
+}
+
+function renderSheet(){
+  const sheet=$("#sheet");
+  const rec=deals.find(x=>x.id===selected);
+  if(!rec&&!draft){sheet.innerHTML='<div class="empty">Pick a deal on the left to see its numbers.</div>';return}
+  const d=draft||{...BLANK,...rec.data};
+  const a=analyze(d);
+  const ro=!canWrite;
+  sheet.innerHTML=`<div class="sheet">
+    <div class="sheet-head"><div><div class="label" id="sMarket"></div><h2 id="sAddr" style="font-size:22px"></h2><a id="sLink" target="_blank" rel="noopener" class="note"></a></div>
+      <span class="pill s-${d.status}" id="sStatus"></span></div>
+    <div class="verdict ${a.pass?"ok":"no"}"><strong>${a.pass?"Passes every rule":a.fails+" rule"+(a.fails>1?"s":"")+" failing"}</strong><span>${a.pass?"Ready for your decision.":"Not buyable as written. Fix the terms or walk away."}</span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="label">Cash flow /mo</div><div class="v ${a.cf<0?"neg":""}">${money(a.cf/12)}</div></div>
+      <div class="kpi"><div class="label">Per unit /mo</div><div class="v ${a.cfUnit<0?"neg":""}">${money(a.cfUnit)}</div></div>
+      <div class="kpi"><div class="label">Cash-on-cash</div><div class="v ${a.coc<0?"neg":""}">${pct(a.coc)}</div></div>
+      <div class="kpi"><div class="label">DSCR</div><div class="v">${isFinite(a.dscr)?a.dscr.toFixed(2):"—"}</div></div>
+      <div class="kpi"><div class="label">Cash to close</div><div class="v">${money(a.invested)}</div></div>
+      <div class="kpi"><div class="label">Rent / price</div><div class="v">${pct(a.rentRatio)}</div></div>
+    </div>
+    <div class="cols">
+      <div><h2 style="margin-bottom:8px">Rule check</h2><ul class="checks">${a.checks.map(c=>`<li class="${c[1]?"ok":"no"}"><span class="mark">${c[1]?"✓":"✕"}</span><span>${c[0]}</span><span class="val">${c[2]}</span></li>`).join("")}</ul></div>
+      <div><h2 style="margin-bottom:8px">Annual cash flow</h2><table class="cf"><tbody>
+        <tr><td>Gross rent</td><td>${money(a.gross)}</td></tr>
+        <tr><td>Vacancy, repairs, capex, management (34%)</td><td>${money(-a.pctCosts)}</td></tr>
+        <tr><td>Taxes, insurance, other</td><td>${money(-(a.opex-a.pctCosts))}</td></tr>
+        <tr><td>Net operating income</td><td>${money(a.noi)}</td></tr>
+        <tr><td>Loan payments (${money(a.pmt)}/mo)</td><td>${money(-a.ds)}</td></tr>
+        <tr class="total"><td>Cash flow</td><td>${money(a.cf)}</td></tr>
+      </tbody></table>
+      <p class="note">Loan ${money(a.loan)} · down payment ${money(a.down)}</p></div>
+    </div>
+    <div class="actions" id="decide" hidden>
+      <button class="approve" id="approve">Approve — make the offer</button>
+      <button class="reject" id="reject">Reject</button>
+    </div>
+    <p class="note" id="decideNote" hidden></p>
+    <form id="form" style="display:grid;gap:18px">
+      ${FIELDS.map(([g,fs])=>`<fieldset ${ro?"disabled":""}><legend class="label">${g}</legend><div class="fields">${fs.map(fieldHTML).join("")}</div></fieldset>`).join("")}
+      <fieldset ${ro?"disabled":""}><legend class="label">Notes</legend><div class="f"><label for="f_notes">Seller terms, inspection findings, manager quotes</label><textarea id="f_notes" data-k="notes" data-t="text"></textarea></div></fieldset>
+      <div class="actions" ${ro?"hidden":""}><button type="submit" class="primary" id="save">${draft&&!rec?"Add to pipeline":"Save changes"}</button>
+      ${rec?'<select id="statusSel" aria-label="Status" style="width:auto">'+Object.entries(STATUS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")+"</select>":""}</div>
+    </form></div>`;
+  $("#sMarket").textContent=(d.market||"Market not set")+(d.example?" · EXAMPLE, not a real listing":"");
+  $("#sAddr").textContent=d.address||"New deal";
+  $("#sStatus").textContent=STATUS[d.status]||"Screening";
+  const link=$("#sLink");if(d.listingUrl&&/^https?:\/\//.test(d.listingUrl)){link.href=d.listingUrl;link.textContent="Open listing"}else link.remove();
+  sheet.querySelectorAll("[data-k]").forEach(el=>{const v=d[el.dataset.k];el.value=v===undefined?"":String(v)});
+  const ss=$("#statusSel");if(ss)ss.value=d.status||"screening";
+  sheet.querySelectorAll("[data-k]").forEach(el=>el.addEventListener("change",()=>{draft=readForm(d);const keep=el.id;renderSheet();const f=document.getElementById(keep);if(f)f.focus()}));
+  $("#form").addEventListener("submit",e=>{e.preventDefault();save(readForm(d))});
+  if(rec&&isOwner&&(d.status==="pending"||d.status==="screening")){
+    $("#decide").hidden=false;
+    $("#approve").disabled=!a.pass;
+    if(!a.pass){const n=$("#decideNote");n.hidden=false;n.textContent="Approve unlocks only when every rule passes."}
+    $("#approve").onclick=()=>decide("approved");
+    $("#reject").onclick=()=>decide("rejected");
+  }
+}
+
+function readForm(base){
+  const d={...base};
+  document.querySelectorAll("#form [data-k]").forEach(el=>{
+    const k=el.dataset.k,t=el.dataset.t;
+    d[k]=t==="bool"?el.value==="true":t==="number"?Number(el.value)||0:el.value;
+  });
+  const ss=$("#statusSel");if(ss)d.status=ss.value;
+  return d;
+}
+
+async function save(d){
+  if(!db)return;
+  const b=$("#save");if(b)b.disabled=true;
+  try{
+    d.updatedAt=new Date().toISOString();
+    if(selected&&deals.some(x=>x.id===selected)){await db.doc("deals/"+selected).set(d)}
+    else{const ref=await db.collection("deals").add({...d,createdAt:d.updatedAt});selected=ref.id}
+    draft=null;toast("Saved");
+  }catch(e){toast(e.code==="invalid_argument"?"You don't have edit access to this desk.":"Couldn't save. Try again.");if(b)b.disabled=false}
+}
+
+async function decide(status){
+  try{await db.doc("deals/"+selected).update({status,decidedAt:new Date().toISOString()});toast(status==="approved"?"Approved. Claude will draft the offer.":"Rejected")}
+  catch(e){toast("Couldn't record that decision. Try again.")}
+}
+
+$("#newDeal").onclick=()=>{selected=null;draft={...BLANK};renderList();renderSheet()};
+
+(async()=>{
+  const timer=setTimeout(()=>{const l=$("#loading");if(l)l.textContent="The deal store can't be reached yet. Check your connection; this page will fill in when it answers."},10000);
+  [db,user]=await Promise.all([claude.use("db"),claude.use("user")]);
+  if(!db){clearTimeout(timer);$("#list").innerHTML='<p class="empty">Sign in to claude.ai to see the pipeline.</p>';return}
+  isOwner=user?await user.isOwner():false;
+  const cw=user?await user.canEdit():null;
+  canWrite=cw!==false;
+  $("#newDeal").hidden=!canWrite;
+  db.collection("deals").onSnapshot(snap=>{
+    if(!snap.metadata.fromCache)clearTimeout(timer);
+    deals=snap.docs.map(s=>({id:s.id,data:s.data()}));
+    if(!selected&&!draft&&deals.length){const p=deals.find(x=>x.data.status==="pending")||deals[0];selected=p.id}
+    renderList();if(!draft)renderSheet();
+  },e=>{clearTimeout(timer);$("#list").innerHTML='<p class="empty">The pipeline couldn\'t load. Reopen the page to try again.</p>'});
+})();
+</script>
