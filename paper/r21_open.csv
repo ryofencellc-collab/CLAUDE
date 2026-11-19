@@ -1,1 +1,2 @@
 ticker,series,side,strike,close_utc,placed_utc,z_at_place,spot_at_place,queue_ahead,seen,filled,status,cancelled_utc,result,pnl,settled_utc,strike_type,cap
+KXSOL15M-26NOV190300-00,KXSOL15M,yes,74.6862,2026-11-19T08:00:00+00:00,2026-11-19T07:59:28.125389+00:00,6.77,74.95,36308.020000000004,1840.71,0.0,open,,,,,greater_or_equal,
