@@ -1,0 +1,12 @@
+name = "deal-bot"
+main = "src/worker.js"
+compatibility_date = "2025-09-01"
+
+[vars]
+AMAZON_TAG = "yourtag-20"      # replace with your Amazon Associates tracking id
+ALLOWED_CHATS = ""             # e.g. "-1001234567890,-1009876543210" (get ids with /chatid)
+LISTEN_PHRASES = "false"       # "true" = also answer "looking for ..." messages
+
+# Secrets (not stored here):
+#   npx wrangler secret put TELEGRAM_TOKEN
+#   npx wrangler secret put WEBHOOK_SECRET
