@@ -45,3 +45,32 @@ A parallel copy with one change: both bids sit **1 tick behind** the reference p
 share (discount factor) but sits behind more queue, so it should be picked off less. Same budget, selection, caps and
 pass rule, scored over its own 10 days (`paper/ROUND44B_LIP.md`). Comparing the two shows whether fill losses or reward
 share drive the result.
+
+## Result, Round 44 (A), 2026-11-19: **FAIL** (`paper/ROUND44_LIP.md`)
+Over 10 days (Nov 9–18): rewards $2,119, realised spread/settled −$3,272, fees $252, **net −$1,422**.
+- Positive days: 5 of 10 (rule: ≥ 7).
+- Worst day: −$1,140 on Nov 12 (rule: ≥ −$300).
+- Reward vs inventory losses: rewards fail to cover inventory losses at all (rule: reward ≥ 2× those losses).
+
+Quoting at the reward reference price gets adversely selected: fills cost more than the rewards earn. Tracker stopped.
+
+## Round 44b status, 2026-11-19 (final day of its 10)
+It is up **+$1,567** (rewards $1,331, spread/settled +$606, fees −$177). It **cannot meet the ≥ 7-of-10 positive-days rule**: 5 positive
+days so far, so 6 at most. Under the pre-registered rule it is a FAIL, even though it made money; the rule is not loosened.
+Every other condition passes:
+- total ≥ $300;
+- worst day −$298 ≥ −$300;
+- spread/settled positive, so the rewards cover it easily.
+
+## Round 44c (registered 2026-11-19 00:30 UTC, before any of its data exists): longer forward test of the 44b quoting rule
+44b's daily P&L is lumpy, with big up days and modest down days. The 7-of-10 consistency rule is a poor test of lumpy P&L, so this is a
+**new, separate test** on new data only: the same engine and settings (`R44_TAG=b, R44_BACK=1`), scored from 2026-11-20 to 2026-12-19
+(30 days). It runs on a fresh $10k ledger and does not reuse 44b's P&L.
+
+**Pass:** all four conditions on those 30 days:
+1. net > 0;
+2. daily-P&L t-stat ≥ 2;
+3. worst day ≥ −$500;
+4. max drawdown ≤ $1,000.
+
+A pass makes it the first real-money candidate, subject to a budget set by the user.
