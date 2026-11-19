@@ -124,6 +124,19 @@ def commit(now):
 
 
 def run():
+    """Loop for R58F_SECONDS (default 5 h 40 m), one cycle every 30 minutes, so a self-chaining workflow keeps it running."""
+    t0 = time.time(); secs = int(os.environ.get("R58F_SECONDS", "0"))
+    while True:
+        try:
+            run_once()
+        except Exception as e:
+            print("cycle failed:", repr(e), flush=True)
+        if time.time() - t0 + 1800 > secs:
+            break
+        time.sleep(1800)
+
+
+def run_once():
     now = pd.Timestamp.now(tz="UTC"); ser = series_list()
     H = refresh_history(ser); print("history rows", len(H), flush=True)
     D = pd.read_csv(DEC) if os.path.exists(DEC) else pd.DataFrame(columns=["time", "series", "ticker", "event", "word", "n", "prior", "yes_ask", "no_ask", "action", "px", "pnl", "result"])

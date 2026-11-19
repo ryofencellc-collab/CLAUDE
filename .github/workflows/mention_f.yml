@@ -1,20 +1,24 @@
 name: mention_f
-# Round 58f (PROTOCOL_ROUND58.md): live paper forward test, mention markets vs word record. Every 30 minutes.
+# Round 58f (PROTOCOL_ROUND58.md): live paper forward test, mention markets vs word record. One cycle every 30 min, self-chaining
+# (scheduled triggers only run on the default branch).
 on:
-  schedule:
-    - cron: "7,37 * * * *"
   workflow_dispatch:
+    inputs:
+      seconds: {description: "run length", default: "20400"}
+      chain: {description: "start the next job when done", default: "yes"}
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: mention_f
   cancel-in-progress: false
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    timeout-minutes: 355
     env:
       R58F_COMMIT: "1"
+      R58F_SECONDS: ${{ inputs.seconds || '20400' }}
     steps:
       - uses: actions/checkout@v4
         with: {ref: "claude/eloquent-darwin-2lipsh"}
@@ -25,3 +29,10 @@ jobs:
           git config user.name "mention bot"
           git config user.email "actions@users.noreply.github.com"
       - run: python -m edge.mention_live
+      - name: Start the next job
+        if: always() && (inputs.chain || 'yes') == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ job.status }}" != "success" ]; then sleep 120; fi
+          for i in 1 2 3; do gh workflow run mention_f.yml --ref claude/eloquent-darwin-2lipsh && exit 0; sleep 20; done
