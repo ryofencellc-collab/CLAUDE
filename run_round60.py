@@ -116,4 +116,34 @@ def analyze():
 
 
 if __name__ == "__main__":
-    {"smoke": smoke, "collect": collect, "analyze": analyze}[sys.argv[1]]()
+    if sys.argv[1] != "forward_score": {"smoke": smoke, "collect": collect, "analyze": analyze}[sys.argv[1]]()
+
+
+def forward_score():
+    """Score the frozen forward selection: ROI from selection date to now for each group vs the frozen universe."""
+    sel = json.load(open("paper/r60_forward_selection.json")); t0 = pd.Timestamp(sel["selected_at"]); now = pd.Timestamp.now(tz="UTC")
+    def roi(a, av0):
+        for k in range(4):
+            try:
+                r = requests.post(R59.INFO, json={"type": "portfolio", "user": a}, timeout=30)
+                if r.status_code == 200:
+                    P = series(dict(r.json()).get("allTime", {}).get("pnlHistory", []))
+                    at = lambda t: next((v for tt, v in reversed(P) if tt <= t), np.nan)
+                    return float(np.clip((at(now) - at(t0)) / av0, -1, 3))
+            except Exception: pass
+            time.sleep(2 + 3 * k)
+        return np.nan
+    U = pd.Series({u["addr"]: roi(u["addr"], u["avB0"]) for u in sel["universe"]}).dropna()
+    rows = []
+    for nm, lst in sel["groups"].items():
+        g = U.reindex([x["addr"] for x in lst]).dropna()
+        if len(g) < 5: rows.append(dict(group=nm, n=len(g), PASS=False)); continue
+        t, w, pos = R59.tstat(g), R59.welch(g, U), (g > 0).mean()
+        rows.append(dict(group=nm, n=len(g), mean_roi=g.mean(), t=t, welch_vs_all=w, pct_profitable=pos, PASS=bool(t >= 2.4 and w >= 2.4 and pos >= 0.55)))
+    R = pd.DataFrame(rows)
+    txt = f"\n## Forward test result ({now:%Y-%m-%d}), selected {t0:%Y-%m-%d}\n\nUniverse: {len(U)} accounts, mean ROI {U.mean():+.1%}, profitable {(U > 0).mean():.0%}.\n\n" + R.round(3).to_markdown(index=False) + "\n"
+    open("reports/ROUND60.md", "a").write(txt); print(txt)
+
+
+if __name__ == "__main__" and sys.argv[1] == "forward_score":
+    forward_score()

@@ -30,3 +30,12 @@ Max drawdown = the largest peak-to-trough fall in cumulative PnL inside the wind
 
 **Calibration:** a synthetic population. Null (luck only) must not pass. With 5% "quiet skill" accounts planted (small positive drift, low
 volatility), the matching group must pass.
+
+## Result, historical part (2026-11-19): **split 2 FAIL**, so the round cannot pass (`reports/ROUND60.md`)
+- **Split 2** (select Jul 15 → Oct 1, test Oct 1 → Nov 19). The universe lost on average (−24%, only 18% profitable).
+  - Q1 steady earners: −8.5% mean, 46% profitable. They **beat the universe significantly** (Welch t 2.9) but still lost money.
+  - Q2 low-turnover winners: −30%, 4% profitable, which is worse than the universe.
+  - Q3 small and steady: −18%.
+- **Split 1:** none was positive. Q3 lost least at −2%.
+- **Reading:** quiet, steady traders *lose less* than everyone else in a falling market, but none of the groups made money. Copying them would not have paid.
+  The frozen forward selection (Q1 17, Q2 50, Q3 31 accounts) is still scored on Dec 19 as pre-registered, for information only.
