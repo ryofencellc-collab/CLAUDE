@@ -75,7 +75,7 @@ def settle(D):
 
 def scan(H, D, ser, now):
     decided = set(D.ticker)
-    rows = []
+    rows = []; seen = {"open": 0, "pre_start": 0, "under_1h": 0}
     for s in ser:
         cursor = None
         for _ in range(5):
@@ -83,9 +83,11 @@ def scan(H, D, ser, now):
             if cursor: p["cursor"] = cursor
             j = get("markets", p) or {}
             for m in j.get("markets", []):
+                seen["open"] += 1
                 if m["ticker"] in decided: continue
                 opened = pd.Timestamp(m.get("open_time"))
-                if opened + pd.Timedelta(hours=1) > now or opened < START - pd.Timedelta(hours=1): continue   # new markets only
+                if opened < START - pd.Timedelta(hours=1): seen["pre_start"] += 1; continue                 # new markets only
+                if opened + pd.Timedelta(hours=1) > now: seen["under_1h"] += 1; continue
                 n, pr = prior(H, s, wkey(m.get("yes_sub_title")), now)
                 ya = lip.fnum(m.get("yes_ask_dollars"), np.nan); yb = lip.fnum(m.get("yes_bid_dollars"), np.nan)
                 na = 1 - yb if yb == yb and yb > 0 else np.nan
@@ -98,6 +100,7 @@ def scan(H, D, ser, now):
                 decided.add(m["ticker"])
             cursor = j.get("cursor")
             if not cursor or not j.get("markets"): break
+    print("scan:", seen, "new decisions:", len(rows), flush=True)
     return pd.concat([D, pd.DataFrame(rows)], ignore_index=True) if rows else D
 
 
