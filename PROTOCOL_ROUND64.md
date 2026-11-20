@@ -71,3 +71,16 @@ This uses the target's whole-period distribution, a mild look-ahead in the thres
 - **"Why winners win":** the top separators are calendar variables (OPEX week, days to FOMC). With 9 days they only identify *which days fell*, so this is a
   day-level confound, not a cause.
 - **Next:** the analysis re-runs nightly. At 20 days the verdict is scored on SPY/SPXW, and as soon as QQQ/IWM have days, the frozen momentum rule is tested on them.
+
+## Data note (2026-11-20, 15:20 UTC): Cboe now refuses GitHub's runners (HTTP 403 on every symbol)
+From the morning of 2026-11-20 the Cboe delayed-quote endpoint (now redirecting to `cdn-api.cboe.com`) returns 403 for every symbol, including SPY and SPX,
+which were collected without trouble until 2026-11-19 21:20 UTC.
+- **Response:** the block is not worked around (no header or IP tricks).
+- **Fallback:** the collector now records **Yahoo option chains** for any symbol Cboe refuses:
+  - one chain per symbol every 5 minutes, backing off on a rate limit;
+  - saved to `data/odte_y/`, separate from the Cboe record.
+- **Yahoo data differences:**
+  - Yahoo's option quotes lag its spot price, so the underlying is the put-call-parity-implied price (median of the 5 strikes nearest spot);
+  - IV is solved from the mid, and Greeks use Black-Scholes;
+  - there are no bid/ask sizes, so the order-book imbalance variable is unavailable.
+- **Consequence:** results on Yahoo days are reported separately from Cboe days and never pooled without a stated amendment.
