@@ -32,3 +32,16 @@ Written 2026-11-20 evening, before any Round 69 number is computed.
   - on the holdout with the haircut, the strategy's mean is > 0 with t ≥ 2;
   - it beats the every-day trade on mean P&L and on max drawdown;
   - Test 1 does not contradict it (real-quote mean ≥ 0 on traded days).
+
+Note (data handling, before any P&L was seen): the Yahoo 11-20 chain has missing legs. The strike used is the nearest one with both a call and a put bid. The same rule applies to the Cboe days, where every ATM strike has both legs, so nothing changes there.
+
+## Verdict (2026-11-20): FAIL
+- **Real quotes, 10 recorded days:**
+  - The strategy traded 7 and lost −$24,298 (2 wins).
+  - The every-day trade lost −$36,081. The S&P fell 6.9% over the same days.
+  - Skipping Thursdays avoided Nov 19 (−$16,190), but Friday Nov 20 (−3.4%, −$18,304) was a normal-looking day.
+- **Blind holdout 2024-08 → 2026-11:**
+  - As modelled, the strategy beats the every-day trade: +2.93 vs +2.04 pt/day, t 1.95 vs 1.44.
+  - With the real-quote haircut, both lose: −1.03 vs −1.95 pt/day, t −0.68.
+  - The S&P gained +34.3% over the same period.
+- **Bottom line:** the filters do beat trading every day, but the trade itself does not make money at real prices.
