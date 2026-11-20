@@ -36,7 +36,7 @@ Each IC is compared with a null built from the same day's target shifted in time
 | atm_iv        | call−put P&L |     0.154 |      -0.063 |    0.217 |       5.255 |     18 | True          |
 | macd_slope    | call−put P&L |     0.11  |       0.001 |    0.109 |       5.048 |     18 | True          |
 | atm_iv        | fwd30        |     0.178 |      -0.053 |    0.231 |       4.924 |     18 | True          |
-| tnx_chg30     | fwd30        |    -0.193 |       0.014 |   -0.207 |      -4.143 |     16 | True          |
+| tnx_chg30     | fwd30        |    -0.193 |       0.014 |   -0.207 |      -4.144 |     16 | True          |
 | atm_gamma     | fwd30        |    -0.097 |       0.053 |   -0.149 |      -4.054 |     18 | True          |
 | min_since_low | fwd30        |    -0.127 |       0.069 |   -0.196 |      -3.948 |     18 | True          |
 
@@ -75,12 +75,12 @@ Variables profitable in holdout: SPY 22/69, SPXW 36/69. Profitable on BOTH roots
 | SPXW   | rsi                   | above dev median → calls, else puts |               55 |          5575   |      101.36 | 4/5          |  1.27 |                     0 |
 | SPXW   | flow_net15            | below dev median → calls, else puts |               55 |          4825   |       87.73 | 2/5          |  0.76 |                     0 |
 | SPXW   | vix_chg5              | below dev median → calls, else puts |               55 |          4075   |       74.09 | 2/5          |  0.73 |                     0 |
-| SPXW   | vix_chg15             | below dev median → calls, else puts |               55 |          3675   |       66.82 | 4/5          |  1.62 |                     0 |
 | SPXW   | flow_call15           | above dev median → calls, else puts |               55 |          3525   |       64.09 | 3/5          |  0.47 |                     0 |
 | SPXW   | qqq_vs_spy15          | above dev median → calls, else puts |               55 |          3245   |       59    | 4/5          |  0.84 |                     0 |
 | SPXW   | aapl_ret15            | above dev median → calls, else puts |               55 |          3105   |       56.45 | 4/5          |  0.55 |                     0 |
 | SPXW   | imb_put               | above dev median → calls, else puts |               55 |          3085   |       56.09 | 3/5          |  0.47 |                     0 |
 | SPXW   | ema9_21               | above dev median → calls, else puts |               55 |          2965   |       53.91 | 3/5          |  0.75 |                     0 |
+| SPXW   | vix_chg15             | below dev median → calls, else puts |               55 |          2535   |       46.09 | 4/5          |  1.13 |                     0 |
 | SPXW   | dist_maxgamma         | above dev median → calls, else puts |               55 |          2325   |       42.27 | 3/5          |  0.46 |                     0 |
 | SPXW   | dist_round            | above dev median → calls, else puts |               55 |          1855   |       33.73 | 3/5          |  0.36 |                     0 |
 | SPXW   | flow_put15            | above dev median → calls, else puts |               55 |          1805   |       32.82 | 3/5          |  0.57 |                     0 |
@@ -112,11 +112,11 @@ Variables profitable in holdout: SPY 22/69, SPXW 36/69. Profitable on BOTH roots
 | SPXW   | tlt_ret15             | above dev median → calls, else puts |               55 |           -35   |       -0.64 | 2/5          | -0.01 |                     0 |
 | SPY    | vix_chg5              | below dev median → calls, else puts |               55 |           -87.5 |       -1.59 | 2/5          | -0.18 |                     0 |
 | SPY    | ret5                  | above dev median → calls, else puts |               55 |           -89.5 |       -1.63 | 2/5          | -0.16 |                     0 |
-| SPY    | vix_chg15             | below dev median → calls, else puts |               55 |           -89.5 |       -1.63 | 3/5          | -0.27 |                     0 |
 | SPY    | ret30                 | above dev median → calls, else puts |               55 |           -99.5 |       -1.81 | 2/5          | -0.21 |                     0 |
 | SPY    | mega_ret30            | below dev median → calls, else puts |               50 |          -119   |       -2.38 | 2/5          | -0.14 |                     0 |
 | SPY    | dist_round            | below dev median → calls, else puts |               55 |          -125.5 |       -2.28 | 3/5          | -0.23 |                     0 |
 | SPY    | msft_ret15            | above dev median → calls, else puts |               55 |          -142.5 |       -2.59 | 3/5          | -0.32 |                     0 |
+| SPY    | vix_chg15             | below dev median → calls, else puts |               55 |          -205.5 |       -3.74 | 3/5          | -0.73 |                     0 |
 | SPY    | qqq_vs_spy15          | above dev median → calls, else puts |               55 |          -225.5 |       -4.1  | 3/5          | -0.67 |                     0 |
 | SPY    | nvda_ret15            | below dev median → calls, else puts |               55 |          -228.5 |       -4.15 | 3/5          | -0.31 |                     0 |
 | SPY    | hyg_ret15             | above dev median → calls, else puts |               55 |          -231.5 |       -4.21 | 3/5          | -0.56 |                     0 |
@@ -191,13 +191,13 @@ Variables profitable in holdout: SPY 22/69, SPXW 36/69. Profitable on BOTH roots
 
 ## B. The algorithm (gradient-boosted trees on all variables, leave-one-day-out, real bid/ask, X2 exits)
 
-All trades: {'trades': 216, 'total': np.float64(-3397.399999999995), 'per_trade': np.float64(-15.728703703703681), 'win': np.float64(0.3055555555555556), 'green': '7/18', 't': np.float64(-0.45740473531222253)}
+All trades: {'trades': 214, 'total': np.float64(5480.600000000002), 'per_trade': np.float64(25.610280373831785), 'win': np.float64(0.35046728971962615), 'green': '9/18', 't': np.float64(0.8106267040585138)}
 
-Walk-away (stop after first winner): {'trades': 65, 'total': np.float64(-3470.1000000000004), 'per_trade': np.float64(-53.38615384615385), 'win': np.float64(0.27692307692307694), 'green': '10/18', 't': np.float64(-0.6386336433511469)}
+Walk-away (stop after first winner): {'trades': 54, 'total': np.float64(1762.9), 'per_trade': np.float64(32.6462962962963), 'win': np.float64(0.3333333333333333), 'green': '10/18', 't': np.float64(0.38364304834196467)}
 
-By root: SPXW: {'trades': 108, 'total': np.float64(-3123.9999999999964), 'per_trade': np.float64(-28.925925925925892), 'win': np.float64(0.28703703703703703), 'green': '3/9', 't': np.float64(-0.4119963251456899)}; SPY: {'trades': 108, 'total': np.float64(-273.4), 'per_trade': np.float64(-2.531481481481481), 'win': np.float64(0.32407407407407407), 'green': '4/9', 't': np.float64(-0.349172564792563)}
+By root: SPXW: {'trades': 106, 'total': np.float64(5332.000000000001), 'per_trade': np.float64(50.30188679245284), 'win': np.float64(0.3584905660377358), 'green': '5/9', 't': np.float64(0.7862885211448785)}; SPY: {'trades': 108, 'total': np.float64(148.5999999999997), 'per_trade': np.float64(1.3759259259259233), 'win': np.float64(0.3425925925925926), 'green': '4/9', 't': np.float64(0.15637947248261358)}
 
-Null (labels time-shifted, 20 runs): 95th percentile total $8,699; real total $-3,397 → **does NOT beat the null**.
+Null (labels time-shifted, 20 runs): 95th percentile total $9,210; real total $5,481 → **does NOT beat the null**.
 
 ## B2. Every instrument × selectivity × walk-away (model out-of-fold, leave-one-day-out) vs no-model baselines
 
@@ -206,88 +206,88 @@ Instruments: options (calls/puts), calls only, puts only, shares long/short, sha
 | policy                                             | selectivity           | walk_away   | root   |   trades |   total |   win | green   |     t |
 |:---------------------------------------------------|:----------------------|:------------|:-------|---------:|--------:|------:|:--------|------:|
 | BASELINE always put                                | every 30-min slot     | False       | SPXW   |      108 |   15501 |  0.44 | 5/9     |  1.47 |
+| options: puts only (short only)                    | every 30-min slot     | False       | SPXW   |       76 |    5662 |  0.34 | 5/9     |  0.69 |
+| options: calls up / puts down                      | confident (≥60%)      | False       | SPXW   |      106 |    5332 |  0.36 | 5/9     |  0.79 |
+| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | False       | SPXW   |      108 |    4692 |  0.43 | 4/9     |  0.58 |
 | BASELINE always shares_short                       | every 30-min slot     | False       | SPXW   |      108 |    4460 |  0.5  | 7/9     |  1.51 |
 | BASELINE always shares_short                       | every 30-min slot     | False       | SPY    |      108 |    4151 |  0.5  | 6/9     |  1.37 |
-| options: puts only (short only)                    | very confident (≥70%) | False       | SPXW   |       62 |    3284 |  0.37 | 5/9     |  0.46 |
-| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | False       | SPXW   |      108 |    1987 |  0.42 | 3/9     |  0.34 |
-| straddles: buy if big move expected, sell if quiet | every 30-min slot     | False       | SPXW   |      108 |    1692 |  0.43 | 5/9     |  0.23 |
+| options: puts only (short only)                    | confident (≥60%)      | False       | SPXW   |       68 |    2601 |  0.32 | 5/9     |  0.37 |
+| straddles: buy if big move expected, sell if quiet | every 30-min slot     | False       | SPXW   |      108 |    2472 |  0.43 | 4/9     |  0.35 |
+| options: puts only (short only)                    | confident (≥60%)      | True        | SPXW   |       29 |    2323 |  0.31 | 6/9     |  0.45 |
+| options: puts only (short only)                    | every 30-min slot     | True        | SPXW   |       29 |    2313 |  0.31 | 6/9     |  0.47 |
+| options: calls up / puts down                      | confident (≥60%)      | True        | SPXW   |       27 |    1759 |  0.33 | 4/9     |  0.38 |
 | straddles: buy if big move expected, sell if quiet | every 30-min slot     | True        | SPXW   |       20 |    1640 |  0.45 | 4/9     |  0.4  |
-| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | True        | SPXW   |       20 |    1350 |  0.45 | 4/9     |  0.35 |
-| options: puts only (short only)                    | every 30-min slot     | True        | SPXW   |       31 |    1347 |  0.29 | 6/9     |  0.26 |
 | BASELINE always put                                | every 30-min slot     | False       | SPY    |      108 |    1150 |  0.4  | 5/9     |  1.18 |
-| options: puts only (short only)                    | every 30-min slot     | False       | SPXW   |       77 |     959 |  0.32 | 5/9     |  0.13 |
-| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | True        | SPXW   |       20 |     730 |  0.45 | 4/9     |  0.17 |
-| shares: long up / short down                       | every 30-min slot     | True        | SPXW   |       20 |     541 |  0.45 | 6/9     |  0.43 |
-| options: calls only (long only)                    | every 30-min slot     | True        | SPY    |       11 |     499 |  0.64 | 6/7     |  3.54 |
-| options: puts only (short only)                    | confident (≥60%)      | False       | SPY    |       72 |     338 |  0.35 | 5/9     |  0.46 |
-| options: puts only (short only)                    | every 30-min slot     | False       | SPY    |       78 |     338 |  0.33 | 5/9     |  0.39 |
-| options: calls up / puts down                      | every 30-min slot     | False       | SPY    |      108 |     301 |  0.36 | 4/9     |  0.32 |
-| shares: long up / short down                       | very confident (≥70%) | True        | SPY    |       21 |     188 |  0.43 | 7/9     |  0.14 |
-| shares: long up / short down                       | very confident (≥70%) | True        | SPXW   |       32 |     178 |  0.28 | 6/9     |  0.15 |
-| options: calls only (long only)                    | every 30-min slot     | False       | SPY    |       55 |     163 |  0.38 | 5/7     |  0.76 |
-| options: puts only (short only)                    | every 30-min slot     | True        | SPY    |       28 |     141 |  0.32 | 6/9     |  0.3  |
-| options: calls up / puts down                      | very confident (≥70%) | True        | SPY    |       24 |     120 |  0.38 | 6/9     |  0.3  |
-| shares: long only                                  | confident (≥60%)      | True        | SPXW   |       14 |     120 |  0.5  | 4/8     |  0.14 |
-| options: calls only (long only)                    | confident (≥60%)      | True        | SPY    |       14 |      96 |  0.43 | 5/7     |  0.22 |
+| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | True        | SPXW   |       19 |     946 |  0.47 | 4/9     |  0.21 |
+| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | True        | SPXW   |       20 |     820 |  0.45 | 4/9     |  0.19 |
+| options: calls only (long only)                    | confident (≥60%)      | True        | SPY    |       14 |     454 |  0.5  | 6/7     |  2.07 |
+| options: calls only (long only)                    | every 30-min slot     | True        | SPY    |       12 |     443 |  0.67 | 6/8     |  2.05 |
+| shares: long up / short down                       | very confident (≥70%) | True        | SPY    |       19 |     285 |  0.47 | 7/9     |  0.22 |
+| shares: long up / short down                       | very confident (≥70%) | True        | SPXW   |       25 |     265 |  0.36 | 6/9     |  0.23 |
+| options: puts only (short only)                    | every 30-min slot     | False       | SPY    |       78 |     259 |  0.36 | 5/9     |  0.36 |
+| shares: long up / short down                       | confident (≥60%)      | True        | SPXW   |       19 |     235 |  0.47 | 6/9     |  0.21 |
+| options: puts only (short only)                    | confident (≥60%)      | True        | SPY    |       27 |     233 |  0.33 | 6/9     |  0.5  |
+| options: calls up / puts down                      | very confident (≥70%) | True        | SPXW   |       34 |     188 |  0.26 | 5/9     |  0.04 |
+| options: calls up / puts down                      | confident (≥60%)      | False       | SPY    |      108 |     149 |  0.34 | 4/9     |  0.16 |
+| shares: long only                                  | every 30-min slot     | True        | SPXW   |       16 |     134 |  0.5  | 5/8     |  0.12 |
+| options: puts only (short only)                    | every 30-min slot     | True        | SPY    |       29 |     105 |  0.31 | 6/9     |  0.22 |
+| options: calls only (long only)                    | confident (≥60%)      | False       | SPY    |       53 |     103 |  0.36 | 4/7     |  0.37 |
+| shares: long only                                  | confident (≥60%)      | True        | SPXW   |       13 |     100 |  0.54 | 4/7     |  0.11 |
+| options: calls up / puts down                      | very confident (≥70%) | False       | SPXW   |      101 |      87 |  0.32 | 4/9     |  0.01 |
+| options: puts only (short only)                    | confident (≥60%)      | False       | SPY    |       70 |      87 |  0.33 | 6/9     |  0.16 |
 | shares: long up / short down                       | confident (≥60%)      | True        | SPY    |       21 |      81 |  0.43 | 7/9     |  0.06 |
-| options: puts only (short only)                    | confident (≥60%)      | True        | SPY    |       28 |      62 |  0.29 | 5/9     |  0.13 |
+| shares: long up / short down                       | very confident (≥70%) | False       | SPXW   |      100 |      44 |  0.42 | 4/9     |  0.01 |
+| options: calls only (long only)                    | every 30-min slot     | False       | SPY    |       57 |      42 |  0.39 | 4/8     |  0.13 |
 | options: calls up / puts down                      | confident (≥60%)      | True        | SPY    |       27 |       4 |  0.33 | 6/9     |  0.01 |
-| shares: long only                                  | very confident (≥70%) | True        | SPXW   |       13 |      -6 |  0.38 | 3/6     | -0.01 |
-| shares: long up / short down                       | confident (≥60%)      | True        | SPXW   |       24 |     -45 |  0.38 | 6/9     | -0.04 |
-| options: calls up / puts down                      | very confident (≥70%) | False       | SPXW   |      100 |     -50 |  0.33 | 4/9     | -0.01 |
-| options: calls only (long only)                    | confident (≥60%)      | False       | SPY    |       51 |    -160 |  0.31 | 4/7     | -0.33 |
-| options: puts only (short only)                    | very confident (≥70%) | True        | SPY    |       25 |    -180 |  0.28 | 5/9     | -0.43 |
-| options: calls up / puts down                      | every 30-min slot     | True        | SPY    |       29 |    -209 |  0.31 | 5/9     | -0.41 |
+| options: calls up / puts down                      | every 30-min slot     | False       | SPY    |      108 |     -10 |  0.34 | 4/9     | -0.01 |
+| options: calls only (long only)                    | very confident (≥70%) | True        | SPY    |       19 |     -61 |  0.32 | 4/7     | -0.15 |
+| options: calls only (long only)                    | very confident (≥70%) | False       | SPY    |       47 |    -120 |  0.32 | 4/7     | -0.27 |
+| shares: long up / short down                       | every 30-min slot     | True        | SPXW   |       24 |    -174 |  0.38 | 6/9     | -0.14 |
+| straddles: buy if big move expected, sell if quiet | every 30-min slot     | False       | SPY    |      108 |    -177 |  0.41 | 2/9     | -0.2  |
+| options: puts only (short only)                    | very confident (≥70%) | True        | SPY    |       26 |    -188 |  0.27 | 5/9     | -0.44 |
+| options: calls up / puts down                      | very confident (≥70%) | False       | SPY    |      104 |    -207 |  0.33 | 5/9     | -0.32 |
+| options: calls up / puts down                      | very confident (≥70%) | True        | SPY    |       26 |    -209 |  0.35 | 6/9     | -0.39 |
+| options: calls up / puts down                      | every 30-min slot     | True        | SPY    |       30 |    -228 |  0.3  | 4/9     | -0.45 |
 | straddles: buy if big move expected, sell if quiet | every 30-min slot     | True        | SPY    |       24 |    -239 |  0.38 | 4/9     | -0.58 |
-| options: calls up / puts down                      | confident (≥60%)      | False       | SPY    |      108 |    -273 |  0.32 | 4/9     | -0.35 |
-| shares: long up / short down                       | every 30-min slot     | True        | SPY    |       21 |    -333 |  0.43 | 6/9     | -0.26 |
-| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | True        | SPY    |       28 |    -345 |  0.32 | 4/9     | -0.77 |
-| shares: long only                                  | every 30-min slot     | True        | SPXW   |       14 |    -366 |  0.5  | 4/8     | -0.36 |
+| shares: long only                                  | every 30-min slot     | True        | SPY    |       12 |    -267 |  0.67 | 5/8     | -0.24 |
+| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | True        | SPY    |       26 |    -303 |  0.35 | 4/9     | -0.63 |
+| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | True        | SPY    |       25 |    -309 |  0.36 | 4/9     | -0.7  |
+| options: puts only (short only)                    | very confident (≥70%) | False       | SPY    |       63 |    -326 |  0.35 | 3/9     | -0.65 |
 | BASELINE always straddle                           | every 30-min slot     | False       | SPY    |      108 |    -374 |  0.31 | 4/9     | -0.63 |
-| options: puts only (short only)                    | very confident (≥70%) | False       | SPY    |       63 |    -401 |  0.3  | 3/9     | -0.85 |
-| options: puts only (short only)                    | very confident (≥70%) | True        | SPXW   |       30 |    -450 |  0.27 | 5/9     | -0.09 |
-| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | True        | SPY    |       30 |    -456 |  0.27 | 4/9     | -0.93 |
-| shares: long only                                  | confident (≥60%)      | True        | SPY    |       12 |    -602 |  0.58 | 4/7     | -0.58 |
-| options: calls only (long only)                    | very confident (≥70%) | True        | SPY    |       30 |    -672 |  0.13 | 3/7     | -1.4  |
-| shares: long only                                  | every 30-min slot     | True        | SPY    |       10 |    -743 |  0.7  | 4/7     | -0.68 |
-| shares: long up / short down                       | confident (≥60%)      | False       | SPXW   |      107 |    -862 |  0.42 | 2/9     | -0.34 |
+| shares: long up / short down                       | confident (≥60%)      | False       | SPY    |      108 |    -466 |  0.44 | 2/9     | -0.17 |
+| shares: long only                                  | very confident (≥70%) | True        | SPXW   |       12 |    -500 |  0.5  | 3/6     | -0.74 |
+| shares: long up / short down                       | every 30-min slot     | False       | SPXW   |      108 |    -522 |  0.47 | 3/9     | -0.22 |
+| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | False       | SPY    |      108 |    -565 |  0.39 | 3/9     | -0.82 |
+| shares: long up / short down                       | every 30-min slot     | True        | SPY    |       23 |    -605 |  0.39 | 5/9     | -0.48 |
+| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | False       | SPY    |       98 |    -616 |  0.35 | 2/9     | -0.88 |
+| shares: long only                                  | confident (≥60%)      | True        | SPY    |       12 |    -787 |  0.58 | 4/7     | -0.72 |
 | BASELINE always short_straddle                     | every 30-min slot     | False       | SPY    |      108 |    -873 |  0.61 | 4/9     | -1.12 |
-| straddles: buy if big move expected, sell if quiet | every 30-min slot     | False       | SPY    |      108 |    -934 |  0.39 | 2/9     | -2.94 |
-| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | False       | SPXW   |       96 |   -1006 |  0.41 | 4/9     | -0.12 |
-| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | False       | SPY    |       97 |   -1044 |  0.26 | 2/9     | -1.39 |
-| straddles: buy if big move expected, sell if quiet | confident (≥60%)      | False       | SPY    |      106 |   -1052 |  0.35 | 2/9     | -1.93 |
-| options: calls up / puts down                      | very confident (≥70%) | False       | SPY    |      105 |   -1087 |  0.29 | 3/9     | -1.38 |
-| options: calls only (long only)                    | very confident (≥70%) | False       | SPY    |       47 |   -1241 |  0.17 | 2/7     | -2.19 |
-| shares: long up / short down                       | every 30-min slot     | False       | SPY    |      108 |   -1306 |  0.46 | 2/9     | -0.51 |
-| shares: long only                                  | very confident (≥70%) | True        | SPY    |       17 |   -1372 |  0.41 | 3/7     | -1.52 |
-| shares: long up / short down                       | every 30-min slot     | False       | SPXW   |      108 |   -1414 |  0.46 | 2/9     | -0.67 |
-| shares: long up / short down                       | very confident (≥70%) | False       | SPY    |      104 |   -1725 |  0.42 | 2/9     | -0.55 |
-| shares: long up / short down                       | very confident (≥70%) | False       | SPXW   |      100 |   -1946 |  0.38 | 2/9     | -1.54 |
+| shares: long only                                  | very confident (≥70%) | True        | SPY    |       18 |   -1124 |  0.39 | 3/7     | -0.96 |
+| shares: long up / short down                       | very confident (≥70%) | False       | SPY    |      104 |   -1138 |  0.45 | 2/9     | -0.36 |
+| options: calls up / puts down                      | every 30-min slot     | False       | SPXW   |      108 |   -1704 |  0.31 | 4/9     | -0.2  |
+| shares: long up / short down                       | confident (≥60%)      | False       | SPXW   |      106 |   -1980 |  0.42 | 3/9     | -1.86 |
 | BASELINE always call                               | every 30-min slot     | False       | SPY    |      108 |   -2018 |  0.27 | 1/9     | -1.94 |
-| shares: long up / short down                       | confident (≥60%)      | False       | SPY    |      108 |   -2267 |  0.41 | 1/9     | -0.74 |
-| shares: long only                                  | every 30-min slot     | False       | SPXW   |       63 |   -2577 |  0.49 | 2/8     | -1.72 |
-| options: calls up / puts down                      | every 30-min slot     | True        | SPXW   |       33 |   -2639 |  0.27 | 4/9     | -0.5  |
-| options: puts only (short only)                    | confident (≥60%)      | False       | SPXW   |       68 |   -2654 |  0.25 | 4/9     | -0.32 |
-| shares: long only                                  | very confident (≥70%) | False       | SPXW   |       49 |   -2671 |  0.29 | 0/6     | -2.33 |
-| options: calls up / puts down                      | every 30-min slot     | False       | SPXW   |      108 |   -2714 |  0.31 | 4/9     | -0.3  |
-| shares: long only                                  | confident (≥60%)      | False       | SPXW   |       57 |   -2789 |  0.39 | 2/8     | -2.1  |
-| options: calls up / puts down                      | confident (≥60%)      | False       | SPXW   |      108 |   -3124 |  0.29 | 3/9     | -0.41 |
-| shares: long only                                  | every 30-min slot     | False       | SPY    |       55 |   -3197 |  0.44 | 2/7     | -2.07 |
-| shares: long only                                  | very confident (≥70%) | False       | SPY    |       46 |   -3341 |  0.35 | 2/7     | -2.46 |
-| shares: long only                                  | confident (≥60%)      | False       | SPY    |       51 |   -3382 |  0.37 | 1/7     | -2.41 |
-| options: calls up / puts down                      | confident (≥60%)      | True        | SPXW   |       38 |   -3474 |  0.24 | 4/9     | -0.63 |
-| options: calls up / puts down                      | very confident (≥70%) | True        | SPXW   |       38 |   -3834 |  0.21 | 5/9     | -0.58 |
-| options: puts only (short only)                    | confident (≥60%)      | True        | SPXW   |       36 |   -4238 |  0.19 | 4/9     | -0.77 |
+| options: calls up / puts down                      | every 30-min slot     | True        | SPXW   |       35 |   -2225 |  0.26 | 4/9     | -0.43 |
+| shares: long only                                  | every 30-min slot     | False       | SPXW   |       64 |   -2303 |  0.47 | 4/8     | -1.3  |
+| shares: long up / short down                       | every 30-min slot     | False       | SPY    |      108 |   -2422 |  0.44 | 1/9     | -0.94 |
+| shares: long only                                  | confident (≥60%)      | False       | SPXW   |       58 |   -2562 |  0.4  | 3/7     | -1.81 |
+| shares: long only                                  | very confident (≥70%) | False       | SPXW   |       49 |   -2758 |  0.41 | 1/6     | -2.37 |
+| options: puts only (short only)                    | very confident (≥70%) | False       | SPXW   |       61 |   -2803 |  0.3  | 3/8     | -0.37 |
+| options: puts only (short only)                    | very confident (≥70%) | True        | SPXW   |       36 |   -2908 |  0.22 | 4/8     | -0.53 |
+| options: calls only (long only)                    | confident (≥60%)      | True        | SPXW   |       21 |   -2953 |  0.29 | 4/7     | -0.41 |
+| shares: long only                                  | every 30-min slot     | False       | SPY    |       57 |   -3083 |  0.47 | 3/8     | -1.73 |
+| shares: long only                                  | confident (≥60%)      | False       | SPY    |       53 |   -3176 |  0.42 | 1/7     | -2.11 |
+| shares: long only                                  | very confident (≥70%) | False       | SPY    |       47 |   -3192 |  0.36 | 1/7     | -2.13 |
+| options: calls only (long only)                    | very confident (≥70%) | True        | SPXW   |       21 |   -4073 |  0.24 | 4/6     | -0.58 |
+| options: calls only (long only)                    | confident (≥60%)      | False       | SPXW   |       58 |   -4294 |  0.33 | 3/7     | -0.6  |
 | BASELINE always shares_long                        | every 30-min slot     | False       | SPXW   |      108 |   -4504 |  0.5  | 2/9     | -1.52 |
 | BASELINE always shares_long                        | every 30-min slot     | False       | SPY    |      108 |   -4583 |  0.49 | 2/9     | -1.51 |
 | BASELINE always straddle                           | every 30-min slot     | False       | SPXW   |      108 |   -4598 |  0.3  | 3/9     | -0.81 |
-| options: calls only (long only)                    | very confident (≥70%) | True        | SPXW   |       21 |   -6223 |  0.19 | 3/6     | -0.9  |
 | BASELINE always short_straddle                     | every 30-min slot     | False       | SPXW   |      108 |   -6798 |  0.65 | 4/9     | -0.84 |
-| options: calls only (long only)                    | confident (≥60%)      | True        | SPXW   |       29 |   -9157 |  0.21 | 3/8     | -1.33 |
-| options: calls only (long only)                    | every 30-min slot     | True        | SPXW   |       31 |  -10043 |  0.19 | 3/8     | -1.5  |
-| options: calls only (long only)                    | very confident (≥70%) | False       | SPXW   |       49 |  -10937 |  0.2  | 1/6     | -1.76 |
-| options: calls only (long only)                    | confident (≥60%)      | False       | SPXW   |       57 |  -13201 |  0.21 | 1/8     | -2.22 |
-| options: calls only (long only)                    | every 30-min slot     | False       | SPXW   |       63 |  -13229 |  0.22 | 2/8     | -1.87 |
+| straddles: buy if big move expected, sell if quiet | very confident (≥70%) | False       | SPXW   |      100 |   -7705 |  0.41 | 3/9     | -1.94 |
+| options: calls only (long only)                    | very confident (≥70%) | False       | SPXW   |       50 |   -8390 |  0.22 | 2/6     | -1.32 |
+| options: calls only (long only)                    | every 30-min slot     | True        | SPXW   |       32 |   -9186 |  0.22 | 4/8     | -1.33 |
+| options: calls only (long only)                    | every 30-min slot     | False       | SPXW   |       64 |   -9692 |  0.3  | 2/8     | -1.45 |
 | BASELINE always call                               | every 30-min slot     | False       | SPXW   |      108 |  -15804 |  0.26 | 2/9     | -1.61 |
 
 ## B3. Strike (ATM / OTM 30-delta / ITM 70-delta) × exit (X1 +25/−15/10m, X2 +50/−25/30m, X3 hold to 15:45), 5-minute grid
@@ -298,9 +298,9 @@ Instruments: options (calls/puts), calls only, puts only, shares long/short, sha
 | ATM      | X3     | SPXW   | BASELINE always puts  |       63 |   53986 | 4/9     |  0.95 |
 | OTM      | X3     | SPXW   | BASELINE always puts  |       63 |   35416 | 4/9     |  0.88 |
 | ITM      | X2     | SPXW   | BASELINE always puts  |      108 |   27696 | 5/9     |  1.32 |
-| ITM      | X3     | SPXW   | model ≥60%            |        9 |   20483 | 3/9     |  0.89 |
-| ATM      | X3     | SPXW   | model ≥60%            |        9 |   18208 | 3/9     |  0.87 |
-| OTM      | X3     | SPXW   | model ≥60%            |        9 |   17463 | 3/9     |  1.04 |
+| ITM      | X3     | SPXW   | model ≥60%            |        9 |   21183 | 3/9     |  0.92 |
+| ATM      | X3     | SPXW   | model ≥60%            |        9 |   18808 | 3/9     |  0.9  |
+| OTM      | X3     | SPXW   | model ≥60%            |        9 |   17623 | 3/9     |  1.05 |
 | ATM      | X2     | SPXW   | BASELINE always puts  |      108 |   16591 | 6/9     |  1.6  |
 | ITM      | X3     | SPY    | BASELINE always puts  |       63 |    6970 | 4/9     |  1.02 |
 | OTM      | X2     | SPXW   | BASELINE always puts  |      108 |    6946 | 6/9     |  1.22 |
@@ -315,35 +315,35 @@ Instruments: options (calls/puts), calls only, puts only, shares long/short, sha
 | OTM      | X2     | SPY    | BASELINE always puts  |      108 |     777 | 6/9     |  1.59 |
 | ITM      | X1     | SPY    | BASELINE always puts  |      315 |      -4 | 4/9     | -0    |
 | ATM      | X1     | SPY    | BASELINE always puts  |      315 |    -122 | 3/9     | -0.12 |
+| ATM      | X2     | SPY    | model ≥60%            |      103 |    -147 | 2/9     | -0.2  |
+| OTM      | X2     | SPY    | model ≥60%            |      103 |    -162 | 3/9     | -0.4  |
 | OTM      | X1     | SPY    | BASELINE always puts  |      315 |    -489 | 3/9     | -0.94 |
-| OTM      | X2     | SPY    | model ≥60%            |      102 |    -628 | 2/9     | -1.75 |
-| ATM      | X2     | SPY    | model ≥60%            |      102 |    -807 | 2/9     | -1.04 |
+| ITM      | X2     | SPY    | model ≥60%            |      103 |    -634 | 3/9     | -0.48 |
+| ATM      | X2     | SPXW   | model ≥60%            |      100 |    -790 | 5/9     | -0.13 |
+| OTM      | X2     | SPXW   | model ≥60%            |      100 |    -920 | 3/9     | -0.22 |
 | OTM      | X1     | SPY    | BASELINE always calls |      315 |    -996 | 3/9     | -1.77 |
-| ITM      | X2     | SPY    | model ≥60%            |      102 |   -1043 | 3/9     | -0.74 |
 | OTM      | X2     | SPY    | BASELINE always calls |      108 |   -1126 | 1/9     | -2.26 |
-| OTM      | X1     | SPY    | model ≥60%            |      280 |   -1317 | 0/9     | -4.95 |
+| OTM      | X1     | SPY    | model ≥60%            |      281 |   -1519 | 0/9     | -5.36 |
 | ATM      | X1     | SPY    | BASELINE always calls |      315 |   -1862 | 3/9     | -1.66 |
 | ATM      | X2     | SPY    | BASELINE always calls |      108 |   -2016 | 1/9     | -1.94 |
 | OTM      | X1     | SPXW   | BASELINE always puts  |      313 |   -2019 | 4/9     | -0.42 |
 | OTM      | X3     | SPY    | BASELINE always calls |       63 |   -2277 | 2/9     | -1.53 |
-| ATM      | X1     | SPY    | model ≥60%            |      280 |   -2304 | 1/9     | -4.31 |
 | ITM      | X2     | SPY    | BASELINE always calls |      108 |   -2559 | 2/9     | -1.5  |
-| ITM      | X1     | SPY    | model ≥60%            |      280 |   -2770 | 0/9     | -4.06 |
+| ATM      | X1     | SPY    | model ≥60%            |      281 |   -2625 | 1/9     | -4.11 |
 | ITM      | X1     | SPY    | BASELINE always calls |      315 |   -3022 | 3/9     | -1.64 |
+| ITM      | X1     | SPY    | model ≥60%            |      281 |   -3148 | 0/9     | -4.24 |
 | ATM      | X3     | SPY    | BASELINE always calls |       63 |   -4170 | 3/9     | -1.45 |
 | ATM      | X1     | SPXW   | BASELINE always puts  |      313 |   -4859 | 3/9     | -0.64 |
-| OTM      | X2     | SPXW   | model ≥60%            |      101 |   -6053 | 1/9     | -1.39 |
 | ITM      | X3     | SPY    | BASELINE always calls |       63 |   -6089 | 3/9     | -1.39 |
-| OTM      | X1     | SPXW   | model ≥60%            |      277 |  -10181 | 2/9     | -2.76 |
-| ATM      | X2     | SPXW   | model ≥60%            |      101 |  -10833 | 2/9     | -1.33 |
+| ITM      | X2     | SPXW   | model ≥60%            |      100 |   -6540 | 4/9     | -0.59 |
 | OTM      | X1     | SPXW   | BASELINE always calls |      313 |  -11054 | 2/9     | -2.2  |
+| OTM      | X1     | SPXW   | model ≥60%            |      271 |  -11293 | 2/9     | -3.32 |
 | OTM      | X2     | SPXW   | BASELINE always calls |      108 |  -12969 | 1/9     | -3.03 |
 | ATM      | X2     | SPXW   | BASELINE always calls |      108 |  -16334 | 2/9     | -1.66 |
-| ATM      | X1     | SPXW   | model ≥60%            |      277 |  -18246 | 2/9     | -2.2  |
 | ATM      | X1     | SPXW   | BASELINE always calls |      313 |  -18259 | 3/9     | -1.95 |
-| ITM      | X2     | SPXW   | model ≥60%            |      101 |  -18573 | 1/9     | -1.59 |
+| ATM      | X1     | SPXW   | model ≥60%            |      271 |  -20398 | 2/9     | -2.88 |
 | OTM      | X3     | SPXW   | BASELINE always calls |       63 |  -21869 | 2/9     | -1.4  |
-| ITM      | X1     | SPXW   | model ≥60%            |      277 |  -23871 | 2/9     | -1.78 |
+| ITM      | X1     | SPXW   | model ≥60%            |      271 |  -25633 | 2/9     | -2.15 |
 | ITM      | X2     | SPXW   | BASELINE always calls |      108 |  -27014 | 2/9     | -1.69 |
 | ITM      | X1     | SPXW   | BASELINE always calls |      313 |  -29699 | 3/9     | -1.89 |
 | ATM      | X3     | SPXW   | BASELINE always calls |       63 |  -40444 | 2/9     | -1.39 |
@@ -351,27 +351,27 @@ Instruments: options (calls/puts), calls only, puts only, shares long/short, sha
 
 ## C. Variable importance (permutation, last 2 days held out)
 
-|               |    SPXW |     SPY |   mean |
-|:--------------|--------:|--------:|-------:|
-| btc_ret30     |  0.0233 |  0.0129 | 0.0181 |
-| ret30         |  0.019  |  0.0129 | 0.0159 |
-| rv30          |  0.0294 | -0.0024 | 0.0135 |
-| vs_high       |  0.0234 |  0.0018 | 0.0126 |
-| pcr_chg15     |  0.0225 |  0.0011 | 0.0118 |
-| hyg_ret15     |  0.0104 |  0.0074 | 0.0089 |
-| atm_gamma     | -0.0005 |  0.0167 | 0.0081 |
-| atm_iv        |  0      |  0.0108 | 0.0054 |
-| vs_low        |  0.0043 |  0.0057 | 0.005  |
-| flow_net15    |  0.0102 | -0.0004 | 0.0049 |
-| pcr_oi        |  0.0024 |  0.0063 | 0.0044 |
-| dxy_chg30     |  0.0008 |  0.0078 | 0.0043 |
-| vs_vwap_true  |  0.0021 |  0.0058 | 0.0039 |
-| gex           |  0.0051 |  0.0025 | 0.0038 |
-| flow_put15    |  0.0047 |  0.0017 | 0.0032 |
-| theta_proxy   |  0.0001 |  0.0058 | 0.0029 |
-| qqq_vs_spy15  |  0.0027 |  0.0031 | 0.0029 |
-| vs_orh        |  0.0024 |  0.0032 | 0.0028 |
-| min_since_low |  0.0069 | -0.0017 | 0.0026 |
-| skew25        |  0.003  |  0.0016 | 0.0023 |
+|               |   SPXW |     SPY |   mean |
+|:--------------|-------:|--------:|-------:|
+| ret30         | 0.0233 |  0.0104 | 0.0169 |
+| rv30          | 0.03   |  0.0008 | 0.0154 |
+| vs_high       | 0.0221 |  0.0064 | 0.0143 |
+| btc_ret30     | 0.0142 |  0.0135 | 0.0139 |
+| pcr_chg15     | 0.0224 | -0.002  | 0.0102 |
+| flow_net15    | 0.0159 |  0.0008 | 0.0084 |
+| pcr_oi        | 0.01   |  0.0052 | 0.0076 |
+| atm_gamma     | 0.0002 |  0.0141 | 0.0072 |
+| min_since_low | 0.0045 |  0.0079 | 0.0062 |
+| dist_maxgamma | 0.0045 |  0.0077 | 0.0061 |
+| vs_orh        | 0.0037 |  0.0074 | 0.0056 |
+| dxy_chg30     | 0.0013 |  0.0097 | 0.0055 |
+| vs_vwap_true  | 0.0047 |  0.0062 | 0.0054 |
+| min_to_close  | 0.0057 |  0.005  | 0.0054 |
+| hyg_ret15     | 0.0055 |  0.0036 | 0.0045 |
+| vs_low        | 0.0036 |  0.0051 | 0.0043 |
+| qqq_vs_spy15  | 0.0043 |  0.0041 | 0.0042 |
+| flow_put15    | 0.0085 | -0.0008 | 0.0038 |
+| vs_orl        | 0.0047 |  0.0015 | 0.0031 |
+| iv_chg15      | 0.0004 |  0.0057 | 0.003  |
 
 Still unavailable: CPI/jobs release calendar (FOMC and OPEX are included), NYSE TICK/ADD breadth, futures order flow and dark-pool prints, news headlines.
