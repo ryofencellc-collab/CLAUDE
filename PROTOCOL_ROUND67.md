@@ -50,3 +50,14 @@ Synthetic 1,100 days with a 10% variance premium and a day-level move multiplier
 - Year-by-year results.
 
 Calibration note (before any real data was fetched): in the first null draft, the synthetic VIX1D varied, so high-vol days had larger point P&L. That is real structure, not a null, and one null configuration passed. The null world now holds vol constant, with the vol-index feature columns as pure noise. Across seeds 3, 4 and 5 the null passes nothing and the planted signal passes every time (null 95th-percentile best holdout t: 2.11 / 3.52 / 2.52).
+
+## Verdict (2026-11-20): FAIL
+
+- **Base result:** unfiltered short straddle on the holdout: +2.04 pt/day, t 1.44, worst day −330, max drawdown 791.
+- **Best dev filters:**
+  - The best were "skip days that gap up more than ~0.25–0.35%" and "trade after a wide-range day". They reached dev t 6.4–6.9.
+  - On the holdout they reached only t 0.9–1.5, below the 2.5 needed and below the null's 3.34. None reduced the worst day (−330, which no morning variable flagged).
+  - The iron-fly version (defined risk) was a little better, holdout t up to 2.2, but is optimistic and was not passed.
+- **Real-quote check:** on 9 days, the real SPXW straddle at 09:31 was 0.895× the VIX1D model premium. That is about 3 pt less, as large as the whole modelled edge. Real spread 0.50 pt.
+- **Gap:** CPI and jobs-report flags are missing (the BLS site refused the runner). FOMC is included.
+- The report's hit-vs-flop table (added after the verdict, descriptive) shows which morning variables differed on winning vs losing days, and whether that held from dev to holdout.

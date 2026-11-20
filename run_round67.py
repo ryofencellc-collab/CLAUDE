@@ -257,6 +257,24 @@ def why_tables(f, A, dev):
     return out
 
 
+def hits_vs_flops(f, A, dev):
+    """Per feature: average on hit days, flop days and the worst-10% flop days, in dev and in holdout separately.
+    d = (hit mean - flop mean) / pooled sd; a real difference should keep its sign and size from dev to holdout."""
+    rows = []; a = A.to_numpy(float)
+    for c in f.columns:
+        x = f[c].to_numpy(float); r = dict(feature=c)
+        for lab, part in (("dev", dev), ("ho", ~dev)):
+            ok = part & np.isfinite(x); h = ok & (a > 0); fl = ok & (a <= 0)
+            big = ok & (a <= np.nanpercentile(a[part], 10))
+            sdp = np.nanstd(x[ok]) or np.nan
+            r[f"{lab}_hit"] = np.nanmean(x[h]); r[f"{lab}_flop"] = np.nanmean(x[fl]); r[f"{lab}_bigflop"] = np.nanmean(x[big])
+            r[f"{lab}_d"] = (np.nanmean(x[h]) - np.nanmean(x[fl])) / sdp
+        rows.append(r)
+    T = pd.DataFrame(rows)
+    T["same_sign"] = np.sign(T.dev_d) == np.sign(T.ho_d)
+    return T.reindex(T.dev_d.abs().sort_values(ascending=False).index).round(3)
+
+
 def report():
     d, cal, src = load()
     f, A, F, sd, prem = features(d, cal)
@@ -282,6 +300,9 @@ def report():
            "## The 25 worst days (A) and what was known at the open", "",
            f.assign(A=A.round(1), move_sd=((d.CLOSE - d.OPEN).abs() / sd.loc[idx]).round(2)).loc[A.nsmallest(25).index,
                ["A", "move_sd", "vix1d", "vix_prev", "v1_over_vix", "gap_bp", "prev_move_sd", "move5_sd", "vix_pct252", "weekday"] + [c for c in ("fomc", "cpi", "nfp", "opex") if c in f]].round(3).to_markdown(), "",
+           "## Hits vs flops: what was different on the morning of winning vs losing days", "",
+           "d = (average on hit days − average on flop days) / spread of the feature. |d| ≥ 0.2 is a noticeable difference. A real pattern keeps its sign and size from dev to holdout.", "",
+           hits_vs_flops(f, A, dev).to_markdown(index=False), "",
            "## Why: mean A by feature bucket (all days)", ""] + why_tables(f, A, dev)
     open("reports/ROUND67.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:16]))
 
