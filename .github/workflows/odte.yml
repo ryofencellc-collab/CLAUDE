@@ -54,7 +54,7 @@ jobs:
   analyze:
     # Rounds 61/62/62b are heavy (R62 report > 1 h); separate job with its own time budget.
     needs: collect
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 240
     env:
