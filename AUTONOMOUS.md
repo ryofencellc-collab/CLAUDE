@@ -44,7 +44,7 @@ released *before* the market closes, and that most traders don't track.
   - **Statistics:** TSA checkpoint throughput (tsa.gov daily), AAA/EIA gas prices (daily/weekly), jobless claims (FRED), CPI (Cleveland Fed nowcast),
     GDP (Atlanta Fed GDPNow), mortgage rates (Freddie Mac), unemployment and payrolls.
   - Step 1 is the probe: list the series, count settled markets, check the data sources.
-- [ ] **58 Chart/streaming nowcasts.** Spotify daily streams (kworb) → Billboard / Spotify weekly #1 markets; box-office tracking → opening-weekend markets.
+- [ ] **58 Chart/streaming nowcasts — IN PROGRESS (Round 63: incumbent-repeat rule on Spotify/Billboard/Netflix #1 markets, PROTOCOL_ROUND63.md).** Spotify daily streams (kworb) → Billboard / Spotify weekly #1 markets; box-office tracking → opening-weekend markets.
 - [ ] **59 Prediction-market lead-lag.** Do Polymarket moves predict Kalshi moves on the same event (or the reverse) within minutes? Signal only, not arbitrage
   (Round 16 found too few matched liquid pairs for arbitrage).
 - [ ] **60 Prediction markets → stocks.** Do jumps in Kalshi/Polymarket Fed, CPI or election odds lead sector ETFs intraday?
