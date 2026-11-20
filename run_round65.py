@@ -49,6 +49,17 @@ def candle_px(c, side):
     return num(v) / 100 if v is not None else np.nan
 
 
+def poly_history(tok, a, b, fidelity=60):
+    """Amendment 2: resolved markets only answer startTs/endTs windows of <= 7 days (interval=all returns nothing after resolution)."""
+    pts, t = {}, int(a.timestamp()); end = int(b.timestamp())
+    while t < end:
+        u = min(t + 7 * 86400 - 60, end)
+        for x in (get(f"{C}/prices-history", {"market": tok, "startTs": t, "endTs": u, "fidelity": fidelity}) or {}).get("history", []):
+            pts[int(x["t"])] = float(x["p"])
+        t = u; time.sleep(0.2)
+    return [{"t": k, "p": v} for k, v in sorted(pts.items())]
+
+
 def collect():
     path = f"{OUT}/raw.pkl"
     if os.path.exists(path): return pickle.load(open(path, "rb"))
@@ -87,8 +98,8 @@ def collect():
             if o not in kout: continue
             tok = json.loads(pm["clobTokenIds"])[0] if isinstance(pm.get("clobTokenIds"), str) else (pm.get("clobTokenIds") or [None])[0]
             if not tok: continue
-            h = (get(f"{C}/prices-history", {"market": tok, "interval": "all", "fidelity": 60}) or {}).get("history", [])
             km_ = kout[o]; cl = pd.Timestamp(km_["close_time"]); op = pd.Timestamp(km_.get("open_time") or cl - pd.Timedelta(days=60))
+            h = poly_history(tok, max(op, cl - pd.Timedelta(days=90)), min(cl, pd.Timestamp.now(tz="UTC")))
             cs = []
             st = int(max(op, cl - pd.Timedelta(days=90)).timestamp())
             for ep in (f"{K}/series/KXFEDDECISION/markets/{km_['ticker']}/candlesticks", f"{K}/historical/markets/{km_['ticker']}/candlesticks"):

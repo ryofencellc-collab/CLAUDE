@@ -54,3 +54,15 @@ The first synthetic design could not be detected:
 The planted world now uses a 6-hour lag, and **both** worlds use steps of sd 0.15 per hour. Real-data rules are unchanged.
 
 Calibration result: planted **PASS** (t 6.6); null **FAIL** (t −19).
+
+## Amendment 2 (2026-11-20, data collection only; no rule change)
+**First run:** 85 outcome pairs were matched, but Polymarket returned **0** history points for every resolved market (`interval=all`), so only 3 future meetings had
+data. That run is a data failure, not a verdict.
+
+**What the probe found** (`probe65.py`): resolved markets do answer `startTs`/`endTs` windows of **≤ 7 days**. With fidelity 1 that is minute-level data (about 10,000 points per week).
+
+**Fix:** the collector now pulls hourly (fidelity 60) Polymarket history in 7-day windows over the 90 days before each meeting. The rules, grid, split and pass
+criteria are unchanged.
+
+**Follow-up idea (not part of this round):** minute-level Polymarket and Kalshi histories both exist, so a minute-level lead-lag (Round 65b) is possible. It would be
+pre-registered separately.
