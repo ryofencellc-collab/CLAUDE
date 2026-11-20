@@ -24,7 +24,7 @@ jobs:
         with: {ref: "claude/eloquent-darwin-2lipsh"}
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
-      - run: pip install -r requirements.txt tabulate
+      - run: pip install -r requirements.txt tabulate lxml
       - run: |
           git config user.name "mention bot"
           git config user.email "actions@users.noreply.github.com"

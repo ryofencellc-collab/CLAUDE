@@ -12,6 +12,7 @@ import numpy as np, pandas as pd
 
 from edge import round20 as r20, round27 as r27, lip
 from edge import weather as wx
+from edge import kworb_snap
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST = os.path.join(ROOT, "paper", "r58f_history.csv")
@@ -120,7 +121,7 @@ def report(D, now):
 
 
 def commit(now):
-    for c in (["git", "add", HIST, DEC, REPORT], ["git", "commit", "-q", "-m", f"round58f: mention ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
+    for c in (["git", "add", "-f", HIST, DEC, REPORT, kworb_snap.OUT], ["git", "commit", "-q", "-m", f"round58f: mention ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
               ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
         try:
             if subprocess.run(c, cwd=ROOT, timeout=120).returncode != 0 and c[1] == "commit": return
@@ -149,6 +150,10 @@ def run_once():
     D = scan(H, D, ser, pd.Timestamp.now(tz="UTC"))
     D.to_csv(DEC, index=False)
     report(D, pd.Timestamp.now(tz="UTC")); print(open(REPORT).read(), flush=True)
+    try:
+        kworb_snap.snap(get)                       # backlog 58b forward data (hourly)
+    except Exception as e:
+        print("r58b snapshot failed:", repr(e), flush=True)
     if os.environ.get("R58F_COMMIT") == "1": commit(pd.Timestamp.now(tz="UTC"))
 
 
