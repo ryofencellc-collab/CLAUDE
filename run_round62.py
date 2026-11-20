@@ -505,7 +505,7 @@ def report():
            VM.sort_values("total", ascending=False).to_markdown(index=False), "",
            "## C. Variable importance (permutation, last 2 days held out)", "",
            imp.assign(mean=imp.mean(axis=1)).sort_values("mean", ascending=False).head(20).round(4).to_markdown() if len(imp) else "n/a", "",
-           "Gaps: no event calendar (Fed/CPI/OPEX), no true volume-weighted VWAP (feed has option volume, not SPY share volume)."]
+           "Still unavailable: CPI/jobs release calendar (FOMC and OPEX are included), NYSE TICK/ADD breadth, futures order flow and dark-pool prints, news headlines."]
     open("reports/ROUND62.md", "w").write("\n".join(out) + "\n"); print("\n".join(out))
 
 
