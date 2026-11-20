@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-20 09:03 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 184232; settled: 175088.
+Updated 2026-11-20 09:44 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 184286; settled: 175098.
 
-Total paper P&L: **$-2,061.85**; filled markets 22795; wrong calls 359, of which filled 225.
+Total paper P&L: **$-2,052.03**; filled markets 22796; wrong calls 359, of which filled 225.
 
 | series             |   markets |   filled |       contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
@@ -19,7 +19,7 @@ Total paper P&L: **$-2,061.85**; filled markets 22795; wrong calls 359, of which
 | KXNHLSPREAD        |       624 |      266 |  84756.8        |           0    | 263899           |   831.35 |       1 |              0 |
 | KXHIGHLAX          |        72 |       61 |  59326.6        |           0    | 735723           |   582.58 |       0 |              0 |
 | KXNFL1HTOTAL       |       386 |       85 |  51972.4        |        3602.52 | 750698           |   510.21 |       0 |              0 |
-| KXLIGAPROMATCH     |      2933 |      206 |  55700.1        |       10480.8  | 318723           |   493.8  |       4 |              2 |
+| KXLIGAPROMATCH     |      2941 |      206 |  55700.1        |       10485    | 319124           |   493.8  |       4 |              2 |
 | KXHIGHCHI          |        72 |       49 |  46438.6        |           0    | 364100           |   456.02 |       0 |              0 |
 | KXHIGHNY           |        66 |       56 |  53191.9        |           0    | 665574           |   453.89 |       1 |              1 |
 | KXRT               |        85 |       50 |  41593.8        |           0    | 710436           |   408.43 |       0 |              0 |
@@ -68,7 +68,7 @@ Total paper P&L: **$-2,061.85**; filled markets 22795; wrong calls 359, of which
 | KXBRASILEIROBTOTAL |       114 |       41 |  19200.8        |          64.5  | 104563           | -1180.95 |       2 |              2 |
 | KXETHD             |     79600 |     1857 | 400520          |       28000    | 778014           | -1228.16 |      40 |             16 |
 | KXUSDJPY15M        |       530 |      368 | 164922          |           0    | 215065           | -1234.94 |       6 |              6 |
-| KXWT20MATCH        |        98 |       69 |  63207.2        |           0    | 641664           | -1379.31 |       2 |              2 |
+| KXWT20MATCH        |       100 |       70 |  64207.2        |           0    | 645454           | -1369.49 |       2 |              2 |
 | KXNCAAF1HSPREAD    |      2458 |      360 | 147834          |          60    | 908619           | -1403.81 |      11 |              5 |
 | KXNCAAF1H          |       711 |      114 |  57711.6        |         800    | 347897           | -1433.56 |       6 |              2 |
 | KXNHLTOTAL         |       810 |      344 | 135970          |           0    |      1.01575e+06 | -1582.97 |       7 |              5 |
