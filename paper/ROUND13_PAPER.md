@@ -4,13 +4,13 @@ Rules: [PROTOCOL_ROUND13.md](../PROTOCOL_ROUND13.md), "Forward test". Started 20
 
 | | |
 |---|---|
-| Trading days booked | 17 |
-| Paper equity | **$9,435.66** |
-| Return so far | -5.64% |
-| Worst drop so far | -6.00% |
-| Green days | 6 of 16 |
+| Trading days booked | 18 |
+| Paper equity | **$9,363.34** |
+| Return so far | -6.37% |
+| Worst drop so far | -6.72% |
+| Green days | 6 of 17 |
 | Current config | volman-sma100-crypto30-trend40 |
-| Current weights | SPY 20%, VNQ 21% |
+| Current weights | SPY 19% |
 
 | Date | Day return | Equity |
 |---|---:|---:|
@@ -30,4 +30,5 @@ Rules: [PROTOCOL_ROUND13.md](../PROTOCOL_ROUND13.md), "Forward test". Started 20
 | 2026-11-13 00:00:00 | -0.07% | $9,531.23 |
 | 2026-11-16 00:00:00 | -0.44% | $9,489.03 |
 | 2026-11-17 00:00:00 | -0.49% | $9,441.69 |
-| 2026-11-18 | -0.06% | $9,435.66 |
+| 2026-11-18 00:00:00 | -0.06% | $9,435.66 |
+| 2026-11-19 | -0.76% | $9,363.34 |
