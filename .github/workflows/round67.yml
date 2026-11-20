@@ -1,0 +1,29 @@
+name: round67
+# Round 67 (PROTOCOL_ROUND67.md): which days does selling 0DTE premium win, and why?
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PYTHONWARNINGS: ignore
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate scipy
+      - name: Smoke (synthetic null fails, planted passes)
+        run: python run_round67.py smoke > /dev/null
+      - name: Run
+        run: python run_round67.py report
+      - name: Commit report
+        if: ${{ !cancelled() }}
+        run: |
+          git config user.name "round67 bot"; git config user.email "actions@users.noreply.github.com"
+          git add reports/ROUND67.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round67: results [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

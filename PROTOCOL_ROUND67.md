@@ -48,3 +48,5 @@ Synthetic 1,100 days with a 10% variance premium and a day-level move multiplier
 - Per feature: quintile table of mean A, win rate and worst day (dev and all).
 - The 25 worst days with their features.
 - Year-by-year results.
+
+Calibration note (before any real data was fetched): in the first null draft, the synthetic VIX1D varied, so high-vol days had larger point P&L. That is real structure, not a null, and one null configuration passed. The null world now holds vol constant, with the vol-index feature columns as pure noise. Across seeds 3, 4 and 5 the null passes nothing and the planted signal passes every time (null 95th-percentile best holdout t: 2.11 / 3.52 / 2.52).
