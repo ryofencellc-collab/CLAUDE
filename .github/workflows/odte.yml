@@ -75,6 +75,7 @@ jobs:
           python run_round61.py report > /dev/null || echo "round61 failed"
           python run_round62b.py report > /dev/null || echo "round62b failed"
           timeout 12000 python run_round62.py report > /dev/null || echo "round62 failed"
-          git add reports/ROUND61.md reports/ROUND62.md reports/ROUND62B.md 2>/dev/null || true
+          python run_round64.py report > /dev/null || echo "round64 failed"
+          git add reports/ROUND61.md reports/ROUND62.md reports/ROUND62B.md reports/ROUND64.md 2>/dev/null || true
           git diff --cached --quiet || git commit -q -m "rounds 61/62: nightly refresh [skip ci]"
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
