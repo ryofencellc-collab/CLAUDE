@@ -13,7 +13,7 @@ jobs:
         with: {ref: "${{ github.ref_name }}"}
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
-      - run: pip install -r requirements.txt && python probe59.py
+      - run: pip install -r requirements.txt && python probe59b.py
       - name: Commit
         run: |
           git config user.name "probe bot"; git config user.email "actions@users.noreply.github.com"
