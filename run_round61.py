@@ -47,7 +47,7 @@ def run_day(ss, spot, root, day, trig, ex):
             hit = bid == bid and tp is not None and (bid >= tp * paid or bid <= sl * paid)
             if hit or (t - t0) >= pd.Timedelta(minutes=hold) or t.time() >= dtime(15, 45):
                 bid = bid if bid == bid else 0.0
-                out.append(dict(day=day, root=root, trig=trig, exit=ex, pnl=(bid - paid) * mult - 2 * fee)); pos = None
+                out.append(dict(day=day, root=root, trig=trig, exit=ex, t_in=t0, cost=paid * mult, pnl=(bid - paid) * mult - 2 * fee)); pos = None
             continue
         if not (dtime(9, 45) <= t.time() < dtime(15, 30)): continue
         s = signal(trig, f, i)
@@ -66,7 +66,7 @@ def all_trades(days_iter):
         for trig in TRIG:
             for ex in EXITS:
                 rows += run_day(ss, spot, root, day, trig, ex)
-    return pd.DataFrame(rows, columns=["day", "root", "trig", "exit", "pnl"])
+    return pd.DataFrame(rows, columns=["day", "root", "trig", "exit", "t_in", "cost", "pnl"])
 
 
 def real_days():
@@ -76,6 +76,20 @@ def real_days():
             d = O.load_day(day, root)
             if d.empty or d["t"].nunique() < O.MIN_SNAPS: continue
             yield day, root, O.snaps(d), d.groupby("t")["spot"].first()
+
+
+def walk_away(T, rule):
+    """Apply a daily walk-away overlay to each (root, trig, exit, day) trade sequence, in entry order.
+    W0 = take every signal; W1 = stop after the first winner; W2 = stop at day P&L >= +1x or <= -1x the day's first-trade cost; W3 = first trade only."""
+    keep = []
+    for _, x in T.sort_values("t_in").groupby(["root", "trig", "exit", "day"], sort=False):
+        run = 0.0; unit = x.cost.iloc[0]
+        for i, r in enumerate(x.itertuples()):
+            keep.append(r.Index); run += r.pnl
+            if rule == "W1" and r.pnl > 0: break
+            if rule == "W2" and (run >= unit or run <= -unit): break
+            if rule == "W3": break
+    return T.loc[keep]
 
 
 def score(T):
@@ -130,10 +144,23 @@ def smoke():
 
 def report():
     T = all_trades(real_days()); R, n = score(T)
+    W = []
+    for rule in ["W0", "W1", "W2", "W3"]:
+        X = T if rule == "W0" else walk_away(T, rule)
+        for (root, trig, ex), x in X.groupby(["root", "trig", "exit"]):
+            dd = x.groupby("day").pnl.sum()
+            W.append(dict(rule=rule, root=root, trig=trig, exit=ex, trades=len(x), total=round(x.pnl.sum(), 0), green_days=f"{(dd > 0).sum()}/{len(dd)}"))
+    WD = pd.DataFrame(W)
+    piv = WD.pivot_table(index=["root", "trig", "exit"], columns="rule", values="total").reset_index()
+    gd = WD.pivot_table(index=["root", "trig", "exit"], columns="rule", values="green_days", aggfunc="first").reset_index()
+    piv = piv.merge(gd, on=["root", "trig", "exit"], suffixes=("", "_green"))
     out = ["# Round 61: indicator setups as 0DTE scalps on real recorded quotes", "", "Rules: [PROTOCOL_ROUND61.md](../PROTOCOL_ROUND61.md). 1 contract, ask in / bid out, fees.",
            f"Recorded days: **{n}** ({'INTERIM: pass test needs 20 days' if n < 20 else 'scored'}). Trades: {len(T):,}. Configurations with any trade: {len(R)}.", "",
            f"Profitable configurations: {int((R.total > 0).sum())} of {len(R)}. Passing: **{int(R.PASS.sum())}**.", "",
-           R.round(2).to_markdown(index=False)]
+           R.round(2).to_markdown(index=False), "",
+           "## Walk-away overlays (total $; green days / days)", "",
+           "W0 = every signal; W1 = stop after the first winner; W2 = stop at day ±1× first-trade cost; W3 = first signal only.", "",
+           piv.sort_values("W1", ascending=False).to_markdown(index=False)]
     open("reports/ROUND61.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:8]))
 
 

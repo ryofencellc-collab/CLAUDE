@@ -49,3 +49,15 @@ Before 20 days, results are reported as interim only.
 - **Mean-reversion setups lost badly:** RSI extremes and Bollinger touches (R1/B1), with SPXW B1-X2 at −$17k, t −5.5.
 - **Reading:** the 9 days were a steady down-trend (SPX 7,550 → 7,340). Trend-following triggers win in trends and fade-the-move triggers lose.
   Whether that holds outside a trending stretch is exactly what days 10–40 decide. The report refreshes nightly with the 0DTE scorer.
+
+## Walk-away overlays (added 2026-11-20 at the user's request; interim, 9 days; reported with every refresh)
+These apply on top of each configuration:
+- W1: stop after the first winning trade of the day.
+- W2: stop at day P&L of ±1× the first trade's cost.
+- W3: take the first signal only.
+
+**First read:**
+- Walk-away raises the share of **green days** (SPX MACD-X2 goes from 5/9 to 7/9; SPY MACD-X1 from 6/9 to 8/9).
+- On the best trend setups it **cuts total profit** (SPX MACD-X2 falls from +$20.9k to +$5.0k), because the later trades of a trend day carried the gains.
+- It turns some losing setups slightly positive (SPX RSI-cross-X1: −$4.2k → +$1.1k; VWAP-X1: −$2.8k → +$1.0k).
+- Stopping does not change the expected value per trade. It only helps if trades within a day are correlated. 20–40 days are needed before reading anything into it.
