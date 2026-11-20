@@ -141,3 +141,17 @@ positive, t ≥ 2.5, **and above the better no-model baseline.**
 - **Verdict (interim):** fails the "above the better baseline" and "above the null" rules. The only information in 20 days is the drift (the market fell). This is
   re-run nightly; Yahoo's 28-day window rolls, so the day count stays about 20 unless the stored `data/ctx` history grows it. It does: files are kept.
 - Run note: the first background run stalled from CPU oversubscription alongside Round 62. It was re-run with `OMP_NUM_THREADS=1` (about 5 minutes). No rules changed.
+
+## Interim, completeness run (2026-11-20, 9 recorded days, 72 variables, 6,127 snapshots): **still nothing beats "always puts"**
+- **A2 tradable test:** 0 of 69 variables beat the better baseline on either root.
+  - The new variables (calendar, aggressor flow, VIX, mega-caps, rates, dollar, BTC, credit, true VWAP) are included.
+  - Variables profitable on both roots on the holdout earned no more than always-puts; on a falling holdout they reduce to "buy puts".
+- **B, the algorithm (72 variables, leave-one-day-out):** −$3,397 on 216 trades, 31% win, 7/18 green days. The null's 95th percentile is +$8,699, so it does **not** beat the null. With walk-away: −$3,470.
+- **B2, instruments × selectivity × walk-away:** the top 3 rows are baselines (always puts SPXW +$15,501; always short shares SPXW +$4,460 and SPY +$4,151).
+  - The best model row (puts only, ≥70%, SPXW, +$3,284, t 0.46) is below the baseline.
+  - One row, calls-only walk-away on SPY, shows t 3.54. It is 11 trades on 7 days and was picked from about 100 rows (Bonferroni bar ≈ 3.3 with a 9-day t). That is not evidence. It is logged and tracked at 20 days.
+- **B3, strike × exit:** every top row is always-puts. Hold-to-close (X3) with ITM puts made +$69,771 on SPXW, but only 4/9 days were green (t 1.03).
+  The model at ≥60% traded 9 times and made less than the baseline for every strike/exit.
+- **C, importance:** BTC 30-min return, the 30-min return, realized vol, distance from the high and the put/call ratio change rank top. The importances are small (≤0.03 AUC)
+  and unstable between roots.
+- **Verdict (interim):** fail. The rest of the tests are unchanged: the 20-day check runs nightly via the odte workflow's analyze job.
