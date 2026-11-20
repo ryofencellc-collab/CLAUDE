@@ -1,15 +1,15 @@
 # Live paper test: Kalshi weather (forward, latest forecasts)
 
-Updated 2026-11-20 11:16 UTC. Rules: PROTOCOL_ROUND5.md, "Forward test". $10 paper bets.
+Updated 2026-11-20 19:57 UTC. Rules: PROTOCOL_ROUND5.md, "Forward test". $10 paper bets.
 
 | | |
 |---|---|
-| City-days checked | 188 |
-| Bets placed | 171 |
-| Open | 1 |
-| Settled | 170 (won 49) |
-| **Profit** | **$-622.94** |
-| ROI | -36.6% |
+| City-days checked | 191 |
+| Bets placed | 174 |
+| Open | 3 |
+| Settled | 171 (won 50) |
+| **Profit** | **$-542.66** |
+| ROI | -31.7% |
 
 Excluded v1 bets (flawed rule, see forward amendment 1): 17 settled, P&L $-7.68.
 
@@ -33,6 +33,6 @@ Green days: 4 of 19
 | 2026-11-09 | 4 | $+2.02 |
 | 2026-11-10 | 10 | $+35.60 |
 | 2026-11-12 | 5 | $-17.88 |
-| 2026-11-13 | 9 | $-81.67 |
+| 2026-11-13 | 10 | $-1.39 |
 | 2026-11-14 | 12 | $-1.14 |
 | 2026-11-15 | 12 | $-35.65 |
