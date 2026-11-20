@@ -85,7 +85,15 @@ def d_at(Drow, K):
 def panel(M, Q, Dmaps):
     """Long table: one row per market-minute with Kalshi bid/ask and fair value S (same minute) and L (15 min older)."""
     Q = Q.copy(); Q["t"] = pd.to_datetime(Q.t, utc=True).dt.tz_convert(ET).dt.floor("min")
-    Q = Q[(Q.t.dt.hour * 60 + Q.t.dt.minute >= 600) & (Q.t.dt.hour * 60 + Q.t.dt.minute <= 945)]
+    # Kalshi sends a candle only when something changes: carry the last quote forward minute by minute
+    filled = []
+    for tk, g in Q.groupby("ticker"):
+        g = g.drop_duplicates("t").set_index("t").sort_index()[["bid", "ask"]]
+        day0 = g.index[0].normalize()
+        grid = pd.date_range(day0 + pd.Timedelta(hours=10), day0 + pd.Timedelta(hours=15, minutes=45), freq="1min")
+        g = g.reindex(g.index.union(grid)).ffill().reindex(grid)
+        filled.append(g.reset_index(names="t").assign(ticker=tk))
+    Q = pd.concat(filled, ignore_index=True).dropna(subset=["bid", "ask"])
     J = Q.merge(M[["ticker", "day", "lo", "hi", "y", "series"]], on="ticker")
     rows = []
     for day, g in J.groupby("day"):
