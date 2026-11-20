@@ -1,0 +1,529 @@
+{
+ "kalshi_macro_series": [
+  [
+   "KXMICROS",
+   "MicroStrategy Bitcoin"
+  ],
+  [
+   "RTCOMPARISON",
+   "Highest rated movie"
+  ],
+  [
+   "FEDFACILITY",
+   "Fed facility"
+  ],
+  [
+   "GDPCN",
+   "China GDP growth"
+  ],
+  [
+   "KXFEDFREQ",
+   "Will Fed policy meetings be reduced?"
+  ],
+  [
+   "KXNGDPQ",
+   "Quarterly NGDP growth"
+  ],
+  [
+   "TERMINALRATE",
+   "Fed funds highest rate"
+  ],
+  [
+   "KXFOMCTONE",
+   "Warsh FOMC tone"
+  ],
+  [
+   "KXCOOK",
+   "Lisa Cook confirmed as Fed member"
+  ],
+  [
+   "KXSTANFORDACCEPT",
+   "Stanford first-year acceptance rate"
+  ],
+  [
+   "KXUSNFP",
+   "US nonfarm payrolls in [month]"
+  ],
+  [
+   "KXFRM",
+   "Mortgage 30-yr rate this week"
+  ],
+  [
+   "KXSTANFORDRATE",
+   "Stanford Admissions Rate"
+  ],
+  [
+   "KXCREDEFMINMAX",
+   "Commercial real estate lowest default rate"
+  ],
+  [
+   "KXAISONG",
+   "AI-generated Hot 100 song"
+  ],
+  [
+   "KXCOOKCHARGE",
+   "Lisa Cook federally charged"
+  ],
+  [
+   "KXTARIFFRATEKR",
+   "Korea tariff rate"
+  ],
+  [
+   "KXHSINCHUCOUNTYMAG",
+   "Hsinchu County magistrate election winner"
+  ],
+  [
+   "KXBOARD",
+   "Next Fed Board Member"
+  ],
+  [
+   "KXVOTEPERCENTPIRATES",
+   "pirates czech vote percent"
+  ],
+  [
+   "KXNEXTATLFED",
+   "Next Atlanta Fed president?"
+  ],
+  [
+   "KXVANRATEWC",
+   "West Coast Freight Rates (Truckstop.com dry van rates)"
+  ],
+  [
+   "KXCBDECISIONENGLAND",
+   "Bank Of ENGLAND policy interest rate decision"
+  ],
+  [
+   "KXCOLUMBIARATE",
+   "Columbia Admissions Rate"
+  ],
+  [
+   "ACPICORE",
+   "Annual core inflation"
+  ],
+  [
+   "RHIKE",
+   "Rate hikes"
+  ],
+  [
+   "KXAIADOPTION",
+   "Headline AI adoption rate"
+  ],
+  [
+   "KXEMERCUTS",
+   "Emergency rate cuts"
+  ],
+  [
+   "KXJPMOMINF",
+   "Japan inflation MoM in [month]"
+  ],
+  [
+   "KXFTAPER",
+   "Fed tapering"
+  ],
+  [
+   "KXCHCPIYOY",
+   "China Inflation Rate YoY"
+  ],
+  [
+   "KXCBDECISIONKOREA",
+   "Bank Of KOREA policy interest rate decision"
+  ],
+  [
+   "GDP",
+   "US GDP growth"
+  ],
+  [
+   "KXCPICOREYOY",
+   "Core inflation"
+  ],
+  [
+   "KXARINFLATIONM",
+   "Argentina inflation"
+  ],
+  [
+   "KXFOMCVOTE",
+   "Next FOMC vote unanimous"
+  ],
+  [
+   "KXCBDCZECH",
+   "Czech National Bank interest rate decision"
+  ],
+  [
+   "KXSUSPENDGASTAX",
+   "Will the federal gas tax be suspended?"
+  ],
+  [
+   "KXESGDPQOQF",
+   "Spain GDP Growth Rate QoQ Flash (quarterly)"
+  ],
+  [
+   "KXTOBACCPI",
+   "Tobacco CPI higher in [month]?"
+  ],
+  [
+   "KXMSTRMARGIN",
+   "MicroStrategy margijn called"
+  ],
+  [
+   "KXFEDNOM",
+   "Federal Reserve chairman replacement announcement"
+  ],
+  [
+   "KXBROWNRATE",
+   "Brown Admissions Rate"
+  ],
+  [
+   "KXWASHURATE",
+   "WashU Admissions Rate"
+  ],
+  [
+   "KXGDPCN",
+   "China GDP growth"
+  ],
+  [
+   "KXCOREUND",
+   "Will Core CPI fall below x.x% in 2026?"
+  ],
+  [
+   "KXRELEASECPI",
+   "Will the BLS release October CPI data?"
+  ],
+  [
+   "KXPSAVERT",
+   "US personal saving rate below x% in [year]?"
+  ],
+  [
+   "KXCPIAPPAREL",
+   "CPI on apparel"
+  ],
+  [
+   "KXCHGDPYOY",
+   "China GDP Growth Rate YoY (quarterly)"
+  ],
+  [
+   "KXMTI194BLOCK",
+   "Will a court block Montana's I-194 corporate political spending ban?"
+  ],
+  [
+   "KXFEDTWEETS",
+   "Fed tweets"
+  ],
+  [
+   "KXMSTRSELL",
+   "Will MicroStrategy sell any Bitcoin before date"
+  ],
+  [
+   "KXMEXCOALITION",
+   "Will Morena, PT and PVEM register a federal coalition in Mexico?"
+  ],
+  [
+   "KXITGDPQOQA",
+   "Italy GDP Growth Rate QoQ Adv (quarterly)"
+  ],
+  [
+   "KXNOMGDPGROWTH",
+   "Nominal GDP growth in [year]"
+  ],
+  [
+   "KXSAGDPQOQ",
+   "South Africa GDP growth QoQ"
+  ],
+  [
+   "KXRATECUTCOUNT",
+   "Number of rate cuts"
+  ],
+  [
+   "KXQRECESS",
+   "Recession start"
+  ],
+  [
+   "KXSCHIFFCHARGE",
+   "Adam Schiff federally charged "
+  ],
+  [
+   "WRECSS",
+   "World recessions"
+  ],
+  [
+   "KXIEAOIL",
+   "Will the IEA approve a strategic oil reserves release?"
+  ],
+  [
+   "KX2YFOMC",
+   "2-year Treasury yield move on FOMC day"
+  ],
+  [
+   "FXPESO",
+   "USD/Mexican peso exchange rate"
+  ],
+  [
+   "KXMENTIONEARNFDX",
+   "FedEx"
+  ],
+  [
+   "CPIFOOD",
+   "CPI on food"
+  ],
+  [
+   "KX30YMORTW",
+   "30-year mortgage rate this week"
+  ],
+  [
+   "KXRECSS",
+   "Quarter of negative GDP growth by 2022 Q2"
+  ],
+  [
+   "KXCBDECISIONJAPAN",
+   "Bank Of Japan policy interest rate decision"
+  ],
+  [
+   "KXWYUNEMPLOW",
+   "Wyoming unemployment"
+  ],
+  [
+   "KXVANRATEMC",
+   "Mountain Central Freight Rates (Truckstop.com dry van rates)"
+  ],
+  [
+   "KXLCPIYOY",
+   "Inflation surge this year"
+  ],
+  [
+   "KXFEDMEET",
+   "Fed emergency meeting"
+  ],
+  [
+   "KXSTONEMOUNTAIN",
+   "Will the Stone Mountain Confederate carving be removed?"
+  ],
+  [
+   "ARINFLATIONM",
+   "Argentina inflation"
+  ],
+  [
+   "KXCNGDP",
+   "China quarterly GDP change in 2021 Q2"
+  ],
+  [
+   "CPICOREYOY",
+   "Core inflation"
+  ],
+  [
+   "KXEZDEPRATE",
+   "Euro Area Deposit Facility Rate (varied dates)"
+  ],
+  [
+   "KXJPSGINFL",
+   "Will Japan\u2019s inflation rate be above Singapore\u2019s"
+  ],
+  [
+   "KXANTHADOPT",
+   "Anthropic AI adoption rate"
+  ]
+ ],
+ "poly_events": 1035,
+ "poly_titles": [
+  " Trump imposes 25% tariff on Canada and Mexico before March?",
+  "'No change' or '25 bps cut' favored for Fed decision in January on December 10?",
+  "0 ships transit Bab el-Mandeb on any date by..?",
+  "0 ships transit Hormuz on any date by..?",
+  "1 million American kids get SpaceX shares by December 31, 2027?",
+  "10-year Treasury yield >4.3% Friday?",
+  "10-year Treasury yield >4.4% Friday?",
+  "10-year Treasury yield >4.5% Friday?",
+  "10-year Treasury yield >4.5% next Friday?",
+  "10-year Treasury yield below 4% before April?",
+  "10-year Treasury yield on Friday?",
+  "2026 World GDP Growth",
+  "2nd Largest Company end of December 2026?",
+  "2nd Largest Company end of November 2026?",
+  "2nd Largest company end of 2025?",
+  "2nd Largest company end of November?",
+  "2nd Largest company end of October?",
+  "2nd Largest company end of September?",
+  "30-year mortgage rate below 5% before election?",
+  "30-year mortgage rate below 6% before election?",
+  "30-year mortgage rate below 6% by December 31?",
+  "3rd Largest Company end of December 2026?",
+  "3rd Largest Company end of November 2026?",
+  "3rd Largest company end of November?",
+  "5% GDP contraction in Q3 2025?  ",
+  "50-year GSE-eligible mortgages by December 31?",
+  "54% tariff goes into effect on China by Wednesday?",
+  "7-day average ship traffic through the Bab el-Mandeb Strait on December 31?",
+  "7-day average ship traffic through the Malacca Strait on December 31?",
+  "7-day average ship traffic through the Malacca Strait on November 30?",
+  "7-day average ship traffic through the Panama Canal on December 31?",
+  "7-day average ship traffic through the Panama Canal on November 30?",
+  "7-day average ship traffic through the Strait of Hormuz on December 31?",
+  "7-day average ship traffic through the Suez Canal on December 31?",
+  "7-day average ship traffic through the Suez Canal on November 30?",
+  "Annual inflation above 2.2% in September?",
+  "Annual inflation above 2.4% in October?",
+  "Annual inflation above 2.5% in August?",
+  "Annual inflation under 3% in August?",
+  "Another Fed rate hike in 2026?",
+  "Another France debt downgrade by December 31?",
+  "Another US debt downgrade before 2027?",
+  "Another US debt downgrade in 2025?",
+  "April Inflation - Annual",
+  "April Inflation US - Annual",
+  "April Inflation US - Monthly",
+  "April Unemployment Rate",
+  "Argentina Annual Inflation 2026",
+  "Argentina Monthly Inflation - April",
+  "Argentina Monthly Inflation - August",
+  "Argentina Monthly Inflation - February",
+  "Argentina Monthly Inflation - July",
+  "Argentina Monthly Inflation - June",
+  "Argentina Monthly Inflation - March",
+  "Argentina Monthly Inflation - May",
+  "Argentina Monthly Inflation - October",
+  "Argentina Monthly Inflation - September",
+  "Argentina Official USD Exchange Rate end of 2026?",
+  "Argentina Official USD Exchange Rate end of 2026? (Higher Brackets)",
+  "Argentina Official USD Exchange Rate on December 31?",
+  "August Inflation - Annual",
+  "August Inflation - Monthly",
+  "August Inflation China - Annual",
+  "August Inflation US - Annual",
+  "August Inflation US - Monthly",
+  "August Unemployment Rate",
+  "August jobs report prints negative?",
+  "Average US gas prices on February 21?",
+  "Average US gas prices on February 28?",
+  "Avg. # of ships transiting Bab el-Mandeb Strait end of November?",
+  "Avg. # of ships transiting Strait of Hormuz end of November?",
+  "BLS delays another CPI release before 2027?",
+  "BOA launches a USD stablecoin in 2025?",
+  "Bab el-Mandeb Strait effectively closed by...?",
+  "Bank of Brazil Decision in January?",
+  "Bank of Brazil Decision in March?",
+  "Bank of Brazil decision in December?",
+  "Bank of Brazil decision in January?",
+  "Bank of Brazil decision in November?",
+  "Bank of Canada Decision in December?",
+  "Bank of Canada Decision in January?",
+  "Bank of Canada Decision in March?",
+  "Bank of Canada Interest Rates: July 2025",
+  "Bank of Canada decision in December?",
+  "Bank of Canada decision in January?",
+  "Bank of Canada decision in October?",
+  "Bank of England Decision in February?",
+  "Bank of England Decision in March?",
+  "Bank of England decision in December?",
+  "Bank of England decision in February?",
+  "Bank of England decision in November?",
+  "Bank of England decision in September?",
+  "Bank of England rate cut in 2025?",
+  "Bank of England rate cut in March meeting?",
+  "Bank of England rate cut in May meeting?",
+  "Bank of England rate cut in September meeting?",
+  "Bank of Israel Decision in February?",
+  "Bank of Israel Decision in January?",
+  "Bank of Israel Decision in November?",
+  "Bank of Japan Decision in December?",
+  "Bank of Japan Decision in January?",
+  "Bank of Japan Decision in March?",
+  "Bank of Japan decision in December?",
+  "Bank of Japan decision in January?",
+  "Bank of Japan decision in October?",
+  "Bank of Japan emergency rate cut in August?",
+  "Bank of Korea Decision in April?",
+  "Bank of Korea Decision in February?",
+  "Bank of Korea Decision in January?",
+  "Bank of Korea decision in November?",
+  "Bank of Mexico Decision in December?",
+  "Bank of Mexico decision in December?",
+  "Bank of Russia Decision in February?",
+  "Bank of Russia Decision in March?",
+  "Bank of Russia decision in December?",
+  "Brazil Annual Inflation 2026",
+  "Brazil GDP Growth in Q3 2026 (QoQ)?",
+  "Brazil unemployment below 6.3% for Q4 2025?",
+  "Brazil\u2019s 12-month inflation below 5.50% for December 2025?",
+  "Bull run: September",
+  "CHIPS Act repealed before July?",
+  "Canada Annual Inflation 2026",
+  "Canada GDP: September 2026 (MoM)",
+  "Canada recession before 2027?",
+  "Canada recession in 2025?",
+  "Canadian unwrought aluminum duty rate on December 31, 2027?",
+  "Central Bank of Chile Decision in January?",
+  "Central Bank of Chile Decision in March?",
+  "Central Bank of Chile decision in December",
+  "Central Bank of Colombia decision in December",
+  "Central Bank of Colombia decision in December?",
+  "China Annual GDP Growth 2026",
+  "China Annual Inflation 2026",
+  "China GDP growth (Y/Y) in Q4 2026?",
+  "China bans US films in April?",
+  "Circle IPO in 2025?",
+  "Core CPI (ex food and energy) MoM - May 2026",
+  "Core CPI MoM - August 2026",
+  "Core CPI MoM - July 2026",
+  "Core CPI MoM - November 2026",
+  "Core CPI MoM - October 2026",
+  "Core CPI MoM - September 2026",
+  "Core CPI YoY - August 2026",
+  "Core CPI YoY - July 2026",
+  "Core CPI YoY - June 2026",
+  "Core CPI YoY - May 2026",
+  "Core CPI YoY - November 2026",
+  "Core CPI YoY - October 2026",
+  "Core CPI YoY - September 2026",
+  "Core PCE MoM - August 2026",
+  "Core PCE MoM - July 2026",
+  "Core PCE MoM - June 2026",
+  "Core PCE MoM - October 2026",
+  "Core PCE MoM - September 2026",
+  "Core PCE YoY - August 2026",
+  "Core PCE YoY - July 2026",
+  "Core PCE YoY - June 2026",
+  "Core PCE YoY - October 2026",
+  "Core PCE YoY - September 2026",
+  "CoreWeave downgraded by Moody's or S&P by...?",
+  "Costco increases hotdog price before 2027?",
+  "DOJ reopens Powell investigation by...?",
+  "December Inflation - Annual",
+  "December Inflation - Monthly",
+  "December Inflation Argentina - Annual",
+  "December Inflation Argentina - Monthly",
+  "December Inflation Canada - Annual",
+  "December Inflation Canada - Monthly",
+  "December Inflation China - Annual",
+  "December Inflation China - Monthly",
+  "December Inflation Eurozone - Annual",
+  "December Inflation Eurozone - Monthly",
+  "December Inflation U.K. - Annual",
+  "December Inflation U.K. - Monthly",
+  "December Inflation US - Annual",
+  "December Inflation US - Monthly",
+  "December Unemployment Rate",
+  "Dem sweep & Gas hits $3.50 by end of 2026?",
+  "Dem sweep & Gas hits $4.50 by end of 2026?",
+  "Dem sweep & US recession by end of 2027?",
+  "Dozen eggs price in November?",
+  "ECB Interest Rates: April 2025",
+  "ECB Interest Rates: December 2024",
+  "ECB Interest Rates: December 2025",
+  "ECB Interest Rates: December 2026",
+  "ECB Interest Rates: February 2026",
+  "ECB Interest Rates: February 2027",
+  "ECB Interest Rates: January 2025",
+  "ECB Interest Rates: July 2025",
+  "ECB Interest Rates: June 2025",
+  "ECB Interest Rates: March 2025",
+  "ECB Interest Rates: March 2027",
+  "ECB Interest Rates: October 2025",
+  "ECB Interest Rates: September 2025",
+  "ECB rate cut in 2025?",
+  "ECB rate cut in 2026?",
+  "EU debt downgrade before 2027?",
+  "EU emergency diesel stocks end of December 2026?",
+  "EU emergency diesel stocks end of November 2026?",
+  "EU emergency diesel stocks end of October 2026?"
+ ],
+ "poly_history_sample_points": 0,
+ "poly_history_sample_head": []
+}
