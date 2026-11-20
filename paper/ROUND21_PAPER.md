@@ -1,10 +1,10 @@
 # Round 21 live paper test: 99c bids on crypto markets decided by the spot price
 
-Updated 2026-11-20 21:56 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
+Updated 2026-11-20 23:57 UTC. Rules: [PROTOCOL_ROUND21.md](../PROTOCOL_ROUND21.md), "Forward test". 1,000 contracts per market at z >= 6; fills only after the live queue ahead.
 
 | | |
 |---|---|
-| Markets bid and settled | 414,886 (cancelled before close 9,968); open now 1,688 |
+| Markets bid and settled | 414,886 (cancelled before close 9,968); open now 3,400 |
 | Markets that got any fill | 1,456 (0.4%) |
 | Losing filled markets | 13 |
 | Contracts filled | 497,071 |
