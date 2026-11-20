@@ -98,14 +98,22 @@ def day_features(c, prev_close, prev_range, prev_ret, vix, vix5, trend20, wd, st
 
 
 # ---------------------------------------------------------------- option outcome table
-def outcome_table(c, V):
-    """O[slot, type, exit] = P&L ($ per contract) for one day."""
+def rv_path(c):
+    """rv30 at every minute (same formula as the rv30 feature; shorter window before minute 30)."""
+    lr2 = np.diff(np.log(c), prepend=np.log(c[0])) ** 2; cs = np.concatenate([[0.0], np.cumsum(lr2)])
+    i = np.arange(len(c)); lo = np.maximum(i - 29, 1); n = np.maximum(i + 1 - lo, 1)
+    return np.sqrt((cs[i + 1] - cs[lo]) * 252 * 390 / n)
+
+
+def outcome_table(c, V, beta=0.0):
+    """O[slot, type, exit] = P&L ($ per contract) for one day. beta > 0 (amendment 2): IV x (rv30_t / V)^beta."""
+    mult = np.clip((np.maximum(rv_path(c), 1e-4) / V) ** beta, 0.3, 3.0) if beta else np.ones(len(c))
     O = np.full((len(SLOTS), len(TYPES), len(EXITS)), np.nan, np.float32)
     mins_all = 390 - np.arange(390)                     # minutes to 16:00 at each minute index (index 0 = 09:31 -> 389? use 390-i-1)
     mins_all = 389 - np.arange(390) + 1.0
     for si, s in enumerate(SLOTS):
         S0 = c[s]; T0 = mins_all[s] / (365 * 1440)
-        atm_iv = float(iv_model(V, mins_all[s], 0.0))
+        atm_iv = float(iv_model(V, mins_all[s], 0.0)) * mult[s]
         j = np.arange(s, LAST + 1); Sj = c[j]; Tj = mins_all[j] / (365 * 1440)
         for ti, (cp, dl) in enumerate(TYPES):
             if dl == 0.5: K = S0
@@ -114,7 +122,7 @@ def outcome_table(c, V):
                 d1 = N_.inv_cdf(target); v = atm_iv * math.sqrt(T0)
                 K = S0 * math.exp(-d1 * v + 0.5 * v * v)
             z = np.log(K / Sj) / (V * np.sqrt(Tj))
-            mid = bs(Sj, K, Tj, iv_model(V, mins_all[j], z), cp)
+            mid = bs(Sj, K, Tj, iv_model(V, mins_all[j], z) * mult[j], cp)
             sp = spread(mid)
             ask0 = mid[0] + sp[0] / 2
             if not (ask0 > 0.05): continue
@@ -130,7 +138,7 @@ def outcome_table(c, V):
     return O
 
 
-def build_market(days, vix, label, planted=None):
+def build_market(days, vix, label, planted=None, beta=0.0):
     ds = sorted(days); F, O, keep = [], [], []
     closes = {d: days[d][-1] for d in ds}
     t0 = time.time()
@@ -145,7 +153,7 @@ def build_market(days, vix, label, planted=None):
         if planted is not None:
             c = days[d]; fut = np.array([np.sign(c[min(s + 30, 389)] - c[s]) for s in SLOTS])
             f = np.column_stack([f, fut + planted.normal(0, 1.0, len(SLOTS))])
-        F.append(f); O.append(outcome_table(days[d], V)); keep.append(d)
+        F.append(f); O.append(outcome_table(days[d], V, beta)); keep.append(d)
         if i % 250 == 0: print(label, i, len(ds), round(time.time() - t0), "s", flush=True)
     return np.array(keep), np.array(F, np.float32), np.array(O, np.float32)
 
@@ -322,5 +330,35 @@ def report():
     open("reports/ROUND66.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:12]))
 
 
+def reprice():
+    """Amendment 2: same dev search (original prices) -> same top 20 re-tested on holdout with IV reacting to rv30."""
+    m1 = json.load(open("data/r66_m1.json")); cut = np.datetime64("2020-01-01")
+    raw = {}
+    for name, pair, vt in (("SPX", "SPXUSD", "^VIX"), ("NDX", "NSXUSD", "^VXN")):
+        raw[name] = (load_days(pair), load_vix(vt))
+    def market(beta):
+        mk = {}
+        for name in raw:
+            dd, F, O = build_market(*raw[name], name, beta=beta); mk[name] = (np.asarray(dd).astype("datetime64[ns]"), F, O)
+        return mk
+    base = market(0.0); d1, F1, O1 = base["SPX"]; d2, F2, _ = base["NDX"]
+    dev, ho = d1 < cut, d1 >= cut; dev2, ho2 = d2 < cut, d2 >= cut
+    R, Q, B, all_sr, nt = search(F1, O1, dev, FEATS); n_cfg = nt * len(TYPES) * len(EXITS); Q2 = thresholds(F2, dev2)
+    H0 = holdout(R, F1, O1, Q, d1, ho, F2, base["NDX"][2], Q2, ho2, all_sr, n_cfg)
+    out = ["# Round 66 amendment 2: re-priced with IV reacting to intraday realized vol", "", "Rules: [PROTOCOL_ROUND66.md](../PROTOCOL_ROUND66.md), amendment 2.", "",
+           f"M1 on real SPXW quotes ({m1['n']:,} ATM snapshots, {m1['days']} days): log(real IV / model IV) vs log(rv30 / VIXprev): beta {m1['beta']:.3f} (within-day {m1['beta_within_day']:.3f}), corr {m1['corr']:.2f}. "
+           f"Real/model IV median by rv30 quintile: " + ", ".join(f"{k} → {v:.2f}" for k, v in m1["by_rv_bin"].items()) + ".", "",
+           f"Original prices: {int(H0.PASS.sum())}/20 top dev configurations PASS (as in ROUND66.md).", ""]
+    verdict = None
+    for lab, beta in (("pooled beta (pre-registered verdict)", m1["beta"]), ("within-day beta (sensitivity only)", m1["beta_within_day"])):
+        mk = market(beta); _, _, O1b = mk["SPX"]; _, _, O2b = mk["NDX"]
+        H = holdout(R, F1, O1b, Q, d1, ho, F2, O2b, Q2, ho2, all_sr, n_cfg)
+        H.insert(0, "rule", [describe(s, FEATS, Q) for s in H.signal]); H = H.drop(columns="signal")
+        if verdict is None: verdict = "PASS → real-quote replay next" if H.PASS.any() else "FAIL (model artifact)"
+        out += [f"## {lab}: beta = {beta:.3f} — {int(H.PASS.sum())}/20 PASS", "", H.to_markdown(index=False), ""]
+    out.insert(4, f"**Verdict: {verdict}.**\n")
+    open("reports/ROUND66_REPRICE.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:12]))
+
+
 if __name__ == "__main__":
-    {"smoke": smoke, "report": report}[sys.argv[1]]()
+    {"smoke": smoke, "report": report, "reprice": reprice}[sys.argv[1]]()
