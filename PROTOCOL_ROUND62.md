@@ -72,3 +72,25 @@ A martingale yields zero expected P&L under any feature, so this test cannot be 
 - **Data gaps:** event calendar; true SPY share volume.
 - **Reading:** 9 days of one regime (a steady sell-off) cannot teach direction. Any model learns "it goes down", and the one day it doesn't is where it
   loses. The analysis refreshes nightly with the 0DTE scorer and is judged at 20 and 40 days, when up, flat and down days are all represented.
+
+## Amendment 3 (2026-11-20, user request): every instrument, selectivity and long/short combination
+Added labels for buying the ATM straddle (call + put), selling the ATM straddle, and long/short shares (~$74k notional) over 30 minutes.
+
+**Model policies:**
+- options calls/puts;
+- calls only (long only);
+- puts only (short only);
+- shares long/short;
+- shares long only;
+- straddles (buy when a big move is predicted, sell when quiet, from a second model).
+
+**Variants:**
+- selectivity: every 30-minute slot, ≥60% confident, ≥70% confident;
+- with and without walk-away.
+
+There are 6 no-model baselines on the same grid.
+
+**Interim (9 days):**
+- The best row is still **BASELINE always puts** (SPX +$15,501). Next are baseline short shares (+$4,460 SPX, +$4,151 SPY).
+- The only model policy positive on both roots is **straddle timing (≥60%)**: SPX +$5,235 and SPY +$620, with t 0.6 and 0.9. That is noise-level and below the baseline.
+- Every directional model policy (options or shares; long, short or both; any selectivity; with or without walk-away) **lost**.

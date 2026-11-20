@@ -46,6 +46,30 @@ def trade_pnl(ts, chains, i, cp, root):
 ROOT = ["SPY"]
 
 
+def straddle_pnl(ts, chains, i, short=False):
+    """Buy (or sell) the ATM straddle at snapshot i. Long: pay asks, exit at bids on +50% / -25% / 30 min / 15:45.
+    Short: receive bids, buy back at asks when cost <= 50% of credit (take profit) or >= 125% (stop), or at 30 min / 15:45."""
+    t0 = ts[i]; g0 = chains[t0]; S = g0.spot.iloc[0]
+    c, p = atm_row(g0, "C", S), atm_row(g0, "P", S)
+    if c is None or p is None: return np.nan
+    mult, fee = O.SPEC[ROOT[0]]["mult"], O.SPEC[ROOT[0]]["fee"]
+    open_px = (c.bid + p.bid) if short else (c.ask + p.ask)
+    if open_px <= 0: return np.nan
+    for t in ts[i + 1:]:
+        g = chains[t]
+        xc, xp = g[(g.cp == "C") & (g.K == c.K)], g[(g.cp == "P") & (g.K == p.K)]
+        if xc.empty or xp.empty: continue
+        if short:
+            cost = float(xc.ask.iloc[0] + xp.ask.iloc[0])
+            if cost <= 0.5 * open_px or cost >= 1.25 * open_px or (t - t0) >= pd.Timedelta(minutes=HOLD) or t.time() >= dtime(15, 45):
+                return (open_px - cost) * mult - 4 * fee
+        else:
+            val = float(xc.bid.iloc[0] + xp.bid.iloc[0])
+            if val >= TP * open_px or (val <= SL * open_px and val > 0) or (t - t0) >= pd.Timedelta(minutes=HOLD) or t.time() >= dtime(15, 45):
+                return (val - open_px) * mult - 4 * fee
+    return np.nan
+
+
 def build_day(day, root, prev):
     ROOT[0] = root
     d = O.load_day(day, root)
@@ -102,6 +126,10 @@ def build_day(day, root, prev):
         j = next((k for k in range(i, len(ts)) if (ts[k] - t) >= pd.Timedelta(minutes=30)), None)
         f["fwd30"] = (sp[ts[j]] / S - 1) * 1e4 if j is not None else np.nan
         f["pnl_call"] = trade_pnl(ts, chains, i, "C", root); f["pnl_put"] = trade_pnl(ts, chains, i, "P", root)
+        f["pnl_straddle"] = straddle_pnl(ts, chains, i); f["pnl_short_straddle"] = straddle_pnl(ts, chains, i, short=True)
+        shares = 100 if root == "SPY" else 10            # ~$74k notional either way (SPX ~10x SPY)
+        f["pnl_shares_long"] = (sp[ts[j]] - S) * shares - 0.01 * shares * 2 if j is not None else np.nan
+        f["pnl_shares_short"] = -(sp[ts[j]] - S) * shares - 0.01 * shares * 2 if j is not None else np.nan
         rows.append(f)
     return pd.DataFrame(rows), dict(close=sp.iloc[-1], range=sp.max() - sp.min())
 
@@ -126,7 +154,7 @@ def build():
 
 
 def feat_cols(D):
-    skip = {"day", "root", "t", "spot", "fwd30", "pnl_call", "pnl_put"}
+    skip = {"day", "root", "t", "spot", "fwd30", "pnl_call", "pnl_put", "pnl_straddle", "pnl_short_straddle", "pnl_shares_long", "pnl_shares_short"}
     return [c for c in D.columns if c not in skip]
 
 
@@ -216,6 +244,71 @@ def lodo(D, F, label_shift=None, seed=0):
     return pd.DataFrame(trades, columns=["root", "day", "t", "side", "p", "pnl"])
 
 
+POLICIES = {   # name: (instrument for 'up' prediction, instrument for 'down' prediction)
+    "options: calls up / puts down": ("pnl_call", "pnl_put"),
+    "options: calls only (long only)": ("pnl_call", None),
+    "options: puts only (short only)": (None, "pnl_put"),
+    "shares: long up / short down": ("pnl_shares_long", "pnl_shares_short"),
+    "shares: long only": ("pnl_shares_long", None),
+}
+
+
+def lodo_matrix(D, F):
+    """Out-of-fold P(up) for every snapshot (leave-one-day-out), plus P(big move) for straddle policies."""
+    P = []
+    for root, R in D.groupby("root"):
+        R = R.copy(); R["big"] = (R.fwd30.abs() > R.fwd30.abs().median()).astype(int)
+        for hold in sorted(R.day.unique()):
+            tr, te = R[(R.day != hold) & R.fwd30.notna()], R[R.day == hold]
+            if tr.empty or te.empty: continue
+            mk = lambda: HistGradientBoostingClassifier(max_iter=150, learning_rate=0.05, max_leaf_nodes=15, l2_regularization=1.0, random_state=0)
+            m1 = mk().fit(tr[F], (tr.fwd30 > 0).astype(int)); m2 = mk().fit(tr[F], tr.big)
+            P.append(te.assign(p_up=m1.predict_proba(te[F])[:, 1], p_big=m2.predict_proba(te[F])[:, 1]))
+    return pd.concat(P, ignore_index=True)
+
+
+def run_policy(P, up_col, dn_col, hi, lo, mode="dir", every=False, walk=False):
+    rows = []
+    for (root, day), x in P.sort_values("t").groupby(["root", "day"]):
+        busy = None
+        for r in x.itertuples():
+            if busy is not None and r.t < busy: continue
+            if mode == "dir":
+                if every: col = up_col if r.p_up >= 0.5 else dn_col
+                else: col = up_col if r.p_up >= hi else (dn_col if r.p_up <= lo else None)
+            else:   # volatility: big move -> long straddle, quiet -> short straddle
+                col = "pnl_straddle" if r.p_big >= hi else ("pnl_short_straddle" if r.p_big <= lo else None)
+                if every: col = "pnl_straddle" if r.p_big >= 0.5 else "pnl_short_straddle"
+            if col is None: continue
+            v = getattr(r, col)
+            if v != v: continue
+            rows.append(dict(root=root, day=day, t=r.t, pnl=v)); busy = r.t + pd.Timedelta(minutes=30)
+            if walk and v > 0: break
+    return pd.DataFrame(rows, columns=["root", "day", "t", "pnl"])
+
+
+def matrix(P):
+    out = []
+    pols = [(nm, u, d, "dir") for nm, (u, d) in POLICIES.items()] + [("straddles: buy if big move expected, sell if quiet", None, None, "vol")]
+    for nm, u, d, mode in pols:
+        for sel, (hi, lo, every) in {"every 30-min slot": (0.5, 0.5, True), "confident (≥60%)": (0.60, 0.40, False), "very confident (≥70%)": (0.70, 0.30, False)}.items():
+            for walk in (False, True):
+                T = run_policy(P, u, d, hi, lo, mode, every, walk)
+                for root in sorted(P.root.unique()):
+                    x = T[T.root == root]; s_ = summarize(x)
+                    out.append(dict(policy=nm, selectivity=sel, walk_away=walk, root=root, trades=s_["trades"], total=round(s_["total"], 0) if s_["trades"] else 0,
+                                    win=round(s_.get("win", np.nan), 2) if s_["trades"] else np.nan, green=s_.get("green"), t=round(s_["t"], 2) if s_["t"] == s_["t"] else np.nan))
+    # no-model baselines on the same 30-min grid
+    for root in sorted(P.root.unique()):
+        G = P[P.root == root].sort_values("t").assign(slot=lambda z: z.t.dt.floor("30min")).groupby(["day", "slot"]).head(1)
+        for col in ["pnl_call", "pnl_put", "pnl_straddle", "pnl_short_straddle", "pnl_shares_long", "pnl_shares_short"]:
+            dd = G.groupby("day")[col].sum()
+            out.append(dict(policy=f"BASELINE always {col.replace('pnl_', '')}", selectivity="every 30-min slot", walk_away=False, root=root, trades=int(G[col].notna().sum()),
+                            total=round(G[col].sum(), 0), win=round((G[col] > 0).mean(), 2), green=f"{(dd > 0).sum()}/{len(dd)}",
+                            t=round(dd.mean() / dd.std() * math.sqrt(len(dd)), 2) if dd.std() > 0 else np.nan))
+    return pd.DataFrame(out)
+
+
 def walk_first_win(T):
     keep = []
     for _, x in T.sort_values("t").groupby(["root", "day"]):
@@ -266,6 +359,7 @@ def report():
     T = lodo(D, F); W = walk_first_win(T) if len(T) else T
     nulls = [lodo(D, F, label_shift=True, seed=s).pnl.sum() for s in range(20)]
     imp = importance(D, F)
+    M = matrix(lodo_matrix(D, F))
     s_all, s_walk = summarize(T), summarize(W)
     by_root = {r: summarize(T[T.root == r]) for r in T.root.unique()} if len(T) else {}
     q95 = float(np.percentile(nulls, 95))
@@ -288,6 +382,10 @@ def report():
            "By root: " + "; ".join(f"{r}: {v}" for r, v in by_root.items()), "",
            f"Null (labels time-shifted, 20 runs): 95th percentile total ${q95:,.0f}; real total ${s_all['total']:,.0f} → "
            f"**{'beats' if s_all['total'] > q95 else 'does NOT beat'} the null**.", "",
+           "## B2. Every instrument × selectivity × walk-away (model out-of-fold, leave-one-day-out) vs no-model baselines", "",
+           "Instruments: options (calls/puts), calls only, puts only, shares long/short, shares long only, straddles (buy when a big move is predicted, sell when quiet). "
+           "Selectivity: every 30-min slot, ≥60% confident, ≥70% confident. Walk-away = stop after the first winning trade of the day.", "",
+           M.sort_values("total", ascending=False).to_markdown(index=False), "",
            "## C. Variable importance (permutation, last 2 days held out)", "",
            imp.assign(mean=imp.mean(axis=1)).sort_values("mean", ascending=False).head(20).round(4).to_markdown() if len(imp) else "n/a", "",
            "Gaps: no event calendar (Fed/CPI/OPEX), no true volume-weighted VWAP (feed has option volume, not SPY share volume)."]
