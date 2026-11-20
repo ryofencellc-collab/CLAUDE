@@ -18,7 +18,7 @@ HIST = os.path.join(ROOT, "paper", "r58f_history.csv")
 DEC = os.path.join(ROOT, "paper", "r58f_decisions.csv")
 REPORT = os.path.join(ROOT, "paper", "ROUND58F.md")
 EDGE, NMIN, START = 0.30, 3, pd.Timestamp("2026-11-19 02:40", tz="UTC")
-TOP_SERIES = int(os.environ.get("R58F_SERIES", "80"))
+TOP_SERIES = int(os.environ.get("R58F_SERIES", "400"))      # all traded Mentions series (protocol: "each open mention market")
 
 
 def wkey(s):
@@ -46,13 +46,15 @@ def row(s, m):
 
 def refresh_history(ser):
     now = pd.Timestamp.now(tz="UTC")
-    if os.path.exists(HIST):
-        H = pd.read_csv(HIST)
-        a = pd.to_datetime(H.close, utc=True, format="ISO8601").max() - pd.Timedelta(days=3)
-        new = [row(s, m) for s in ser for m in r27.settled_markets(s, a, now + pd.Timedelta(days=1), max_pages=5)]
-    else:                                  # first run: full history from the live + historical endpoints
-        H = pd.DataFrame()
-        new = [row(s, m) for s in ser for m in r20.markets(s, pd.Timestamp("2025-01-01", tz="UTC"), now + pd.Timedelta(days=1))]
+    H = pd.read_csv(HIST) if os.path.exists(HIST) else pd.DataFrame(columns=["series", "ticker", "event", "word", "close", "y"])
+    known = set(H.series)
+    a = (pd.to_datetime(H.close, utc=True, format="ISO8601").max() - pd.Timedelta(days=3)) if len(H) else None
+    new = []
+    for s in ser:
+        if s in known and a is not None:     # incremental: recent settlements only
+            new += [row(s, m) for m in r27.settled_markets(s, a, now + pd.Timedelta(days=1), max_pages=5)]
+        else:                                # series not seen before: full history (live + historical endpoints)
+            new += [row(s, m) for m in r20.markets(s, pd.Timestamp("2025-01-01", tz="UTC"), now + pd.Timedelta(days=1))]
     H = pd.concat([H, pd.DataFrame(new)], ignore_index=True).drop_duplicates("ticker", keep="last")
     H.to_csv(HIST, index=False)
     return H

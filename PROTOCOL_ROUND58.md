@@ -76,3 +76,8 @@ Same rule on **new** markets only, from now on.
   if prior − ask ≥ 0.30 (YES) or (1 − prior) − no_ask ≥ 0.30 (NO). One trade per market, Kalshi taker fee.
 - **Pass:** after 30 calendar days, ≥ 150 settled trades, mean P&L > 0 and event-clustered t ≥ 2.
 - A pass makes it a real-money candidate, subject to a budget set by the user.
+
+### 58f implementation note (2026-11-20, no trades yet)
+The tracker covered only the 80 highest-volume Mentions series. Those listed no new markets for 24 hours: all 448 of their open markets predate the start.
+It now covers **all traded Mentions series**, matching the protocol's "each open mention market". Series it hasn't seen yet get their full history first.
+The rule is unchanged.
