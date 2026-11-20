@@ -38,6 +38,8 @@ jobs:
         if: always()
         run: |
           python -m edge.odte_score > /dev/null || echo "scorer failed"
+          python fetch_context.py || echo "context fetch failed"
+          git add -f data/ctx 2>/dev/null || true
           python run_round61.py report > /dev/null || echo "round61 failed"
           python run_round62.py report > /dev/null || echo "round62 failed"
           git add reports/ROUND39B.md paper/r39b_trades.csv reports/ROUND61.md reports/ROUND62.md 2>/dev/null || true

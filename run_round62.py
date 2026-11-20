@@ -70,6 +70,45 @@ def straddle_pnl(ts, chains, i, short=False):
     return np.nan
 
 
+MEGA = ["NVDA", "AAPL", "MSFT", "AMZN", "META", "GOOGL", "TSLA"]
+
+
+def load_ctx(day):
+    path = f"data/ctx/{day}.csv.gz"
+    if not os.path.exists(path): return None
+    C = pd.read_csv(path, index_col=0); C.index = pd.to_datetime(C.index, utc=True).tz_convert(O.ET)
+    return C.sort_index().ffill()
+
+
+def ctx_feats(C, t):
+    """Market-wide variables from Yahoo 1-minute bars that CLOSED before t (bar stamped m closes at m+1)."""
+    if C is None: return {}
+    cut = t.floor("min") - pd.Timedelta(minutes=1)
+    X = C[C.index <= cut]
+    if len(X) < 31: return {}
+    def chg(col, k, pct=True):
+        if col not in X or X[col].iloc[-1 - k] != X[col].iloc[-1 - k]: return np.nan
+        a, b = X[col].iloc[-1 - k], X[col].iloc[-1]
+        return (b / a - 1) * 1e4 if pct else (b - a)
+    f = {"vix": X["^VIX_close"].iloc[-1] if "^VIX_close" in X else np.nan}
+    for k in (5, 15, 30): f[f"vix_chg{k}"] = chg("^VIX_close", k, pct=False)
+    m15 = [chg(f"{m}_close", 15) for m in MEGA]; m5 = [chg(f"{m}_close", 5) for m in MEGA]; m30 = [chg(f"{m}_close", 30) for m in MEGA]
+    f.update(mega_ret5=np.nanmean(m5), mega_ret15=np.nanmean(m15), mega_ret30=np.nanmean(m30),
+             mega_breadth15=np.nanmean([v > 0 for v in m15 if v == v]) if any(v == v for v in m15) else np.nan,
+             nvda_ret15=chg("NVDA_close", 15), aapl_ret15=chg("AAPL_close", 15), msft_ret15=chg("MSFT_close", 15), tsla_ret15=chg("TSLA_close", 15))
+    spy15 = chg("SPY_close", 15)
+    f.update(mega_lead15=f["mega_ret15"] - spy15, qqq_vs_spy15=chg("QQQ_close", 15) - spy15, iwm_vs_spy15=chg("IWM_close", 15) - spy15,
+             tnx_chg30=chg("^TNX_close", 30, pct=False), dxy_chg30=chg("DX-Y.NYB_close", 30), btc_ret30=chg("BTC-USD_close", 30),
+             tlt_ret15=chg("TLT_close", 15), hyg_ret15=chg("HYG_close", 15))
+    sess = X[X.index.time >= dtime(9, 30)]
+    if "SPY_vol" in sess and sess.SPY_vol.sum() > 0:
+        vwap = (sess.SPY_close * sess.SPY_vol).sum() / sess.SPY_vol.sum()
+        f["vs_vwap_true"] = (sess.SPY_close.iloc[-1] / vwap - 1) * 1e4
+        v15 = sess.SPY_vol.tail(15).sum(); avg15 = sess.SPY_vol.mean() * 15
+        f["spy_vol_rel15"] = v15 / avg15 if avg15 > 0 else np.nan
+    return f
+
+
 def build_day(day, root, prev):
     ROOT[0] = root
     d = O.load_day(day, root)
@@ -84,6 +123,7 @@ def build_day(day, root, prev):
     m20, s20 = sp.rolling(20).mean(), sp.rolling(20).std()
     rows = []
     feat_hist = []
+    CTX = load_ctx(day)
     for i, t in enumerate(ts):
         if not (dtime(9, 45) <= t.time() < dtime(15, 30)): continue
         g = chains[t]; S = sp[t]
@@ -116,6 +156,7 @@ def build_day(day, root, prev):
         gam = (g.gamma * g.open_interest).groupby(g.K).sum(); f["dist_maxgamma"] = (S - gam.idxmax()) / S * 1e4 if len(gam) else np.nan
         sign = np.where(g.cp == "C", 1.0, -1.0); f["gex"] = float((g.gamma * g.open_interest * sign).sum() * S * S * 0.01 * 100 / 1e9)
         f["theta_proxy"] = (ac.theo + ap.theo) / 2
+        f.update(ctx_feats(CTX, t))
         feat_hist.append((t, f["atm_iv"], f["pcr_vol"], vc, vp))
         h = [x for x in feat_hist if (t - x[0]) <= pd.Timedelta(minutes=15)]
         f["iv_chg15"] = f["atm_iv"] - h[0][1]; f["pcr_chg15"] = f["pcr_vol"] - h[0][2]

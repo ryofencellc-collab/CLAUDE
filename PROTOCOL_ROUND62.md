@@ -94,3 +94,16 @@ There are 6 no-model baselines on the same grid.
 - The best row is still **BASELINE always puts** (SPX +$15,501). Next are baseline short shares (+$4,460 SPX, +$4,151 SPY).
 - The only model policy positive on both roots is **straddle timing (≥60%)**: SPX +$5,235 and SPY +$620, with t 0.6 and 0.9. That is noise-level and below the baseline.
 - Every directional model policy (options or shares; long, short or both; any selectivity; with or without walk-away) **lost**.
+
+## Amendment 4 (2026-11-20, user request "did we miss a variable in the stocks?"): market-wide variables
+Added from Yahoo 1-minute bars, using only bars closed before each snapshot:
+- VIX level and its 5/15/30-minute change;
+- mega-cap (NVDA/AAPL/MSFT/AMZN/META/GOOGL/TSLA) average 5/15/30-minute returns, 15-minute breadth (share of the 7 that are up), and single-name 15-minute returns;
+- mega-caps leading SPY;
+- QQQ and IWM relative to SPY;
+- 10-year yield, dollar index and Bitcoin 30-minute changes;
+- TLT and HYG (credit) 15-minute returns;
+- **true SPY VWAP** and SPY relative volume, which close the earlier gap.
+
+Data: `fetch_context.py` → `data/ctx/<day>.csv.gz`, refreshed nightly; Yahoo keeps 1-minute bars for 30 days. Clock check: Yahoo's SPY bars match our corrected
+snapshot clock at lag 0 (mean |diff| $0.155, worse at ±1 min). That also confirms the 15-minute feed-lag fix.
