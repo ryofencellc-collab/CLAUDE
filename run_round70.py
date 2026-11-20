@@ -6,6 +6,9 @@ ET = "America/New_York"
 MARGINS = [0.02, 0.03, 0.05, 0.08]
 DEV_END = "2026-11-13"
 OUT = "data/r70"; os.makedirs(OUT, exist_ok=True)
+SAMPLE = os.environ.get("R70_SAMPLE") == "1"
+PKL = f"{OUT}/kalshi_sample.pkl" if SAMPLE else f"{OUT}/kalshi.pkl"
+REPORT = "reports/ROUND70_SAMPLE.md" if SAMPLE else "reports/ROUND70.md"
 
 
 def fee(p):
@@ -34,6 +37,10 @@ def collect():
             th = kalshi_threshold(m)
             if d in days and th: ms.append(dict(series=s, ticker=m["ticker"], day=d, lo=th[0], hi=th[1], y=float(m["result"] == "yes"), open_time=m["open_time"], close_time=m["close_time"]))
     M = pd.DataFrame(ms); print("markets", len(M), M.groupby(["series", "day"]).size().to_dict(), flush=True)
+    if SAMPLE:   # small end-to-end check first: one day, 10 middle strikes of each series
+        M = M[M.day == "2026-11-10"]
+        M = pd.concat([g.sort_values("lo").iloc[len(g) // 2 - 5: len(g) // 2 + 5] for _, g in M.groupby("series")])
+        print("SAMPLE markets", len(M), M.ticker.tolist(), flush=True)
     from edge import weather as wx
     qs = []
     for i, r in enumerate(M.itertuples()):
@@ -45,7 +52,8 @@ def collect():
         if i % 100 == 0: print("candles", i, len(M), sum(len(q) for q in qs), flush=True)
     Q = pd.concat(qs, ignore_index=True) if qs else pd.DataFrame()
     print("candles", len(Q), flush=True)
-    pickle.dump((M, Q), open(f"{OUT}/kalshi.pkl", "wb"))
+    if len(Q): print(Q.head(3).to_string(), "\nnon-null ask", Q.ask.notna().sum(), flush=True)
+    pickle.dump((M, Q), open(PKL, "wb"))
 
 
 # ---------------------------------------------------------------- options -> digitals
@@ -166,10 +174,13 @@ def smoke():
 
 # ---------------------------------------------------------------- report
 def report():
-    M, Q = pickle.load(open(f"{OUT}/kalshi.pkl", "rb"))
+    M, Q = pickle.load(open(PKL, "rb"))
     Dm = {d: digitals(d) for d in sorted(M.day.unique())}
     P = panel(M, Q, Dm)
     P["mid"] = (P.bid + P.ask) / 2
+    print("panel rows", len(P), "with fS", int(P.fS.notna().sum()), "with fL", int(P.fL.notna().sum()), flush=True)
+    if SAMPLE:
+        print(P[P.fS.notna()].sample(min(12, int(P.fS.notna().sum())), random_state=1)[["ticker", "t", "bid", "ask", "fS", "fL", "y"]].to_string(), flush=True)
     res = analyze(P)
     passed = res["fL"]["PASS"]
     V = P[(P.bid > 0) & (P.ask < 0.98) & (P.ask > 0.02) & P.fS.notna()]
@@ -186,7 +197,7 @@ def report():
         if len(r["H"]):
             out += ["Holdout by side:", "", r["H"].groupby("side").pnl.agg(["count", "mean", "sum"]).round(3).to_markdown(), ""]
     out += ["## Calibration by Kalshi mid band (all market-minutes)", "", cal.to_markdown(), "", "## |Kalshi mid − option fair| by hour", "", gap.to_markdown(), ""]
-    open("reports/ROUND70.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:30]))
+    open(REPORT, "w").write("\n".join(out) + "\n"); print("\n".join(out[:30]))
 
 
 if __name__ == "__main__":

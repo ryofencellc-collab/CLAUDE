@@ -2,6 +2,8 @@ name: round70
 # Round 70 (PROTOCOL_ROUND70.md): Kalshi S&P 4pm markets vs SPXW 0DTE option-implied probabilities.
 on:
   workflow_dispatch:
+    inputs:
+      sample: {description: "1 = one-day 20-market check", default: "1"}
 permissions:
   contents: write
 jobs:
@@ -10,6 +12,7 @@ jobs:
     timeout-minutes: 90
     env:
       PYTHONWARNINGS: ignore
+      R70_SAMPLE: ${{ github.event.inputs.sample }}
     steps:
       - uses: actions/checkout@v4
         with: {ref: "${{ github.ref_name }}"}
@@ -24,6 +27,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           git config user.name "round70 bot"; git config user.email "actions@users.noreply.github.com"
-          git add -f reports/ROUND70.md data/r70/kalshi.pkl 2>/dev/null || true
+          git add -f reports/ROUND70*.md data/r70/*.pkl 2>/dev/null || true
           git diff --cached --quiet || git commit -q -m "round70: results [skip ci]"
           for i in 1 2 3 4; do git pull --rebase -q && git push -q && break; sleep 7; done
