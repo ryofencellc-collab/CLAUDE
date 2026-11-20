@@ -192,7 +192,7 @@ def report():
                          "hit days": X.loc[X.A > 0, hcols].mean()}).round(3)
     prof.index = [c[1:] for c in prof.index]
     has = X[hcols].notna().any(axis=1)
-    X["damage_window"] = np.nan
+    X["damage_window"] = pd.Series(None, index=X.index, dtype=object)
     X.loc[has, "damage_window"] = X.loc[has, hcols].fillna(-99).idxmax(axis=1).str[1:]
     sched_window = X.loc[w50, "damage_window"].isin(["10:00", "14:00", "14:30"])
     T3 = X.loc[w50, ["A", "move_sd", "cat", "events", "er_names", "vix1d", "v1_over_vix", "gap_bp", "pre_sd", "damage_window", "max5_sd", "max5_time"]].round(2)
