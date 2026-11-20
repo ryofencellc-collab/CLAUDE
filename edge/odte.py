@@ -14,7 +14,12 @@ import requests
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "odte")
 URL = "https://cdn.cboe.com/api/global/delayed_quotes/options/{}.json"
-SYMBOLS = {"SPX": "_SPX", "SPY": "SPY"}
+SYMBOLS = {"SPX": "_SPX", "SPY": "SPY", "QQQ": "QQQ", "IWM": "IWM"}          # daily 0DTE expiries
+FRIDAY = {s: s for s in ("AAPL", "MSFT", "NVDA", "AMZN", "META", "GOOGL", "TSLA")}  # weekly options: 0DTE on Fridays (Round 64 universe)
+
+
+def symbols_today(now: datetime) -> dict:
+    return {**SYMBOLS, **FRIDAY} if now.astimezone(timezone(timedelta(hours=-5))).weekday() == 4 else dict(SYMBOLS)
 POLL = int(os.environ.get("ODTE_POLL", "60"))
 MAX_DTE = 3
 BAND = 0.04
@@ -55,7 +60,7 @@ def parse(js: dict, fetched: datetime) -> pd.DataFrame:
 
 
 def fetch(sym: str) -> dict:
-    r = requests.get(URL.format(SYMBOLS[sym]), timeout=40,
+    r = requests.get(URL.format({**SYMBOLS, **FRIDAY}[sym]), timeout=40,
                      headers={"User-Agent": "Mozilla/5.0 (research collector)"})
     r.raise_for_status()
     return r.json()
@@ -121,12 +126,13 @@ def collect() -> None:
     day, tag = start.strftime("%Y-%m-%d"), start.strftime("%H%M")
     hh, mm = map(int, STOP_UTC.split(":"))
     stop = start.replace(hour=hh, minute=mm, second=0, microsecond=0)
-    frames = {s: [] for s in SYMBOLS}
-    last_feed = {s: None for s in SYMBOLS}
+    syms = symbols_today(start)
+    frames = {s: [] for s in syms}
+    last_feed = {s: None for s in syms}
     last_commit = time.time()
     while time.time() - t0 < MAX_SECONDS and datetime.now(timezone.utc) < stop:
         now = datetime.now(timezone.utc)
-        for s in SYMBOLS:
+        for s in syms:
             try:
                 js = fetch(s)
                 if js.get("timestamp") == last_feed[s]:
