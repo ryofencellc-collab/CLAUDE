@@ -42,7 +42,8 @@ jobs:
           git add -f data/ctx 2>/dev/null || true
           python run_round61.py report > /dev/null || echo "round61 failed"
           python run_round62.py report > /dev/null || echo "round62 failed"
-          git add reports/ROUND39B.md paper/r39b_trades.csv reports/ROUND61.md reports/ROUND62.md 2>/dev/null || true
+          python run_round62b.py report > /dev/null || echo "round62b failed"
+          git add reports/ROUND39B.md paper/r39b_trades.csv reports/ROUND61.md reports/ROUND62.md reports/ROUND62B.md 2>/dev/null || true
           git diff --cached --quiet || git commit -q -m "round39b: daily score [skip ci]"
           for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
       - uses: actions/upload-artifact@v4

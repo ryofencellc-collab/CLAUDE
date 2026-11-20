@@ -8,7 +8,9 @@ OUT = "data/ctx"; os.makedirs(OUT, exist_ok=True)
 
 
 def main():
-    days = sorted(os.path.basename(p) for p in glob.glob("data/odte/2*"))
+    rec = {os.path.basename(p) for p in glob.glob("data/odte/2*")}
+    recent = {d.strftime("%Y-%m-%d") for d in pd.bdate_range(pd.Timestamp.now().normalize() - pd.Timedelta(days=28), pd.Timestamp.now().normalize() - pd.Timedelta(days=1))}
+    days = sorted(rec | recent)             # every recorded 0DTE day + every weekday Yahoo still holds (direction study history)
     todo = [d for d in days if not os.path.exists(f"{OUT}/{d}.csv.gz") and (pd.Timestamp.now() - pd.Timestamp(d)).days <= 28]
     for d in todo:
         a, b = pd.Timestamp(d), pd.Timestamp(d) + pd.Timedelta(days=1)

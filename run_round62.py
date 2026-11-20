@@ -46,6 +46,31 @@ def trade_pnl(ts, chains, i, cp, root):
 ROOT = ["SPY"]
 
 
+EXITS = {"X1": (1.25, 0.85, 10), "X2": (1.50, 0.75, 30), "X3": (None, None, 9999)}
+
+
+def pick_strike(g, cp, S, kind):
+    x = g[(g.cp == cp) & (g.bid > 0) & (g.ask > 0)]
+    if x.empty: return None
+    if kind == "ATM": return x.loc[(x.K - S).abs().idxmin()]
+    target = 0.30 if kind == "OTM" else 0.70
+    return x.loc[(x.delta.abs() - target).abs().idxmin()]
+
+
+def trade_pnl2(ts, chains, i, cp, kind, ex):
+    t0 = ts[i]; g0 = chains[t0]; S = g0.spot.iloc[0]
+    r = pick_strike(g0, cp, S, kind)
+    if r is None: return np.nan
+    tp, sl, hold = EXITS[ex]; K, paid = r.K, r.ask; mult, fee = O.SPEC[ROOT[0]]["mult"], O.SPEC[ROOT[0]]["fee"]
+    for t in ts[i + 1:]:
+        g = chains[t]; x = g[(g.cp == cp) & (g.K == K)]
+        if x.empty: continue
+        b = float(x.bid.iloc[0])
+        if (tp is not None and (b >= tp * paid or (b <= sl * paid and b > 0))) or (t - t0) >= pd.Timedelta(minutes=hold) or t.time() >= dtime(15, 45):
+            return (b - paid) * mult - 2 * fee
+    return np.nan
+
+
 def straddle_pnl(ts, chains, i, short=False):
     """Buy (or sell) the ATM straddle at snapshot i. Long: pay asks, exit at bids on +50% / -25% / 30 min / 15:45.
     Short: receive bids, buy back at asks when cost <= 50% of credit (take profit) or >= 125% (stop), or at 30 min / 15:45."""
@@ -124,6 +149,9 @@ def build_day(day, root, prev):
     rows = []
     feat_hist = []
     CTX = load_ctx(day)
+    import run_round62b as RB
+    CAL = RB.calendar_feats(day)
+    prev_vol = {}; flow_hist = []
     for i, t in enumerate(ts):
         if not (dtime(9, 45) <= t.time() < dtime(15, 30)): continue
         g = chains[t]; S = sp[t]
@@ -156,7 +184,19 @@ def build_day(day, root, prev):
         gam = (g.gamma * g.open_interest).groupby(g.K).sum(); f["dist_maxgamma"] = (S - gam.idxmax()) / S * 1e4 if len(gam) else np.nan
         sign = np.where(g.cp == "C", 1.0, -1.0); f["gex"] = float((g.gamma * g.open_interest * sign).sum() * S * S * 0.01 * 100 / 1e9)
         f["theta_proxy"] = (ac.theo + ap.theo) / 2
-        f.update(ctx_feats(CTX, t))
+        f.update(ctx_feats(CTX, t)); f.update(CAL)
+        # aggressor flow: new contracts traded since the last snapshot x sign(last trade - mid), calls and puts separately
+        fc = fp = 0.0
+        for rr in g[["cp", "K", "volume", "last_trade_price", "bid", "ask"]].itertuples(index=False):
+            key = (rr.cp, rr.K); dv = rr.volume - prev_vol.get(key, rr.volume); prev_vol[key] = rr.volume
+            if dv > 0 and rr.bid > 0 and rr.ask > 0:
+                sgn = np.sign(rr.last_trade_price - (rr.bid + rr.ask) / 2)
+                if rr.cp == "C": fc += dv * sgn
+                else: fp += dv * sgn
+        flow_hist.append((t, fc, fp))
+        fl = [x for x in flow_hist if (t - x[0]) <= pd.Timedelta(minutes=15)]
+        f["flow_call15"] = sum(x[1] for x in fl); f["flow_put15"] = sum(x[2] for x in fl)
+        f["flow_net15"] = f["flow_call15"] - f["flow_put15"]
         feat_hist.append((t, f["atm_iv"], f["pcr_vol"], vc, vp))
         h = [x for x in feat_hist if (t - x[0]) <= pd.Timedelta(minutes=15)]
         f["iv_chg15"] = f["atm_iv"] - h[0][1]; f["pcr_chg15"] = f["pcr_vol"] - h[0][2]
@@ -168,6 +208,11 @@ def build_day(day, root, prev):
         f["fwd30"] = (sp[ts[j]] / S - 1) * 1e4 if j is not None else np.nan
         f["pnl_call"] = trade_pnl(ts, chains, i, "C", root); f["pnl_put"] = trade_pnl(ts, chains, i, "P", root)
         f["pnl_straddle"] = straddle_pnl(ts, chains, i); f["pnl_short_straddle"] = straddle_pnl(ts, chains, i, short=True)
+        if t.minute % 5 == 0:                     # strike x exit variants on a 5-minute grid
+            for cp in ("C", "P"):
+                for kind in ("ATM", "OTM", "ITM"):
+                    for ex in EXITS:
+                        f[f"v_{cp}_{kind}_{ex}"] = trade_pnl2(ts, chains, i, cp, kind, ex)
         shares = 100 if root == "SPY" else 10            # ~$74k notional either way (SPX ~10x SPY)
         f["pnl_shares_long"] = (sp[ts[j]] - S) * shares - 0.01 * shares * 2 if j is not None else np.nan
         f["pnl_shares_short"] = -(sp[ts[j]] - S) * shares - 0.01 * shares * 2 if j is not None else np.nan
@@ -196,7 +241,7 @@ def build():
 
 def feat_cols(D):
     skip = {"day", "root", "t", "spot", "fwd30", "pnl_call", "pnl_put", "pnl_straddle", "pnl_short_straddle", "pnl_shares_long", "pnl_shares_short"}
-    return [c for c in D.columns if c not in skip]
+    return [c for c in D.columns if c not in skip and not c.startswith("v_")]
 
 
 def univariate(D, F, n_null=100, seed=0):
@@ -350,6 +395,34 @@ def matrix(P):
     return pd.DataFrame(out)
 
 
+def variant_matrix(P):
+    """Model-driven directional option trades for every strike (ATM/OTM 30-delta/ITM 70-delta) x exit (X1/X2/X3), on the 5-minute grid,
+    one position at a time, >=60% confident; plus always-call / always-put baselines for each variant."""
+    out = []
+    G = P[[c for c in P.columns if c.startswith("v_")] + ["root", "day", "t", "p_up"]].dropna(subset=["v_C_ATM_X2"])
+    for kind in ("ATM", "OTM", "ITM"):
+        for ex in EXITS:
+            hold = EXITS[ex][2] if EXITS[ex][2] < 9999 else 400
+            for root in sorted(G.root.unique()):
+                rows, base_c, base_p = [], [], []
+                for day, x in G[G.root == root].sort_values("t").groupby("day"):
+                    busy = None
+                    for r in x.itertuples():
+                        vc, vp = getattr(r, f"v_C_{kind}_{ex}"), getattr(r, f"v_P_{kind}_{ex}")
+                        if busy is None or r.t >= busy:
+                            side = vc if r.p_up >= 0.6 else (vp if r.p_up <= 0.4 else None)
+                            if side is not None and side == side:
+                                rows.append(dict(day=day, pnl=side)); busy = r.t + pd.Timedelta(minutes=hold)
+                    xs = x.assign(slot=x.t.dt.floor(f"{min(hold, 60)}min")).groupby("slot").head(1)
+                    base_c += [dict(day=day, pnl=v) for v in getattr(xs, f"v_C_{kind}_{ex}") if v == v]
+                    base_p += [dict(day=day, pnl=v) for v in getattr(xs, f"v_P_{kind}_{ex}") if v == v]
+                for nm, L in (("model ≥60%", rows), ("BASELINE always calls", base_c), ("BASELINE always puts", base_p)):
+                    T = pd.DataFrame(L, columns=["day", "pnl"]); dd = T.groupby("day").pnl.sum() if len(T) else pd.Series(dtype=float)
+                    out.append(dict(strike=kind, exit=ex, root=root, policy=nm, trades=len(T), total=round(T.pnl.sum(), 0) if len(T) else 0,
+                                    green=f"{(dd > 0).sum()}/{len(dd)}", t=round(dd.mean() / dd.std() * math.sqrt(len(dd)), 2) if len(dd) > 2 and dd.std() > 0 else np.nan))
+    return pd.DataFrame(out)
+
+
 def walk_first_win(T):
     keep = []
     for _, x in T.sort_values("t").groupby(["root", "day"]):
@@ -400,7 +473,8 @@ def report():
     T = lodo(D, F); W = walk_first_win(T) if len(T) else T
     nulls = [lodo(D, F, label_shift=True, seed=s).pnl.sum() for s in range(20)]
     imp = importance(D, F)
-    M = matrix(lodo_matrix(D, F))
+    PM = lodo_matrix(D, F)
+    M = matrix(PM); VM = variant_matrix(PM)
     s_all, s_walk = summarize(T), summarize(W)
     by_root = {r: summarize(T[T.root == r]) for r in T.root.unique()} if len(T) else {}
     q95 = float(np.percentile(nulls, 95))
@@ -427,6 +501,8 @@ def report():
            "Instruments: options (calls/puts), calls only, puts only, shares long/short, shares long only, straddles (buy when a big move is predicted, sell when quiet). "
            "Selectivity: every 30-min slot, ≥60% confident, ≥70% confident. Walk-away = stop after the first winning trade of the day.", "",
            M.sort_values("total", ascending=False).to_markdown(index=False), "",
+           "## B3. Strike (ATM / OTM 30-delta / ITM 70-delta) × exit (X1 +25/−15/10m, X2 +50/−25/30m, X3 hold to 15:45), 5-minute grid", "",
+           VM.sort_values("total", ascending=False).to_markdown(index=False), "",
            "## C. Variable importance (permutation, last 2 days held out)", "",
            imp.assign(mean=imp.mean(axis=1)).sort_values("mean", ascending=False).head(20).round(4).to_markdown() if len(imp) else "n/a", "",
            "Gaps: no event calendar (Fed/CPI/OPEX), no true volume-weighted VWAP (feed has option volume, not SPY share volume)."]

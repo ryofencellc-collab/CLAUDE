@@ -107,3 +107,28 @@ Added from Yahoo 1-minute bars, using only bars closed before each snapshot:
 
 Data: `fetch_context.py` → `data/ctx/<day>.csv.gz`, refreshed nightly; Yahoo keeps 1-minute bars for 30 days. Clock check: Yahoo's SPY bars match our corrected
 snapshot clock at lag 0 (mean |diff| $0.155, worse at ±1 min). That also confirms the 15-minute feed-lag fix.
+
+## Amendment 5 (2026-11-20, completeness pass, user: "make sure nothing else is missing"), written before the combined run
+1. **Longer history for direction (Round 62b, `run_round62b.py`):** Yahoo keeps 1-minute bars for 28 days, which covers every weekday from Oct 23 onward
+   (20 days now, growing nightly).
+   - **Variables (54):** SPY price action, true VWAP and volume, every market-wide variable from amendment 4, and calendar variables (business days to the monthly
+     OPEX, OPEX week, days to and since the FOMC, month start and end).
+   - **Lookahead control:** features use only bars closed before the decision (shifted one bar).
+   - **Targets:** forward 10, 30 and 60 minutes.
+   - **Policies:** shares long/short, long only, short only; every slot, ≥60% or ≥70% confident; with and without walk-away.
+   - **Baselines:** always long, always short. **Null:** time-shifted labels, 10 runs.
+   - **Calibration:** a planted variable must be exploited.
+2. **Options study (Round 62) additions:**
+   - calendar variables;
+   - **aggressor flow:** new contracts traded × sign(last trade − mid), summed over 15 minutes for calls, puts and net;
+   - **strike × exit variants** on a 5-minute grid: ATM, 30-delta OTM and 70-delta ITM, each with X1, X2 and X3 exits. These are model-driven (≥60%) with
+     always-calls and always-puts baselines per variant.
+
+**Still unavailable (stated, not ignored):**
+- the CPI/jobs release calendar; FOMC is included;
+- index breadth (NYSE TICK/ADD);
+- futures order flow and dark-pool prints;
+- news headlines.
+
+Pass rules are unchanged: options at ≥ 20 recorded days. Round 62b uses the same rules: positive on its policy, above the null's 95th percentile, both halves
+positive, t ≥ 2.5, **and above the better no-model baseline.**
