@@ -295,7 +295,7 @@ def report():
         days = load_days(pair); vix = load_vix(vt)
         dd, F, O = build_market(days, vix, name)
         np.savez_compressed(f"data/r66_{name}.npz", days=dd.astype("datetime64[ns]").astype(np.int64), F=F, O=O)
-        mk[name] = (dd, F, O); print(name, len(dd), "days", F.shape, O.shape, flush=True)
+        mk[name] = (np.asarray(dd).astype("datetime64[ns]"), F, O); print(name, len(dd), "days", F.shape, O.shape, flush=True)
     d1, F1, O1 = mk["SPX"]; d2, F2, O2 = mk["NDX"]
     cut = np.datetime64("2020-01-01")
     dev, ho = d1 < cut, d1 >= cut; dev2, ho2 = d2 < cut, d2 >= cut
