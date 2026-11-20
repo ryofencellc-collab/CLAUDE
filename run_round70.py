@@ -34,8 +34,16 @@ def collect():
             th = kalshi_threshold(m)
             if d in days and th: ms.append(dict(series=s, ticker=m["ticker"], day=d, lo=th[0], hi=th[1], y=float(m["result"] == "yes"), open_time=m["open_time"], close_time=m["close_time"]))
     M = pd.DataFrame(ms); print("markets", len(M), M.groupby(["series", "day"]).size().to_dict(), flush=True)
-    raw = [dict(ticker=r.ticker, open_time=r.open_time, close_time=r.close_time) for r in M.itertuples()]
-    Q = r31.candles_live("KXINX", raw)
+    from edge import weather as wx
+    qs = []
+    for i, r in enumerate(M.itertuples()):
+        a_ = pd.Timestamp(r.day + " 09:55", tz=ET); b_ = pd.Timestamp(r.close_time)
+        x = wx._get(f"{wx.KALSHI}/series/{r.series}/markets/{r.ticker}/candlesticks",
+                    {"start_ts": int(a_.timestamp()), "end_ts": int(b_.timestamp()), "period_interval": 1})
+        if x is not None and x.status_code == 200:
+            qs.append(r31.parse_candles(r.ticker, x.json().get("candlesticks")))
+        if i % 100 == 0: print("candles", i, len(M), sum(len(q) for q in qs), flush=True)
+    Q = pd.concat(qs, ignore_index=True) if qs else pd.DataFrame()
     print("candles", len(Q), flush=True)
     pickle.dump((M, Q), open(f"{OUT}/kalshi.pkl", "wb"))
 
