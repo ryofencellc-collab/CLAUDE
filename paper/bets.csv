@@ -42,3 +42,9 @@ bet_id,logged_at_utc,kickoff_uk,div,home,away,side,odds,betfair_odds,fair_odds,e
 2026-11-07|I2|Juve Stabia|Arezzo|A,2026-11-06T15:59:30.901056+00:00,2026-11-07 14:00,I2,Juve Stabia,Arezzo,A,5.0,4.7,4.892,0.022,5.0,10.0,lost,-10.0,2026-11-09T18:54:45.653026+00:00
 2026-11-14|E3|Rochdale|York|H,2026-11-13T16:32:31.382197+00:00,2026-11-14 15:00,E3,Rochdale,York,H,4.33,4.1,4.218,0.0267,4.2,10.0,lost,-10.0,2026-11-16T18:40:17.504052+00:00
 2026-11-14|EC|Eastleigh|Fylde|A,2026-11-13T16:32:31.382197+00:00,2026-11-14 15:00,EC,Eastleigh,Fylde,A,1.95,1.82,1.909,0.0217,1.85,10.0,won,9.5,2026-11-16T18:40:17.504052+00:00
+2026-11-22|N1|Sparta Rotterdam|AZ Alkmaar|H,2026-11-20T17:01:36.576269+00:00,2026-11-22 13:30,N1,Sparta Rotterdam,AZ Alkmaar,H,4.33,4.0,4.216,0.0271,4.33,10.0,open,,
+2026-11-21|E2|Blackpool|Wigan|D,2026-11-20T17:01:36.576269+00:00,2026-11-21 12:30,E2,Blackpool,Wigan,D,3.7,3.55,3.614,0.0239,3.5,10.0,open,,
+2026-11-21|E3|Barnet|Port Vale|D,2026-11-20T17:01:36.576269+00:00,2026-11-21 15:00,E3,Barnet,Port Vale,D,3.6,3.45,3.512,0.025,3.5,10.0,open,,
+2026-11-21|E3|Chesterfield|Shrewsbury|D,2026-11-20T17:01:36.576269+00:00,2026-11-21 15:00,E3,Chesterfield,Shrewsbury,D,4.2,3.95,4.096,0.0253,3.9,10.0,open,,
+2026-11-21|EC|Kidderminster|Fylde|A,2026-11-20T17:01:36.576269+00:00,2026-11-21 15:00,EC,Kidderminster,Fylde,A,2.05,1.94,1.989,0.0307,1.95,10.0,open,,
+2026-11-21|EC|Yeovil|Forest Green|A,2026-11-20T17:01:36.576269+00:00,2026-11-21 17:30,EC,Yeovil,Forest Green,A,2.6,2.48,2.544,0.0219,2.55,10.0,open,,
