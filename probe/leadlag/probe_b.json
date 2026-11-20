@@ -1,0 +1,313 @@
+{
+ "poly_fed_events": [
+  [
+   "Fed Decision in April?",
+   "2027-04-28T23:59:00Z",
+   91093
+  ],
+  [
+   "Fed Decision in December?",
+   "2026-12-10T04:59:00Z",
+   44929699
+  ],
+  [
+   "Fed Decision in January?",
+   "2027-01-28T04:59:00Z",
+   4141526
+  ],
+  [
+   "Fed Decision in July?",
+   "2026-07-29T00:00:00Z",
+   143954094
+  ],
+  [
+   "Fed Decision in June?",
+   "2026-06-17T00:00:00Z",
+   164640887
+  ],
+  [
+   "Fed Decision in March?",
+   "2027-03-18T03:59:00Z",
+   297798
+  ],
+  [
+   "Fed Decision in October?",
+   "2026-10-29T03:59:00Z",
+   101896355
+  ],
+  [
+   "Fed Decision in September?",
+   "2026-09-16T00:00:00Z",
+   53020
+  ],
+  [
+   "Fed Decision in September?",
+   "2026-09-16T00:00:00Z",
+   208022818
+  ],
+  [
+   "Fed decision in April?",
+   "2026-04-29T00:00:00Z",
+   284224765
+  ],
+  [
+   "Fed decision in December?",
+   "2024-12-18T12:00:00Z",
+   58771669
+  ],
+  [
+   "Fed decision in December?",
+   "2025-12-10T00:00:00Z",
+   393905949
+  ],
+  [
+   "Fed decision in January?",
+   "2025-01-29T12:00:00Z",
+   190915049
+  ],
+  [
+   "Fed decision in January?",
+   "2026-01-28T00:00:00Z",
+   659499549
+  ],
+  [
+   "Fed decision in July?",
+   "2025-07-30T12:00:00Z",
+   136613627
+  ],
+  [
+   "Fed decision in June?",
+   "2025-06-18T12:00:00Z",
+   106895986
+  ],
+  [
+   "Fed decision in March?",
+   "2025-03-19T12:00:00Z",
+   78037951
+  ],
+  [
+   "Fed decision in March?",
+   "2026-03-18T00:00:00Z",
+   260075340
+  ],
+  [
+   "Fed decision in May?",
+   "2025-05-07T12:00:00Z",
+   88372825
+  ],
+  [
+   "Fed decision in October?",
+   "2025-10-29T12:00:00Z",
+   252485550
+  ],
+  [
+   "Fed decision in September?",
+   "2025-09-17T12:00:00Z",
+   220591461
+  ]
+ ],
+ "poly_cpi_events": [
+  [
+   "April Inflation US - Annual",
+   "2026-05-12T00:00:00Z",
+   478175
+  ],
+  [
+   "April Inflation US - Monthly",
+   "2026-05-12T00:00:00Z",
+   128201
+  ],
+  [
+   "August Inflation US - Annual",
+   "2026-09-11T03:59:00Z",
+   156365
+  ],
+  [
+   "August Inflation US - Monthly",
+   "2026-09-11T03:59:00Z",
+   76753
+  ],
+  [
+   "December Inflation US - Annual",
+   "2026-01-13T00:00:00Z",
+   265607
+  ],
+  [
+   "December Inflation US - Monthly",
+   "2026-01-13T00:00:00Z",
+   480241
+  ],
+  [
+   "February Inflation US - Annual",
+   "2026-03-11T00:00:00Z",
+   0
+  ],
+  [
+   "February Inflation US - Monthly",
+   "2026-03-11T00:00:00Z",
+   0
+  ],
+  [
+   "January Inflation US - Annual",
+   "2026-02-11T00:00:00Z",
+   69472
+  ],
+  [
+   "January Inflation US - Annual (Lower Brackets)",
+   "2026-02-11T00:00:00Z",
+   641800
+  ],
+  [
+   "January Inflation US - Monthly",
+   "2026-02-11T00:00:00Z",
+   260605
+  ],
+  [
+   "July Inflation US - Annual",
+   "2026-08-12T03:59:00Z",
+   649479
+  ],
+  [
+   "July Inflation US - Monthly",
+   "2026-08-12T03:59:00Z",
+   305146
+  ],
+  [
+   "June Inflation US - Annual",
+   "2026-07-15T03:59:00Z",
+   870572
+  ],
+  [
+   "June Inflation US - Monthly",
+   "2026-07-15T03:59:00Z",
+   52283
+  ],
+  [
+   "March Inflation US - Annual",
+   "2026-04-10T00:00:00Z",
+   3344780
+  ],
+  [
+   "March Inflation US - Annual (Higher Brackets)",
+   "2026-04-10T00:00:00Z",
+   1242667
+  ],
+  [
+   "March Inflation US - Monthly",
+   "2026-04-10T00:00:00Z",
+   703745
+  ],
+  [
+   "May Inflation US - Annual",
+   "2026-06-10T08:00:00Z",
+   594601
+  ],
+  [
+   "May Inflation US - Monthly",
+   "2026-06-10T08:00:00Z",
+   127500
+  ],
+  [
+   "November Inflation US - Annual",
+   "2026-12-10T13:30:00Z",
+   48038
+  ],
+  [
+   "November Inflation US - Monthly",
+   "2026-12-11T04:59:00Z",
+   6074
+  ],
+  [
+   "October Inflation US - Annual",
+   "2026-11-11T04:59:00Z",
+   208940
+  ],
+  [
+   "October Inflation US - Monthly",
+   "2026-11-11T04:59:00Z",
+   62365
+  ],
+  [
+   "September Inflation US - Annual",
+   "2026-10-15T03:59:00Z",
+   274681
+  ],
+  [
+   "September Inflation US - Monthly",
+   "2026-10-15T03:59:00Z",
+   97593
+  ]
+ ],
+ "poly_hist": [
+  {
+   "title": "Fed Decision in December?",
+   "market": "Will there be no change in Fed interest rates after the December 2026 meeting?",
+   "1": 0,
+   "60": 0,
+   "all_60": 693
+  },
+  {
+   "title": "Fed Decision in January?",
+   "market": "Will the Fed increase interest rates by 25 bps after the January 2027 meeting?",
+   "1": 0,
+   "60": 0,
+   "all_60": 692
+  },
+  {
+   "title": "Fed Decision in March?",
+   "market": "Will the Fed increase interest rates by 25 bps after the March 2027 meeting?",
+   "1": 0,
+   "60": 0,
+   "all_60": 543
+  },
+  {
+   "title": "Fed Decision in April?",
+   "market": "Will the Fed increase interest rates by 25 bps after the April 2027 meeting?",
+   "1": 0,
+   "60": 0,
+   "all_60": 511
+  }
+ ],
+ "kalshi_KXFED": {
+  "settled": 22,
+  "events": [
+   "KXFED-26OCT",
+   "KXFED-26SEP"
+  ]
+ },
+ "kalshi_KXFED_candles": {
+  "ticker": "KXFED-26SEP-T3.75",
+  "min1": 1853,
+  "h1": 1366,
+  "hist_min1": 1853
+ },
+ "kalshi_KXFEDDECISION": {
+  "settled": 10,
+  "events": [
+   "KXFEDDECISION-26OCT",
+   "KXFEDDECISION-26SEP"
+  ]
+ },
+ "kalshi_KXFEDDECISION_candles": {
+  "ticker": "KXFEDDECISION-26SEP-H0",
+  "min1": 3885,
+  "h1": 1394,
+  "hist_min1": 3885
+ },
+ "kalshi_KXCPI": {
+  "settled": 26,
+  "events": [
+   "KXCPI-26OCT",
+   "KXCPI-26SEP"
+  ]
+ },
+ "kalshi_KXCPI_candles": {
+  "ticker": "KXCPI-26SEP-T0.5",
+  "min1": 1788,
+  "h1": 1047,
+  "hist_min1": {
+   "status": 404,
+   "text": "{\"error\":{\"code\":\"failed_to_get_market_by_ticker:_not_found\",\"message\":\"failed to get market by ticker: not found\"}}"
+  }
+ }
+}
