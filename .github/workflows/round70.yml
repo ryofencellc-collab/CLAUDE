@@ -1,0 +1,29 @@
+name: round70
+# Round 70 (PROTOCOL_ROUND70.md): Kalshi S&P 4pm markets vs SPXW 0DTE option-implied probabilities.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONWARNINGS: ignore
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref_name }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate scipy
+      - name: Smoke (synthetic null fails, planted passes)
+        run: python run_round70.py smoke > /dev/null
+      - run: python run_round70.py collect
+      - run: python run_round70.py report
+      - name: Commit report
+        if: ${{ !cancelled() }}
+        run: |
+          git config user.name "round70 bot"; git config user.email "actions@users.noreply.github.com"
+          git add -f reports/ROUND70.md data/r70/kalshi.pkl 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "round70: results [skip ci]"
+          for i in 1 2 3 4; do git pull --rebase -q && git push -q && break; sleep 7; done
