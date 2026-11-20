@@ -6,7 +6,7 @@ import pandas as pd, requests
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "paper", "r58b"); os.makedirs(OUT, exist_ok=True)
 PAGES = {"us": "https://kworb.net/spotify/country/us_daily.html", "global": "https://kworb.net/spotify/country/global_daily.html"}
-SERIES = ["KXSPOTIFYD", "KXSPOTIFY2D", "KXSPOTIFYGLOBALD"]
+SERIES = ["KXSPOTIFYD", "KXSPOTIFY2D", "KXSPOTIFYD2", "KXSPOTIFY3D", "KXSPOTIFYGLOBALD", "KXSPOTIFYGLOBAL2D", "KXSPOTIFYW", "KXSPOTIFYARTISTD"]
 STAMP = os.path.join(OUT, ".last")
 
 
@@ -35,13 +35,18 @@ def snap(get, min_gap_s=3300):
                 p = os.path.join(OUT, f"{day}_{chart}_{now:%H%M}.html.gz"); gzip.open(p, "wt").write(r.text); wrote.append(p)
             except Exception:
                 pass
-    rows = []
+    rows, seen = [], {}
     for s in SERIES:
-        j = get("markets", {"series_ticker": s, "status": "open", "limit": 1000}) or {}
-        for m in j.get("markets", []):
+        ms = (get("markets", {"series_ticker": s, "status": "open", "limit": 1000}) or {}).get("markets", [])
+        if not ms:                       # fallback: open events with nested markets
+            evs = (get("events", {"series_ticker": s, "status": "open", "with_nested_markets": "true", "limit": 200}) or {}).get("events", [])
+            ms = [m for e in evs for m in e.get("markets", [])]
+        seen[s] = len(ms)
+        for m in ms:
             rows.append(dict(time=now.isoformat(), series=s, ticker=m["ticker"], event=m.get("event_ticker"), title=m.get("yes_sub_title"),
                              yes_bid=m.get("yes_bid_dollars"), yes_ask=m.get("yes_ask_dollars"), volume=m.get("volume_fp"), close=m.get("close_time")))
     if rows:
         p = os.path.join(OUT, f"{day}_kalshi.csv"); _append(p, pd.DataFrame(rows)); wrote.append(p)
-    open(STAMP, "w").write(now.isoformat()); print("r58b snapshot:", len(rows), "kalshi quotes;", wrote, flush=True)
+    _append(os.path.join(OUT, "kalshi_scan_log.csv"), pd.DataFrame([dict(time=now.isoformat(), **seen)]))
+    open(STAMP, "w").write(now.isoformat()); print("r58b snapshot:", len(rows), "kalshi quotes", seen, wrote, flush=True)
     return wrote
