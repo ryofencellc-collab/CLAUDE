@@ -193,6 +193,21 @@ def synthetic(planted, seed=0):
     return pairs
 
 
+def diagnostics(pairs):
+    rows = []
+    for p in pairs:
+        K_ = pd.DataFrame(p["kal"], columns=["t", "bid", "ask"]) if p["kal"] else pd.DataFrame(columns=["t", "bid", "ask"])
+        F = frames([p])
+        x = F[0][2] if F else pd.DataFrame(columns=["poly", "bid", "ask"])
+        mid = (x.bid + x.ask) / 2 if len(x) else pd.Series(dtype=float)
+        rows.append(dict(meeting=p["meeting"], outcome=p["outcome"], ticker=p["ticker"], result=p["result"], poly_pts=len(p["poly"]), kal_candles=len(K_),
+                         kal_with_bid_ask=int(K_[["bid", "ask"]].notna().all(axis=1).sum()) if len(K_) else 0, aligned=int(x.poly.notna().sum()) if len(x) else 0,
+                         med_abs_gap=round(float((x.poly - mid).abs().median()), 4) if len(x) else np.nan,
+                         med_spread=round(float((x.ask - x.bid).median()), 4) if len(x) else np.nan,
+                         corr=round(float(x.poly.corr(mid)), 3) if len(x) > 5 else np.nan))
+    return pd.DataFrame(rows)
+
+
 def report(res, pairs):
     out = ["# Round 65: does Polymarket lead Kalshi on Fed decisions? (hourly)", "", "Rules: [PROTOCOL_ROUND65.md](../PROTOCOL_ROUND65.md).", "",
            f"Matched outcome pairs: {len(pairs)}; with both histories: {sum(1 for p in pairs if p['poly'] and p['kal'])}; meetings: {', '.join(res.get('meetings', []))}.", "",
@@ -203,7 +218,8 @@ def report(res, pairs):
         if len(res["T"]):
             out += ["## Holdout by side", "", res["T"].groupby("side").pnl.agg(["count", "mean", "sum"]).round(4).to_markdown(), "",
                     "## Holdout by meeting", "", res["T"].groupby("meeting").pnl.agg(["count", "mean", "sum"]).round(4).to_markdown(), ""]
-    if len(res.get("grid", [])): out += ["## Dev grid", "", res["grid"].round(4).to_markdown(index=False)]
+    if len(res.get("grid", [])): out += ["## Dev grid", "", res["grid"].round(4).to_markdown(index=False), ""]
+    out += ["## Data diagnostics per matched pair", "", diagnostics(pairs).to_markdown(index=False)]
     open("reports/ROUND65.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:9]))
 
 
