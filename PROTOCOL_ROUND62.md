@@ -132,3 +132,12 @@ snapshot clock at lag 0 (mean |diff| $0.155, worse at ±1 min). That also confir
 
 Pass rules are unchanged: options at ≥ 20 recorded days. Round 62b uses the same rules: positive on its policy, above the null's 95th percentile, both halves
 positive, t ≥ 2.5, **and above the better no-model baseline.**
+
+## Interim, Round 62b (2026-11-20, 20 days Oct 23 → Nov 19, 6,920 minutes, 52 variables): **no model beats "always short"**
+- **Best rows are the no-model baselines:** always short SPY made +$8,891 (60 min), +$7,218 (30 min) and +$5,207 (10 min), with t 1.4–1.9 (100 shares).
+- **The best model policy is short-only** (+$4,911 at 30 min, t 2.04), which is **below** the always-short baseline. The model adds nothing except reducing exposure.
+- **The model's two-sided bet (≥60%, long/short) lost** at every horizon: −$1,740, −$199 and −$1,923, against time-shift null 95th percentiles of +$2,297, +$3,530 and +$3,174.
+- **Every long-only policy lost** (−$3.9k to −$6.3k). Walk-away raised green days (up to 16/20) but cut totals.
+- **Verdict (interim):** fails the "above the better baseline" and "above the null" rules. The only information in 20 days is the drift (the market fell). This is
+  re-run nightly; Yahoo's 28-day window rolls, so the day count stays about 20 unless the stored `data/ctx` history grows it. It does: files are kept.
+- Run note: the first background run stalled from CPU oversubscription alongside Round 62. It was re-run with `OMP_NUM_THREADS=1` (about 5 minutes). No rules changed.
