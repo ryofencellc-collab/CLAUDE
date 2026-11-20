@@ -74,3 +74,16 @@ pass rule as B1.
 - **F1, from Reddit r/options:** a 0DTE SPX iron butterfly entered at 14:50 ET with ATM shorts and ±$15 wings (±$1.5 on SPY), taking profit at 15% of the
   credit, else held to expiry, skipping FOMC days. It is scored with bid/ask fills (F1) and with mid fills (F1m, as no-code platforms do).
   The same pass rule applies at 20 and 40 trading days.
+
+## Amendment 2026-11-20: S1 trend-pullback scalper (reverse-engineered from a Reddit trader's Nov 16 SPY put day)
+- **Trend mode** (after 10:00 ET): DOWN if spot is below the 09:30–10:00 range low and below the session mean; UP is the mirror.
+- **Entry:** a 0.10% bounce off the running low (DOWN) or high (UP) buys the ATM put (or call) at the ask.
+- **Exit:** at the bid, on the first of +25%, −15%, 10 minutes, or 15:45.
+- **Sizing:** one position at a time, 1 contract, re-entry allowed until 15:30. It is scored with the other 39b strategies (20/40-day pass rule).
+
+**Backfill on the 9 recorded days (Nov 9–19), corrected clock:**
+- SPY: 107 trades, **−$638** (−$6 a trade, 36% win).
+- SPXW: 112 trades, **−$1,846** (41% win).
+- On Nov 16 itself, the trend day the Reddit trader posted, the rule took the same strikes at about the same times ($745/$746 puts mid-morning, $739/$740 puts after 13:40) and still **lost $46**.
+
+The posted profit came from discretion and sizing (2 → 42 contracts), not from a repeatable entry/exit rule.

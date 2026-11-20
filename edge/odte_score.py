@@ -191,6 +191,7 @@ def day_trades(day: str, root: str, S: float, ctx: dict | None = None) -> list[d
                 v, how = debit_exit(ss, te, legs, root, S)
                 out.append(dict(day=day, strategy="L1 long straddle", root=root, entry=e.strftime("%H:%M"), legs=str(legs),
                                 credit=round(-paid, 3), exit=how, pnl=round((v - paid) * sp["mult"] - 2 * sp["fee"] * 2, 2)))
+    out += scalper(ss, spot, root, day)
     fw = 15.0 if root == "SPXW" else 1.5
     for name, mid in (("F1 Reddit iron fly 14:50 (bid/ask fills)", False), ("F1m same, mid fills", True)):
         r = fly_trade(name, root, day, ss, spot, S, fw, mid=mid)
@@ -245,6 +246,51 @@ def fly_trade(name, root, day, ss, spot, S, w, tp=0.15, mid=False):
         exit_val = -spread_value(S, legs)
     pnl = (cr - exit_val) * sp["mult"] - len(legs) * sp["fee"] * (1 if how == "expiry" else 2)
     return dict(day=day, strategy=name, root=root, entry="14:50", legs=str(legs), credit=round(cr, 3), exit=how, pnl=round(pnl, 2))
+
+
+def scalper(ss, spot, root, day, bounce=0.001, tp=1.25, sl=0.85, hold_min=10):
+    """S1 (reverse-engineered from a Reddit trader's Nov 16 day, added 2026-11-20): trend-pullback 0DTE scalper.
+    Trend mode after 10:00 ET: DOWN if spot < opening-range low (09:30-10:00) and < session mean; UP if spot > OR high and > mean.
+    Entry: in DOWN mode, spot bounces >= 0.10% off the running session low -> buy the ATM put at the ask (mirror for UP / calls).
+    Exit: bid >= 1.25x entry, bid <= 0.85x entry, 10 minutes, or 15:45 -> sell at bid. One position at a time, 1 contract, re-entry allowed
+    until 15:30. Returns a list of trades."""
+    sp = SPEC[root]
+    s = spot.sort_index()
+    orng = s[(s.index.time >= dtime(9, 30)) & (s.index.time < dtime(10, 0))]
+    if len(orng) < 10:
+        return []
+    hi, lo = orng.max(), orng.min()
+    out, pos = [], None
+    run_lo = run_hi = None
+    sess = s[s.index.time >= dtime(9, 30)]
+    for t, g in ss:
+        if t.time() < dtime(9, 30) or t not in s.index:
+            continue
+        px = float(s[t]); mean = float(sess[sess.index <= t].mean())
+        run_lo = px if run_lo is None else min(run_lo, px); run_hi = px if run_hi is None else max(run_hi, px)
+        if pos:
+            cp, K, paid, t0 = pos
+            b = q(g, cp, K, "bid")
+            done = (b == b and (b >= tp * paid or b <= sl * paid)) or (t - t0) >= pd.Timedelta(minutes=hold_min) or t.time() >= dtime(15, 45)
+            if done:
+                b = b if b == b else 0.0
+                out.append(dict(day=day, strategy="S1 trend-pullback scalper", root=root, entry=t0.strftime("%H:%M"), legs=str([(cp, K, 1)]),
+                                credit=round(-paid, 3), exit=f"{t:%H:%M}", pnl=round((b - paid) * sp["mult"] - 2 * sp["fee"], 2)))
+                pos = None
+            continue
+        if t.time() < dtime(10, 0) or t.time() >= dtime(15, 30):
+            continue
+        down = px < lo and px < mean and px >= run_lo * (1 + bounce)
+        up = px > hi and px > mean and px <= run_hi * (1 - bounce)
+        if down or up:
+            cp = "P" if down else "C"
+            K = float(min(g.xs(cp, level="cp").index, key=lambda x: abs(x - px)))
+            a = q(g, cp, K, "ask")
+            if a == a and a > 0:
+                pos = (cp, K, a, t)
+                if down: run_lo = px      # next entry needs a new bounce off a fresh low
+                else: run_hi = px
+    return out
 
 
 BREAKOUTS = {"B1 OR breakout": {}, "B2 breakout by 11:00 only": {"cutoff": dtime(11, 0)},
