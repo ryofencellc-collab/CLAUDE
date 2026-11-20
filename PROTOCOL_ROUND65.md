@@ -74,3 +74,15 @@ pre-registered separately.
 2. **Duplicate pairs:** two Polymarket questions could map to one Kalshi outcome. Only the highest-volume Polymarket market per (meeting, outcome) is kept.
 
 The rules, grid, split and pass criteria are unchanged. The earlier "FAIL (no dev config with 50 trades)" came from these bugs and is void.
+
+## Result (2026-11-20, after amendments 2–3): **FAIL**
+- **Data:** 78 matched outcome pairs with both histories, across 18 Fed meetings (2024-12 → 2027-01).
+- **Dev choice:** g 0.03, H 24 h, split at the 2026-01 meeting.
+- **Holdout:** 298 trades, **−$0.040 per contract**, meeting-clustered t **−5.25**. Every holdout meeting lost. The time-shift null lost about the same (−$0.048).
+- **Dev:** all 16 configurations lost (−2.7¢ to −8.3¢ per contract).
+- **Reading:**
+  - Kalshi and Polymarket Fed prices track each other within about 1¢ hour to hour (correlation 0.94–0.99 on the main outcomes).
+  - When they diverge by 2–8¢, Kalshi does **not** catch up to Polymarket within 1–24 hours by more than the spread plus fees.
+  - At hourly resolution there is no exploitable lead.
+- **Minute-level follow-up (65b):** possible, since both venues have minute history. It is low priority: a lead that doesn't survive one hour would have to be a sub-hour effect much
+  larger than the 1¢ spread plus fees.
