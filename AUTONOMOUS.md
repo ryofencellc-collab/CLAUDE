@@ -46,7 +46,13 @@ released *before* the market closes, and that most traders don't track.
   - Step 1 is the probe: list the series, count settled markets, check the data sources.
 - [x] **58 Chart/streaming nowcasts — Round 63 FAIL** (incumbent-repeat rule: market prices match repeat rates, Brier 0.13 vs prior 0.38). Follow-up 58b below.
 - [ ] **58b Spotify stream-gap nowcast.** Use kworb daily US/global stream counts (the #1 − #2 gap and its trend) to predict the next day's #1 vs the Kalshi price. Collector LIVE since 2026-11-20 (`edge/kworb_snap.py`, hourly via the mention_f loop → `paper/r58b/`); test when ≥ 30 days are recorded (~Dec 20). Spotify daily streams (kworb) → Billboard / Spotify weekly #1 markets; box-office tracking → opening-weekend markets.
-- [ ] **59 Prediction-market lead-lag.** Do Polymarket moves predict Kalshi moves on the same event (or the reverse) within minutes? Signal only, not arbitrage
+- [ ] **59 Prediction-market lead-lag — probed 2026-11-20** (`probe/leadlag/probe_b.json`):
+  - **Matched pairs:** 21 Polymarket "Fed decision in <month>" events (2024-12 → 2027-04, up to $660M volume each) match Kalshi KXFED / KXFEDDECISION, and 26 Polymarket "US inflation monthly/annual" events match KXCPI.
+  - **History limits:** Kalshi has 1-minute candles (live and historical endpoints). Polymarket's prices-history returns **hourly points only** (`interval=all`, about 700 per market); minute queries return 0.
+  - **Plan:**
+    - (a) **Round 65:** an *hourly* lead-lag test on Fed decisions — does Polymarket's last-hour move predict Kalshi's next-hour move by more than Kalshi taker costs?
+    - (b) If it is promising, a minute-level forward collector of both venues.
+  - Original idea: Do Polymarket moves predict Kalshi moves on the same event (or the reverse) within minutes? Signal only, not arbitrage
   (Round 16 found too few matched liquid pairs for arbitrage).
 - [ ] **60 Prediction markets → stocks.** Do jumps in Kalshi/Polymarket Fed, CPI or election odds lead sector ETFs intraday?
 - [ ] **61 Liquidity programs elsewhere.** Polymarket's liquidity rewards, run as paper market making, if Round 44b passes on Kalshi.
