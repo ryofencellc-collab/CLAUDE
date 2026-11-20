@@ -69,3 +69,13 @@ by a model **calibrated to our real recorded 0DTE quotes**.
 - **Fix:** criterion 5 now uses a deflated Sharpe on the **holdout** excess series, with N equal to the number of configurations actually tested on the holdout (20), the Sharpe-ratio
   variance taken across those 20, and each series' skew and kurtosis.
 - **Why this is sound:** dev-stage multiplicity is handled by the untouched holdout plus Bonferroni (t ≥ 3 over 20). Criteria 1–4 are unchanged.
+
+## Amendment 2 (2026-11-20, after the search PASS, before any real-quote check is run)
+
+The search passed (15 of the top 20 meet all five criteria). Nearly all of them are "rv30 high → buy calls, quick profit target". That is exactly where the model is weakest. The model sets IV from yesterday's VIX and never lets IV react to today's realized volatility. If real IV rises with intraday realized vol, the model underprices options on high-rv30 minutes. Any minute-data noise would also inflate both rv30 and the profit-target hits. So before the real-quote replay, two pre-registered checks:
+
+- **M1, IV reacts to realized vol (real Cboe SPXW quotes, 9 days):** at each 1-minute snapshot from 10:00 to 15:30, take ATM IV (|z| < 0.25, median), divide it by the model IV, and regress log(ratio) on log(rv30 / VIXprev). rv30 uses the same formula as the search, computed from the recorded spot. Report β and the implied mispricing at rv30 = 0.16.
+- **Re-price:** rebuild the outcome tables with IV × (rv30_t / VIXprev)^β at entry and at every exit minute, β from M1. Then re-test the same top-20 configurations, unchanged, on the holdout with the same five criteria.
+  - If none passes, the verdict is **FAIL (model artifact)**.
+  - If any passes, it goes to the real-quote replay on the recorded days, then a live paper test.
+- **Real-quote replay (reported whatever happens):** run every PASS configuration on the recorded 1-minute SPXW quotes. Enter at the real ask of the strike nearest the type's delta and exit at the real bid. Compare with the same trade taken unconditionally at the same slot. With ≤ 9 days this is descriptive only and can veto but never confirm.
