@@ -55,3 +55,17 @@ Sell at 10:05, 11:30, 13:00 or 14:35 instead of the open. Premium for the rest o
 - P&L = premium − |C − S_T| − 0.6.
 
 The model is not trusted for levels, so this is never a pass. It shows how much of the flop damage a later entry would have avoided, and what it gives up.
+
+## Verdict (2026-11-20): FAIL (no pre-registered skip rule passes). Findings:
+- **Unscheduled news, not the calendar, drives the losses.**
+  - Days with no scheduled release or mega-cap earnings carry 73% of all straddle losses and 29 of the worst 50 days. Their options are priced cheapest (VIX1D/VIX 0.67).
+  - In only 7 of the worst 50 days did the biggest damage start at a scheduled time (10:00, 14:00, 14:30). The damage builds over 10:30–11:30 and again 15:00–16:00, i.e. trend days.
+- **Scheduled macro is priced in.**
+  - Options charge more on FOMC (VIX1D/VIX 0.88), jobs (0.75) and CPI (0.73) days.
+  - CPI days earned +5.1 pt and FOMC days −0.2. Skipping CPI/jobs/FOMC (E1) lowered the holdout mean, 1.65 vs 2.04.
+- **Mega-cap earnings mornings are the one known-in-advance loser:** mean −3.7 pt on 49 days (NVDA −7.7 on 18), 9 of the worst 50.
+  - Skipping them (E3) gave holdout +2.18, t 1.5: better than base but far below 2.5.
+- **Thursdays are weak in both periods** (dev +0.85, holdout −1.76, vs +3–8 on other days).
+  - Skip-Thursday on the holdout: +2.97, t 2.03.
+  - Not pre-registered here (weekday filters were in Round 67's search and did not rank), so it is a lead only.
+- **Late entry after a quiet morning** (model-priced, descriptive) loses money at 11:30 and 13:00. The afternoon premium is too small for the afternoon move plus costs.
