@@ -45,3 +45,13 @@ Synthetic world:
 - the planted world prices the incumbent at 0.5 + 0.5·(p − 0.5), which shrinks it toward 50%; the null world prices it at p.
 
 **Required:** planted → PASS; null → FAIL.
+
+## Result (2026-11-20): **FAIL**
+- **Data:** 31,779 settled markets in 11 series; 1,904 incumbent markets, 1,646 of them priced.
+- **Dev choice:** e 0.30, n_min 10.
+- **Holdout:** 187 trades, mean −$0.007 per contract, t −0.28.
+- **Brier:** prior 0.379 vs price 0.130. The market is far more accurate than the repeat-rate prior.
+- **Reading:**
+  - Kalshi prices track the incumbents' real repeat rates closely. Spotify daily 4+ streak: 82% repeat vs 81¢; global 88% vs 85¢.
+  - A new #1 (streak 1) looks overpriced by about 10¢ in most series, but in the holdout that slice made +$0.004 per contract, so the costs eat it.
+  - No edge. Next for backlog 58: a real nowcast from kworb daily stream counts (the gap between #1 and #2), not raw persistence.
