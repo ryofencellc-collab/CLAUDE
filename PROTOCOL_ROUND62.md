@@ -116,7 +116,7 @@ snapshot clock at lag 0 (mean |diff| $0.155, worse at ±1 min). That also confir
    - **Lookahead control:** features use only bars closed before the decision (shifted one bar).
    - **Targets:** forward 10, 30 and 60 minutes.
    - **Policies:** shares long/short, long only, short only; every slot, ≥60% or ≥70% confident; with and without walk-away.
-   - **Baselines:** always long, always short. **Null:** time-shifted labels, 10 runs.
+   - **Baselines:** always long, always short. **Null:** time-shifted labels, 10 runs for 30 min and 5 for 10/60 min.
    - **Calibration:** a planted variable must be exploited.
 2. **Options study (Round 62) additions:**
    - calendar variables;

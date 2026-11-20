@@ -157,7 +157,7 @@ def analyze(D, n_null=10):
         for side, nm in ((1, "BASELINE always long"), (-1, "BASELINE always short")):
             T = G.assign(pnl=side * G[f"fwd{h}"] / 1e4 * G.px * SHARES - 2 * COST * SHARES)[["day", "t", "pnl"]]
             rows.append(dict(horizon=f"{h}m", policy=nm, selectivity="every slot", walk_away=False, **summ(T)))
-        nulls[h] = [policy(oof(D, F, h, shift=True, seed=s), h, "long_short", 0.6, 0.4, False, False).pnl.sum() for s in range(n_null)]
+        nulls[h] = [policy(oof(D, F, h, shift=True, seed=s), h, "long_short", 0.6, 0.4, False, False).pnl.sum() for s in range(n_null if h == 30 else 5)]
     return pd.DataFrame(rows), nulls
 
 
