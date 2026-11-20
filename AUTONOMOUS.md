@@ -56,3 +56,4 @@ released *before* the market closes, and that most traders don't track.
   (Round 16 found too few matched liquid pairs for arbitrage).
 - [ ] **60 Prediction markets → stocks.** Do jumps in Kalshi/Polymarket Fed, CPI or election odds lead sector ETFs intraday?
 - [ ] **61 Liquidity programs elsewhere.** Polymarket's liquidity rewards, run as paper market making, if Round 44b passes on Kalshi.
+- [ ] **66b 0DTE forward check (from Round 66).** (1) Re-estimate the IV-vs-rv30 β once ≥ 20 recorded SPXW days exist and re-run `run_round66.py reprice` with nothing else changed. (2) Forward-track one rule: macd_slope ≤ −0.5211 AND rv30 ≥ 0.1596 → ATM call, +50% target. Use the recorded quotes (Yahoo 5-min while Cboe is 403) and the ^GSPC 1-minute spot. Pass at 20 trigger days: excess > 0, t ≥ 2. Pre-registered in PROTOCOL_ROUND66.md.

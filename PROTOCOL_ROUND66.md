@@ -79,3 +79,15 @@ The search passed (15 of the top 20 meet all five criteria). Nearly all of them 
   - If none passes, the verdict is **FAIL (model artifact)**.
   - If any passes, it goes to the real-quote replay on the recorded days, then a live paper test.
 - **Real-quote replay (reported whatever happens):** run every PASS configuration on the recorded 1-minute SPXW quotes. Enter at the real ask of the strike nearest the type's delta and exit at the real bid. Compare with the same trade taken unconditionally at the same slot. With ≤ 9 days this is descriptive only and can veto but never confirm.
+
+## Verdict (2026-11-20): FAIL (model artifact)
+
+- **Original prices:** 15 of 20 PASS, nearly all "rv30 high → buy calls, quick profit target" ([ROUND66.md](reports/ROUND66.md)).
+- **M1, real quotes:** real/model ATM IV rises with rv30, from 0.59 in the lowest quintile to 1.24 in the highest. Pooled β 0.457, corr 0.72.
+- **Re-priced with the pooled β (pre-registered):** **0 of 20 PASS**. Best: holdout t 3.30, but NDX −47 and DSR 0.89 ([ROUND66_REPRICE.md](reports/ROUND66_REPRICE.md)).
+- **Within-day β 0.093 (sensitivity only):** 19 of 20 pass. This β removes the day-level IV rise on high-rv days, and that rise is exactly what these entries are exposed to. So the pooled β is the right pricing model, and the verdict stands on it.
+- **Real-quote replay (9 days):** 11 of the 15 rules have negative excess over the same trade taken unconditionally ([ROUND66_REPLAY.md](reports/ROUND66_REPLAY.md)).
+- **Follow-up (66b):**
+  - β comes from only 9 days. Re-estimate it once ≥ 20 recorded days exist and re-run the reprice with nothing else changed.
+  - Forward paper tracking of the single rule that was positive in both the reprice (t 3.30) and the real replay: macd_slope ≤ −0.5211 AND rv30 ≥ 0.1596 → buy the ATM SPXW call at the first 15-minute slot, take +50% or sell at the 15:55 bid.
+  - Pass after 20 new trigger days: mean excess over the unconditional same-slot trade > 0 and t ≥ 2.
