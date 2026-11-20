@@ -66,3 +66,11 @@ criteria are unchanged.
 
 **Follow-up idea (not part of this round):** minute-level Polymarket and Kalshi histories both exist, so a minute-level lead-lag (Round 65b) is possible. It would be
 pre-registered separately.
+
+## Amendment 3 (2026-11-20, data bugs found by per-pair diagnostics; no rule change)
+1. **Kalshi price scale:** historical-endpoint candles report the close in **dollars**, but the collector divided every close by 100. Resolved meetings therefore showed about 90¢
+   "gaps" and 0.01¢ spreads, and every g gave the same trades.
+   Fix: the unit is detected per series (cents if any value is > 1).
+2. **Duplicate pairs:** two Polymarket questions could map to one Kalshi outcome. Only the highest-volume Polymarket market per (meeting, outcome) is kept.
+
+The rules, grid, split and pass criteria are unchanged. The earlier "FAIL (no dev config with 50 trades)" came from these bugs and is void.

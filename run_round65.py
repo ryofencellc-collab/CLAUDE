@@ -42,11 +42,17 @@ def num(x):
 
 
 def candle_px(c, side):
+    """Raw close; the unit (dollars vs cents) is decided per series in scale_kal (amendment 3: historical candles are in dollars)."""
     d = c.get(side) or {}
     v = d.get("close_dollars")
     if v is not None: return num(v)
-    v = d.get("close")
-    return num(v) / 100 if v is not None else np.nan
+    return num(d.get("close"))
+
+
+def scale_kal(rows):
+    vals = [v for _, b, a in rows for v in (b, a) if v == v]
+    f = 100.0 if vals and max(vals) > 1.0 else 1.0
+    return [(t, b / f, a / f) for t, b, a in rows]
 
 
 def poly_history(tok, a, b, fidelity=60):
@@ -108,8 +114,14 @@ def collect():
                 if cs: break
             pairs.append(dict(meeting=f"{key[0]}-{key[1]:02d}", outcome=o, ticker=km_["ticker"], result=km_.get("result"), close=cl,
                               poly=[(int(x["t"]), float(x["p"])) for x in h],
-                              kal=[(int(c["end_period_ts"]), candle_px(c, "yes_bid"), candle_px(c, "yes_ask")) for c in cs]))
+                              vol=float(pm.get("volume") or 0),
+                              kal=scale_kal([(int(c["end_period_ts"]), candle_px(c, "yes_bid"), candle_px(c, "yes_ask")) for c in cs])))
             print(key, o, len(h), "poly pts", len(cs), "kalshi candles", flush=True)
+    best = {}                                                  # amendment 3: one Polymarket market per (meeting, outcome), the highest-volume one
+    for p in pairs:
+        k = (p["meeting"], p["outcome"])
+        if k not in best or p["vol"] > best[k]["vol"]: best[k] = p
+    pairs = list(best.values())
     pickle.dump(pairs, open(path, "wb")); return pairs
 
 
