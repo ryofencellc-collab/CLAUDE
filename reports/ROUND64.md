@@ -29,7 +29,7 @@ Rule picked for each held-out day (mined on the other days):
 ## SPY
 
 - **Held-out (leave-one-day-out) P&L: $323** on 17 trades; green days 6/9; t 0.95.
-- Luck test (same search on time-shifted labels, 20 runs): 95th percentile $353 → real is **NOT above** luck.
+- Luck test (same search on time-shifted labels, 20 runs): 95th percentile $352 → real is **NOT above** luck.
 - Baselines on the same ≤ 2/day schedule: always call $-402, always put $518.
 - Best rule on ALL days (in-sample, for reference only): BUY PUT when macd_slope <= -0.6238 (p20) AND ret3 <= -9.395 (p10) → $1,241 in-sample.
 
