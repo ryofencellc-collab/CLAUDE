@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-21 10:50 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 198898; settled: 188873.
+Updated 2026-11-21 11:51 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 199436; settled: 188889.
 
-Total paper P&L: **$-11,771.67**; filled markets 24686; wrong calls 420, of which filled 260.
+Total paper P&L: **$-11,753.87**; filled markets 24689; wrong calls 420, of which filled 260.
 
 | series             |   markets |   filled |      contracts |   median_queue |            reach |       pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|---------------:|---------------:|-----------------:|----------:|--------:|---------------:|
@@ -10,7 +10,7 @@ Total paper P&L: **$-11,771.67**; filled markets 24686; wrong calls 420, of whic
 | KXNFLSPREAD        |       776 |      538 | 342112         |           0    |      4.51098e+06 |   3358.52 |       0 |              0 |
 | KXRAIN             |       448 |      354 | 321126         |         194.68 |      2.47634e+06 |   3153.36 |       0 |              0 |
 | KXTEMPMIAH         |      2876 |     1000 | 426925         |           0    | 699205           |   2710.66 |       7 |              5 |
-| KXCS2GAME          |       939 |      276 | 148040         |        1316.8  |      1.28835e+06 |   1453.23 |       2 |              0 |
+| KXCS2GAME          |       941 |      278 | 149845         |        1316    |      1.29077e+06 |   1470.96 |       2 |              0 |
 | KXAAAGASD          |       240 |      188 | 142975         |           0    |      2.23336e+06 |   1403.86 |       0 |              0 |
 | KXNBAGAME          |       180 |      142 | 142000         |           0    |      4.44265e+07 |   1394.44 |       0 |              0 |
 | KXNBA1QTOTAL       |      1170 |      284 | 137822         |        3096.5  | 779820           |   1324.68 |       3 |              1 |
@@ -18,11 +18,11 @@ Total paper P&L: **$-11,771.67**; filled markets 24686; wrong calls 420, of whic
 | KXNHLSPREAD        |       650 |      280 |  91973.3       |           0    | 276476           |    902.16 |       1 |              0 |
 | KXNFL1HSPREAD      |       498 |      131 |  88194.2       |        2222    |      1.34082e+06 |    865.88 |       0 |              0 |
 | KXHIGHLAX          |        78 |       65 |  63326.6       |           0    | 774161           |    621.86 |       0 |              0 |
-| KXLIGAPROMATCH     |      3245 |      226 |  59600.6       |       10486    | 340456           |    532.03 |       4 |              2 |
+| KXLIGAPROMATCH     |      3255 |      226 |  59600.6       |       10485    | 340933           |    532.03 |       4 |              2 |
 | KXNFL1HTOTAL       |       386 |       85 |  51972.4       |        3602.52 | 750698           |    510.21 |       0 |              0 |
 | KXHIGHNY           |        72 |       61 |  58191.9       |           0    | 711917           |    502.99 |       1 |              1 |
 | KXHIGHCHI          |        78 |       53 |  48678.8       |           0    | 369286           |    478.01 |       0 |              0 |
-| KXCS2MAP           |      1317 |      110 |  44699.2       |        5289.01 | 303892           |    438.65 |       2 |              0 |
+| KXCS2MAP           |      1321 |      111 |  44707.6       |        5268    | 304349           |    438.72 |       2 |              0 |
 | KXRT               |        85 |       50 |  41593.8       |           0    | 710436           |    408.43 |       0 |              0 |
 | KXNFL3QSPREAD      |       337 |       53 |  39353.3       |        3333    | 396933           |    386.41 |       0 |              0 |
 | KXNFL1H            |        84 |       49 |  38782.3       |           0    | 502363           |    380.8  |       0 |              0 |
