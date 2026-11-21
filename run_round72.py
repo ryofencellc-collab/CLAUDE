@@ -55,6 +55,14 @@ def one(st, books, ctxs, period):
 def sample():
     books, ctxs, px = load()
     st = [c for c in configs() if c.name == "mwf d0.16 std 25-50d hold cap30"][0]
+    b, c = books["SPY"], ctxs["SPY"]
+    days = [d for d in b.days if pd.Timestamp("2023-01-01") <= d < pd.Timestamp("2023-07-01")]
+    print("days in window", len(days), "weekday counts", pd.Series([d.weekday() for d in days]).value_counts().sort_index().to_dict())
+    n_tr = sum(1 for d in days if b.spot(d) > c["sma200"].get(d, np.nan)); print("days above 200-day", n_tr)
+    for d in days[:12]:
+        e = B.entries(st, b, d, c)
+        t = b.by_day[d]; exps = sorted({(x - d).days for x in t.expiration.unique()})
+        print(d.date(), "dte available", exps[:8], "cands", [(round(oc, 2), round(ml, 0)) for _, oc, ml, *_ in e])
     s = one(st, books, ctxs, (pd.Timestamp("2023-01-01"), pd.Timestamp("2023-07-01")))
     print("SAMPLE", st.name, {k: (round(v, 3) if isinstance(v, float) else v) for k, v in s.items()})
 
