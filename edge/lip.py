@@ -29,6 +29,8 @@ MIN_POOL_DAY = 3.0
 BANK: dict = {}               # reward/realized/fees of markets we stopped quoting (state['bank'])
 MAX_PER_EVENT = 3          # strikes of one event move together (Round 40/41 lesson)
 MAX_EVENT_COLLATERAL = 1500.0
+# Round 44d: skip series whose outcome a live public data feed settles early (informed traders pick off resting quotes)
+EXCLUDE = tuple(x for x in os.environ.get("R44_EXCLUDE", "").split(",") if x)
 
 
 def fnum(x, d=0.0):
@@ -212,6 +214,8 @@ def rank(now: pd.Timestamp, held: dict) -> dict:
     cands = []
     for p in progs:
         m = info.get(p["market_ticker"]) or {}
+        if EXCLUDE and p["market_ticker"].startswith(EXCLUDE):
+            continue
         if m.get("status") != "active" or m.get("price_level_structure") != "linear_cent":
             continue
         if pd.Timestamp(m.get("close_time")) < now + pd.Timedelta(hours=24):

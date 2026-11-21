@@ -74,3 +74,22 @@ Every other condition passes:
 4. max drawdown ≤ $1,000.
 
 A pass makes it the first real-money candidate, subject to a budget set by the user.
+
+## Rounds 44d and 44e (registered 2026-11-21, before either runs): two parallel variants of 44b, scored like 44c
+44b's inventory losses come mostly from markets whose outcome a live public data feed settles early. The largest open-position losses are in AAA gas-price ladders (−$600 across 5 markets), where traders watching live AAA prices pick off resting quotes. Two separate paper trackers on new data only, same engine and budget as 44b:
+- **44d:** 44b (1 tick behind) plus skipping series settled by live public data. The `R44_EXCLUDE` prefixes cover:
+  - gas prices;
+  - temperature, rain and snow;
+  - stock indices;
+  - crypto;
+  - oil, metals, FX and Treasuries;
+  - CPI, jobs, GDP, claims, PPI, retail, PCE, Fed and mortgage rates.
+- **44e:** 44b with quotes **2 ticks** behind the reference (less adverse selection, smaller reward share).
+
+Each is scored on its own daily net P&L from its first full day through 2026-12-20, with exactly the 44c pass rule:
+1. net > 0;
+2. daily t-stat ≥ 2;
+3. worst day ≥ −$500;
+4. max drawdown ≤ $1,000.
+
+A 5-minute smoke run of each must show markets quoted and a ledger written before the chain starts. 44c itself is unchanged: `R44_EXCLUDE` is empty for it.
