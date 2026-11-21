@@ -1,8 +1,8 @@
 # Round 44b: paper market making for Kalshi liquidity rewards (quotes 1 tick behind)
 
-Updated 2026-11-21 10:14 UTC. Rules: [PROTOCOL_ROUND44.md](../PROTOCOL_ROUND44.md). $10,000 budget.
+Updated 2026-11-21 10:54 UTC. Rules: [PROTOCOL_ROUND44.md](../PROTOCOL_ROUND44.md). $10,000 budget.
 
-Since start: reward **$1,648.72**, realised spread/settled **$1,131.00**, open inventory marked **$232.50**, fees **$275.87** → **net $2,736.35**. Quoting 20 markets, collateral $9,099.
+Since start: reward **$1,651.19**, realised spread/settled **$1,131.00**, open inventory marked **$238.50**, fees **$275.87** → **net $2,744.82**. Quoting 20 markets, collateral $9,162.
 
 | Day | Reward | Net | Markets |
 |---|---:|---:|---:|
@@ -17,6 +17,6 @@ Since start: reward **$1,648.72**, realised spread/settled **$1,131.00**, open i
 | 2026-11-18 | $145.25 | $215.66 | 16 |
 | 2026-11-19 | $127.44 | $544.92 | 41 |
 | 2026-11-20 | $133.83 | $-460.24 | 15 |
-| 2026-11-21 | $58.04 | $1,094.50 | 20 |
+| 2026-11-21 | $60.50 | $1,102.96 | 20 |
 
 Fills: 277 (83,100 contracts) in 131 markets.
