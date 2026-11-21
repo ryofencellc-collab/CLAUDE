@@ -1,8 +1,8 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-21 08:07 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 197812; settled: 188811.
+Updated 2026-11-21 08:48 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 197877; settled: 188817.
 
-Total paper P&L: **$-11,792.87**; filled markets 24681; wrong calls 420, of which filled 260.
+Total paper P&L: **$-11,773.23**; filled markets 24683; wrong calls 420, of which filled 260.
 
 | series             |   markets |   filled |      contracts |   median_queue |            reach |       pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|---------------:|---------------:|-----------------:|----------:|--------:|---------------:|
@@ -18,7 +18,7 @@ Total paper P&L: **$-11,792.87**; filled markets 24681; wrong calls 420, of whic
 | KXNHLSPREAD        |       650 |      280 |  91973.3       |           0    | 276476           |    902.16 |       1 |              0 |
 | KXNFL1HSPREAD      |       498 |      131 |  88194.2       |        2222    |      1.34082e+06 |    865.88 |       0 |              0 |
 | KXHIGHLAX          |        78 |       65 |  63326.6       |           0    | 774161           |    621.86 |       0 |              0 |
-| KXLIGAPROMATCH     |      3209 |      225 |  59588.8       |       10490    | 340418           |    531.92 |       4 |              2 |
+| KXLIGAPROMATCH     |      3213 |      225 |  59588.8       |       10490    | 340418           |    531.92 |       4 |              2 |
 | KXNFL1HTOTAL       |       386 |       85 |  51972.4       |        3602.52 | 750698           |    510.21 |       0 |              0 |
 | KXHIGHNY           |        72 |       61 |  58191.9       |           0    | 711917           |    502.99 |       1 |              1 |
 | KXHIGHCHI          |        78 |       53 |  48678.8       |           0    | 369286           |    478.01 |       0 |              0 |
@@ -66,7 +66,7 @@ Total paper P&L: **$-11,792.87**; filled markets 24681; wrong calls 420, of whic
 | KXUSDJPY15M        |       581 |      404 | 181945         |           0    | 236856           |  -1101.77 |       8 |              8 |
 | KXBRASILEIROBTOTAL |       114 |       41 |  19200.8       |          64.5  | 104563           |  -1180.95 |       2 |              2 |
 | KXNBA3QTOTAL       |      1169 |      280 | 138269         |         716    | 747462           |  -1226.15 |      10 |              3 |
-| KXWT20MATCH        |       110 |       76 |  69305.7       |           0    | 673498           |  -1319.42 |       2 |              2 |
+| KXWT20MATCH        |       112 |       78 |  71305.7       |           0    | 735203           |  -1299.78 |       2 |              2 |
 | KXNCAAF1HSPREAD    |      2500 |      372 | 152813         |          60    | 926344           |  -1354.95 |      12 |              5 |
 | KXNCAAF1H          |       717 |      118 |  61469.8       |         799.54 | 361515           |  -1396.66 |       6 |              2 |
 | KXNHLTOTAL         |       839 |      360 | 144425         |           0    |      1.05419e+06 |  -1499.97 |       7 |              5 |
