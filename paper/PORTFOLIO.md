@@ -1,11 +1,11 @@
 # Round 23 live paper portfolio: three unrelated edges with a risk engine
 
-Updated 2026-11-21 21:02 UTC. Rules: [PROTOCOL_PORTFOLIO.md](../PROTOCOL_PORTFOLIO.md). $10,000 paper: A $5,000 Kalshi crypto (2,500 contracts/market), B $4,000 Round 13, C $1,000 football.
+Updated 2026-11-21 21:07 UTC. Rules: [PROTOCOL_PORTFOLIO.md](../PROTOCOL_PORTFOLIO.md). $10,000 paper: A $5,000 Kalshi crypto (2,500 contracts/market), B $4,000 Round 13, C $1,000 football.
 
 | | |
 |---|---|
-| **Portfolio profit** | **$+4,880.68** (equity $14,880.68) |
-| By sleeve | A $+5,135.54 · B $-175.36 · C $-79.50 |
+| **Portfolio profit** | **$+4,954.36** (equity $14,954.36) |
+| By sleeve | A $+5,209.22 · B $-175.36 · C $-79.50 |
 | Days with P&L | 21 (green 100%) |
 | Max drawdown | 0.0% |
 
@@ -38,6 +38,6 @@ Updated 2026-11-21 21:02 UTC. Rules: [PROTOCOL_PORTFOLIO.md](../PROTOCOL_PORTFOL
 | 2026-11-18 | +217.54 | -2.32 | +0.00 | **+215.22** | 14,421.41 |
 | 2026-11-19 | +49.12 | -29.58 | +0.00 | **+19.54** | 14,440.95 |
 | 2026-11-20 | +221.04 | -26.91 | +0.00 | **+194.13** | 14,635.08 |
-| 2026-11-21 | +245.60 | +0.00 | +0.00 | **+245.60** | 14,880.68 |
+| 2026-11-21 | +319.28 | +0.00 | +0.00 | **+319.28** | 14,954.36 |
 
 Risk rules that fired: none
