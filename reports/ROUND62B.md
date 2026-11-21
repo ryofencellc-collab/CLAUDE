@@ -1,71 +1,71 @@
 # Round 62b: direction study on Yahoo 1-minute data (SPY + market-wide + calendar variables)
 
 Rules: [PROTOCOL_ROUND62.md](../PROTOCOL_ROUND62.md) amendment 5. 100 SPY shares per trade (~$74k), 1¢/share each way. Leave-one-day-out.
-Days: **20** (2026-10-23 → 2026-11-19); minutes analysed: 6,920; variables: 52.
+Days: **21** (2026-10-23 → 2026-11-20); minutes analysed: 7,266; variables: 52.
 
-- 10-min horizon: best model policy $1,917 vs best no-model baseline $5,207; model ≥60% long/short $-4,234 vs time-shift null 95th pct $2,810.
-- 30-min horizon: best model policy $3,579 vs best no-model baseline $7,218; model ≥60% long/short $-313 vs time-shift null 95th pct $4,381.
-- 60-min horizon: best model policy $3,575 vs best no-model baseline $8,891; model ≥60% long/short $-1,938 vs time-shift null 95th pct $4,890.
+- 10-min horizon: best model policy $2,907 vs best no-model baseline $7,014; model ≥60% long/short $-2,389 vs time-shift null 95th pct $5,024.
+- 30-min horizon: best model policy $6,912 vs best no-model baseline $9,800; model ≥60% long/short $323 vs time-shift null 95th pct $7,996.
+- 60-min horizon: best model policy $5,505 vs best no-model baseline $11,789; model ≥60% long/short $32 vs time-shift null 95th pct $6,086.
 
 | horizon   | policy                | selectivity   | walk_away   |   trades |   total |   win | green   |     t |
 |:----------|:----------------------|:--------------|:------------|---------:|--------:|------:|:--------|------:|
-| 60m       | BASELINE always short | every slot    | False       |      120 |    8891 |  0.54 | 12/20   |  1.91 |
-| 30m       | BASELINE always short | every slot    | False       |      240 |    7218 |  0.54 | 12/20   |  1.79 |
-| 10m       | BASELINE always short | every slot    | False       |      720 |    5207 |  0.52 | 9/20    |  1.39 |
-| 30m       | short_only            | every slot    | False       |      178 |    3579 |  0.49 | 12/20   |  1.35 |
-| 60m       | short_only            | ≥70%          | False       |       70 |    3575 |  0.59 | 15/19   |  2.14 |
-| 60m       | short_only            | every slot    | False       |       86 |    3054 |  0.55 | 11/19   |  1.59 |
-| 60m       | short_only            | ≥60%          | False       |       76 |    2927 |  0.58 | 14/19   |  1.87 |
-| 60m       | short_only            | every slot    | True        |       35 |    2738 |  0.49 | 13/19   |  1.64 |
-| 30m       | short_only            | ≥60%          | False       |      150 |    2630 |  0.55 | 14/20   |  1.5  |
-| 60m       | short_only            | ≥70%          | True        |       31 |    2542 |  0.58 | 14/19   |  1.75 |
-| 30m       | short_only            | ≥70%          | False       |      122 |    2473 |  0.51 | 12/19   |  1.51 |
-| 60m       | short_only            | ≥60%          | True        |       33 |    2177 |  0.52 | 13/19   |  1.47 |
-| 10m       | short_only            | every slot    | False       |      490 |    1917 |  0.48 | 9/20    |  0.81 |
-| 30m       | short_only            | ≥70%          | True        |       34 |    1733 |  0.53 | 14/19   |  1.52 |
-| 30m       | short_only            | every slot    | True        |       46 |    1674 |  0.43 | 15/20   |  1.28 |
-| 30m       | short_only            | ≥60%          | True        |       39 |    1236 |  0.51 | 13/20   |  1.07 |
-| 30m       | long_short            | every slot    | True        |       40 |    1235 |  0.5  | 13/20   |  0.95 |
-| 10m       | short_only            | ≥60%          | False       |      354 |     818 |  0.51 | 11/20   |  0.5  |
-| 10m       | short_only            | ≥60%          | True        |       40 |     156 |  0.5  | 12/20   |  0.21 |
-| 10m       | short_only            | ≥70%          | False       |      216 |     102 |  0.47 | 13/20   |  0.09 |
-| 30m       | long_short            | ≥70%          | True        |       39 |      55 |  0.51 | 15/20   |  0.03 |
-| 10m       | short_only            | every slot    | True        |       48 |     -16 |  0.42 | 11/20   | -0.02 |
-| 30m       | long_short            | ≥60%          | False       |      233 |    -313 |  0.53 | 11/20   | -0.11 |
-| 30m       | long_short            | ≥60%          | True        |       40 |    -486 |  0.5  | 13/20   | -0.26 |
-| 10m       | short_only            | ≥70%          | True        |       50 |    -579 |  0.38 | 10/20   | -0.95 |
-| 10m       | long_short            | every slot    | True        |       47 |    -830 |  0.43 | 13/20   | -0.77 |
-| 30m       | long_only             | ≥60%          | True        |       31 |    -969 |  0.55 | 12/18   | -0.53 |
-| 10m       | long_only             | every slot    | True        |       38 |   -1056 |  0.53 | 12/20   | -1.05 |
-| 30m       | long_only             | ≥70%          | True        |       31 |   -1087 |  0.45 | 10/16   | -0.63 |
-| 60m       | long_short            | ≥60%          | True        |       41 |   -1219 |  0.46 | 13/20   | -0.46 |
-| 30m       | long_short            | every slot    | False       |      240 |   -1451 |  0.51 | 8/20    | -0.71 |
-| 10m       | long_only             | ≥70%          | True        |       36 |   -1473 |  0.33 | 7/16    | -1.31 |
-| 10m       | long_short            | ≥70%          | True        |       55 |   -1490 |  0.36 | 10/20   | -1.3  |
-| 30m       | long_only             | every slot    | True        |       40 |   -1524 |  0.48 | 13/19   | -0.84 |
-| 60m       | long_short            | ≥70%          | True        |       43 |   -1581 |  0.44 | 12/20   | -0.57 |
-| 60m       | long_short            | every slot    | True        |       44 |   -1631 |  0.41 | 13/20   | -0.62 |
-| 10m       | long_only             | ≥60%          | True        |       38 |   -1655 |  0.47 | 10/18   | -1.4  |
-| 30m       | long_short            | ≥70%          | False       |      197 |   -1848 |  0.49 | 10/20   | -0.65 |
-| 10m       | long_short            | ≥60%          | True        |       52 |   -1901 |  0.38 | 9/20    | -1.53 |
-| 60m       | long_short            | ≥60%          | False       |      117 |   -1938 |  0.5  | 10/20   | -0.5  |
-| 60m       | long_short            | ≥70%          | False       |      106 |   -2164 |  0.47 | 12/20   | -0.59 |
-| 10m       | long_short            | every slot    | False       |      700 |   -2826 |  0.47 | 9/20    | -0.96 |
-| 30m       | long_only             | ≥70%          | False       |       91 |   -2880 |  0.46 | 8/16    | -1.26 |
-| 30m       | long_only             | ≥60%          | False       |      122 |   -2971 |  0.47 | 9/18    | -1.21 |
-| 60m       | long_only             | every slot    | True        |       36 |   -3043 |  0.42 | 10/17   | -1.35 |
-| 60m       | long_only             | ≥70%          | True        |       28 |   -3589 |  0.36 | 6/14    | -1.53 |
-| 60m       | long_only             | ≥60%          | True        |       33 |   -3772 |  0.36 | 8/16    | -1.62 |
-| 30m       | long_only             | every slot    | False       |      148 |   -3968 |  0.49 | 10/19   | -1.3  |
-| 60m       | long_short            | every slot    | False       |      120 |   -4057 |  0.49 | 9/20    | -1.15 |
-| 10m       | long_only             | ≥70%          | False       |      116 |   -4174 |  0.35 | 4/16    | -1.96 |
-| 10m       | long_short            | ≥60%          | False       |      570 |   -4234 |  0.47 | 8/20    | -1.91 |
-| 10m       | long_short            | ≥70%          | False       |      330 |   -4408 |  0.43 | 7/20    | -2.05 |
-| 10m       | long_only             | ≥60%          | False       |      254 |   -5385 |  0.43 | 5/18    | -2.17 |
-| 60m       | long_only             | ≥70%          | False       |       48 |   -5538 |  0.29 | 4/14    | -1.86 |
-| 60m       | long_only             | every slot    | False       |       74 |   -5805 |  0.38 | 8/17    | -1.86 |
-| 10m       | long_only             | every slot    | False       |      409 |   -6066 |  0.44 | 8/20    | -2.14 |
-| 60m       | long_only             | ≥60%          | False       |       63 |   -6260 |  0.3  | 5/16    | -2    |
-| 10m       | BASELINE always long  | every slot    | False       |      720 |   -8087 |  0.46 | 7/20    | -2.15 |
-| 30m       | BASELINE always long  | every slot    | False       |      240 |   -8178 |  0.45 | 7/20    | -2.03 |
-| 60m       | BASELINE always long  | every slot    | False       |      120 |   -9371 |  0.46 | 8/20    | -2.01 |
+| 60m       | BASELINE always short | every slot    | False       |      126 |   11789 |  0.56 | 13/21   |  2.24 |
+| 30m       | BASELINE always short | every slot    | False       |      252 |    9800 |  0.55 | 13/21   |  2.13 |
+| 10m       | BASELINE always short | every slot    | False       |      756 |    7014 |  0.53 | 10/21   |  1.73 |
+| 30m       | short_only            | every slot    | False       |      197 |    6912 |  0.54 | 14/21   |  1.86 |
+| 60m       | short_only            | every slot    | False       |       97 |    5505 |  0.58 | 13/21   |  2.04 |
+| 60m       | short_only            | ≥60%          | False       |       89 |    5287 |  0.55 | 13/20   |  1.7  |
+| 30m       | short_only            | ≥60%          | False       |      171 |    5259 |  0.52 | 14/21   |  1.81 |
+| 60m       | short_only            | ≥70%          | False       |       80 |    4871 |  0.56 | 13/19   |  1.66 |
+| 60m       | short_only            | every slot    | True        |       34 |    3341 |  0.59 | 16/21   |  1.88 |
+| 30m       | short_only            | ≥70%          | False       |      131 |    3288 |  0.54 | 15/20   |  1.79 |
+| 10m       | short_only            | ≥60%          | False       |      362 |    2907 |  0.51 | 16/21   |  1.53 |
+| 10m       | short_only            | every slot    | False       |      515 |    2819 |  0.51 | 10/21   |  1.07 |
+| 60m       | short_only            | ≥60%          | True        |       35 |    2670 |  0.54 | 14/20   |  1.59 |
+| 60m       | short_only            | ≥70%          | True        |       33 |    2496 |  0.52 | 14/19   |  1.47 |
+| 30m       | short_only            | ≥70%          | True        |       37 |    2411 |  0.54 | 16/20   |  1.86 |
+| 30m       | short_only            | ≥60%          | True        |       41 |    1754 |  0.49 | 15/21   |  1.56 |
+| 60m       | long_short            | ≥60%          | True        |       37 |    1294 |  0.54 | 15/21   |  0.51 |
+| 30m       | short_only            | every slot    | True        |       48 |    1138 |  0.44 | 13/21   |  0.97 |
+| 30m       | long_short            | ≥70%          | True        |       37 |    1066 |  0.57 | 16/21   |  0.53 |
+| 10m       | short_only            | ≥70%          | False       |      224 |     856 |  0.52 | 15/21   |  0.79 |
+| 60m       | long_short            | every slot    | True        |       41 |     789 |  0.46 | 15/21   |  0.28 |
+| 10m       | short_only            | ≥60%          | True        |       39 |     688 |  0.54 | 17/21   |  0.93 |
+| 30m       | long_short            | ≥60%          | True        |       40 |     424 |  0.52 | 15/21   |  0.23 |
+| 10m       | short_only            | ≥70%          | True        |       44 |     421 |  0.48 | 13/21   |  0.74 |
+| 30m       | long_short            | ≥70%          | False       |      200 |     326 |  0.55 | 16/21   |  0.11 |
+| 30m       | long_short            | ≥60%          | False       |      242 |     323 |  0.51 | 12/21   |  0.12 |
+| 60m       | long_short            | ≥70%          | False       |      112 |     243 |  0.47 | 12/21   |  0.06 |
+| 60m       | long_short            | ≥60%          | False       |      123 |      32 |  0.51 | 10/21   |  0.01 |
+| 60m       | long_short            | ≥70%          | True        |       41 |    -149 |  0.44 | 15/21   | -0.05 |
+| 60m       | long_short            | every slot    | False       |      126 |    -393 |  0.49 | 11/21   | -0.11 |
+| 10m       | long_short            | ≥60%          | True        |       42 |    -492 |  0.5  | 15/21   | -0.46 |
+| 10m       | short_only            | every slot    | True        |       49 |    -581 |  0.43 | 8/21    | -0.72 |
+| 30m       | long_short            | every slot    | False       |      252 |    -625 |  0.52 | 12/21   | -0.2  |
+| 10m       | long_only             | every slot    | True        |       41 |    -771 |  0.51 | 14/21   | -0.75 |
+| 30m       | long_only             | ≥70%          | True        |       26 |    -954 |  0.58 | 11/16   | -0.54 |
+| 30m       | long_short            | every slot    | True        |       43 |    -984 |  0.49 | 14/21   | -0.51 |
+| 10m       | long_short            | ≥70%          | True        |       48 |    -995 |  0.44 | 12/21   | -0.81 |
+| 10m       | long_short            | every slot    | True        |       59 |   -1508 |  0.36 | 11/21   | -1.39 |
+| 30m       | long_only             | ≥60%          | True        |       31 |   -1534 |  0.52 | 10/18   | -0.85 |
+| 10m       | long_only             | ≥70%          | True        |       32 |   -2156 |  0.34 | 6/14    | -1.79 |
+| 10m       | long_only             | ≥60%          | True        |       43 |   -2336 |  0.42 | 8/19    | -1.95 |
+| 10m       | long_short            | ≥60%          | False       |      603 |   -2389 |  0.49 | 12/21   | -1.07 |
+| 30m       | long_only             | every slot    | True        |       39 |   -2497 |  0.49 | 13/20   | -1.11 |
+| 10m       | long_short            | ≥70%          | False       |      357 |   -2761 |  0.46 | 11/21   | -1.27 |
+| 30m       | long_only             | ≥70%          | False       |       86 |   -3281 |  0.5  | 9/16    | -1.18 |
+| 60m       | long_only             | ≥70%          | True        |       26 |   -3692 |  0.31 | 7/14    | -1.61 |
+| 10m       | long_only             | ≥70%          | False       |      134 |   -3823 |  0.36 | 4/14    | -2.06 |
+| 10m       | long_only             | ≥60%          | False       |      265 |   -4649 |  0.46 | 8/19    | -1.91 |
+| 30m       | long_only             | ≥60%          | False       |      117 |   -4722 |  0.44 | 7/18    | -1.71 |
+| 60m       | long_only             | ≥70%          | False       |       43 |   -4858 |  0.3  | 6/14    | -1.85 |
+| 60m       | long_only             | ≥60%          | True        |       33 |   -4962 |  0.36 | 8/16    | -1.93 |
+| 60m       | long_only             | every slot    | True        |       41 |   -5276 |  0.34 | 9/18    | -2    |
+| 10m       | long_short            | every slot    | False       |      735 |   -5569 |  0.48 | 7/21    | -2.37 |
+| 30m       | long_only             | every slot    | False       |      156 |   -6494 |  0.44 | 7/20    | -2.03 |
+| 60m       | long_only             | ≥60%          | False       |       57 |   -6745 |  0.32 | 5/16    | -2.39 |
+| 60m       | long_only             | every slot    | False       |       69 |   -7353 |  0.35 | 6/18    | -2.32 |
+| 10m       | long_only             | every slot    | False       |      412 |   -7826 |  0.43 | 10/21   | -2.2  |
+| 10m       | BASELINE always long  | every slot    | False       |      756 |  -10038 |  0.45 | 7/21    | -2.47 |
+| 30m       | BASELINE always long  | every slot    | False       |      252 |  -10808 |  0.44 | 7/21    | -2.35 |
+| 60m       | BASELINE always long  | every slot    | False       |      126 |  -12293 |  0.44 | 8/21    | -2.34 |
