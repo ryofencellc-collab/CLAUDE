@@ -39,3 +39,14 @@ A pass goes to a live paper tracker (real quotes, next-close fills), not money.
 ## Calibration (synthetic, before real data)
 - **Null:** independent random walks with equal volatility. It must FAIL; mean reversion on unrelated stocks can still win often but loses big.
 - **Planted:** B·exp(OU gap, half-life 10 days, sd 1.5%). It must PASS.
+
+## Verdict (2026-11-21): FAIL
+- **Primary rule:** holdout win rate 47% (rule ≥ 70%) on 883 trades.
+- **The dev choice** (window 120, |z| ≥ 2.5) also wins 49%.
+- **Liquid pairs lose after costs:** GOOGL/GOOG, FOXA/FOX, NWSA/NWS, LEN, HEI, Z/ZG and BF all show 21–41% wins.
+  - Even before costs, GOOGL/GOOG wins only 59% and FOXA/FOX 48%: the gap drifts more than it snaps back within 20 days.
+- **The only "winners" are untradable:** BIO/BIO-B 88%, MOG-A/MOG-B 83% and TAP/TAP-A 75% win rates.
+  - Their B-class shares trade on few days: median daily volume 0 for TAP-A and BIO-B (179 and 222 zero-volume days in the last year), $30k for MOG-B.
+  - Their "mean reversion" is stale closing prices, not a fill anyone could get.
+- Data: LGF-A/B and CWEN-A are not in free data and were dropped.
+- Methodology: two pairs were run end to end before the full set.
