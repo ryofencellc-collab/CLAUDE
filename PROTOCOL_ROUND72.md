@@ -52,3 +52,27 @@ A 1-configuration, 6-month run must complete before the full grid.
 The sample made 0 trades. Two fixes:
 - **Sizing:** one SPY spread's max loss (~$740) exceeds the per-entry budget (e.g. 30% × $25k / 15 = $500), so the quantity rounded to 0. Rule: take **1 contract** whenever the per-entry budget rounds to 0 but the total open-risk cap still has room. The cap still binds.
 - **Data:** the DoltHub chains exist only on Mondays, Wednesdays and Fridays (sample: 24/24/26 days, no Tue/Thu). The "daily" arm cannot be tested and is dropped, leaving **36 configurations**, all 3× a week (Mon/Wed/Fri). Selection and pass rules are unchanged.
+
+## Verdict (2026-11-21): PASS → live paper tracker
+- **Dev choice:** Mon/Wed/Fri, 10-delta short put, 25–50 days to expiry, managed, 70% open-risk cap.
+- **Holdout 2024-01 → 2026-11:**
+
+| | Strategy | SPY buy-and-hold |
+|---|---|---|
+| CAGR | +14.9% | +16.8% |
+| Sharpe | 2.35 | 1.07 |
+| Max drop | −9.1% | −19.0% |
+
+  - win rate 95.1%, 2.4 trades/week;
+  - average win $51, average loss −$331, worst trade −$1,407;
+  - it earns slightly less than SPY with half the drawdown.
+- **Neighbours agree:** every 10-delta, 25–50-day configuration has a holdout Sharpe of 1.5–2.5, a max drop of 5–12% and a 94–98% win rate.
+  - 16- and 25-delta versions earn more in good years but drop 24–48%.
+  - The 7–21-day 10-delta versions earn 21–36%/yr but drop 16–26%.
+- **Caveats:**
+  - End-of-day prices on Mon/Wed/Fri only, so daily marks are smoothed and Sharpe is overstated.
+  - Live intraday fills will differ.
+  - The 200-day filter kept it mostly out of 2022.
+  - The holdout includes the Aug 2024 and Apr 2025 shocks.
+  - 36 configurations were tried; the choice was made on dev only.
+- **Next:** a live paper tracker on real SPY quotes, then a verdict before any money.
