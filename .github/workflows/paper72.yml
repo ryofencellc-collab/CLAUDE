@@ -1,0 +1,28 @@
+name: paper72
+# Round 72 live paper tracker (PROTOCOL_ROUND72.md): SPY 10-delta put credit spreads, Mon/Wed/Fri entries, managed daily.
+on:
+  schedule:
+    - cron: "40 20 * * 1-5"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: paper72
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "claude/eloquent-darwin-2lipsh"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt tabulate
+      - run: python -m edge.paper72
+      - name: Commit
+        run: |
+          git config user.name "paper72 bot"; git config user.email "actions@users.noreply.github.com"
+          git add -f paper/r72_state.json paper/r72_daily.csv paper/ROUND72_PAPER.md paper/r72_trades.csv 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "paper72: ledger $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
+          for i in 1 2 3 4; do git pull --rebase -q && git push -q && break; sleep 7; done

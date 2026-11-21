@@ -76,3 +76,12 @@ The sample made 0 trades. Two fixes:
   - The holdout includes the Aug 2024 and Apr 2025 shocks.
   - 36 configurations were tried; the choice was made on dev only.
 - **Next:** a live paper tracker on real SPY quotes, then a verdict before any money.
+
+## Live paper tracker (registered 2026-11-21, before its first run)
+- **Engine:** `edge/paper72.py`, run every weekday at 20:40 UTC (15:40 ET in winter; 16:40 ET in summer is after the close, so the cron moves to 19:40 UTC when DST starts).
+- **Quotes:** real Yahoo SPY quotes; deltas from mid-implied vol; SPY from the chain's own price.
+- **Rules:** exactly the dev choice (Mon/Wed/Fri, 10-delta, 25–50 days, managed, 70% cap, above the 200-day). Fills at natural prices; each entry also logs the mid credit. $25,000 paper account.
+- **Starting state:** SPY is currently below its 200-day average (689.81 vs 730.29 on 2026-11-20), so by rule the tracker stays in cash until it recovers. It may not trade for weeks.
+- **Verdict:** at 40 closed trades, or 2027-05-21, whichever comes first.
+  - **Pass:** net P&L > 0, win rate ≥ 85%, max drawdown ≤ 12%, and the average natural credit ≥ 50% of the average mid credit (fills are realistic).
+  - A pass makes it a real-money candidate at a budget the user sets.
