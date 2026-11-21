@@ -18,13 +18,13 @@ def slots(freq, dte):
 
 def configs():
     out = []
-    for freq in ("daily", "mwf"):
+    for freq in ("mwf",):          # amendment 1: the DoltHub chains exist only on Mon/Wed/Fri, so "daily" is not testable
         for dl in (0.10, 0.16, 0.25):
             for dn, dte in DTES.items():
                 for manage in (False, True):
                     for cap in (0.30, 0.50, 0.70):
                         name = f"{freq} d{dl} {dn} {'managed' if manage else 'hold'} cap{int(cap * 100)}"
-                        out.append(B.Strat(name, "put_spread", delta=dl, filt=("trend",), risk=cap / slots(freq, dte), manage=manage, freq=freq, dte=dte, cap=cap))
+                        out.append(B.Strat(name, "put_spread", delta=dl, filt=("trend",), risk=cap / slots(freq, dte), manage=manage, freq=freq, dte=dte, cap=cap, min1=True))
     return out
 
 
@@ -91,7 +91,7 @@ def report():
     if pick is not None:
         out += [f"**Dev choice:** {pick.config}. Holdout: CAGR {pick.ho_cagr}%, Sharpe {pick.ho_sharpe}, max drop {pick.ho_max_dd}%, win rate {pick.ho_win}%, {pick.ho_per_wk} trades/week.", ""]
     out += [f"**Verdict: {'PASS → live paper tracker' if passed else 'FAIL'}.**", "",
-            "## All 72 configurations (dev 2020-03 → 2023, holdout 2024 → 2026-11)", "", R.sort_values("dev_sharpe", ascending=False).to_markdown(index=False), ""]
+            "## All 36 configurations (dev 2020-03 → 2023, holdout 2024 → 2026-11)", "", R.sort_values("dev_sharpe", ascending=False).to_markdown(index=False), ""]
     open("reports/ROUND72.md", "w").write("\n".join(out) + "\n"); print("\n".join(out[:12]))
     R.to_csv("data/r72_grid.csv", index=False)
 

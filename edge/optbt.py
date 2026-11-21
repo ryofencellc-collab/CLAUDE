@@ -127,6 +127,7 @@ class Strat:
     freq: str = "weekly"            # Round 72: "weekly" | "daily" | "mwf" (Mon/Wed/Fri)
     dte: tuple = (25, 50, 35)       # Round 72: expiry window (lo, hi, target) in calendar days for credit spreads
     cap: float = 0.30               # Round 72: total open-risk cap as a share of equity
+    min1: bool = False              # Round 72: take 1 contract when the per-entry budget is below one spread's max loss but the cap has room
 
 
 def entries(st: Strat, book, d, ctx) -> list:
@@ -326,6 +327,8 @@ def run(strats: list, books: dict, ctxs: dict, earn: dict, start, end, capital=2
                     continue
                 room = cap_total - open_risk.get(st.name, 0.0)
                 qty = int(min(st.risk * equity, room) // ml)
+                if qty < 1 and st.min1 and ml <= room:
+                    qty = 1
                 if qty < 1:
                     continue
                 comm = COMM * len(legs) * qty

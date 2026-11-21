@@ -47,3 +47,8 @@ All 72 configurations are reported on the holdout for transparency, but only the
 
 ## Check first
 A 1-configuration, 6-month run must complete before the full grid.
+
+## Amendment 1 (2026-11-21, after the 6-month sample run, before any full or holdout result)
+The sample made 0 trades. Two fixes:
+- **Sizing:** one SPY spread's max loss (~$740) exceeds the per-entry budget (e.g. 30% × $25k / 15 = $500), so the quantity rounded to 0. Rule: take **1 contract** whenever the per-entry budget rounds to 0 but the total open-risk cap still has room. The cap still binds.
+- **Data:** the DoltHub chains exist only on Mondays, Wednesdays and Fridays (sample: 24/24/26 days, no Tue/Thu). The "daily" arm cannot be tested and is dropped, leaving **36 configurations**, all 3× a week (Mon/Wed/Fri). Selection and pass rules are unchanged.
