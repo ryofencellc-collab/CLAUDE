@@ -46,3 +46,9 @@ Synthetic days with a true close distribution; options priced from the truth plu
 - Calibration of Kalshi mid vs option D vs outcome, by price band.
 - Average |Kalshi mid − D| by hour.
 - The number of minutes where a gap ≥ m exists.
+
+## Verdict (2026-11-21): FAIL
+- Kalshi tracks the option chain closely: the median |Kalshi mid − option fair| is 1¢ (1–1.5¢ all day) across 107,272 market-minutes. The two are equally calibrated (bands match to ≤ 0.5¢).
+- **Variant S (same-minute fair value, upper bound):** dev lost at every margin. Holdout +$4.23 on 91 trades, t 1.31, 2 of 4 days positive.
+- **Variant L (15-minute-old options, the free-data reality):** holdout −$42.16 on 245 trades, t −6.43. Kalshi moves faster than delayed option data, so the "gaps" are just stale fair values.
+- Methodology note: a 20-market one-day sample was run end to end before the full run. It found the missing-candle gaps, which are now forward-filled.
