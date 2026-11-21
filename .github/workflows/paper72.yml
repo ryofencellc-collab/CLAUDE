@@ -25,4 +25,9 @@ jobs:
           git config user.name "paper72 bot"; git config user.email "actions@users.noreply.github.com"
           git add -f paper/r72_state.json paper/r72_daily.csv paper/ROUND72_PAPER.md paper/r72_trades.csv 2>/dev/null || true
           git diff --cached --quiet || git commit -q -m "paper72: ledger $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
-          for i in 1 2 3 4; do git pull --rebase -q && git push -q && break; sleep 7; done
+          set +e
+          for i in 1 2 3 4 5 6; do
+            git fetch -q origin claude/eloquent-darwin-2lipsh && git rebase -q FETCH_HEAD && git push origin HEAD:claude/eloquent-darwin-2lipsh && echo "pushed on try $i" && exit 0
+            git rebase --abort 2>/dev/null; sleep $((5 * i))
+          done
+          echo "push failed after 6 tries"; exit 1
