@@ -124,6 +124,9 @@ class Strat:
     risk: float = 0.05
     symbols: tuple = ("SPY",)
     manage: bool = True             # False: hold credit spreads to expiry (no profit target, stop or 21-day exit)
+    freq: str = "weekly"            # Round 72: "weekly" | "daily" | "mwf" (Mon/Wed/Fri)
+    dte: tuple = (25, 50, 35)       # Round 72: expiry window (lo, hi, target) in calendar days for credit spreads
+    cap: float = 0.30               # Round 72: total open-risk cap as a share of equity
 
 
 def entries(st: Strat, book, d, ctx) -> list:
@@ -148,7 +151,7 @@ def entries(st: Strat, book, d, ctx) -> list:
         return []
     out = []
     if st.kind in ("put_spread", "call_spread", "condor"):
-        e = pick_exp(tbl, d, 25, 50, 35)
+        e = pick_exp(tbl, d, *st.dte)
         if e is None:
             return []
         legs, widths = [], []
@@ -312,12 +315,12 @@ def run(strats: list, books: dict, ctxs: dict, earn: dict, start, end, capital=2
                             exit_day = b._next.get(nxt) if nxt == E else nxt
                             if exit_day is not None and (exit_day - d).days <= 6:
                                 cands += [(sym, *c) for c in earnings_entries(st, b, d, exit_day)]
-            elif weekly:
+            elif (weekly if st.freq == "weekly" else True if st.freq == "daily" else d.weekday() in (0, 2, 4)):
                 for sym in st.symbols:
                     b = books.get(sym)
                     if b is not None and d in b.by_day:
                         cands += [(sym, *c) for c in entries(st, b, d, ctxs[sym])]
-            cap_total = 0.30 * equity * budget[st.name]
+            cap_total = st.cap * equity * budget[st.name]
             for sym, legs, oc, ml, kind, exit_on in cands:
                 if ml <= 0:
                     continue
