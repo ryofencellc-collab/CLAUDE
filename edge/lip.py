@@ -317,13 +317,17 @@ def summary(now) -> str:
 
 def commit(now):
     paths = [p for p in (STATE, MINUTES, FILLS, REPORT) if os.path.exists(p)]
-    for c in (["git", "add", *paths], ["git", "commit", "-q", "-m", f"round44{TAG}: lip ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"],
-              ["git", "pull", "--rebase", "-q"], ["git", "push", "-q"]):
-        try:
-            if subprocess.run(c, cwd=ROOT, timeout=120).returncode != 0 and c[1] == "commit":
-                return
-        except subprocess.TimeoutExpired:
+    try:
+        subprocess.run(["git", "add", *paths], cwd=ROOT, timeout=120)
+        if subprocess.run(["git", "commit", "-q", "-m", f"round44{TAG}: lip ledger {now:%Y-%m-%dT%H:%MZ} [skip ci]"], cwd=ROOT, timeout=120).returncode != 0:
             return
+        for attempt in range(4):      # other bots push to the same branch: retry the pull + push race
+            subprocess.run(["git", "pull", "--rebase", "-q"], cwd=ROOT, timeout=120)
+            if subprocess.run(["git", "push", "-q"], cwd=ROOT, timeout=120).returncode == 0:
+                return
+            time.sleep(5 + 5 * attempt)
+    except subprocess.TimeoutExpired:
+        return
 
 
 def recover_bank() -> dict:
