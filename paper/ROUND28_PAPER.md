@@ -1,15 +1,15 @@
 # Round 28 paper: live queue survey
 
-Updated 2026-11-21 01:19 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 193034; settled: 186677.
+Updated 2026-11-21 02:20 UTC. Rules: [PROTOCOL_ROUND28.md](../PROTOCOL_ROUND28.md). Joined markets: 193977; settled: 187431.
 
-Total paper P&L: **$-5,319.21**; filled markets 24379; wrong calls 404, of which filled 248.
+Total paper P&L: **$-5,043.46**; filled markets 24422; wrong calls 404, of which filled 248.
 
 | series             |   markets |   filled |        contracts |   median_queue |            reach |      pnl |   wrong |   wrong_filled |
 |:-------------------|----------:|---------:|-----------------:|---------------:|-----------------:|---------:|--------:|---------------:|
 | KXNCAAFSPREAD      |      5242 |     1752 | 770486           |           0    |      4.0894e+06  |  4163.09 |      38 |             19 |
 | KXNFLSPREAD        |       776 |      538 | 342112           |           0    |      4.51098e+06 |  3358.52 |       0 |              0 |
 | KXRAIN             |       448 |      354 | 321126           |         194.68 |      2.47634e+06 |  3153.36 |       0 |              0 |
-| KXTEMPMIAH         |      2842 |      990 | 423725           |           0    | 695786           |  2679.27 |       7 |              5 |
+| KXTEMPMIAH         |      2857 |      995 | 426068           |           0    | 698327           |  2702.27 |       7 |              5 |
 | KXCS2GAME          |       931 |      274 | 147891           |        1316    |      1.27193e+06 |  1451.78 |       2 |              0 |
 | KXAAAGASD          |       240 |      188 | 142975           |           0    |      2.23336e+06 |  1403.86 |       0 |              0 |
 | KXNBAGAME          |       172 |      136 | 136000           |           0    |      4.27001e+07 |  1335.52 |       0 |              0 |
@@ -18,7 +18,7 @@ Total paper P&L: **$-5,319.21**; filled markets 24379; wrong calls 404, of which
 | KXNHLSPREAD        |       640 |      275 |  88608.7         |           0    | 268349           |   869.13 |       1 |              0 |
 | KXNFL1HSPREAD      |       498 |      131 |  88194.2         |        2222    |      1.34082e+06 |   865.88 |       0 |              0 |
 | KXHIGHLAX          |        78 |       65 |  63326.6         |           0    | 774161           |   621.86 |       0 |              0 |
-| KXLIGAPROMATCH     |      3157 |      221 |  58822.7         |       10489.6  | 333365           |   524.41 |       4 |              2 |
+| KXLIGAPROMATCH     |      3163 |      221 |  58822.7         |       10489    | 333365           |   524.41 |       4 |              2 |
 | KXNFL1HTOTAL       |       386 |       85 |  51972.4         |        3602.52 | 750698           |   510.21 |       0 |              0 |
 | KXHIGHNY           |        72 |       61 |  58191.9         |           0    | 711917           |   502.99 |       1 |              1 |
 | KXHIGHCHI          |        78 |       53 |  48678.8         |           0    | 369286           |   478.01 |       0 |              0 |
@@ -61,7 +61,7 @@ Total paper P&L: **$-5,319.21**; filled markets 24379; wrong calls 404, of which
 | KXDIMAYORTOTAL     |       122 |       52 |  31252.2         |           0    | 171213           |  -693.19 |       1 |              1 |
 | KXTRUMPSAY         |        52 |       39 |  33306.7         |           0    | 513396           |  -730.96 |       2 |              2 |
 | KXNASCARRACE       |        79 |       25 |  24347.9         |       12654    | 944275           |  -760.91 |       1 |              1 |
-| KXETHD             |     85215 |     2035 | 434142           |       28000    | 848544           |  -958.98 |      44 |             19 |
+| KXETHD             |     85749 |     2043 | 435094           |       28000    | 850460           |  -949.66 |      44 |             19 |
 | KXGBPUSD15M        |       631 |      412 | 161330           |           0    | 218000           | -1029.45 |       9 |              6 |
 | KXUSDJPY15M        |       581 |      404 | 181945           |           0    | 236856           | -1101.77 |       8 |              8 |
 | KXBRASILEIROBTOTAL |       114 |       41 |  19200.8         |          64.5  | 104563           | -1180.95 |       2 |              2 |
@@ -76,4 +76,4 @@ Total paper P&L: **$-5,319.21**; filled markets 24379; wrong calls 404, of which
 | KXNBATOTAL         |      2629 |     1567 | 809444           |           0    |      2.62617e+06 | -2168.2  |      33 |             22 |
 | KXNBASPREAD        |      2947 |     1823 | 943675           |           0    |      2.73561e+06 | -2376.59 |      38 |             18 |
 | KXNFLFIRSTTD       |       709 |      251 | 177110           |         887.69 |      4.11002e+06 | -3261.12 |       5 |              5 |
-| KXBTCD             |     56923 |     7144 |      5.36655e+06 |        9575    |      2.29885e+07 | -8370.85 |     105 |             78 |
+| KXBTCD             |     57122 |     7174 |      5.39135e+06 |        9575    |      2.30862e+07 | -8127.42 |     105 |             78 |
