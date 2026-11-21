@@ -32,7 +32,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-09,B1 OR breakout,SPXW,10:02,"[('C', 7505.0, 1)]",-19.8,target 12:10,2047.0
 2026-11-09,B2 breakout by 11:00 only,SPXW,10:02,"[('C', 7505.0, 1)]",-19.8,target 12:10,2047.0
 2026-11-09,B3 breakout with the day (vs prior close),SPXW,10:02,"[('C', 7505.0, 1)]",-19.8,target 12:10,2047.0
-2026-11-09,B4 breakout on high-VIX1D days,SPXW,10:02,"[('C', 7505.0, 1)]",-19.8,target 12:10,2047.0
 2026-11-09,"B5 breakout, -50% stop, no target",SPXW,10:02,"[('C', 7505.0, 1)]",-19.8,15:45 15:45,4087.0
 2026-11-09,I1 condor 10d,SPY,10:00,"[('P', 739.0, -1), ('P', 736.0, 1), ('C', 754.0, -1), ('C', 757.0, 1)]",0.3,expiry,27.4
 2026-11-09,I2 condor 10d stop 2x,SPY,10:00,"[('P', 739.0, -1), ('P', 736.0, 1), ('C', 754.0, -1), ('C', 757.0, 1)]",0.3,stop 14:39,-53.2
@@ -67,7 +66,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-09,B1 OR breakout,SPY,10:02,"[('C', 748.0, 1)]",-2.07,target 12:10,211.7
 2026-11-09,B2 breakout by 11:00 only,SPY,10:02,"[('C', 748.0, 1)]",-2.07,target 12:10,211.7
 2026-11-09,B3 breakout with the day (vs prior close),SPY,10:02,"[('C', 748.0, 1)]",-2.07,target 12:10,211.7
-2026-11-09,B4 breakout on high-VIX1D days,SPY,10:02,"[('C', 748.0, 1)]",-2.07,target 12:10,211.7
 2026-11-09,"B5 breakout, -50% stop, no target",SPY,10:02,"[('C', 748.0, 1)]",-2.07,15:45 15:45,408.7
 2026-11-10,I1 condor 10d,SPXW,10:00,"[('P', 7455.0, -1), ('P', 7430.0, 1), ('C', 7600.0, -1), ('C', 7625.0, 1)]",2.4,expiry,234.0
 2026-11-10,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7455.0, -1), ('P', 7430.0, 1), ('C', 7600.0, -1), ('C', 7625.0, 1)]",2.4,expiry,234.0
@@ -103,7 +101,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-10,B1 OR breakout,SPXW,10:00,"[('C', 7530.0, 1)]",-20.7,floor 10:38,-1113.0
 2026-11-10,B2 breakout by 11:00 only,SPXW,10:00,"[('C', 7530.0, 1)]",-20.7,floor 10:38,-1113.0
 2026-11-10,B3 breakout with the day (vs prior close),SPXW,10:50,"[('P', 7485.0, 1)]",-20.0,floor 11:08,-1023.0
-2026-11-10,B4 breakout on high-VIX1D days,SPXW,10:00,"[('C', 7530.0, 1)]",-20.7,floor 10:38,-1113.0
 2026-11-10,"B5 breakout, -50% stop, no target",SPXW,10:00,"[('C', 7530.0, 1)]",-20.7,floor 10:38,-1113.0
 2026-11-10,I1 condor 10d,SPY,10:00,"[('P', 743.0, -1), ('P', 740.0, 1), ('C', 757.0, -1), ('C', 760.0, 1)]",0.34,expiry,31.4
 2026-11-10,I2 condor 10d stop 2x,SPY,10:00,"[('P', 743.0, -1), ('P', 740.0, 1), ('C', 757.0, -1), ('C', 760.0, 1)]",0.34,expiry,31.4
@@ -138,7 +135,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-10,B1 OR breakout,SPY,10:00,"[('C', 751.0, 1)]",-2.13,floor 10:29,-108.3
 2026-11-10,B2 breakout by 11:00 only,SPY,10:00,"[('C', 751.0, 1)]",-2.13,floor 10:29,-108.3
 2026-11-10,B3 breakout with the day (vs prior close),SPY,10:47,"[('P', 747.0, 1)]",-1.78,floor 13:37,-92.3
-2026-11-10,B4 breakout on high-VIX1D days,SPY,10:00,"[('C', 751.0, 1)]",-2.13,floor 10:29,-108.3
 2026-11-10,"B5 breakout, -50% stop, no target",SPY,10:00,"[('C', 751.0, 1)]",-2.13,floor 10:29,-108.3
 2026-11-11,I1 condor 10d,SPXW,10:00,"[('P', 7520.0, -1), ('P', 7495.0, 1), ('C', 7630.0, -1), ('C', 7655.0, 1)]",2.1,expiry,204.0
 2026-11-11,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7520.0, -1), ('P', 7495.0, 1), ('C', 7630.0, -1), ('C', 7655.0, 1)]",2.1,stop 11:58,-282.0
@@ -232,7 +228,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-12,B1 OR breakout,SPXW,10:53,"[('C', 7610.0, 1)]",-14.7,target 11:07,1667.0
 2026-11-12,B2 breakout by 11:00 only,SPXW,10:53,"[('C', 7610.0, 1)]",-14.7,target 11:07,1667.0
 2026-11-12,B3 breakout with the day (vs prior close),SPXW,10:57,"[('C', 7625.0, 1)]",-14.0,target 11:11,1457.0
-2026-11-12,B4 breakout on high-VIX1D days,SPXW,10:53,"[('C', 7610.0, 1)]",-14.7,target 11:07,1667.0
 2026-11-12,"B5 breakout, -50% stop, no target",SPXW,10:53,"[('C', 7610.0, 1)]",-14.7,floor 14:03,-753.0
 2026-11-12,I1 condor 10d,SPY,10:00,"[('P', 750.0, -1), ('P', 747.0, 1), ('C', 764.0, -1), ('C', 767.0, 1)]",0.24,expiry,21.4
 2026-11-12,I2 condor 10d stop 2x,SPY,10:00,"[('P', 750.0, -1), ('P', 747.0, 1), ('C', 764.0, -1), ('C', 767.0, 1)]",0.24,stop 11:09,-33.2
@@ -267,7 +262,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-12,B1 OR breakout,SPY,10:52,"[('C', 759.0, 1)]",-1.58,target 11:09,177.7
 2026-11-12,B2 breakout by 11:00 only,SPY,10:52,"[('C', 759.0, 1)]",-1.58,target 11:09,177.7
 2026-11-12,B3 breakout with the day (vs prior close),SPY,10:58,"[('C', 760.0, 1)]",-1.73,floor 13:45,-102.3
-2026-11-12,B4 breakout on high-VIX1D days,SPY,10:52,"[('C', 759.0, 1)]",-1.58,target 11:09,177.7
 2026-11-12,"B5 breakout, -50% stop, no target",SPY,10:52,"[('C', 759.0, 1)]",-1.58,floor 14:01,-80.3
 2026-11-13,I1 condor 10d,SPXW,10:00,"[('P', 7470.0, -1), ('P', 7445.0, 1), ('C', 7625.0, -1), ('C', 7650.0, 1)]",2.35,expiry,229.0
 2026-11-13,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7470.0, -1), ('P', 7445.0, 1), ('C', 7625.0, -1), ('C', 7650.0, 1)]",2.35,stop 10:15,-307.0
@@ -306,7 +300,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-13,B1 OR breakout,SPXW,10:00,"[('P', 7560.0, 1)]",-20.5,target 10:11,2297.0
 2026-11-13,B2 breakout by 11:00 only,SPXW,10:00,"[('P', 7560.0, 1)]",-20.5,target 10:11,2297.0
 2026-11-13,B3 breakout with the day (vs prior close),SPXW,10:00,"[('P', 7560.0, 1)]",-20.5,target 10:11,2297.0
-2026-11-13,B4 breakout on high-VIX1D days,SPXW,10:00,"[('P', 7560.0, 1)]",-20.5,target 10:11,2297.0
 2026-11-13,"B5 breakout, -50% stop, no target",SPXW,10:00,"[('P', 7560.0, 1)]",-20.5,floor 14:17,-1043.0
 2026-11-13,I1 condor 10d,SPY,10:00,"[('P', 746.0, -1), ('P', 743.0, 1), ('C', 761.0, -1), ('C', 764.0, 1)]",0.26,expiry,23.4
 2026-11-13,I2 condor 10d stop 2x,SPY,10:00,"[('P', 746.0, -1), ('P', 743.0, 1), ('C', 761.0, -1), ('C', 764.0, 1)]",0.26,stop 10:11,-32.2
@@ -344,7 +337,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-13,B1 OR breakout,SPY,10:00,"[('P', 754.0, 1)]",-2.17,target 10:11,216.7
 2026-11-13,B2 breakout by 11:00 only,SPY,10:00,"[('P', 754.0, 1)]",-2.17,target 10:11,216.7
 2026-11-13,B3 breakout with the day (vs prior close),SPY,10:00,"[('P', 754.0, 1)]",-2.17,target 10:11,216.7
-2026-11-13,B4 breakout on high-VIX1D days,SPY,10:00,"[('P', 754.0, 1)]",-2.17,target 10:11,216.7
 2026-11-13,"B5 breakout, -50% stop, no target",SPY,10:00,"[('P', 754.0, 1)]",-2.17,floor 14:59,-117.3
 2026-11-16,I1 condor 10d,SPXW,10:00,"[('P', 7380.0, -1), ('P', 7355.0, 1), ('C', 7555.0, -1), ('C', 7580.0, 1)]",2.7,expiry,264.0
 2026-11-16,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7380.0, -1), ('P', 7355.0, 1), ('C', 7555.0, -1), ('C', 7580.0, 1)]",2.7,expiry,264.0
@@ -386,7 +378,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-16,B1 OR breakout,SPXW,10:00,"[('P', 7475.0, 1)]",-24.8,floor 10:53,-1273.0
 2026-11-16,B2 breakout by 11:00 only,SPXW,10:00,"[('P', 7475.0, 1)]",-24.8,floor 10:53,-1273.0
 2026-11-16,B3 breakout with the day (vs prior close),SPXW,10:00,"[('P', 7475.0, 1)]",-24.8,floor 10:53,-1273.0
-2026-11-16,B4 breakout on high-VIX1D days,SPXW,10:00,"[('P', 7475.0, 1)]",-24.8,floor 10:53,-1273.0
 2026-11-16,"B5 breakout, -50% stop, no target",SPXW,10:00,"[('P', 7475.0, 1)]",-24.8,floor 10:53,-1273.0
 2026-11-16,I1 condor 10d,SPY,10:00,"[('P', 736.0, -1), ('P', 733.0, 1), ('C', 753.0, -1), ('C', 756.0, 1)]",0.36,expiry,33.4
 2026-11-16,I2 condor 10d stop 2x,SPY,10:00,"[('P', 736.0, -1), ('P', 733.0, 1), ('C', 753.0, -1), ('C', 756.0, 1)]",0.36,expiry,33.4
@@ -427,7 +418,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-16,B1 OR breakout,SPY,10:00,"[('P', 746.0, 1)]",-2.65,target 13:28,292.7
 2026-11-16,B2 breakout by 11:00 only,SPY,10:00,"[('P', 746.0, 1)]",-2.65,target 13:28,292.7
 2026-11-16,B3 breakout with the day (vs prior close),SPY,10:00,"[('P', 746.0, 1)]",-2.65,target 13:28,292.7
-2026-11-16,B4 breakout on high-VIX1D days,SPY,10:00,"[('P', 746.0, 1)]",-2.65,target 13:28,292.7
 2026-11-16,"B5 breakout, -50% stop, no target",SPY,10:00,"[('P', 746.0, 1)]",-2.65,15:45 15:45,434.7
 2026-11-17,I1 condor 10d,SPXW,10:00,"[('P', 7335.0, -1), ('P', 7310.0, 1), ('C', 7480.0, -1), ('C', 7505.0, 1)]",2.9,expiry,284.0
 2026-11-17,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7335.0, -1), ('P', 7310.0, 1), ('C', 7480.0, -1), ('C', 7505.0, 1)]",2.9,stop 10:36,-332.0
@@ -475,7 +465,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-17,B1 OR breakout,SPXW,10:00,"[('C', 7415.0, 1)]",-21.0,floor 10:10,-1183.0
 2026-11-17,B2 breakout by 11:00 only,SPXW,10:00,"[('C', 7415.0, 1)]",-21.0,floor 10:10,-1183.0
 2026-11-17,B3 breakout with the day (vs prior close),SPXW,10:03,"[('P', 7395.0, 1)]",-21.2,target 10:36,2217.0
-2026-11-17,B4 breakout on high-VIX1D days,SPXW,10:00,"[('C', 7415.0, 1)]",-21.0,floor 10:10,-1183.0
 2026-11-17,"B5 breakout, -50% stop, no target",SPXW,10:00,"[('C', 7415.0, 1)]",-21.0,floor 10:10,-1183.0
 2026-11-17,I1 condor 10d,SPY,10:00,"[('P', 730.0, -1), ('P', 727.0, 1), ('C', 747.0, -1), ('C', 750.0, 1)]",0.33,expiry,30.4
 2026-11-17,I2 condor 10d stop 2x,SPY,10:00,"[('P', 730.0, -1), ('P', 727.0, 1), ('C', 747.0, -1), ('C', 750.0, 1)]",0.33,stop 10:41,-58.2
@@ -522,7 +511,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-17,B1 OR breakout,SPY,10:00,"[('C', 739.0, 1)]",-2.75,floor 10:18,-146.3
 2026-11-17,B2 breakout by 11:00 only,SPY,10:00,"[('C', 739.0, 1)]",-2.75,floor 10:18,-146.3
 2026-11-17,B3 breakout with the day (vs prior close),SPY,10:03,"[('P', 738.0, 1)]",-2.7,target 10:41,372.7
-2026-11-17,B4 breakout on high-VIX1D days,SPY,10:00,"[('C', 739.0, 1)]",-2.75,floor 10:18,-146.3
 2026-11-17,"B5 breakout, -50% stop, no target",SPY,10:00,"[('C', 739.0, 1)]",-2.75,floor 10:18,-146.3
 2026-11-18,I1 condor 10d,SPXW,10:00,"[('P', 7260.0, -1), ('P', 7235.0, 1), ('C', 7450.0, -1), ('C', 7475.0, 1)]",2.8,expiry,274.0
 2026-11-18,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7260.0, -1), ('P', 7235.0, 1), ('C', 7450.0, -1), ('C', 7475.0, 1)]",2.8,stop 11:21,-342.0
@@ -553,7 +541,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-18,B1 OR breakout,SPXW,10:00,"[('C', 7365.0, 1)]",-28.8,floor 10:11,-1513.0
 2026-11-18,B2 breakout by 11:00 only,SPXW,10:00,"[('C', 7365.0, 1)]",-28.8,floor 10:11,-1513.0
 2026-11-18,B3 breakout with the day (vs prior close),SPXW,10:00,"[('C', 7365.0, 1)]",-28.8,floor 10:11,-1513.0
-2026-11-18,B4 breakout on high-VIX1D days,SPXW,10:00,"[('C', 7365.0, 1)]",-28.8,floor 10:11,-1513.0
 2026-11-18,"B5 breakout, -50% stop, no target",SPXW,10:00,"[('C', 7365.0, 1)]",-28.8,floor 10:11,-1513.0
 2026-11-18,I1 condor 10d,SPY,10:00,"[('P', 724.0, -1), ('P', 721.0, 1), ('C', 743.0, -1), ('C', 746.0, 1)]",0.35,expiry,32.4
 2026-11-18,I2 condor 10d stop 2x,SPY,10:00,"[('P', 724.0, -1), ('P', 721.0, 1), ('C', 743.0, -1), ('C', 746.0, 1)]",0.35,expiry,32.4
@@ -584,7 +571,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-18,B1 OR breakout,SPY,10:42,"[('P', 729.0, 1)]",-2.87,floor 12:07,-153.3
 2026-11-18,B2 breakout by 11:00 only,SPY,10:42,"[('P', 729.0, 1)]",-2.87,floor 12:07,-153.3
 2026-11-18,B3 breakout with the day (vs prior close),SPY,10:42,"[('P', 729.0, 1)]",-2.87,floor 12:07,-153.3
-2026-11-18,B4 breakout on high-VIX1D days,SPY,10:42,"[('P', 729.0, 1)]",-2.87,floor 12:07,-153.3
 2026-11-18,"B5 breakout, -50% stop, no target",SPY,10:42,"[('P', 729.0, 1)]",-2.87,floor 12:07,-153.3
 2026-11-19,I1 condor 10d,SPXW,10:00,"[('P', 7270.0, -1), ('P', 7245.0, 1), ('C', 7470.0, -1), ('C', 7495.0, 1)]",3.2,expiry,-2186.0
 2026-11-19,I2 condor 10d stop 2x,SPXW,10:00,"[('P', 7270.0, -1), ('P', 7245.0, 1), ('C', 7470.0, -1), ('C', 7495.0, 1)]",3.2,stop 10:32,-337.0
@@ -643,7 +629,6 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-19,B1 OR breakout,SPXW,10:12,"[('P', 7370.0, 1)]",-29.6,target 10:31,3517.0
 2026-11-19,B2 breakout by 11:00 only,SPXW,10:12,"[('P', 7370.0, 1)]",-29.6,target 10:31,3517.0
 2026-11-19,B3 breakout with the day (vs prior close),SPXW,10:30,"[('P', 7320.0, 1)]",-30.0,target 10:39,3117.0
-2026-11-19,B4 breakout on high-VIX1D days,SPXW,10:12,"[('P', 7370.0, 1)]",-29.6,target 10:31,3517.0
 2026-11-19,"B5 breakout, -50% stop, no target",SPXW,10:12,"[('P', 7370.0, 1)]",-29.6,15:45 15:45,14667.0
 2026-11-19,I1 condor 10d,SPY,10:00,"[('P', 725.0, -1), ('P', 722.0, 1), ('C', 745.0, -1), ('C', 748.0, 1)]",0.37,expiry,-265.6
 2026-11-19,I2 condor 10d stop 2x,SPY,10:00,"[('P', 725.0, -1), ('P', 722.0, 1), ('C', 745.0, -1), ('C', 748.0, 1)]",0.37,stop 10:33,-44.2
@@ -700,5 +685,4 @@ day,strategy,root,entry,legs,credit,exit,pnl
 2026-11-19,B1 OR breakout,SPY,10:12,"[('P', 735.0, 1)]",-2.87,target 10:31,328.7
 2026-11-19,B2 breakout by 11:00 only,SPY,10:12,"[('P', 735.0, 1)]",-2.87,target 10:31,328.7
 2026-11-19,B3 breakout with the day (vs prior close),SPY,10:31,"[('P', 730.0, 1)]",-3.21,target 11:53,343.7
-2026-11-19,B4 breakout on high-VIX1D days,SPY,10:12,"[('P', 735.0, 1)]",-2.87,target 10:31,328.7
 2026-11-19,"B5 breakout, -50% stop, no target",SPY,10:12,"[('P', 735.0, 1)]",-2.87,15:45 15:45,1468.7

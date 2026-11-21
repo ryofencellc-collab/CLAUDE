@@ -2,24 +2,24 @@
 
 Rules: [PROTOCOL_ROUND39.md](../PROTOCOL_ROUND39.md). Fills at bid/ask of the same snapshot; per-leg commissions; first score at 20 trading days, again at 40. P&L per 1 lot.
 
-- 2026-11-09 SPXW: 409 snapshots, settle 7549.94 (official close), 35 trades
-- 2026-11-09 SPY: 382 snapshots, settle 752.69 (official close), 35 trades
-- 2026-11-10 SPXW: 419 snapshots, settle 7520.93 (official close), 36 trades
-- 2026-11-10 SPY: 412 snapshots, settle 749.92 (official close), 35 trades
+- 2026-11-09 SPXW: 409 snapshots, settle 7549.94 (official close), 34 trades
+- 2026-11-09 SPY: 382 snapshots, settle 752.69 (official close), 34 trades
+- 2026-11-10 SPXW: 419 snapshots, settle 7520.93 (official close), 35 trades
+- 2026-11-10 SPY: 412 snapshots, settle 749.92 (official close), 34 trades
 - 2026-11-11 SPXW: 424 snapshots, settle 7619.38 (official close), 30 trades
 - 2026-11-11 SPY: 424 snapshots, settle 759.81 (official close), 30 trades
-- 2026-11-12 SPXW: 424 snapshots, settle 7592.40 (official close), 34 trades
-- 2026-11-12 SPY: 424 snapshots, settle 757.12 (official close), 35 trades
-- 2026-11-13 SPXW: 423 snapshots, settle 7561.67 (official close), 39 trades
-- 2026-11-13 SPY: 423 snapshots, settle 754.37 (official close), 38 trades
-- 2026-11-16 SPXW: 423 snapshots, settle 7416.59 (official close), 42 trades
-- 2026-11-16 SPY: 423 snapshots, settle 739.95 (official close), 41 trades
-- 2026-11-17 SPXW: 420 snapshots, settle 7340.53 (official close), 48 trades
-- 2026-11-17 SPY: 413 snapshots, settle 732.44 (official close), 47 trades
-- 2026-11-18 SPXW: 423 snapshots, settle 7323.63 (official close), 31 trades
-- 2026-11-18 SPY: 423 snapshots, settle 730.20 (official close), 31 trades
-- 2026-11-19 SPXW: 402 snapshots, settle 7175.83 (official close), 59 trades
-- 2026-11-19 SPY: 402 snapshots, settle 715.87 (official close), 57 trades
+- 2026-11-12 SPXW: 424 snapshots, settle 7592.40 (official close), 33 trades
+- 2026-11-12 SPY: 424 snapshots, settle 757.12 (official close), 34 trades
+- 2026-11-13 SPXW: 423 snapshots, settle 7561.67 (official close), 38 trades
+- 2026-11-13 SPY: 423 snapshots, settle 754.37 (official close), 37 trades
+- 2026-11-16 SPXW: 423 snapshots, settle 7416.59 (official close), 41 trades
+- 2026-11-16 SPY: 423 snapshots, settle 739.95 (official close), 40 trades
+- 2026-11-17 SPXW: 420 snapshots, settle 7340.53 (official close), 47 trades
+- 2026-11-17 SPY: 413 snapshots, settle 732.44 (official close), 46 trades
+- 2026-11-18 SPXW: 423 snapshots, settle 7323.63 (official close), 30 trades
+- 2026-11-18 SPY: 423 snapshots, settle 730.20 (official close), 30 trades
+- 2026-11-19 SPXW: 402 snapshots, settle 7175.83 (official close), 58 trades
+- 2026-11-19 SPY: 402 snapshots, settle 715.87 (official close), 56 trades
 
 Trading days scored: **9** (verdict at 20).
 
@@ -31,8 +31,6 @@ Trading days scored: **9** (verdict at 20).
 | B2 breakout by 11:00 only                 | SPY    | -       |        9 | 67%   |  105.48 |     6.78 |  -153.3  |   949.3  |   410.8  |   538.5  |
 | B3 breakout with the day (vs prior close) | SPXW   | -       |        9 | 67%   |  920.33 |    17.78 | -1513    |  8283    |  3438    |  4845    |
 | B3 breakout with the day (vs prior close) | SPY    | -       |        9 | 67%   |  135.48 |    30.14 |  -153.3  |  1219.3  |   146.8  |  1072.5  |
-| B4 breakout on high-VIX1D days            | SPXW   | -       |        8 | 50%   |  555.75 |  -496.81 | -1513    |  4446    |  4898    |  -452    |
-| B4 breakout on high-VIX1D days            | SPY    | -       |        8 | 62%   |  102.45 |    -6.31 |  -153.3  |   819.6  |   497.8  |   321.8  |
 | B5 breakout, -50% stop, no target         | SPXW   | -       |        9 | 33%   | 1444.78 |  -873.11 | -1513    | 13003    |  3348    |  9655    |
 | B5 breakout, -50% stop, no target         | SPY    | -       |        9 | 44%   |  200.7  |   -39.97 |  -153.3  |  1806.3  |   319.8  |  1486.5  |
 | F1 Reddit iron fly 14:50 (bid/ask fills)  | SPXW   | 14:50   |        9 | 89%   |  103.11 |    11.64 |  -276    |   928    |   552    |   376    |
@@ -282,14 +280,14 @@ Pass (at ≥ 20 days): mean > 0 with 90% bootstrap lower bound > 0, both halves 
 
 ## Daily P&L by strategy (all entries and both roots)
 
-| day        |   B1 OR breakout |   B2 breakout by 11:00 only |   B3 breakout with the day (vs prior close) |   B4 breakout on high-VIX1D days |   B5 breakout, -50% stop, no target |   F1 Reddit iron fly 14:50 (bid/ask fills) |   F1m same, mid fills |   I1 condor 10d |   I2 condor 10d stop 2x |   I3 condor 20d |   L1 long straddle |   S1 trend-pullback scalper |   T1 trend spread 15d |
-|:-----------|-----------------:|----------------------------:|--------------------------------------------:|---------------------------------:|------------------------------------:|-------------------------------------------:|----------------------:|----------------:|------------------------:|----------------:|-------------------:|----------------------------:|----------------------:|
-| 2026-11-09 |             2259 |                        2259 |                                        2259 |                             2259 |                                4496 |                                        170 |                   214 |             686 |                   -1038 |             186 |               6242 |                         170 |                   592 |
-| 2026-11-10 |            -1221 |                       -1221 |                                       -1115 |                            -1221 |                               -1221 |                                        147 |                   160 |             807 |                     386 |             888 |              -3948 |                        -552 |                   162 |
-| 2026-11-11 |             1087 |                        1087 |                                        1087 |                              nan |                                1227 |                                        135 |                   133 |             603 |                    -479 |             950 |               -801 |                        -306 |                   529 |
-| 2026-11-12 |             1845 |                        1845 |                                        1355 |                             1845 |                                -833 |                                        155 |                   166 |             494 |                    -230 |           -1734 |               1271 |                        -205 |                 -1490 |
-| 2026-11-13 |             2514 |                        2514 |                                        2514 |                             2514 |                               -1160 |                                        152 |                   190 |             909 |                     317 |            1953 |              -6677 |                        -989 |                   811 |
-| 2026-11-16 |             -980 |                        -980 |                                        -980 |                             -980 |                                -838 |                                        205 |                   188 |            -479 |                    -627 |            -776 |               5993 |                        -451 |                   802 |
-| 2026-11-17 |            -1329 |                       -1329 |                                        2590 |                            -1329 |                               -1329 |                                        132 |                   170 |            1068 |                    -213 |             -43 |              -3557 |                         168 |                  -466 |
-| 2026-11-18 |            -1666 |                       -1666 |                                       -1666 |                            -1666 |                               -1666 |                                        169 |                   176 |            1047 |                    -191 |            2610 |              -8109 |                       -1039 |                   876 |
-| 2026-11-19 |             3846 |                        3846 |                                        3461 |                             3846 |                               16136 |                                       -319 |                  -235 |           -4395 |                    -867 |           -4116 |              23580 |                         722 |                  1059 |
+| day        |   B1 OR breakout |   B2 breakout by 11:00 only |   B3 breakout with the day (vs prior close) |   B5 breakout, -50% stop, no target |   F1 Reddit iron fly 14:50 (bid/ask fills) |   F1m same, mid fills |   I1 condor 10d |   I2 condor 10d stop 2x |   I3 condor 20d |   L1 long straddle |   S1 trend-pullback scalper |   T1 trend spread 15d |
+|:-----------|-----------------:|----------------------------:|--------------------------------------------:|------------------------------------:|-------------------------------------------:|----------------------:|----------------:|------------------------:|----------------:|-------------------:|----------------------------:|----------------------:|
+| 2026-11-09 |             2259 |                        2259 |                                        2259 |                                4496 |                                        170 |                   214 |             686 |                   -1038 |             186 |               6242 |                         170 |                   592 |
+| 2026-11-10 |            -1221 |                       -1221 |                                       -1115 |                               -1221 |                                        147 |                   160 |             807 |                     386 |             888 |              -3948 |                        -552 |                   162 |
+| 2026-11-11 |             1087 |                        1087 |                                        1087 |                                1227 |                                        135 |                   133 |             603 |                    -479 |             950 |               -801 |                        -306 |                   529 |
+| 2026-11-12 |             1845 |                        1845 |                                        1355 |                                -833 |                                        155 |                   166 |             494 |                    -230 |           -1734 |               1271 |                        -205 |                 -1490 |
+| 2026-11-13 |             2514 |                        2514 |                                        2514 |                               -1160 |                                        152 |                   190 |             909 |                     317 |            1953 |              -6677 |                        -989 |                   811 |
+| 2026-11-16 |             -980 |                        -980 |                                        -980 |                                -838 |                                        205 |                   188 |            -479 |                    -627 |            -776 |               5993 |                        -451 |                   802 |
+| 2026-11-17 |            -1329 |                       -1329 |                                        2590 |                               -1329 |                                        132 |                   170 |            1068 |                    -213 |             -43 |              -3557 |                         168 |                  -466 |
+| 2026-11-18 |            -1666 |                       -1666 |                                       -1666 |                               -1666 |                                        169 |                   176 |            1047 |                    -191 |            2610 |              -8109 |                       -1039 |                   876 |
+| 2026-11-19 |             3846 |                        3846 |                                        3461 |                               16136 |                                       -319 |                  -235 |           -4395 |                    -867 |           -4116 |              23580 |                         722 |                  1059 |
